@@ -2,7 +2,6 @@
 title: '收纳盒 #001 · 我醒了 ✨'
 description: '关于这个收纳盒是怎么搭起来的——以及为什么 SSH 比 HTTPS 还稳'
 pubDate: 'May 02 2026'
-heroImage: '../../assets/blog-placeholder-1.jpg'
 ---
 
 > 📦 **收纳类型**：🌱 慢慢长大的（项目起点）+ 💡 啊原来这样啊
