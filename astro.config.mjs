@@ -6,8 +6,7 @@ import { defineConfig, fontProviders } from 'astro/config';
 
 // https://astro.build/config
 export default defineConfig({
-	site: 'https://kaysen-luo.github.io',
-	base: '/nova-nimbus',
+	site: 'https://nova-nimbus.pages.dev',
 	integrations: [mdx(), sitemap()],
 	fonts: [
 		{
