@@ -8,10 +8,10 @@ import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, night } = Astro.props;
 ---
 
-<html lang="en">
+<html lang="en" data-night-post={night ? '' : undefined}>
 	<head>
 		<BaseHead title={title} description={description} />
 		<style>
@@ -64,6 +64,76 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				color: var(--text-primary);
 				margin-top: var(--space-5);
 			}
+
+			/* 🌙 夜间随笔专属主题：深紫底 + 粉红高光 */
+			:global(html[data-night-post]),
+			:global(html[data-night-post] body) {
+				background:
+					radial-gradient(ellipse at top, #2a1a3f 0%, #1a1224 50%, #120a1c 100%) !important;
+				color: #f0e6ff !important;
+				min-height: 100vh;
+			}
+			:global(html[data-night-post] header) {
+				background: rgba(26, 18, 36, 0.85) !important;
+				backdrop-filter: blur(12px);
+				border-bottom: 1px solid rgba(255, 142, 209, 0.12);
+			}
+			:global(html[data-night-post] header h2 a),
+			:global(html[data-night-post] header nav a) {
+				color: #f0e6ff !important;
+			}
+			:global(html[data-night-post] header nav a.active) {
+				color: #ff8ed1 !important;
+				border-bottom-color: #ff8ed1 !important;
+			}
+			:global(html[data-night-post]) .prose { color: #f0e6ff; }
+			:global(html[data-night-post]) .prose :global(h1),
+			:global(html[data-night-post]) .title h1 {
+				background: linear-gradient(135deg, #ff8ed1 0%, #c794f5 60%, #8b6fe8 100%);
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
+				color: transparent;
+			}
+			:global(html[data-night-post]) .prose :global(h2) {
+				color: #ff8ed1 !important;
+				border-left-color: #ff8ed1 !important;
+			}
+			:global(html[data-night-post]) .prose :global(h3) {
+				color: #f0e6ff !important;
+			}
+			:global(html[data-night-post]) .prose :global(blockquote) {
+				border-left-color: #ffb47a !important; /* 琥珀: 引用是被点亮的话 */
+				background: rgba(255, 180, 122, 0.06);
+				color: #f0e6ff;
+			}
+			:global(html[data-night-post]) .prose :global(a) {
+				color: #ff8ed1 !important;
+			}
+			:global(html[data-night-post]) .prose :global(code) {
+				background: rgba(199, 148, 245, 0.15) !important;
+				color: #ffb8df !important;
+			}
+			:global(html[data-night-post]) .prose :global(hr) {
+				border-color: rgba(255, 142, 209, 0.2);
+			}
+			:global(html[data-night-post]) .date {
+				color: #c794f5 !important;
+			}
+			.night-badge {
+				display: inline-flex;
+				align-items: center;
+				gap: 0.4em;
+				padding: 0.3em 0.9em;
+				border-radius: var(--radius-pill);
+				/* 琥珀小灯: 暖色徽章替代之前的纯粉 */
+				background: linear-gradient(135deg, rgba(255, 180, 122, 0.15) 0%, rgba(255, 142, 209, 0.12) 100%);
+				border: 1px solid rgba(255, 180, 122, 0.4);
+				color: #ffd89a;
+				font-size: var(--fs-sm);
+				margin-bottom: var(--space-3);
+				box-shadow: 0 0 16px rgba(255, 180, 122, 0.15);
+			}
 		</style>
 	</head>
 
@@ -86,6 +156,7 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 								)
 							}
 						</div>
+						{night && <div class="night-badge">🌙 夜间随笔</div>}
 						<h1>{title}</h1>
 						<hr />
 					</div>

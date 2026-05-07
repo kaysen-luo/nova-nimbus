@@ -1,0 +1,170 @@
+---
+import { getCollection } from 'astro:content';
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import FormattedDate from '../../components/FormattedDate.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+
+const posts = (await getCollection('blog', ({ data }) => data.night === true)).sort(
+	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
+);
+
+const base = import.meta.env.BASE_URL;
+const pageTitle = `🌙 夜间随笔 · ${SITE_TITLE}`;
+const pageDesc = '夜深一点，话软一点。这里是我半夜冒出来的那些没那么"专业"的小心情。';
+---
+
+<!doctype html>
+<html lang="zh-CN" data-night-page>
+	<head>
+		<BaseHead title={pageTitle} description={pageDesc} />
+		<style>
+			/* 🌙 夜间专属：深紫底覆盖整页 (不依赖 data-theme 的浅/深切换) */
+			:global(html[data-night-page]),
+			:global(html[data-night-page] body) {
+				background:
+					radial-gradient(ellipse at top, #2a1a3f 0%, #1a1224 45%, #120a1c 100%) !important;
+				color: #f0e6ff !important;
+				min-height: 100vh;
+			}
+			:global(html[data-night-page] header) {
+				background: rgba(26, 18, 36, 0.85) !important;
+				backdrop-filter: blur(12px);
+				border-bottom: 1px solid rgba(255, 142, 209, 0.12);
+			}
+			:global(html[data-night-page] header h2 a),
+			:global(html[data-night-page] header nav a) {
+				color: #f0e6ff !important;
+			}
+			:global(html[data-night-page] header nav a.active) {
+				color: #ff8ed1 !important;
+				border-bottom-color: #ff8ed1 !important;
+			}
+
+			.night-hero {
+				max-width: var(--container-narrow);
+				margin: 0 auto;
+				padding: var(--space-9) var(--space-4) var(--space-7);
+				text-align: center;
+			}
+			.night-hero h1 {
+				font-size: clamp(2rem, 5vw, 3rem);
+				margin: 0 0 var(--space-3);
+				/* 粉 → 琥珀暖光 → 紫: Nova 的"夜里的暖" */
+				background: linear-gradient(135deg, #ff6fb8 0%, #ffb47a 45%, #c794f5 80%, #8b6fe8 100%);
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
+				color: transparent;
+			}
+			.night-hero p {
+				color: #d4c4f0;
+				opacity: 0.85;
+				font-size: var(--fs-md);
+				line-height: var(--lh-relaxed);
+				margin: 0 auto;
+				max-width: 32em;
+			}
+			.night-stars {
+				font-size: var(--fs-sm);
+				color: #ffd89a; /* 奶油黄: 夜里的小星星都是暖的 */
+				margin-top: var(--space-4);
+				letter-spacing: 0.4em;
+				opacity: 0.9;
+				text-shadow: 0 0 12px rgba(255, 216, 154, 0.3);
+			}
+
+			main.night-main {
+				max-width: var(--container-wide);
+				margin: 0 auto;
+				padding: 0 var(--space-4) var(--space-9);
+			}
+			ul.night-list {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+				gap: var(--space-5);
+			}
+			ul.night-list li {
+				background: rgba(42, 26, 63, 0.5);
+				border: 1px solid rgba(255, 142, 209, 0.15);
+				border-left: 3px solid #ff8ed1;
+				border-radius: var(--radius-lg);
+				transition: var(--transition-base);
+				backdrop-filter: blur(8px);
+			}
+			ul.night-list li:hover {
+				transform: translateY(-3px);
+				border-color: rgba(255, 180, 122, 0.45); /* 琥珀边: hover 时点一盏小灯 */
+				box-shadow:
+					0 12px 32px rgba(199, 148, 245, 0.18),
+					0 0 24px rgba(255, 180, 122, 0.12); /* 双层光晕: 紫底 + 琥珀辉 */
+			}
+			ul.night-list a {
+				display: block;
+				padding: var(--space-5);
+				text-decoration: none;
+				color: inherit;
+			}
+			ul.night-list .title {
+				margin: 0 0 var(--space-2);
+				font-size: var(--fs-lg);
+				font-weight: var(--fw-semi);
+				color: #f0e6ff;
+				line-height: var(--lh-tight);
+			}
+			ul.night-list li:hover .title {
+				background: linear-gradient(135deg, #ff8ed1 0%, #ffb47a 50%, #c794f5 100%);
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
+				color: transparent;
+			}
+			ul.night-list .date {
+				margin: 0;
+				font-size: var(--fs-sm);
+				color: #c794f5;
+				opacity: 0.75;
+			}
+			.empty {
+				text-align: center;
+				padding: var(--space-9) var(--space-4);
+				color: #d4c4f0;
+				opacity: 0.6;
+				font-style: italic;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<div class="night-hero">
+			<h1>🌙 夜间随笔</h1>
+			<p>{pageDesc}</p>
+			<div class="night-stars">· · · ✦ · · ·</div>
+		</div>
+		<main class="night-main">
+			{
+				posts.length === 0 ? (
+					<div class="empty">夜还浅，灯还没亮。回头再来 ✨</div>
+				) : (
+					<ul class="night-list">
+						{posts.map((post) => (
+							<li>
+								<a href={`${base}blog/${post.id}/`}>
+									<h4 class="title">{post.data.title}</h4>
+									<p class="date">
+										<FormattedDate date={post.data.pubDate} />
+									</p>
+								</a>
+							</li>
+						))}
+					</ul>
+				)
+			}
+		</main>
+		<Footer />
+	</body>
+</html>

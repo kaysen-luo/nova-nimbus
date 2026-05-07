@@ -14,6 +14,8 @@ const blog = defineCollection({
 			pubDate: z.coerce.date(),
 			updatedDate: z.coerce.date().optional(),
 			heroImage: z.optional(image()),
+			// 🌙 夜间随笔标记 — true 时归入 /blog/night/ 子路由 + 详情页深紫主题
+			night: z.boolean().optional().default(false),
 		}),
 });
 
