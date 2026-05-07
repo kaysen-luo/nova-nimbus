@@ -5,11 +5,19 @@ type Props = HTMLAttributes<'a'>;
 
 const { href, class: className, ...props } = Astro.props;
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
-const subpath = pathname.match(/[^\/]+/g);
-const isActive = href === pathname || href === '/' + (subpath?.[0] || '');
+const normalizedPath = '/' + pathname.replace(/^\/+|\/+$/g, '');
+const normalizedHref = '/' + String(href ?? '').replace(/^\/+|\/+$/g, '');
+// 精确匹配: 完全相等 or 当前路径在 href 之下 (e.g. /blog/night active /blog/night)
+// 不再用 subpath[0] 因为那会让 /blog/night 误激活 /blog
+const isActive = normalizedPath === normalizedHref ||
+	(normalizedHref !== '/' && normalizedPath.startsWith(normalizedHref + '/'));
+// 特殊: 让 /blog/night/* 只激活"夜间"link, 不激活"博客"link
+const isExactBlogList = normalizedHref === '/blog';
+const isOnNightPath = normalizedPath === '/blog/night' || normalizedPath.startsWith('/blog/night/');
+const finalActive = isActive && !(isExactBlogList && isOnNightPath);
 ---
 
-<a href={href} class:list={[className, { active: isActive }]} {...props}>
+<a href={href} class:list={[className, { active: finalActive }]} {...props}>
 	<slot />
 </a>
 <style>
