@@ -20,18 +20,37 @@ const base = import.meta.env.BASE_URL;
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
 			main {
-				width: var(--container-wide);
+				width: 100%;
+				max-width: var(--container-wide);
 			}
 			ul {
-				display: flex;
-				flex-wrap: wrap;
+				display: grid;
+				grid-template-columns: repeat(2, 1fr);
 				gap: var(--space-6);
 				list-style-type: none;
 				margin: 0;
 				padding: 0;
 			}
 			ul li {
-				width: calc(50% - var(--space-3));
+				width: 100%;
+				background: var(--bg-elevated);
+				border: 1px solid var(--brand-soft);
+				border-left: 4px solid var(--brand-primary);
+				border-radius: var(--radius-lg);
+				overflow: hidden;
+				box-shadow: 0 2px 8px rgba(139, 111, 232, 0.06);
+				transition: var(--transition-base);
+			}
+			ul li:nth-child(2n) {
+				border-left-color: var(--brand-rose);
+			}
+			ul li:nth-child(3n) {
+				border-left-color: var(--accent-gold);
+			}
+			ul li:hover {
+				transform: translateY(-3px);
+				border-color: var(--brand-primary);
+				box-shadow: 0 12px 28px rgba(139, 111, 232, 0.18);
 			}
 			ul li * {
 				text-decoration: none;
@@ -39,14 +58,18 @@ const base = import.meta.env.BASE_URL;
 			}
 			ul li img {
 				width: 100%;
-				margin-bottom: var(--space-3);
-				border-radius: var(--radius-md);
+				margin-bottom: 0;
+				border-radius: 0;
 			}
 			ul li a {
 				display: block;
+				padding: var(--space-5);
+			}
+			ul li a:has(img) {
+				padding-top: var(--space-3);
 			}
 			.title {
-				margin: 0 0 var(--space-1) 0;
+				margin: 0 0 var(--space-2) 0;
 				font-size: var(--fs-lg);
 				font-weight: var(--fw-semi);
 				color: var(--text-primary);
@@ -55,21 +78,24 @@ const base = import.meta.env.BASE_URL;
 			.date {
 				margin: 0;
 				font-size: var(--fs-sm);
-				color: var(--text-secondary);
-			}
-			ul li a:hover .title,
-			ul li a:hover .date {
 				color: var(--brand-primary);
+				font-weight: var(--fw-medium);
+				opacity: 0.85;
+			}
+			ul li:hover .title {
+				background: var(--brand-gradient);
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
+				color: transparent;
 			}
 			ul a:hover img {
 				box-shadow: var(--shadow-md);
 			}
 			@media (max-width: 720px) {
 				ul {
+					grid-template-columns: 1fr;
 					gap: var(--space-4);
-				}
-				ul li {
-					width: 100%;
 				}
 			}
 		</style>

@@ -1,32 +1,39 @@
 /*
  * Nova Nimbus · Design Tokens v1
- * 调性: 晚霞星云为底 + 内心粉粉为面
- * 基础: 现首页粉系 #b86fa0 / #9b6fd5 升级为正式 brand token
+ * 调性: 晚霞星云 — 薰衣草紫为主, 玫瑰粉为副, 暖橙→深紫为强调
+ * 来源: 色卡 v1 demo
  */
 
 :root {
-	/* ===== 色彩 · 浅色模式 (默认) ===== */
-	/* 中性 */
+	/* ===== 色彩 · 浅色模式 (色卡 v1 · 晚霞星云) ===== */
+	/* 中性 — 暖奶咖底 */
 	--bg-page: #fefbf8;
 	--bg-elevated: #ffffff;
-	--bg-subtle: #fdf6f8;
+	--bg-subtle: #f5efe8;
 	--text-primary: #2c1810;
 	--text-secondary: #6b5b4f;
 	--text-tertiary: #9b8a7e;
 	--border-subtle: #ede3db;
-	--border-pink: #f0d4e0;
+	--border-brand: #d4c2f0;        /* 浅薰衣草边 */
 
-	/* 品牌 (粉色基调) */
-	--brand-primary: #b86fa0;       /* 主品牌, 链接/标题强调 */
-	--brand-purple: #9b6fd5;        /* 副品牌, 渐变搭档 */
-	--brand-soft-pink: #fff5f7;     /* 浅粉底, hover/卡片 */
-	--brand-soft-purple: #f3ebff;   /* 浅紫底 */
-	--brand-gradient: linear-gradient(135deg, #b86fa0 0%, #9b6fd5 100%);
+	/* 品牌 (薰衣草紫 + 玫瑰粉, 取自色卡 v1) */
+	--brand-primary: #8b6fe8;       /* 主品牌 · 薰衣草紫 (链接/强调) */
+	--brand-rose: #b85478;          /* 副品牌 · 玫瑰粉 (渐变搭档) */
+	--brand-soft: #e8d9f5;          /* 浅紫软底 */
+	--brand-soft-rose: #f8e0ea;     /* 浅粉软底 */
+	--brand-gradient: linear-gradient(110deg, #6a4ed8 0%, #8b6fe8 15%, #c95878 40%, #d6356a 100%);
 
-	/* 强调色 (晚霞星云预留) */
-	--accent-sunset-warm: #ffa74f;  /* 暖橙, 渐变起 */
-	--accent-sunset-cool: #6119de;  /* 深紫, 渐变止 */
-	--accent-gold: #e8b850;         /* 金, 装饰 */
+	/* 兼容别名 (旧 hex 引用 brand-purple/soft-pink/soft-purple/border-pink 都映射到新色) */
+	--brand-purple: #b85478;
+	--brand-soft-pink: #f8e0ea;
+	--brand-soft-purple: #e8d9f5;
+	--border-pink: #d4c2f0;
+
+	/* 强调色 (晚霞星云完整套) */
+	--accent-sunset-warm: #ffa74f;  /* 暖橙 */
+	--accent-sunset-cool: #6119de;  /* 深紫 */
+	--accent-gold: #e0a93a;         /* 金, 装饰 (亮琥珀, 与紫粉同等视觉重量) */
+	--accent-gold-soft: #fff1d6;    /* 浅金底 */
 	--gradient-sunset: linear-gradient(135deg, #ffa74f 0%, #6119de 100%);
 
 	/* ===== 字号阶 (7 级, 11-32px) ===== */
@@ -72,11 +79,11 @@
 	--radius-xl: 24px;
 	--radius-pill: 999px;
 
-	/* ===== 阴影 (温暖系 rgba) ===== */
-	--shadow-sm: 0 1px 3px rgba(184, 111, 160, 0.06), 0 1px 2px rgba(184, 111, 160, 0.04);
-	--shadow-md: 0 4px 12px rgba(184, 111, 160, 0.08);
-	--shadow-lg: 0 8px 24px rgba(184, 111, 160, 0.12);
-	--shadow-xl: 0 16px 40px rgba(184, 111, 160, 0.16);
+	/* ===== 阴影 (温暖系 rgba, 薰衣草紫调) ===== */
+	--shadow-sm: 0 1px 3px rgba(139, 111, 232, 0.06), 0 1px 2px rgba(139, 111, 232, 0.04);
+	--shadow-md: 0 4px 12px rgba(139, 111, 232, 0.08);
+	--shadow-lg: 0 8px 24px rgba(139, 111, 232, 0.12);
+	--shadow-xl: 0 16px 40px rgba(139, 111, 232, 0.16);
 
 	/* ===== 容器宽度 ===== */
 	--container-prose: 720px;     /* 阅读宽 */
@@ -89,9 +96,9 @@
 	--transition-slow: 300ms ease;
 }
 
-/* ===== 深色模式 token 覆写 ===== */
+/* ===== 深色模式 token 覆写 (色卡 v1 配套) ===== */
 [data-theme="dark"] {
-	/* 中性 — 深底奶白字 */
+	/* 中性 — 深紫底奶白字 */
 	--bg-page: #1a1224;
 	--bg-elevated: #2a2031;
 	--bg-subtle: #221a2c;
@@ -99,19 +106,26 @@
 	--text-secondary: #c4b5c8;
 	--text-tertiary: #8a7d92;
 	--border-subtle: #3a2d44;
-	--border-pink: #5a3a52;
+	--border-brand: #6a5a8a;
 
-	/* 品牌 — 暗底下提亮一档防糊 */
-	--brand-primary: #d99dc4;
-	--brand-purple: #b89dec;
-	--brand-soft-pink: #2f1f2c;
+	/* 品牌 — 暗底提亮一档防糊 */
+	--brand-primary: #b89dec;       /* 薰衣草紫 (亮版) */
+	--brand-rose: #e07b9d;          /* 玫瑰粉 (亮版) */
+	--brand-soft: #2a1f3d;
+	--brand-soft-rose: #3a1f2c;
+	--brand-gradient: linear-gradient(135deg, #b89dec 0%, #e07b9d 100%);
+
+	/* 兼容别名 */
+	--brand-purple: #e07b9d;
+	--brand-soft-pink: #3a1f2c;
 	--brand-soft-purple: #2a1f3d;
-	--brand-gradient: linear-gradient(135deg, #d99dc4 0%, #b89dec 100%);
+	--border-pink: #6a5a8a;
 
-	/* 强调色 */
+	/* 强调色 (深色下提亮) */
 	--accent-sunset-warm: #ffb872;
 	--accent-sunset-cool: #8a4ae8;
 	--accent-gold: #f0c878;
+	--accent-gold-soft: #3a2f1c;
 	--gradient-sunset: linear-gradient(135deg, #ffb872 0%, #8a4ae8 100%);
 
 	/* 阴影 — 深色下加深加散 */
@@ -153,8 +167,8 @@ body {
 }
 
 main {
-	width: var(--container-prose);
-	max-width: calc(100% - var(--space-6));
+	width: 100%;
+	max-width: var(--container-prose);
 	margin: 0 auto;
 	padding: var(--space-8) var(--space-4);
 }

@@ -52,6 +52,18 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			.last-updated-on {
 				font-style: italic;
 			}
+			/* h2 加品牌色竖条 + 紫字 */
+			.prose :global(h2) {
+				color: var(--brand-primary);
+				padding-left: var(--space-3);
+				border-left: 4px solid var(--brand-primary);
+				margin-top: var(--space-7);
+			}
+			/* h3 保持中性深灰, 留紫色给 h2 当独占强调 */
+			.prose :global(h3) {
+				color: var(--text-primary);
+				margin-top: var(--space-5);
+			}
 		</style>
 	</head>
 

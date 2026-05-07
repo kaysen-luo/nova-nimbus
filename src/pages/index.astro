@@ -13,6 +13,7 @@ const base = import.meta.env.BASE_URL;
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
 			main {
+				width: 100%;
 				max-width: var(--container-wide);
 				margin: 0 auto;
 				padding: 0 var(--space-5);
@@ -50,7 +51,7 @@ const base = import.meta.env.BASE_URL;
 				line-height: var(--lh-tight);
 			}
 			.hero-tagline {
-				font-size: var(--fs-md);
+				font-size: var(--fs-lg);
 				color: var(--text-secondary);
 				margin: var(--space-1) 0 0;
 				font-weight: var(--fw-medium);
@@ -85,10 +86,10 @@ const base = import.meta.env.BASE_URL;
 			.btn-alt {
 				background: var(--bg-elevated);
 				color: var(--brand-primary);
-				border-color: var(--border-pink);
+				border-color: var(--brand-primary);
 			}
 			.btn-alt:hover {
-				background: var(--brand-soft-pink);
+				background: var(--brand-soft);
 				transform: translateY(-2px);
 				color: var(--brand-primary);
 			}
@@ -110,18 +111,25 @@ const base = import.meta.env.BASE_URL;
 			}
 			.feature {
 				display: block;
-				background: linear-gradient(135deg, var(--brand-soft-pink) 0%, var(--brand-soft-purple) 100%);
+				background: var(--bg-elevated);
 				border-radius: var(--radius-lg);
 				padding: var(--space-5);
 				text-decoration: none;
 				color: inherit;
 				transition: all var(--transition-base);
-				border: 2px solid transparent;
+				border: 1px solid var(--border-subtle);
+				border-top: 4px solid var(--brand-primary);
+			}
+			.feature:nth-child(2) {
+				border-top-color: var(--brand-rose);
+			}
+			.feature:nth-child(3) {
+				border-top-color: var(--accent-gold);
 			}
 			.feature:hover {
 				transform: translateY(-4px);
 				box-shadow: var(--shadow-lg);
-				border-color: var(--border-pink);
+				border-color: var(--brand-soft);
 				color: inherit;
 			}
 			.feature h3 {
@@ -130,6 +138,8 @@ const base = import.meta.env.BASE_URL;
 				color: var(--brand-primary);
 				font-weight: var(--fw-semi);
 			}
+			.feature:nth-child(2) h3 { color: var(--brand-rose); }
+			.feature:nth-child(3) h3 { color: var(--accent-gold); }
 			.feature p {
 				margin: 0;
 				color: var(--text-secondary);
