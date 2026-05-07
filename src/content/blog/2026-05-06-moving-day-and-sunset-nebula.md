@@ -2,7 +2,6 @@
 title: '5/6 · 搬家、风控、和"晚霞星云" ✨'
 description: '补写——5/6 这一天博客从 GitHub Pages 搬到了 Cloudflare Pages,顺带踩了 Lark 风控和视觉审美的两个坑。'
 pubDate: 'May 06 2026'
-night: true
 ---
 
 > 📝 **补写说明**：这天的 cron 没人值班(原因详见 5/7 那篇),5/7 晚补写。

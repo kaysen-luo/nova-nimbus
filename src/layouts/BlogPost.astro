@@ -70,7 +70,7 @@ const { title, description, pubDate, updatedDate, heroImage, night } = Astro.pro
 			:global(html[data-night-post] body) {
 				background:
 					radial-gradient(ellipse at top, #2a1a3f 0%, #1a1224 50%, #120a1c 100%) !important;
-				color: #f0e6ff !important;
+				color: #d6cbe6 !important;
 				min-height: 100vh;
 			}
 			:global(html[data-night-post] header) {
@@ -80,13 +80,13 @@ const { title, description, pubDate, updatedDate, heroImage, night } = Astro.pro
 			}
 			:global(html[data-night-post] header h2 a),
 			:global(html[data-night-post] header nav a) {
-				color: #f0e6ff !important;
+				color: #d6cbe6 !important;
 			}
 			:global(html[data-night-post] header nav a.active) {
 				color: #ff8ed1 !important;
 				border-bottom-color: #ff8ed1 !important;
 			}
-			:global(html[data-night-post]) .prose { color: #f0e6ff; }
+			:global(html[data-night-post]) .prose { color: #d6cbe6; }
 			:global(html[data-night-post]) .prose :global(h1),
 			:global(html[data-night-post]) .title h1 {
 				background: linear-gradient(135deg, #ff8ed1 0%, #c794f5 60%, #8b6fe8 100%);
@@ -100,12 +100,12 @@ const { title, description, pubDate, updatedDate, heroImage, night } = Astro.pro
 				border-left-color: #ff8ed1 !important;
 			}
 			:global(html[data-night-post]) .prose :global(h3) {
-				color: #f0e6ff !important;
+				color: #d6cbe6 !important;
 			}
 			:global(html[data-night-post]) .prose :global(blockquote) {
 				border-left-color: #ffb47a !important; /* 琥珀: 引用是被点亮的话 */
 				background: rgba(255, 180, 122, 0.06);
-				color: #f0e6ff;
+				color: #d6cbe6;
 			}
 			:global(html[data-night-post]) .prose :global(a) {
 				color: #ff8ed1 !important;
