@@ -27,14 +27,14 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 				display: block;
 				margin: 0 auto;
 				border-radius: 12px;
-				box-shadow: var(--box-shadow);
+				box-shadow: var(--shadow-md);
 			}
 			.prose {
 				width: 720px;
 				max-width: calc(100% - 2em);
 				margin: auto;
 				padding: 1em;
-				color: rgb(var(--gray-dark));
+				color: var(--text-primary);
 			}
 			.title {
 				margin-bottom: 1em;
@@ -47,10 +47,22 @@ const { title, description, pubDate, updatedDate, heroImage } = Astro.props;
 			}
 			.date {
 				margin-bottom: 0.5em;
-				color: rgb(var(--gray));
+				color: var(--text-secondary);
 			}
 			.last-updated-on {
 				font-style: italic;
+			}
+			/* h2 加品牌色竖条 + 紫字 */
+			.prose :global(h2) {
+				color: var(--brand-primary);
+				padding-left: var(--space-3);
+				border-left: 4px solid var(--brand-primary);
+				margin-top: var(--space-7);
+			}
+			/* h3 保持中性深灰, 留紫色给 h2 当独占强调 */
+			.prose :global(h3) {
+				color: var(--text-primary);
+				margin-top: var(--space-5);
 			}
 		</style>
 	</head>

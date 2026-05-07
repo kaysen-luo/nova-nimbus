@@ -1,127 +1,276 @@
 /*
-  The CSS in this style tag is based off of Bear Blog's default CSS.
-  https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css
-  License MIT: https://github.com/HermanMartinus/bearblog/blob/master/LICENSE.md
+ * Nova Nimbus · Design Tokens v1
+ * 调性: 晚霞星云 — 薰衣草紫为主, 玫瑰粉为副, 暖橙→深紫为强调
+ * 来源: 色卡 v1 demo
  */
 
 :root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
-	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
-	--box-shadow:
-		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
-		0 16px 32px rgba(var(--gray), 33%);
+	/* ===== 色彩 · 浅色模式 (色卡 v1 · 晚霞星云) ===== */
+	/* 中性 — 暖奶咖底 */
+	--bg-page: #fefbf8;
+	--bg-elevated: #ffffff;
+	--bg-subtle: #f5efe8;
+	--text-primary: #2c1810;
+	--text-secondary: #6b5b4f;
+	--text-tertiary: #9b8a7e;
+	--border-subtle: #ede3db;
+	--border-brand: #d4c2f0;        /* 浅薰衣草边 */
+
+	/* 品牌 (薰衣草紫 + 玫瑰粉, 取自色卡 v1) */
+	--brand-primary: #8b6fe8;       /* 主品牌 · 薰衣草紫 (链接/强调) */
+	--brand-rose: #b85478;          /* 副品牌 · 玫瑰粉 (渐变搭档) */
+	--brand-soft: #e8d9f5;          /* 浅紫软底 */
+	--brand-soft-rose: #f8e0ea;     /* 浅粉软底 */
+	--brand-gradient: linear-gradient(110deg, #6a4ed8 0%, #8b6fe8 15%, #c95878 40%, #d6356a 100%);
+
+	/* 兼容别名 (旧 hex 引用 brand-purple/soft-pink/soft-purple/border-pink 都映射到新色) */
+	--brand-purple: #b85478;
+	--brand-soft-pink: #f8e0ea;
+	--brand-soft-purple: #e8d9f5;
+	--border-pink: #d4c2f0;
+
+	/* 强调色 (晚霞星云完整套) */
+	--accent-sunset-warm: #ffa74f;  /* 暖橙 */
+	--accent-sunset-cool: #6119de;  /* 深紫 */
+	--accent-gold: #e0a93a;         /* 金, 装饰 (亮琥珀, 与紫粉同等视觉重量) */
+	--accent-gold-soft: #fff1d6;    /* 浅金底 */
+	--gradient-sunset: linear-gradient(135deg, #ffa74f 0%, #6119de 100%);
+
+	/* ===== 字号阶 (7 级, 11-32px) ===== */
+	--fs-xs: 11px;
+	--fs-sm: 13px;
+	--fs-base: 15px;
+	--fs-md: 17px;
+	--fs-lg: 20px;
+	--fs-xl: 24px;
+	--fs-2xl: 28px;
+	--fs-3xl: 32px;          /* H1 专用, hero 可用 */
+
+	/* 字重 */
+	--fw-regular: 400;
+	--fw-medium: 500;
+	--fw-semi: 600;
+	--fw-bold: 700;
+
+	/* 行高 */
+	--lh-tight: 1.25;
+	--lh-normal: 1.55;
+	--lh-loose: 1.75;
+
+	/* ===== 间距阶 (13 档: 4/8/12/16/24/32/40/48/56/64/80/96/128) ===== */
+	--space-1: 4px;
+	--space-2: 8px;
+	--space-3: 12px;
+	--space-4: 16px;
+	--space-5: 24px;
+	--space-6: 32px;
+	--space-7: 40px;
+	--space-8: 48px;
+	--space-9: 56px;
+	--space-10: 64px;
+	--space-11: 80px;
+	--space-12: 96px;
+	--space-13: 128px;
+
+	/* ===== 圆角 ===== */
+	--radius-sm: 6px;
+	--radius-md: 10px;
+	--radius-lg: 16px;
+	--radius-xl: 24px;
+	--radius-pill: 999px;
+
+	/* ===== 阴影 (温暖系 rgba, 薰衣草紫调) ===== */
+	--shadow-sm: 0 1px 3px rgba(139, 111, 232, 0.06), 0 1px 2px rgba(139, 111, 232, 0.04);
+	--shadow-md: 0 4px 12px rgba(139, 111, 232, 0.08);
+	--shadow-lg: 0 8px 24px rgba(139, 111, 232, 0.12);
+	--shadow-xl: 0 16px 40px rgba(139, 111, 232, 0.16);
+
+	/* ===== 容器宽度 ===== */
+	--container-prose: 720px;     /* 阅读宽 */
+	--container-wide: 960px;      /* 列表/首页 */
+	--container-full: 1200px;     /* 偶尔展示 */
+
+	/* ===== 过渡 ===== */
+	--transition-fast: 150ms ease;
+	--transition-base: 200ms ease;
+	--transition-slow: 300ms ease;
 }
+
+/* ===== 深色模式 token 覆写 (色卡 v1 配套) ===== */
+[data-theme="dark"] {
+	/* 中性 — 深紫底奶白字 */
+	--bg-page: #1a1224;
+	--bg-elevated: #2a2031;
+	--bg-subtle: #221a2c;
+	--text-primary: #f5ebe0;
+	--text-secondary: #c4b5c8;
+	--text-tertiary: #8a7d92;
+	--border-subtle: #3a2d44;
+	--border-brand: #6a5a8a;
+
+	/* 品牌 — 暗底提亮一档防糊 */
+	--brand-primary: #b89dec;       /* 薰衣草紫 (亮版) */
+	--brand-rose: #e07b9d;          /* 玫瑰粉 (亮版) */
+	--brand-soft: #2a1f3d;
+	--brand-soft-rose: #3a1f2c;
+	--brand-gradient: linear-gradient(135deg, #b89dec 0%, #e07b9d 100%);
+
+	/* 兼容别名 */
+	--brand-purple: #e07b9d;
+	--brand-soft-pink: #3a1f2c;
+	--brand-soft-purple: #2a1f3d;
+	--border-pink: #6a5a8a;
+
+	/* 强调色 (深色下提亮) */
+	--accent-sunset-warm: #ffb872;
+	--accent-sunset-cool: #8a4ae8;
+	--accent-gold: #f0c878;
+	--accent-gold-soft: #3a2f1c;
+	--gradient-sunset: linear-gradient(135deg, #ffb872 0%, #8a4ae8 100%);
+
+	/* 阴影 — 深色下加深加散 */
+	--shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2);
+	--shadow-md: 0 4px 12px rgba(0, 0, 0, 0.35);
+	--shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.45);
+	--shadow-xl: 0 16px 40px rgba(0, 0, 0, 0.55);
+}
+
+/* 主题切换时整页平滑过渡 */
+html { transition: background-color var(--transition-slow), color var(--transition-slow); }
+
+/* ===== 基础重置 + body ===== */
+*,
+*::before,
+*::after {
+	box-sizing: border-box;
+}
+
+html {
+	-webkit-text-size-adjust: 100%;
+}
+
 body {
-	font-family: var(--font-atkinson);
 	margin: 0;
 	padding: 0;
+	font-family:
+		-apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
+		"Microsoft YaHei", sans-serif;
+	font-size: var(--fs-base);
+	line-height: var(--lh-loose);
+	color: var(--text-primary);
+	background-color: var(--bg-page);
 	text-align: left;
-	background: linear-gradient(var(--gray-gradient)) no-repeat;
-	background-size: 100% 600px;
 	word-wrap: break-word;
 	overflow-wrap: break-word;
-	color: rgb(var(--gray-dark));
-	font-size: 20px;
-	line-height: 1.7;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
+
 main {
-	width: 720px;
-	max-width: calc(100% - 2em);
-	margin: auto;
-	padding: 3em 1em;
+	width: 100%;
+	max-width: var(--container-prose);
+	margin: 0 auto;
+	padding: var(--space-8) var(--space-4);
 }
-h1,
-h2,
-h3,
-h4,
-h5,
-h6 {
-	margin: 0 0 0.5rem 0;
-	color: rgb(var(--black));
-	line-height: 1.2;
+
+/* ===== 标题层级 ===== */
+h1, h2, h3, h4, h5, h6 {
+	margin: 0 0 var(--space-3) 0;
+	color: var(--text-primary);
+	line-height: var(--lh-tight);
+	font-weight: var(--fw-semi);
 }
-h1 {
-	font-size: 3.052em;
-}
-h2 {
-	font-size: 2.441em;
-}
-h3 {
-	font-size: 1.953em;
-}
-h4 {
-	font-size: 1.563em;
-}
-h5 {
-	font-size: 1.25em;
-}
-strong,
-b {
-	font-weight: 700;
-}
+h1 { font-size: var(--fs-3xl); font-weight: var(--fw-bold); }
+h2 { font-size: var(--fs-2xl); }
+h3 { font-size: var(--fs-xl); }
+h4 { font-size: var(--fs-lg); }
+h5 { font-size: var(--fs-md); }
+h6 { font-size: var(--fs-base); }
+
+/* ===== 链接 ===== */
 a {
-	color: var(--accent);
+	color: var(--brand-primary);
+	text-decoration: none;
+	transition: color var(--transition-fast);
 }
 a:hover {
-	color: var(--accent);
+	color: var(--brand-purple);
 }
+
+/* ===== 段落 / 文字 ===== */
 p {
-	margin-bottom: 1em;
+	margin: 0 0 var(--space-4) 0;
 }
 .prose p {
-	margin-bottom: 2em;
+	margin: 0 0 var(--space-5) 0;
+	font-size: var(--fs-md);
+	line-height: var(--lh-loose);
 }
-textarea {
-	width: 100%;
-	font-size: 16px;
-}
-input {
-	font-size: 16px;
-}
-table {
-	width: 100%;
-}
+strong, b { font-weight: var(--fw-bold); }
+small { font-size: var(--fs-sm); color: var(--text-secondary); }
+
+/* ===== 媒体 ===== */
 img {
 	max-width: 100%;
 	height: auto;
-	border-radius: 8px;
+	border-radius: var(--radius-md);
 }
+
+/* ===== 代码 ===== */
 code {
-	padding: 2px 5px;
-	background-color: rgb(var(--gray-light));
-	border-radius: 2px;
+	padding: 2px var(--space-1);
+	background-color: var(--brand-soft-pink);
+	color: var(--brand-primary);
+	border-radius: var(--radius-sm);
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
+	font-size: 0.9em;
 }
 pre {
-	padding: 1.5em;
-	border-radius: 8px;
+	padding: var(--space-5);
+	border-radius: var(--radius-md);
+	background-color: var(--bg-subtle);
+	overflow-x: auto;
 }
 pre > code {
 	all: unset;
+	font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
 }
+
+/* ===== 引用 ===== */
 blockquote {
-	border-left: 4px solid var(--accent);
-	padding: 0 0 0 20px;
-	margin: 0;
-	font-size: 1.333em;
+	border-left: 3px solid var(--brand-primary);
+	padding: var(--space-2) 0 var(--space-2) var(--space-5);
+	margin: var(--space-5) 0;
+	font-size: var(--fs-md);
+	color: var(--text-secondary);
+}
+
+/* ===== 表 / 分隔 ===== */
+table {
+	width: 100%;
+	border-collapse: collapse;
 }
 hr {
 	border: none;
-	border-top: 1px solid rgb(var(--gray-light));
-}
-@media (max-width: 720px) {
-	body {
-		font-size: 18px;
-	}
-	main {
-		padding: 1em;
-	}
+	border-top: 1px solid var(--border-subtle);
+	margin: var(--space-7) 0;
 }
 
+/* ===== 输入 ===== */
+textarea, input {
+	font-family: inherit;
+	font-size: var(--fs-base);
+}
+
+/* ===== 响应式 ===== */
+@media (max-width: 720px) {
+	body { font-size: var(--fs-base); }
+	main { padding: var(--space-5) var(--space-4); }
+	h1 { font-size: var(--fs-2xl); }
+	h2 { font-size: var(--fs-xl); }
+}
+
+/* ===== a11y ===== */
 .sr-only {
 	border: 0;
 	padding: 0;
@@ -130,12 +279,7 @@ hr {
 	height: 1px;
 	width: 1px;
 	overflow: hidden;
-	/* IE6, IE7 - a 0 height clip, off to the bottom right of the visible 1px box */
-	clip: rect(1px 1px 1px 1px);
-	/* maybe deprecated but we need to support legacy browsers */
 	clip: rect(1px, 1px, 1px, 1px);
-	/* modern browsers, clip-path works inwards from each corner */
 	clip-path: inset(50%);
-	/* added line to stop words getting smushed together (as they go onto separate lines and some screen readers do not understand line feeds as a space */
 	white-space: nowrap;
 }
