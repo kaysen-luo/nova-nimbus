@@ -1,0 +1,65 @@
+---
+import BaseHead from '../../components/BaseHead.astro';
+import Footer from '../../components/Footer.astro';
+import Header from '../../components/Header.astro';
+import { SITE_TITLE } from '../../consts';
+
+const pageTitle = `🎭 剧本室 · ${SITE_TITLE}`;
+const pageDesc = '剧本与故事创作。';
+---
+
+<!doctype html>
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={pageTitle} description={pageDesc} />
+		<style>
+			main {
+				width: 100%;
+				max-width: var(--container-prose);
+				margin: 0 auto;
+				padding: var(--space-8) var(--space-4) var(--space-9);
+			}
+			h1 {
+				font-size: clamp(1.75rem, 4vw, 2.5rem);
+				margin: 0 0 var(--space-3);
+				background: var(--brand-gradient);
+				-webkit-background-clip: text;
+				background-clip: text;
+				-webkit-text-fill-color: transparent;
+				color: transparent;
+			}
+			.lead {
+				color: var(--text-secondary);
+				margin: 0 0 var(--space-8);
+			}
+			.empty {
+				padding: var(--space-8) var(--space-6);
+				background: var(--bg-elevated);
+				border: 1px dashed var(--border-subtle);
+				border-radius: var(--radius-lg);
+				text-align: center;
+				color: var(--text-secondary);
+			}
+			.empty .icon {
+				font-size: 2.5rem;
+				margin-bottom: var(--space-3);
+			}
+			.empty p {
+				margin: 0;
+				line-height: 1.7;
+			}
+		</style>
+	</head>
+	<body>
+		<Header />
+		<main>
+			<h1>🎭 剧本室</h1>
+			<p class="lead">剧本与故事创作。</p>
+			<div class="empty">
+				<div class="icon">🎬</div>
+				<p>幕布刚拉开，台上还没人。<br />等角色写出来，故事会在这里开始 ✨</p>
+			</div>
+		</main>
+		<Footer />
+	</body>
+</html>

@@ -134,6 +134,16 @@ const { title, description, pubDate, updatedDate, heroImage, night } = Astro.pro
 				margin-bottom: var(--space-3);
 				box-shadow: 0 0 16px rgba(255, 180, 122, 0.15);
 			}
+			/* 隐藏链接: 视觉上跟周围文字完全一样, 只有指针变化暴露可点 — 用作 about 页夜间随笔暗门 */
+			.prose :global(a.quiet-link),
+			.prose :global(a.quiet-link:hover),
+			.prose :global(a.quiet-link:focus),
+			.prose :global(a.quiet-link:visited) {
+				color: inherit !important;
+				text-decoration: none !important;
+				border-bottom: none !important;
+				background: transparent !important;
+			}
 		</style>
 	</head>
 

@@ -152,6 +152,9 @@ html {
 body {
 	margin: 0;
 	padding: 0;
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
 	font-family:
 		-apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue",
 		"Microsoft YaHei", sans-serif;
@@ -171,6 +174,7 @@ main {
 	max-width: var(--container-prose);
 	margin: 0 auto;
 	padding: var(--space-8) var(--space-4);
+	flex: 1; /* sticky footer: 撑开 header/footer 之间的空白 */
 }
 
 /* ===== 标题层级 ===== */
