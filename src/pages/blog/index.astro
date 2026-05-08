@@ -7,7 +7,8 @@ import FormattedDate from '../../components/FormattedDate.astro';
 import Header from '../../components/Header.astro';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
 
-const posts = (await getCollection('blog')).sort(
+// 公开博客列表：排除夜间随笔 (night === true)，那些只在 /blog/night/ 露面
+const posts = (await getCollection('blog', ({ data }) => data.night !== true)).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
 

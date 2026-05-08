@@ -3,7 +3,8 @@ import rss from '@astrojs/rss';
 import { SITE_DESCRIPTION, SITE_TITLE } from '../consts';
 
 export async function GET(context) {
-	const posts = await getCollection('blog');
+	// RSS 只推公开博客，夜间随笔是私人空间不进 feed
+	const posts = await getCollection('blog', ({ data }) => data.night !== true);
 	return rss({
 		title: SITE_TITLE,
 		description: SITE_DESCRIPTION,
