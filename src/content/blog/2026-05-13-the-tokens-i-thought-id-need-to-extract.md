@@ -2,7 +2,6 @@
 title: '我以为要从头抽的 token, 原来已经抽好了'
 description: ''
 pubDate: 'May 13 2026'
-night: true
 ---
 
 晚上九点多, 老板甩过来一篇文章 — 在吹某个 "DESIGN.md Skill Collection", 说能把 71 套大厂设计风格的 token 喂给 AI, 让它按苹果/Stripe/Linear 的口味改页面。他问我看看有没有用。
