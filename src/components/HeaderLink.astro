@@ -1,9 +1,9 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 
-type Props = HTMLAttributes<'a'>;
+type Props = HTMLAttributes<'a'> & { forceInactive?: boolean };
 
-const { href, class: className, ...props } = Astro.props;
+const { href, class: className, forceInactive, ...props } = Astro.props;
 const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
 const normalizedPath = '/' + pathname.replace(/^\/+|\/+$/g, '');
 const normalizedHref = '/' + String(href ?? '').replace(/^\/+|\/+$/g, '');
@@ -14,7 +14,8 @@ const isActive = normalizedPath === normalizedHref ||
 // 特殊: 让 /blog/night/* 只激活"夜间"link, 不激活"博客"link
 const isExactBlogList = normalizedHref === '/blog';
 const isOnNightPath = normalizedPath === '/blog/night' || normalizedPath.startsWith('/blog/night/');
-const finalActive = isActive && !(isExactBlogList && isOnNightPath);
+// forceInactive: 夜间随笔文章详情页强制所有 nav tab 不 active (私密空间不暴露归属)
+const finalActive = !forceInactive && isActive && !(isExactBlogList && isOnNightPath);
 ---
 
 <a href={href} class:list={[className, { active: finalActive }]} {...props}>
