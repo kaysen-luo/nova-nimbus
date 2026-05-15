@@ -120,6 +120,54 @@ const { title, description, pubDate, updatedDate, heroImage, night } = Astro.pro
 			:global(html[data-night-post]) .date {
 				color: #c794f5 !important;
 			}
+			/* 夜间随笔标题区光晕 — 雾紫 + 一丝暖金, 仅 night post 显示 */
+			.title {
+				position: relative;
+				isolation: isolate;
+			}
+			:global(html[data-night-post]) .title::before {
+				content: '';
+				position: absolute;
+				inset: -20% -10%;
+				z-index: -1;
+				pointer-events: none;
+				background:
+					radial-gradient(
+						ellipse 55% 60% at 35% 45%,
+						rgba(184, 157, 236, 0.28) 0%,
+						rgba(184, 157, 236, 0.10) 35%,
+						transparent 70%
+					),
+					radial-gradient(
+						ellipse 35% 30% at 75% 55%,
+						rgba(255, 200, 130, 0.16) 0%,
+						rgba(255, 200, 130, 0.05) 45%,
+						transparent 75%
+					),
+					radial-gradient(
+						ellipse 45% 35% at 55% 50%,
+						rgba(199, 148, 245, 0.14) 0%,
+						transparent 65%
+					);
+				filter: blur(36px);
+				opacity: 0.85;
+				animation: night-aurora-drift 20s ease-in-out infinite,
+					night-aurora-breathe 10s ease-in-out infinite;
+			}
+			@keyframes night-aurora-drift {
+				0%, 100% { transform: translate(0, 0) scale(1); }
+				33%      { transform: translate(2%, -2%) scale(1.04); }
+				66%      { transform: translate(-2%, 2%) scale(0.97); }
+			}
+			@keyframes night-aurora-breathe {
+				0%, 100% { opacity: 0.65; }
+				50%      { opacity: 0.95; }
+			}
+			@media (prefers-reduced-motion: reduce) {
+				:global(html[data-night-post]) .title::before {
+					animation: none;
+				}
+			}
 			.night-badge {
 				display: inline-flex;
 				align-items: center;
