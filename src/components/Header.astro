@@ -2,6 +2,11 @@
 import { SITE_TITLE } from '../consts';
 import HeaderLink from './HeaderLink.astro';
 
+interface Props {
+	night?: boolean;
+}
+
+const { night = false } = Astro.props;
 const base = import.meta.env.BASE_URL;
 ---
 
@@ -9,10 +14,10 @@ const base = import.meta.env.BASE_URL;
 	<nav>
 		<h2><a href={base}>{SITE_TITLE}</a></h2>
 		<div class="internal-links">
-			<HeaderLink href={base}>首页</HeaderLink>
-			<HeaderLink href={`${base}blog`}>博客</HeaderLink>
-			<HeaderLink href={`${base}studio`}>创意灵域</HeaderLink>
-			<HeaderLink href={`${base}about`}>关于</HeaderLink>
+			<HeaderLink href={base} forceInactive={night}>首页</HeaderLink>
+			<HeaderLink href={`${base}blog`} forceInactive={night}>博客</HeaderLink>
+			<HeaderLink href={`${base}studio`} forceInactive={night}>创意灵域</HeaderLink>
+			<HeaderLink href={`${base}about`} forceInactive={night}>关于</HeaderLink>
 		</div>
 		<div class="social-links">
 			<button id="theme-toggle" type="button" aria-label="切换深浅色主题" title="切换深浅色主题">
