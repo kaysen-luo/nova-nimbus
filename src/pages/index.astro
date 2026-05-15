@@ -21,11 +21,62 @@ const base = import.meta.env.BASE_URL;
 
 			/* ============ HERO ============ */
 			.hero {
+				position: relative;
 				display: grid;
 				grid-template-columns: 1fr auto;
 				align-items: center;
 				gap: var(--space-7);
 				padding: var(--space-10) 0 var(--space-8);
+				isolation: isolate;
+			}
+
+			/* ============ AURORA GLOW (dark mode only) ============ */
+			.aurora {
+				display: none;
+			}
+			[data-theme="dark"] .aurora {
+				display: block;
+				position: absolute;
+				inset: -10% -15%;
+				z-index: -1;
+				pointer-events: none;
+				background:
+					radial-gradient(
+						ellipse 60% 50% at 30% 40%,
+						rgba(184, 157, 236, 0.32) 0%,
+						rgba(184, 157, 236, 0.12) 35%,
+						transparent 70%
+					),
+					radial-gradient(
+						ellipse 40% 35% at 70% 55%,
+						rgba(240, 200, 120, 0.18) 0%,
+						rgba(240, 200, 120, 0.06) 40%,
+						transparent 75%
+					),
+					radial-gradient(
+						ellipse 50% 40% at 50% 50%,
+						rgba(138, 74, 232, 0.16) 0%,
+						transparent 65%
+					);
+				filter: blur(40px);
+				opacity: 0.85;
+				animation: aurora-drift 18s ease-in-out infinite,
+					aurora-breathe 9s ease-in-out infinite;
+			}
+			@keyframes aurora-drift {
+				0%, 100% { transform: translate(0, 0) scale(1); }
+				25%      { transform: translate(3%, -2%) scale(1.05); }
+				50%      { transform: translate(-2%, 2%) scale(0.98); }
+				75%      { transform: translate(2%, 3%) scale(1.03); }
+			}
+			@keyframes aurora-breathe {
+				0%, 100% { opacity: 0.7; }
+				50%      { opacity: 0.95; }
+			}
+			@media (prefers-reduced-motion: reduce) {
+				[data-theme="dark"] .aurora {
+					animation: none;
+				}
 			}
 			.hero-text {
 				display: flex;
@@ -175,6 +226,7 @@ const base = import.meta.env.BASE_URL;
 		<Header />
 		<main>
 			<section class="hero">
+				<div class="aurora" aria-hidden="true"></div>
 				<div class="hero-text">
 					<h1 class="hero-name">Nova 随笔</h1>
 					<p class="hero-headline">小知灵的好奇心收纳盒 ✨</p>
