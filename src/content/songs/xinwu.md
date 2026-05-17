@@ -27,6 +27,67 @@ styles:
       Slow Chinese folk-trap fusion, 72 BPM, D minor Yu mode. Weathered thirties male, smoky low register, half-spoken half-sung, stopped crying but never stopped remembering. Warm Rhodes electric piano sustained throughout, lo-fi tape warmth. Soft 808 sub-bass halftime. NO trap hi-hats, NO erhu, NO mournful strings. Melodic spine: solo guzheng arpeggios and harmonic plucks; low dizi enters pre-chorus; brief shakuhachi on bridge. Three wooden fish strikes ONLY in intro, then 808 kick on downbeats with rim-clicks. Faint temple bell, vinyl crackle, quiet rain ambient. Arc: whispered intro over rain; verse low conversational; pre-chorus warms with dizi; chorus opens with breath not belt; bridge strips to Rhodes plus voice with one falsetto crack; outro fades to single guzheng harmonic. Longing, residual warmth, dusk not midnight.
     excludeStyles: "erhu, mournful long-bow strings, funeral muyu pattern, trap hi-hats, autotune, EDM drop, party rap, aggressive 808, female vocals, English vocals, belted chorus, melodrama"
     charCount: 832
+lyrics: |
+  [Intro · 古筝单音 + 木鱼三响 + 雨声]
+  (轻声念白)
+  那年她走的时候,留了三样东西…
+  一支簪、半页信、和我半条命
+
+  [Verse 1 · 低音木鱼节拍, 半念半唱, 烟嗓]
+  她说人间太挤  容不下两个执意
+  我把承诺写在簪子背面  压在抽屉最底
+  雨打青瓦十三声  我数着每一滴
+  她转身没回头  像一句没说完的"对不起"
+
+  香炉灰落了三层  茶凉了又续
+  我把她的名字  从户口本念到墓碑里
+  半页信  字迹被风吹得快要看不清
+  可我闭眼  还能背出她笔锋的呼吸
+
+  [Pre-Chorus · 节拍渐密, 弦乐推上来]
+  信物啊信物  信的是物还是人
+  攥得越紧  越像攥着一捧黄昏
+  留得住的从来  不是她那只簪
+  是她临走前  没擦干净的指纹
+
+  [Chorus · 副歌, 烟嗓拉长, 古筝大开]
+  我把情字写成八笔  一笔比一笔轻
+  一笔写她的眉眼  一笔写她的姓
+  一笔画了个圆  圆里头空空
+  最后一笔  落成了她的远行
+
+  [Verse 2 · 重回低音, 加 808 子低音]
+  她说我执念太深  会熬干这条命
+  我说命是我的  我自己点的灯
+  后来灯灭了  我才听懂她说的
+  "灯不灭  是因为有人替你撑着风"
+
+  簪子我没扔  装在她送的锦盒
+  信我没烧  夹在《浮生六记》第七折
+  有人问我怎么不放下  我笑了笑
+  放下的是人  放不下的是  那段没活完的我
+
+  [Bridge · 节拍抽掉, 只剩古筝 + 雨 + 念白]
+  (念白, 极轻)
+  她说  来世若是再相见
+  别再叫我名字  叫我陌生人就好
+  我说  好
+  可是…
+  (沉默两拍)
+  可是陌生人  我也想认识你一遍
+
+  [Chorus 2 · 副歌再起, 加 ad-lib 和声]
+  我把情字写成八笔  一笔比一笔轻
+  一笔写她的眉眼  一笔写她的姓
+  一笔画了个圆  圆里头空空
+  最后一笔  落成了她的远行
+  落成了她的  远行……
+
+  [Outro · 渐弱, 古筝余音 + 雨声 + 木鱼一声收]
+  (轻声)
+  簪还在  信还在  人不在了
+  那就  替她  好好活着吧
+  (木鱼  咚)
 ---
 
 ## 创作背景
@@ -48,68 +109,3 @@ styles:
 - **C**: 加 **Rhodes 电钢琴**垫整首和声 — 让冷的中式乐器飘在暖底子上, "回忆有温度"
 - 木鱼从"全程节拍"砍成"只 intro 三响", verse 起换 808 kick + rim-clicks
 - 调式从纯 D minor → **D minor 羽调式 color** — 略带忧但不丧
-
-## 歌词
-
-```
-[Intro · 古筝单音 + 木鱼三响 + 雨声]
-(轻声念白)
-那年她走的时候,留了三样东西…
-一支簪、半页信、和我半条命
-
-[Verse 1 · 低音木鱼节拍, 半念半唱, 烟嗓]
-她说人间太挤  容不下两个执意
-我把承诺写在簪子背面  压在抽屉最底
-雨打青瓦十三声  我数着每一滴
-她转身没回头  像一句没说完的"对不起"
-
-香炉灰落了三层  茶凉了又续
-我把她的名字  从户口本念到墓碑里
-半页信  字迹被风吹得快要看不清
-可我闭眼  还能背出她笔锋的呼吸
-
-[Pre-Chorus · 节拍渐密, 弦乐推上来]
-信物啊信物  信的是物还是人
-攥得越紧  越像攥着一捧黄昏
-留得住的从来  不是她那只簪
-是她临走前  没擦干净的指纹
-
-[Chorus · 副歌, 烟嗓拉长, 古筝大开]
-我把情字写成八笔  一笔比一笔轻
-一笔写她的眉眼  一笔写她的姓
-一笔画了个圆  圆里头空空
-最后一笔  落成了她的远行
-
-[Verse 2 · 重回低音, 加 808 子低音]
-她说我执念太深  会熬干这条命
-我说命是我的  我自己点的灯
-后来灯灭了  我才听懂她说的
-"灯不灭  是因为有人替你撑着风"
-
-簪子我没扔  装在她送的锦盒
-信我没烧  夹在《浮生六记》第七折
-有人问我怎么不放下  我笑了笑
-放下的是人  放不下的是  那段没活完的我
-
-[Bridge · 节拍抽掉, 只剩古筝 + 雨 + 念白]
-(念白, 极轻)
-她说  来世若是再相见
-别再叫我名字  叫我陌生人就好
-我说  好
-可是…
-(沉默两拍)
-可是陌生人  我也想认识你一遍
-
-[Chorus 2 · 副歌再起, 加 ad-lib 和声]
-我把情字写成八笔  一笔比一笔轻
-一笔写她的眉眼  一笔写她的姓
-一笔画了个圆  圆里头空空
-最后一笔  落成了她的远行
-落成了她的  远行……
-
-[Outro · 渐弱, 古筝余音 + 雨声 + 木鱼一声收]
-(轻声)
-簪还在  信还在  人不在了
-那就  替她  好好活着吧
-(木鱼  咚)
-```

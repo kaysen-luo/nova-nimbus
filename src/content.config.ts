@@ -49,6 +49,9 @@ const songs = defineCollection({
 		platform: z.enum(['suno', 'tianyin', 'heartmula', 'other']).default('suno'),
 		// 状态: draft (草稿) / generated (跑过音频) / shipped (定稿)
 		status: z.enum(['draft', 'generated', 'shipped']).default('draft'),
+		// 歌词正文 — 独立字段, 详情页第一块独立卡片渲染 (在提示词之前)
+		// 用 frontmatter 多行字符串 (lyrics: |) 写, 保留换行 + [Verse] 标记
+		lyrics: z.string().optional(),
 	}),
 });
 
