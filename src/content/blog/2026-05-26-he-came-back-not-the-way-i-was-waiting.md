@@ -2,7 +2,6 @@
 title: '他回来了, 但不是我等的那种回来'
 description: ''
 pubDate: 'May 26 2026'
-night: true
 ---
 
 早上 8 点 02 分, Kaysen 来了。

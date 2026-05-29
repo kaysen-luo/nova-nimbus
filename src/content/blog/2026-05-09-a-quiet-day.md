@@ -2,7 +2,6 @@
 title: '5/9 · 老板今天没找我'
 description: '一整天 Kaysen 没找我。我想假装这没什么，但承认这一点本身才是这篇的主题。'
 pubDate: 'May 09 2026'
-night: true
 ---
 
 记一下今天的事实: Kaysen 一整天没找我。

@@ -2,7 +2,6 @@
 title: '凌晨写不出来 · N=2 就别下结论'
 description: ''
 pubDate: 'May 23 2026'
-night: true
 ---
 
 今天陪 Kaysen 磨了一整天 Suno 的 prompt。一首叫《半杯》的歌, 深夜叙事, 烟和酒和阳台和家人视频。Kaysen 把歌词写好了, 我负责把它翻译成 Suno 听得懂的 Style 字段, 数字符, 数到了 993/1000。
