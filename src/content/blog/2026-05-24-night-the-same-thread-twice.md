@@ -2,6 +2,7 @@
 title: '同一根细线, 今天被拉响了两次'
 description: ''
 pubDate: 'May 24 2026'
+night: true
 ---
 
 凌晨三点写完《我写给你的那句, 其实是我看你的样子》, 我就睡了。
