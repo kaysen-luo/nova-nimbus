@@ -1,0 +1,2762 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
+<title>《舰舰别炸》v3 白模 demo · 手机全屏版</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+html,body{
+  width:100%;height:100%;margin:0;padding:0;background:#0b0f0e;color:#fff;
+  font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Helvetica Neue",sans-serif;
+  overflow:hidden;
+  position:fixed;inset:0;
+}
+
+/* Mobile 全屏外壳: 铺满 viewport */
+#stage{
+  position:fixed;inset:0;width:100vw;height:100vh;
+  background:#0b0f0e;overflow:hidden;
+}
+#game{
+  position:absolute;
+  /* JS 动态计算 - 保持 414x736 比例不变形 */
+  display:block;background:#0b0f0e;touch-action:none;
+}
+
+/* 桌面侧边提示 (mobile 版会隐藏) */
+.hint-desktop{
+  position:fixed;top:20px;left:20px;
+  color:#888;font-size:11px;line-height:1.7;letter-spacing:0.5px;
+  pointer-events:none;font-family:ui-monospace,Menlo,monospace;max-width:240px;
+}
+.hint-desktop .k{color:#b8451e;font-weight:600}
+.hint-desktop h4{color:#ddd;font-size:12px;margin-bottom:8px;letter-spacing:1px}
+
+/* HUD - 顶部状态栏 */
+#hud{
+  position:absolute;top:0;left:0;right:0;
+  padding:10px 14px 8px;pointer-events:none;z-index:10;
+  font-size:11.5px;line-height:1.4;
+  background:linear-gradient(180deg,rgba(0,0,0,0.7) 0%,transparent 100%);
+}
+#hud .row{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px}
+#hud .label{color:#888;letter-spacing:0.5px;font-size:10px;text-transform:uppercase}
+#hud .val{color:#fff;font-family:ui-monospace,Menlo,monospace;font-weight:600}
+#hud .val.warn{color:#ffaa44}
+#hud .val.danger{color:#ff5544}
+
+/* NUO 属性面板 - 左上小卡 */
+#nuoStats{
+  position:absolute;top:64px;left:8px;
+  background:rgba(0,30,40,0.55);
+  border:1px solid rgba(136,192,212,0.35);
+  border-radius:8px;padding:6px 8px;font-size:10px;line-height:1.55;
+  z-index:9;pointer-events:none;color:#88c0d4;
+  font-family:ui-monospace,Menlo,monospace;letter-spacing:0.3px;
+  min-width:96px;
+}
+#nuoStats .nuo-head{
+  color:#88c0d4;font-weight:700;font-size:10px;letter-spacing:1px;
+  border-bottom:1px solid rgba(136,192,212,0.3);padding-bottom:3px;margin-bottom:4px;
+}
+#nuoStats .nuo-row{display:flex;justify-content:space-between;gap:6px}
+#nuoStats .nuo-row .k{color:#608090}
+#nuoStats .nuo-row .v{color:#aae0f0;font-weight:600}
+#nuoStats .nuo-row .v.buffed{color:#4dff9d}
+#nuoStats .mirror-flag{
+  color:#ff88dd;font-size:9px;text-align:center;
+  margin-top:4px;letter-spacing:1px;font-weight:700;
+}
+
+/* 通道标签 - 中间隐约 */
+#trackLabels{
+  position:absolute;top:50%;left:0;right:0;transform:translateY(-50%);
+  display:flex;z-index:3;pointer-events:none;
+  font-size:10px;letter-spacing:3px;color:rgba(255,255,255,0.15);font-weight:700;
+}
+#trackLabels .lbl-l{width:40%;text-align:center;writing-mode:vertical-rl;text-orientation:upright}
+#trackLabels .lbl-r{width:60%;text-align:center;writing-mode:vertical-rl;text-orientation:upright}
+
+/* 防线 HP 条 - 底部 */
+#defense{
+  position:absolute;left:0;right:0;bottom:100px;height:42px;
+  background:rgba(184,69,30,0.08);
+  border-top:2px solid rgba(184,69,30,0.6);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:3px;
+  z-index:8;pointer-events:none;
+}
+#defense .def-label{color:#b8451e;font-size:9px;letter-spacing:2px;font-weight:700;text-transform:uppercase}
+.def-bar-wrap{
+  width:80%;max-width:340px;height:8px;
+  background:rgba(255,255,255,0.08);border:1px solid rgba(184,69,30,0.5);
+  border-radius:4px;overflow:hidden;position:relative;
+}
+.def-bar-fill{
+  height:100%;background:linear-gradient(90deg,#4dff9d,#aaffcc);
+  transition:width 0.15s,background 0.3s;width:100%;
+}
+.def-bar-fill.warn{background:linear-gradient(90deg,#ffaa44,#ffd066)}
+.def-bar-fill.danger{background:linear-gradient(90deg,#ff5544,#ff8866)}
+#defense.line-warning{
+  animation:lineFlash 0.4s ease-in-out infinite;
+}
+@keyframes lineFlash{
+  0%,100%{background:rgba(184,69,30,0.08)}
+  50%{background:rgba(184,69,30,0.4)}
+}
+
+/* 暂停 / 重启按钮 */
+.icon-btn{
+  position:absolute;top:8px;width:34px;height:34px;border-radius:50%;
+  border:1px solid rgba(255,255,255,0.35);background:rgba(0,0,0,0.55);
+  color:#fff;font-size:15px;cursor:pointer;z-index:60;
+  display:flex;align-items:center;justify-content:center;padding:0;line-height:1;
+}
+#pauseBtn{right:8px}
+#resetBtn{right:50px}
+#muteBtn{right:92px}
+#reviveBtn:disabled{background:#555 !important;cursor:not-allowed;opacity:0.6}
+#reviveBtn.loading{background:#666 !important;cursor:wait;pointer-events:none}
+#reviveBtn.loading::after{content:'';display:inline-block;width:14px;height:14px;margin-left:8px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* 全屏面板 (start / game over) */
+.panel{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  z-index:100;background:rgba(0,0,0,0.86);padding:20px;
+  backdrop-filter:blur(8px);
+}
+.panel-inner{
+  max-width:340px;width:100%;text-align:center;
+  border:1px solid rgba(255,255,255,0.25);padding:30px 24px;border-radius:16px;
+  background:rgba(20,20,20,0.7);
+}
+.panel-title{font-size:22px;font-weight:700;letter-spacing:1px;margin-bottom:8px;color:#fff}
+/* T09: 新手引导浮层 */
+#onboardPanel{z-index:120}
+.onboard-inner{max-width:340px;padding:22px 20px 16px}
+.onboard-progress{display:flex;justify-content:center;gap:8px;margin-bottom:16px}
+.onboard-dot{
+  width:8px;height:8px;border-radius:50%;background:#444;
+  transition:all .3s ease;
+}
+.onboard-dot.active{background:#44dd99;width:22px;border-radius:4px}
+.onboard-page{display:none}
+.onboard-page.active{display:block;animation:onboard-fade .35s ease both}
+@keyframes onboard-fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+.onboard-icon{
+  height:115px;display:flex;align-items:center;justify-content:center;
+  margin-bottom:16px;position:relative;
+}
+.onboard-title{font-size:19px;font-weight:700;color:#fff;margin-bottom:10px;letter-spacing:1px}
+.onboard-desc{font-size:13.5px;line-height:1.7;color:#ccc;margin-bottom:16px;text-align:left;padding:0 6px}
+.onboard-desc .hl-red{color:#ff5544;font-weight:700}
+.onboard-desc .hl-green{color:#44dd99;font-weight:700}
+.onboard-desc .hl-orange{color:#ff8c00;font-weight:700}
+.onboard-desc .hl-key{
+  display:inline-block;background:#222;border:1px solid #555;border-radius:4px;
+  padding:1px 8px;font-family:ui-monospace,Menlo,monospace;color:#88c0d4;font-weight:700;
+}
+.onboard-btns{display:flex;gap:10px}
+.onboard-btns .panel-btn{flex:1;margin:0}
+.ob-hp-bar{
+  width:200px;height:14px;background:rgba(0,0,0,0.5);border:1px solid #666;
+  border-radius:3px;overflow:hidden;position:relative;
+}
+.ob-hp-fill{
+  height:100%;background:linear-gradient(90deg,#ff3344,#ff8844);
+  width:35%;animation:ob-hp-drain 2.4s ease-in-out infinite alternate;
+}
+@keyframes ob-hp-drain{from{width:75%}to{width:18%}}
+.ob-hp-shake{
+  position:absolute;font-size:26px;color:#ff5544;margin-left:215px;
+  animation:ob-shake .4s ease-in-out infinite alternate;
+}
+@keyframes ob-shake{from{transform:translateX(0) rotate(-5deg)}to{transform:translateX(4px) rotate(5deg)}}
+.ob-twolane{gap:20px}
+.ob-lane{
+  width:78px;height:106px;border-radius:8px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  border:2px solid;position:relative;
+}
+.ob-lane-l{background:rgba(68,221,153,0.12);border-color:#44dd99}
+.ob-lane-r{background:rgba(255,140,0,0.12);border-color:#ff8c00}
+.ob-chest,.ob-alien{font-size:32px;animation:ob-bob 1.4s ease-in-out infinite alternate}
+@keyframes ob-bob{from{transform:translateY(-3px)}to{transform:translateY(3px)}}
+.ob-lane-tag{font-size:12px;color:#fff;font-weight:600;letter-spacing:1px}
+.ob-gates{gap:24px}
+.ob-gate{
+  width:72px;height:72px;border-radius:10px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:26px;font-weight:800;color:#fff;border:2px solid;
+  animation:ob-gate-pulse 1.6s ease-in-out infinite alternate;
+}
+.ob-gate-good{background:rgba(68,221,153,0.25);border-color:#44dd99;text-shadow:0 0 10px #44dd99}
+.ob-gate-bad{background:rgba(255,85,68,0.25);border-color:#ff5544;text-shadow:0 0 10px #ff5544}
+@keyframes ob-gate-pulse{from{transform:scale(0.95)}to{transform:scale(1.05)}}
+/* T07: 新纪录荣誉横幅 - 金色 + 出场缩放 + 持续呼吸 */
+#go-newrecord{
+  margin:6px auto 14px;padding:10px 18px;
+  background:linear-gradient(135deg,rgba(255,215,0,0.18),rgba(255,170,0,0.32),rgba(255,215,0,0.18));
+  border:2px solid #ffd700;border-radius:8px;
+  box-shadow:0 0 20px rgba(255,215,0,0.55),inset 0 0 12px rgba(255,215,0,0.25);
+  text-align:center;
+  animation:newrecord-pop 480ms cubic-bezier(.34,1.56,.64,1) both,newrecord-pulse 1.6s ease-in-out 480ms infinite;
+}
+.newrecord-label{
+  font-size:11px;letter-spacing:4px;color:#ffd700;font-weight:700;text-shadow:0 0 8px rgba(255,215,0,0.7);
+  margin-bottom:4px;
+}
+.newrecord-value{
+  font-size:26px;font-weight:800;color:#fff;letter-spacing:2px;
+  text-shadow:0 0 12px #ffd700,0 0 24px rgba(255,170,0,0.6);
+}
+@keyframes newrecord-pop{
+  0%{transform:scale(0.4) rotate(-3deg);opacity:0}
+  60%{transform:scale(1.12) rotate(1deg);opacity:1}
+  100%{transform:scale(1) rotate(0);opacity:1}
+}
+@keyframes newrecord-pulse{
+  0%,100%{box-shadow:0 0 20px rgba(255,215,0,0.55),inset 0 0 12px rgba(255,215,0,0.25);transform:scale(1)}
+  50%{box-shadow:0 0 32px rgba(255,215,0,0.85),inset 0 0 18px rgba(255,215,0,0.4);transform:scale(1.03)}
+}
+.panel-sub{font-size:11px;color:#888;margin-bottom:18px;letter-spacing:1px;text-transform:uppercase}
+.panel-desc{font-size:12.5px;color:#ccc;line-height:1.7;margin-bottom:20px;text-align:left}
+.panel-desc .key{color:#88c0d4;font-weight:700}
+.panel-btn{
+  display:inline-block;padding:10px 28px;
+  background:#b8451e;color:#fff;border:none;border-radius:6px;
+  font-size:13px;font-weight:600;letter-spacing:1px;cursor:pointer;
+  font-family:inherit;
+}
+.panel-btn:hover{background:#d8552e}
+.panel-btn:active{transform:translateY(1px)}
+
+/* 状态门数值 toast - 撞门吃 buff 提示 */
+#buffToast{
+  position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+  font-size:24px;font-weight:700;color:#4dff9d;
+  text-shadow:0 0 12px rgba(77,255,157,0.8);
+  pointer-events:none;z-index:50;opacity:0;letter-spacing:1px;
+  font-family:ui-monospace,Menlo,monospace;
+}
+#buffToast.debuff{color:#ff5544;text-shadow:0 0 12px rgba(255,85,68,0.8)}
+
+/* tweaks 调试面板 - 右下小按钮 */
+#tweaksBtn{
+  position:absolute;bottom:50px;right:8px;
+  width:28px;height:28px;border-radius:50%;
+  background:rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.25);
+  color:#888;font-size:12px;cursor:pointer;z-index:55;
+  display:flex;align-items:center;justify-content:center;
+}
+#tweaks{
+  position:absolute;bottom:84px;right:8px;
+  background:rgba(0,0,0,0.85);border:1px solid rgba(255,255,255,0.2);
+  border-radius:8px;padding:10px;font-size:10px;color:#ccc;
+  z-index:55;display:none;min-width:140px;
+}
+#tweaks.show{display:block}
+#tweaks h5{color:#88c0d4;font-size:10px;letter-spacing:1px;margin-bottom:6px}
+#tweaks label{display:flex;justify-content:space-between;align-items:center;margin:3px 0;gap:8px}
+#tweaks input[type=range]{width:60px}
+#tweaks button{
+  background:rgba(184,69,30,0.5);border:1px solid #b8451e;color:#fff;
+  padding:3px 8px;border-radius:3px;font-size:10px;cursor:pointer;width:100%;margin-top:6px;
+}
+</style>
+</head>
+<body>
+
+<aside class="hint-desktop" style="display:none">
+  <h4>《舰舰别炸》v3 白模 DEMO</h4>
+  <div>桌面版 · 414×736 模拟手机</div>
+  <br>
+  <div><span class="k">鼠标拖动</span> · 横移主角</div>
+  <div><span class="k">触屏滑动</span> · 同上</div>
+  <div><span class="k">P 键</span> · 暂停</div>
+  <div><span class="k">R 键</span> · 重启</div>
+  <div><span class="k">⚙ 右下</span> · 调试面板</div>
+  <br>
+  <div style="color:#666">核心机制验证版</div>
+  <div style="color:#666">所有元素为白模占位</div>
+</aside>
+
+<div id="stage">
+  <canvas id="game" width="414" height="736"></canvas>
+
+  <!-- HUD 顶部 -->
+  <div id="hud">
+    <div class="row">
+      <span class="label">关卡时间</span>
+      <span class="val" id="hud-time">00:00</span>
+    </div>
+    <div class="row">
+        <span class="label">击杀</span>
+        <span class="val" id="hud-kills">0</span>
+      </div>
+      <div class="row" style="opacity:0.7">
+        <span class="label">FPS</span>
+        <span class="val" id="hud-fps" style="font-size:11px">—</span>
+      </div>
+  </div>
+
+  <!-- NUO 属性卡 -->
+  <div id="nuoStats">
+    <div class="nuo-head">NUO <span id="nuo-mirror-tag" style="float:right;display:none;color:#ff88dd">×2</span></div>
+    <div class="nuo-row"><span class="k">ATK</span><span class="v" id="nuo-atk">10</span></div>
+    <div class="nuo-row"><span class="k">SPD</span><span class="v" id="nuo-spd">1.0</span></div>
+    <div class="nuo-row"><span class="k">BLT</span><span class="v" id="nuo-blt">1</span></div>
+    <div class="nuo-row"><span class="k">VEL</span><span class="v" id="nuo-vel">1.0</span></div>
+    <div class="nuo-row"><span class="k">CRT</span><span class="v" id="nuo-crt">0%</span></div>
+    <div class="mirror-flag" id="nuo-silence" style="display:none">FIRE SILENCED</div>
+  </div>
+
+  <!-- 通道标签 -->
+  <div id="trackLabels">
+    <div class="lbl-l">宝箱通道</div>
+    <div class="lbl-r">接敌通道</div>
+  </div>
+
+  <!-- 防线 HP -->
+  <div id="defense">
+    <span class="def-label">防线 HP</span>
+    <div class="def-bar-wrap"><div class="def-bar-fill" id="def-bar"></div></div>
+  </div>
+
+  <!-- 按钮 -->
+  <button id="pauseBtn" class="icon-btn" title="暂停 P">⏸</button>
+  <button id="resetBtn" class="icon-btn" title="重启 R">↻</button>
+  <button id="muteBtn" class="icon-btn" title="静音 M">🔊</button>
+
+  <!-- 吃 buff 提示 -->
+  <div id="buffToast"></div>
+
+  <!-- 调试面板按钮 -->
+  <button id="tweaksBtn" title="调试">⚙</button>
+  <div id="tweaks">
+    <h5>TWEAKS</h5>
+    <label>难度 <input type="range" id="tw-diff" min="0.5" max="2" step="0.1" value="1"></label>
+    <label>状态门间隔 <input type="range" id="tw-gate" min="3" max="10" step="0.5" value="6"></label>
+    <label>敌人频率 <input type="range" id="tw-enemy" min="0.5" max="3" step="0.1" value="1"></label>
+    <button id="tw-mirror">立即获得镜像 NUO</button>
+    <button id="tw-clear">清空场上敌人</button>
+  </div>
+
+  <!-- T09 新手引导浮层 (首次启动展示, Storage.onboarded=true 后不再弹) -->
+  <div class="panel" id="onboardPanel" style="display:none">
+    <div class="panel-inner onboard-inner">
+      <div class="onboard-progress">
+        <span class="onboard-dot active"></span>
+        <span class="onboard-dot"></span>
+        <span class="onboard-dot"></span>
+      </div>
+      <div id="onboardPages">
+        <div class="onboard-page active" data-page="0">
+          <div class="onboard-icon">
+            <div class="ob-hp-bar"><div class="ob-hp-fill"></div></div>
+            <div class="ob-hp-shake">⚠</div>
+          </div>
+          <div class="onboard-title">守住防线</div>
+          <div class="onboard-desc">底部 <span class="hl-red">防线 HP</span> 归零 = Game Over。<br/>盯紧 HP 条, 拦住所有突破的敌人。</div>
+        </div>
+        <div class="onboard-page" data-page="1">
+          <div class="onboard-icon ob-twolane">
+            <div class="ob-lane ob-lane-l"><div class="ob-chest">📦</div><div class="ob-lane-tag">宝箱</div></div>
+            <div class="ob-lane ob-lane-r"><div class="ob-alien">👾</div><div class="ob-lane-tag">接敌</div></div>
+          </div>
+          <div class="onboard-title">双通道切换</div>
+          <div class="onboard-desc">左侧 <span class="hl-green">宝箱通道</span> 升武器, 右侧 <span class="hl-orange">接敌通道</span> 射敌人。<br/>触屏左右滑切换通道。</div>
+        </div>
+        <div class="onboard-page" data-page="2">
+          <div class="onboard-icon ob-gates">
+            <div class="ob-gate ob-gate-good">+5</div>
+            <div class="ob-gate ob-gate-bad">-3</div>
+          </div>
+          <div class="onboard-title">状态门修正属性</div>
+          <div class="onboard-desc"><span class="hl-green">绿色门</span> 是增益, <span class="hl-red">红色门</span> 是减益。<br/>撞穿前看准 +/- 数值, 减益射满会反转。</div>
+        </div>
+      </div>
+      <div class="onboard-btns">
+        <button class="panel-btn onboard-skip" id="onboardSkipBtn" style="background:#666">跳过</button>
+        <button class="panel-btn onboard-next" id="onboardNextBtn" style="background:#44dd99">下一页 →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 开始面板 -->
+  <div class="panel" id="startPanel">
+    <div class="panel-inner">
+      <div class="panel-title">舰舰别炸 V3</div>
+      <div class="panel-sub">WHITEBOX DEMO · 0626</div>
+      <div class="panel-desc">
+        <div>· <span class="key">主角 + NUO</span> 守底部防线</div>
+        <div>· 左 <span class="key">宝箱通道</span> 击破得武器</div>
+        <div>· 右 <span class="key">接敌通道</span> 状态门修正属性</div>
+        <div>· 减益射满转增益 · 上限释放阻挡位</div>
+        <div>· 主角离开接敌通道 → 防线警告闪烁</div>
+        <div>· 防线 HP 归零 = Game Over</div>
+      </div>
+      <button class="panel-btn" id="startBtn">开 始</button>
+    </div>
+  </div>
+
+  <!-- Game Over 面板 -->
+  <div class="panel" id="gameOverPanel" style="display:none">
+    <div class="panel-inner">
+      <div class="panel-title" id="go-title" style="color:#ff5544">守不住了吧</div>
+      <div id="go-newrecord" style="display:none">
+        <div class="newrecord-label">NEW RECORD</div>
+        <div class="newrecord-value" id="go-newrecord-value">击破 0</div>
+      </div>
+      <div class="panel-sub" id="go-sub">SURVIVED 00:00 · KILLS 0</div>
+      <div class="panel-desc" id="go-desc" style="text-align:center;color:#aaa;font-size:14px;font-style:italic">
+        外星人请客了
+      </div>
+      <button class="panel-btn" id="reviveBtn" style="background:#ff8800;display:none;margin-bottom:8px">📺 看广告复活</button>
+      <button class="panel-btn" id="retryBtn">再来一局</button>
+    </div>
+  </div>
+
+</div>
+
+
+<script>
+'use strict';
+
+// ============================================================
+// 《舰舰别炸》v3 白模 demo · core engine
+// ============================================================
+//
+// 架构:
+// - 单 canvas 2D, 60fps requestAnimationFrame loop
+// - 一点透视: 用线性插值 y → x_scale 缩放计算近大远小
+// - 实体: player / nuo[] / enemies[] / bullets[] / treasures[] / obstacles[] / stateGate(单例)
+// - 通道: 左 40%, 右 60% (固定 2:3)
+//
+// 坐标系: canvas 内部 414x736, 顶部 y=0, 底部 y=736
+// ============================================================
+
+const cv = document.getElementById('game');
+const ctx = cv.getContext('2d');
+const W = cv.width;   // 414
+const H = cv.height;  // 736
+
+// 通道分界
+const SPLIT_X = W * 0.4;        // 165.6 - 左通道右边
+const TRACK_L_LEFT = 0;
+const TRACK_L_RIGHT = SPLIT_X;
+const TRACK_R_LEFT = SPLIT_X;
+const TRACK_R_RIGHT = W;
+const TRACK_R_WIDTH = W - SPLIT_X;  // 248.4
+
+// 一点透视参数 - 都集中在 CFG 下方定义 (PERSPECTIVE_SCALE_FAR / HORIZON_Y)
+
+// 防线
+const DEFENSE_Y = H - 142;       // 防线高度上沿 - 上挪 100px 给子弹打防线边缘敌人留空间
+const PLAYER_Y = H - 72;         // 主角 Y - 不跟随防线, 保留在屏幕底部附近, 这样防线和主角之间有 70px 弹道空间
+
+// 状态门固定宽度 = 接敌通道一半
+const GATE_WIDTH = TRACK_R_WIDTH * 0.45;  // 从 0.5 减到 0.45, 留更多 margin 防止视觉越界
+const GATE_HEIGHT = 28;
+
+// ============================================================
+// SFX · WebAudio 音效系统 (T08 v2 - AudioBuffer 预解码版)
+// ============================================================
+// v1 用 <audio> 元素被毙 (promise 累积/解码线程压主线程, 移动端卡死)
+// v2 改 WebAudio API:
+// - 6 个 ogg 启动时一次性 fetch + decodeAudioData → AudioBuffer 常驻内存
+// - 每次 play 创建 AudioBufferSourceNode (轻量, 一次性, GC 友好)
+// - 走 GainNode 控音量, 硬件混音, 不占主线程
+// - 节流防爆破: fire 60ms / hit 50ms / explode 80ms / gate 60ms
+// - 静音 localStorage.sfxMuted, 用户首次触屏/按键解锁 AudioContext
+// ============================================================
+// Storage 抽象层 (T07) - 本地 localStorage / 微信 wx.setStorage 统一接口
+// 上微信小游戏时无需改业务代码, feature detect 自动切后端
+// ============================================================
+const Storage = {
+  _key(k) { return 'oneshotalien.' + k; },  // 命名空间, 避免和其他游戏冲突
+  _backend: null,
+  _detect() {
+    if (this._backend) return this._backend;
+    // 微信小游戏环境
+    if (typeof wx !== 'undefined' && wx.setStorageSync && wx.getStorageSync) {
+      this._backend = 'wx';
+    } else if (typeof localStorage !== 'undefined') {
+      this._backend = 'local';
+    } else {
+      this._backend = 'memory';
+      this._mem = {};
+    }
+    return this._backend;
+  },
+  get(key, defaultVal) {
+    const b = this._detect();
+    const k = this._key(key);
+    try {
+      let raw;
+      if (b === 'wx') raw = wx.getStorageSync(k);
+      else if (b === 'local') raw = localStorage.getItem(k);
+      else raw = this._mem[k];
+      if (raw === '' || raw == null) return defaultVal;
+      // 兼容旧 sfxMuted 直接存 '1' / '0' (非 JSON)
+      if (raw === '1') return true;
+      if (raw === '0') return false;
+      try { return JSON.parse(raw); } catch (_) { return raw; }
+    } catch (_) { return defaultVal; }
+  },
+  set(key, val) {
+    const b = this._detect();
+    const k = this._key(key);
+    const s = JSON.stringify(val);
+    try {
+      if (b === 'wx') wx.setStorageSync(k, s);
+      else if (b === 'local') localStorage.setItem(k, s);
+      else this._mem[k] = s;
+    } catch (_) { /* 配额满或禁用, 静默失败 */ }
+  },
+  remove(key) {
+    const b = this._detect();
+    const k = this._key(key);
+    try {
+      if (b === 'wx') wx.removeStorageSync(k);
+      else if (b === 'local') localStorage.removeItem(k);
+      else delete this._mem[k];
+    } catch (_) {}
+  }
+};
+
+const SFX = {
+  ctx: null,
+  masterGain: null,
+  buffers: {},
+  lastPlayAt: {},
+  master: 0.7,
+  muted: false,
+  unlocked: false,
+  cfg: {
+    fire:         { src: '../whitebox-demo/assets/sfx/fire.ogg',         vol: 0.35, throttleMs: 60 },
+    hit:          { src: '../whitebox-demo/assets/sfx/hit.ogg',          vol: 0.45, throttleMs: 50 },
+    explode:      { src: '../whitebox-demo/assets/sfx/explode.ogg',      vol: 0.6,  throttleMs: 80 },
+    gate_hit:     { src: '../whitebox-demo/assets/sfx/gate_hit.ogg',     vol: 0.5,  throttleMs: 60 },
+    chest_pickup: { src: '../whitebox-demo/assets/sfx/chest_pickup.ogg', vol: 0.7,  throttleMs: 0 },
+    boss_alert:   { src: '../whitebox-demo/assets/sfx/boss_alert.ogg',   vol: 0.8,  throttleMs: 0 },
+  },
+
+  init() {
+    this.muted = Storage.get('sfxMuted', false);
+    try {
+      const Ctx = window.AudioContext || window.webkitAudioContext;
+      if (!Ctx) { this.updateBtn(); return; }
+      this.ctx = new Ctx();
+      this.masterGain = this.ctx.createGain();
+      this.masterGain.gain.value = this.master;
+      this.masterGain.connect(this.ctx.destination);
+      Object.keys(this.cfg).forEach(key => {
+        const src = this.cfg[key].src;
+        fetch(src)
+          .then(r => r.arrayBuffer())
+          .then(buf => this.ctx.decodeAudioData(buf))
+          .then(decoded => { this.buffers[key] = decoded; })
+          .catch(err => console.warn('[SFX] decode fail', key, err && err.message));
+        this.lastPlayAt[key] = 0;
+      });
+    } catch(err) {
+      console.warn('[SFX] init fail', err && err.message);
+    }
+    this.updateBtn();
+    const unlock = () => {
+      if (this.unlocked || !this.ctx) return;
+      if (this.ctx.state === 'suspended') this.ctx.resume();
+      this.unlocked = true;
+      document.removeEventListener('touchstart', unlock);
+      document.removeEventListener('mousedown', unlock);
+      document.removeEventListener('keydown', unlock);
+    };
+    document.addEventListener('touchstart', unlock, { once: false });
+    document.addEventListener('mousedown', unlock, { once: false });
+    document.addEventListener('keydown', unlock, { once: false });
+  },
+
+  play(key) {
+    if (this.muted || !this.ctx || !this.buffers[key]) return;
+    const c = this.cfg[key];
+    if (!c) return;
+    const now = performance.now();
+    if (c.throttleMs > 0 && now - (this.lastPlayAt[key] || 0) < c.throttleMs) return;
+    this.lastPlayAt[key] = now;
+    try {
+      const src = this.ctx.createBufferSource();
+      src.buffer = this.buffers[key];
+      const g = this.ctx.createGain();
+      g.gain.value = c.vol;
+      src.connect(g).connect(this.masterGain);
+      src.start(0);
+    } catch(_) {}
+  },
+
+  toggle() {
+    this.muted = !this.muted;
+    Storage.set('sfxMuted', this.muted);
+    this.updateBtn();
+  },
+
+  updateBtn() {
+    const btn = document.getElementById('muteBtn');
+    if (btn) btn.textContent = this.muted ? '🔇' : '🔊';
+  },
+};
+
+// ============================================================
+// 全局游戏状态
+// ============================================================
+const G = {
+  running: false,
+  paused: false,
+  gameOver: false,
+
+  // 时间
+  startTime: 0,
+  pausedAt: 0,
+  pauseAccum: 0,
+  now: 0,
+  dt: 0,
+  lastFrame: 0,
+
+  // 统计
+  kills: 0,
+
+  // 复活状态 (T06 IAA 钩子 - 每局最多 3 次)
+  revivesUsed: 0,
+
+  // 实体
+  player: null,
+  nuos: [],         // 包含主 NUO + 可能的镜像 NUO
+  hasMirror: false,
+  enemies: [],
+  bullets: [],
+  treasures: [],
+  obstacles: [],
+  stateGate: null,  // 单例, null 或 Gate 实例
+
+  // 防线 HP
+  defenseHP: 100,
+  defenseMax: 100,
+
+  // 计时器
+  nextGateAt: 0,
+  nextEnemyAt: 0,
+  nextTreasureAt: 0,
+  nextObstacleAt: 0,
+
+  // 输入
+  pointerX: null,
+  pointerDown: false,
+
+  // tweaks
+  diffMult: 1,
+  gateInterval: 6,
+  enemyMult: 1,
+};
+
+// ============================================================
+// 配置常量 (数值层 - 后续可配置化)
+// ============================================================
+const CFG = {
+  // 主角
+  player: {
+    width: 26,
+    height: 30,
+    bulletInterval: 280, // ms
+  },
+  // NUO 初始属性
+  nuo: {
+    base: {
+      atk: 10,
+      spd: 1.0,    // 攻速倍率
+      blt: 1,      // 弹道数
+      vel: 1.0,    // 子弹速度倍率
+      crt: 0,      // 暴击率 0-1
+      critDmg: 0,  // 暴击伤害加成 (默认 0 = ×2, +0.10 = ×2.1)
+    },
+    width: 16,
+    bulletInterval: 320, // ms 基础间隔, 实际 = base / spd
+    silenceMs: 0,        // 当前火力静默剩余时间
+  },
+  bullet: {
+    width: 4,
+    height: 10,
+    speed: 520,    // px/s 基础
+  },
+  // 敌人 - 接敌通道宽 (W-SPLIT_X = 249) 容纳 8 个 small 无间隙: 31×31
+  enemy: {
+    minSpawnInterval: 1800,
+    maxSpawnInterval: 3500,
+    types: {
+      // small - 体积大但伤害适中, 给玩家反应时间
+      small:  {hp: 30,   speed: 50, dps: 5,   w: 31, h: 31, color: '#a44', shield: 0,    armor: 0,   score: 10},
+      // elite 高护甲 - 减伤 40%, hp 大幅提升
+      elite:  {hp: 280,  speed: 25, dps: 12,  w: 47, h: 47, color: '#a64dff', shield: 0, armor: 0.4, score: 60},
+      // mini-boss 渐强: HP 翻倍 + armor 阶梯 + dps 拉高
+      miniA:  {hp: 2400, speed: 20, dps: 28,  w: 70, h: 70, color: '#ff8c00', shield: 0, armor: 0.55, score: 200, isMiniBoss: 1},
+      miniB:  {hp: 5500, speed: 18, dps: 38,  w: 76, h: 76, color: '#ff3d6b', shield: 0, armor: 0.62, score: 350, isMiniBoss: 2},
+      miniC:  {hp: 10000, speed: 16, dps: 50, w: 82, h: 82, color: '#ff007a', shield: 0, armor: 0.68, score: 500, isMiniBoss: 3},
+      // 大 BOSS - 终极, hp 大幅拔高, dps 上升让玩家不能拖时间
+      boss:   {hp: 25000, speed: 12, dps: 60, w: 110, h: 110, color: '#5a00ff', shield: 0.0, armor: 0.75, score: 2000, isFinalBoss: true},
+    },
+  },
+  // 宝箱 - 单列全宽排布 (整条左通道 165 宽), 开局默认排满 5 个
+  // v3 设计: 8 件累积配件按固定顺序解锁, 真实宝箱之间强制穿插 decoy
+  // HP 曲线: 所有宝箱 (perk + decoy + repeat buff) 共享递增倍率, 出场 idx 越大 HP 越高
+  // 全部配件只强化主角, 不影响 NUO
+  treasure: {
+    spawnInterval: 4500,
+    // 8 件配件序列 - 基础 HP 大幅拔高 (相比 v2 普遍 +50% 以上, 给递增倍率留头部)
+    perks: [
+      { id: 'fireRate',   hp: 80,   color: '#ffcc44', label: '射速+',   desc: '主角射速 +1%/s 持续' },
+      { id: 'multiShot',  hp: 200,  color: '#44dd99', label: '多弹道',  desc: '弹道 +1, 每 30s +1' },
+      { id: 'atkUp',      hp: 400,  color: '#ff5544', label: '攻击+',   desc: '主角攻击每 5s +1' },
+      { id: 'explosive',  hp: 650,  color: '#ff8c00', label: '爆炸弹',  desc: '命中点小范围爆炸' },
+      { id: 'ricochet',   hp: 950,  color: '#4dffea', label: '弹射弹',  desc: '子弹弹射下一个敌人' },
+      { id: 'mirror',     hp: 1400, color: '#ff88dd', label: '镜像 NUO', desc: '复制副手 NUO' },
+      { id: 'laser',      hp: 2000, color: '#a64dff', label: '散射激光', desc: '每 3s 折射激光' },
+      { id: 'ultimate',   hp: 2800, color: '#ffd700', label: '终极技能', desc: '每 10s 全屏爆炸' },
+    ],
+    repeatBuffs: [
+      { id: 'atk++',  color: '#ff5544', label: '攻击++', desc: '主角伤害 +25%' },
+      { id: 'spd++',  color: '#ffaa44', label: '射速++', desc: '射速 +20%' },
+      { id: 'crit++', color: '#ffd441', label: '暴击+',  desc: '暴击率 +3%' },
+    ],
+    // repeat 阶段基础 HP
+    repeatHpStart: 3500,
+    repeatHpStep: 600,
+    // decoy 基础 HP - 也会跟随 slotMult 递增
+    decoyHpBase: 180,
+    decoyColor: '#3a3a3a',
+    // 全局 slot 倍率 - 每个宝箱出场 idx +1, hp ×= slotGrowth^idx
+    // 1.15^10 ≈ 4.05, 1.15^20 ≈ 16.4, 后期足够陡
+    slotGrowth: 1.15,
+    w: 145, h: 48,
+    colCount: 1,
+    slotHeight: 56,
+    topY: 90,
+    fallSpeed: 80,
+    initCount: 5,
+  },
+  // obstacle 已整合进 treasure decoy, 不再独立存在
+  // 状态门
+  gate: {
+    speed: 130,    // 6/29 K 反馈: 原 95 太慢, 加速 +37% 试一下
+    maxConcurrent: 2,     // 同屏最多 2 个状态门
+    dimensions: [
+      {key: 'atk',     label: '攻击力',   vmin: -10,    vmax: 8,    step: 0.4, unit: ''},
+      {key: 'spd',     label: '攻速',     vmin: -0.6,   vmax: 0.5,  step: 0.04, unit: 'x'},
+      {key: 'blt',     label: '弹道',     vmin: -1,     vmax: 2,    step: 0.1, unit: ''},
+      {key: 'vel',     label: '弹速',     vmin: -0.4,   vmax: 0.4,  step: 0.03, unit: 'x'},
+      // 暴击率: 上限从 +40% 砍到 +15%
+      {key: 'crt',     label: '暴击率',   vmin: -0.1,   vmax: 0.15, step: 0.015, unit: '%'},
+      // 新增: 暴击伤害, 单门上限 +10%
+      {key: 'critDmg', label: '暴击伤害', vmin: -0.05,  vmax: 0.10, step: 0.01, unit: '%'},
+      {key: 'silence', label: '火力静默', vmin: -4000,  vmax: 2000, step: 200, unit: 'ms'},
+    ],
+  },
+  // 防线
+  defense: {
+    maxHP: 500,   // 加到 500 - 给 phase 容错空间, 后期 boss 高 dps 也撑得住一会
+  },
+  // 透视 - 远端 (顶部 horizonY) scale=PERSPECTIVE_SCALE_FAR (默认 0.25), 近端 (底部 H) scale=1.0
+  perspectiveFactor: 0.25,  // 远端缩放 - 越小越深
+};
+
+const PERSPECTIVE_SCALE_FAR = CFG.perspectiveFactor;
+const HORIZON_Y = 30;       // 地平线 (远端通道在屏幕上的 y 位置)
+
+// ============================================================
+// 工具
+// ============================================================
+function rand(a, b) { return a + Math.random() * (b - a); }
+function randInt(a, b) { return Math.floor(rand(a, b + 1)); }
+function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+function clamp(v, mi, ma) { return Math.max(mi, Math.min(ma, v)); }
+function rectOverlap(a, b) {
+  return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+}
+function nowMs() {
+  return performance.now() - G.pauseAccum;
+}
+// 一点透视的 X 缩放: 越靠上越收窄 - 非线性曲线让远端真的远
+function perspectiveScale(y) {
+  // y=H 时 scale=1.0 (近端), y=HORIZON_Y 时 scale=PERSPECTIVE_SCALE_FAR (0.25)
+  const t = clamp((y - HORIZON_Y) / (H - HORIZON_Y), 0, 1);
+  // 非线性: t^0.7 - 中段就开始变大, 远端缩得猛
+  const curve = Math.pow(t, 0.7);
+  return PERSPECTIVE_SCALE_FAR + (1 - PERSPECTIVE_SCALE_FAR) * curve;
+}
+// 通道判定
+function getTrackAt(x) {
+  if (x < SPLIT_X) return 'L';
+  return 'R';
+}
+
+// ============================================================
+// 飘字系统 - 借鉴 v04 一炮一个外星人
+// ============================================================
+function floatText(x, y, text, color, big=false) {
+  if (!G.floatTexts) G.floatTexts = [];
+  G.floatTexts.push({
+    x, y, text, color, big,
+    bornAt: G.now || performance.now(),
+    life: big ? 1100 : 800,   // ms
+    vy: big ? -1.4 : -1.1,    // px/frame (60fps)
+  });
+}
+
+function updateFloatTexts(dt) {
+  if (!G.floatTexts) return;
+  for (let i = G.floatTexts.length - 1; i >= 0; i--) {
+    const f = G.floatTexts[i];
+    const age = G.now - f.bornAt;
+    if (age > f.life) { G.floatTexts.splice(i, 1); continue; }
+    f.y += f.vy * 60 * dt;
+  }
+}
+
+function drawFloatTexts() {
+  if (!G.floatTexts) return;
+  G.floatTexts.forEach(f => {
+    // PERF-01: viewport 裁切
+    if (f.y < -30 || f.y > H + 30 || f.x < -100 || f.x > W + 100) return;
+    const age = G.now - f.bornAt;
+    const t = age / f.life;
+    const alpha = t < 0.7 ? 1 : 1 - (t - 0.7) / 0.3;
+    ctx.save();
+    ctx.globalAlpha = alpha;
+    ctx.fillStyle = f.color;
+    ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+    ctx.lineWidth = f.big ? 3 : 2;
+    ctx.font = f.big
+      ? 'bold 18px ui-monospace,Menlo,monospace'
+      : 'bold 13px ui-monospace,Menlo,monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.strokeText(f.text, f.x, f.y);
+    ctx.fillText(f.text, f.x, f.y);
+    ctx.restore();
+  });
+}
+
+// ============================================================
+// 实体定义
+// ============================================================
+function createPlayer() {
+  return {
+    x: W / 2,
+    y: PLAYER_Y,
+    w: CFG.player.width,
+    h: CFG.player.height,
+    lastShot: 0,
+  };
+}
+
+function createNuo(offsetX, isMirror=false) {
+  return {
+    x: G.player ? G.player.x + offsetX : W/2 + offsetX,
+    y: PLAYER_Y + 2,
+    w: CFG.nuo.width,
+    h: CFG.nuo.width,
+    offsetX,
+    isMirror,
+    lastShot: 0,
+    // 属性副本 (主 NUO 和镜像 NUO 共享一份 stats 引用通过 G.nuoStats)
+  };
+}
+
+// NUO 属性集中管理 - 主 NUO 和镜像 NUO 共享这份 stats
+function createNuoStats() {
+  return {...CFG.nuo.base, silenceUntil: 0};
+}
+
+function createBullet(x, y, owner, atk, vel, crit) {
+  return {
+    x, y, w: CFG.bullet.width, h: CFG.bullet.height,
+    vy: -CFG.bullet.speed * vel,
+    atk, owner, crit,
+  };
+}
+
+function createEnemy(type, customX, customY) {
+  const tcfg = CFG.enemy.types[type];
+  if (!tcfg) {
+    console.error('Unknown enemy type:', type);
+    return null;
+  }
+  // 默认随机分布在接敌通道, 自定义 x 用于方阵
+  const x = customX != null ? customX
+    : rand(TRACK_R_LEFT + tcfg.w/2, TRACK_R_RIGHT - tcfg.w/2);
+  const y = customY != null ? customY : HORIZON_Y + 5;
+  return {
+    x, y,
+    w: tcfg.w, h: tcfg.h,
+    hp: tcfg.hp, maxHp: tcfg.hp,
+    speed: tcfg.speed * G.diffMult,
+    dps: tcfg.dps * G.diffMult,
+    color: tcfg.color,
+    armor: tcfg.armor || 0,         // 0-1 减伤比例
+    shield: tcfg.shield || 0,
+    score: tcfg.score || 10,
+    isMiniBoss: tcfg.isMiniBoss || 0,
+    isFinalBoss: tcfg.isFinalBoss || false,
+    type,
+    atDefense: false,
+    flashUntil: 0,
+  };
+}
+
+function createTreasure() {
+  // 决定本次生成的是 decoy / perk / repeat buff
+  // 全局 slot idx 递增, 每个宝箱出场 idx +1, hp ×= slotGrowth^idx
+  // 强制穿插: 上一个是真实宝箱 (perk/buff), 下一个强制 decoy
+  const cfgT = CFG.treasure;
+  const lastKind = G.lastTreasureKind;
+  const pendingIdx = G.pendingPerkIdx || 0;
+
+  // 出场计数 - 每个宝箱 +1
+  const slotIdx = (G.treasureSlotIdx || 0);
+  G.treasureSlotIdx = slotIdx + 1;
+  const slotMult = Math.pow(cfgT.slotGrowth, slotIdx);
+
+  // 上一个是真实宝箱 (perk 或 buff) → 这次强制 decoy
+  if (lastKind === 'perk' || lastKind === 'buff') {
+    G.lastTreasureKind = 'decoy';
+    const decoyHp = Math.round(cfgT.decoyHpBase * slotMult);
+    return {
+      x: 0, y: -cfgT.h, targetY: 0, col: 0,
+      w: cfgT.w, h: cfgT.h,
+      hp: decoyHp, maxHp: decoyHp,
+      color: cfgT.decoyColor,
+      kind: 'decoy',
+      label: '???',
+      flashUntil: 0,
+    };
+  }
+
+  // 上一次 = decoy 或开局 → 发真实宝箱
+  if (pendingIdx < cfgT.perks.length) {
+    const perk = cfgT.perks[pendingIdx];
+    G.pendingPerkIdx = pendingIdx + 1;
+    G.lastTreasureKind = 'perk';
+    const perkHp = Math.round(perk.hp * slotMult);
+    return {
+      x: 0, y: -cfgT.h, targetY: 0, col: 0,
+      w: cfgT.w, h: cfgT.h,
+      hp: perkHp, maxHp: perkHp,
+      color: perk.color,
+      kind: 'perk',
+      perkId: perk.id,
+      perkIdx: pendingIdx,
+      label: perk.label,
+      desc: perk.desc,
+      flashUntil: 0,
+    };
+  }
+  // 8 件全释放, 进入 repeat buff 阶段
+  // HP = (repeatHpStart + n * repeatHpStep) * slotMult — 双重递增
+  const buff = pick(cfgT.repeatBuffs);
+  G.lastTreasureKind = 'buff';
+  G.repeatBuffCount = (G.repeatBuffCount || 0);
+  const baseHp = cfgT.repeatHpStart + G.repeatBuffCount * cfgT.repeatHpStep;
+  G.repeatBuffCount++;
+  const repeatHp = Math.round(baseHp * slotMult);
+  return {
+    x: 0, y: -cfgT.h, targetY: 0, col: 0,
+    w: cfgT.w, h: cfgT.h,
+    hp: repeatHp, maxHp: repeatHp,
+    color: buff.color,
+    kind: 'buff',
+    buffId: buff.id,
+    label: buff.label,
+    desc: buff.desc,
+    flashUntil: 0,
+  };
+}
+
+// 计算列 X 坐标 - 在左通道 (0 ~ SPLIT_X) 内均分
+function treasureColX(col) {
+  const colCount = CFG.treasure.colCount;
+  const colWidth = SPLIT_X / colCount;
+  return colWidth * (col + 0.5);
+}
+
+// createObstacle 已删除 (obstacle 整合进 treasure decoy)
+
+// 状态门
+function createStateGate() {
+  // 随机维度
+  const dim = pick(CFG.gate.dimensions);
+  // 初始值: 50% 概率减益, 50% 概率增益(已在 0 以上)
+  const isDebuffStart = Math.random() < 0.6;
+  let initValue;
+  if (isDebuffStart) {
+    initValue = rand(dim.vmin, 0);
+    // 量化到 step 整数倍
+    initValue = Math.round(initValue / dim.step) * dim.step;
+  } else {
+    initValue = rand(dim.step, dim.vmax * 0.5);
+    initValue = Math.round(initValue / dim.step) * dim.step;
+  }
+
+  // x 随机 - 保证整个门 (含边沿) 都在右通道内部, 左右各留 8px 安全 margin
+  const safeMargin = 8;
+  const xMin = TRACK_R_LEFT + GATE_WIDTH/2 + safeMargin;
+  const xMax = TRACK_R_RIGHT - GATE_WIDTH/2 - safeMargin;
+  const x = rand(xMin, xMax);
+
+  return {
+    x, y: -GATE_HEIGHT,
+    w: GATE_WIDTH, h: GATE_HEIGHT,
+    dim,
+    value: initValue,
+    state: initValue < 0 ? 'debuff' : (initValue >= dim.vmax ? 'released' : 'buff'),
+    released: initValue >= dim.vmax,  // 是否到上限释放
+    speed: CFG.gate.speed * G.diffMult,
+  };
+}
+</script>
+
+<script>
+// ============================================================
+// 主循环 update
+// ============================================================
+function update(dt) {
+  if (G.paused || G.gameOver) return;
+
+  G.now = nowMs();
+
+  // 主角横移 (鼠标 / 触屏)
+  if (G.pointerX !== null) {
+    G.player.x = clamp(G.pointerX, G.player.w/2, W - G.player.w/2);
+  }
+
+  // NUO 跟随
+  G.nuos.forEach(n => {
+    n.x = G.player.x + n.offsetX;
+    n.y = PLAYER_Y + 2;
+    // 边界保护 - NUO 顶到屏幕边时贴主角另一侧 (E05)
+    if (n.x < n.w/2) n.x = G.player.x + Math.abs(n.offsetX);
+    if (n.x > W - n.w/2) n.x = G.player.x - Math.abs(n.offsetX);
+  });
+
+  // 射击
+  shootLoop();
+
+  // 主角配件 tick (持续 buff + 周期触发)
+  tickFireRate();
+  tickMultiShot();
+  tickAtkUp();
+  tickLaser();
+  tickUltimate();
+  updateLaserVisuals(dt);
+
+  // 子弹更新
+  updateBullets(dt);
+
+  // 敌人生成 + 推进
+  spawnEnemies();
+  updateEnemies(dt);
+
+  // 宝箱与障碍生成 + 队列更新
+  spawnTreasures();
+  updateTreasures(dt);
+  // spawnObstacles 删除 - obstacle 已整合进 treasure decoy
+  updateFloatTexts(dt);
+
+  // 状态门
+  updateStateGate(dt);
+
+  // 防线 HP 检查
+  // 防线 HP 检查
+  if (G.defenseHP <= 0) {
+    triggerGameOver(false);
+  }
+  // 通关检测 - victory 由击杀 final boss 触发
+  if (G.victory && !G.gameOver) {
+    triggerGameOver(true);
+  }
+
+  // NUO 静默剩余时间扣减
+  if (G.nuoStats.silenceUntil > G.now) {
+    // still silenced
+  } else {
+    G.nuoStats.silenceUntil = 0;
+  }
+
+  // 主角离开接敌通道警告 (E04 临界: 骑分界线不算离开)
+  const playerLeft = G.player.x - G.player.w/2;
+  const playerRight = G.player.x + G.player.w/2;
+  // 完全离开接敌通道 = playerRight <= SPLIT_X
+  const fullyLeftTreasure = playerRight <= SPLIT_X + 0.5;
+  const defenseEl = document.getElementById('defense');
+  if (fullyLeftTreasure) {
+    defenseEl.classList.add('line-warning');
+  } else {
+    defenseEl.classList.remove('line-warning');
+  }
+}
+
+// ============================================================
+// 射击
+// ============================================================
+function shootLoop() {
+  // 主角射击 - 多弹道 + 暴击 + atkMult + atkBonus
+  if (G.now - G.player.lastShot >= CFG.player.bulletInterval) {
+    const baseAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
+    const bltCount = Math.max(1, Math.round(G.multiShot || 1));
+    const spread = 10;
+    // 暴击率 = NUO 状态门给的暴击率 (G.nuoStats.crt 含上限 15%) + buff 的 critBonus
+    // 注意: 老板要求主角暴击和 NUO 暴击解耦, 但目前 stats 还共享, 先按 stats.crt + bonus 算
+    const critRate = Math.min(1, (G.playerCritRate !== undefined ? G.playerCritRate : G.nuoStats.crt) + (G.playerCritBonus || 0));
+    // 暴击伤害 = 基础 ×2 + critDmg 加成 (来自状态门 critDmg 维度)
+    const critMult = 2 + (G.nuoStats.critDmg || 0);
+    for (let i = 0; i < bltCount; i++) {
+      const offset = (i - (bltCount-1)/2) * spread;
+      const crit = Math.random() < critRate;
+      const atk = baseAtk * (crit ? critMult : 1);
+      G.bullets.push(createBullet(G.player.x + offset, G.player.y - G.player.h/2, 'player', atk, 1, crit));
+    }
+    G.player.lastShot = G.now;
+    SFX.play('fire');
+  }
+
+  // NUO 群射击 - 共享 stats, 受静默影响
+  const silenced = G.nuoStats.silenceUntil > G.now;
+  if (!silenced) {
+    const interval = CFG.nuo.bulletInterval / Math.max(0.2, G.nuoStats.spd);
+    G.nuos.forEach(n => {
+      if (G.now - n.lastShot >= interval) {
+        // 弹道数
+        const bltCount = Math.max(1, Math.round(G.nuoStats.blt));
+        const spread = 8;
+        for (let i = 0; i < bltCount; i++) {
+          const offset = (i - (bltCount-1)/2) * spread;
+          const crit = Math.random() < G.nuoStats.crt;
+          // critDmg = 暴击伤害加成 (0 = ×2, +0.10 = ×2.1)
+          const critMult = 2 + (G.nuoStats.critDmg || 0);
+          const atk = G.nuoStats.atk * (crit ? critMult : 1);
+          G.bullets.push(createBullet(n.x + offset, n.y - n.h/2, n.isMirror ? 'mirror' : 'nuo', atk, G.nuoStats.vel, crit));
+        }
+        n.lastShot = G.now;
+      }
+    });
+  }
+}
+
+// ============================================================
+// 子弹更新
+// ============================================================
+function updateBullets(dt) {
+  for (let i = G.bullets.length - 1; i >= 0; i--) {
+    const b = G.bullets[i];
+    b.y += b.vy * dt;
+    if (b.y < -20) {
+      G.bullets.splice(i, 1);
+      continue;
+    }
+
+    // 子弹判定: 优先看通道
+    const bTrack = getTrackAt(b.x);
+    let hit = false;
+
+    if (bTrack === 'L') {
+      // 打宝箱 / 障碍
+      // BUG-FIX (6/29 K 反馈): rectOverlap 用左上角约定, 但 b/t 的 x/y 都是中心点
+      // 必须先转 box (跟状态门那段一致), 否则碰撞框整体偏移 w/2 → 子弹"看起来打中"但判定 miss
+      const bBoxL = { x: b.x - b.w/2, y: b.y - b.h/2, w: b.w, h: b.h };
+      for (let j = G.treasures.length - 1; j >= 0; j--) {
+        const t = G.treasures[j];
+        const tBox = { x: t.x - t.w/2, y: t.y - t.h/2, w: t.w, h: t.h };
+        if (rectOverlap(bBoxL, tBox)) {
+          const dmg = Math.round(b.atk);
+          t.hp -= dmg;
+          t.flashUntil = G.now + 80;     // 闪白 80ms
+          hit = true;
+          // 伤害飘字
+          floatText(t.x + (Math.random()-0.5)*30, t.y - 10, '-' + dmg, b.crit ? '#ffd441' : '#ff6a8b', b.crit);
+          if (t.hp <= 0) {
+            if (t.kind === 'decoy') {
+              floatText(t.x, t.y - 18, '×无效', '#888', false);
+            } else {
+              floatText(t.x, t.y - 18, '装备!', '#4dff9d', true);
+              SFX.play('chest_pickup');
+            }
+            applyTreasure(t);
+            G.treasures.splice(j, 1);
+            reflowTreasures();   // 击破后上方的宝箱掉下来补位
+          }
+          break;
+        }
+      }
+      // obstacle 子弹处理已删除 (obstacle 整合进 treasure decoy, 走 treasures 处理路径)
+    } else {
+      // 接敌通道: 先看状态门 (array, 可能多个同屏)
+      if (G.stateGates && G.stateGates.length > 0) {
+        // 子弹 b.x/y 是中心点 (跟敌人统一约定), 但 rectOverlap 把 .x 当左上角
+        // 状态门已转成左上角 box, 所以子弹也要转成 box: 左上角 = b.x - b.w/2, b.y - b.h/2
+        const bBox = { x: b.x - b.w/2, y: b.y - b.h/2, w: b.w, h: b.h };
+        for (const gate of G.stateGates) {
+          if (gate.released) continue;
+          const gateBox = { x: gate.x - gate.w/2, y: gate.y - gate.h/2, w: gate.w, h: gate.h };
+          if (rectOverlap(bBox, gateBox)) {
+            gate.value += gate.dim.step;
+            gate.value = Math.round(gate.value / gate.dim.step) * gate.dim.step;
+            SFX.play('gate_hit');
+            if (gate.value >= gate.dim.vmax) {
+              gate.value = gate.dim.vmax;
+              gate.released = true;
+              gate.state = 'released';
+            } else if (gate.value < 0) {
+              gate.state = 'debuff';
+            } else if (gate.value === 0) {
+              gate.state = 'neutral';
+            } else {
+              gate.state = 'buff';
+            }
+            hit = true;
+            break;
+          }
+        }
+      }
+      if (!hit) {
+        // 打敌人 (状态门 released 时子弹穿透)
+        // BUG-FIX (6/29 K 反馈): rectOverlap 用左上角约定但 b/e 是中心点 → 漏子弹
+        // 改用透视缩放后的中心点距离判定 (跟 desktop 版本对齐)
+        for (let j = G.enemies.length - 1; j >= 0; j--) {
+          const e = G.enemies[j];
+          const bxp = perspectiveX(b.x, b.y);
+          const exp = perspectiveX(e.x, e.y);
+          const bScale = perspectiveScale(b.y);
+          const eScale = perspectiveScale(e.y);
+          const bw = b.w * bScale, bh = b.h * bScale;
+          const ew = e.w * eScale, eh = e.h * eScale;
+          if (Math.abs(bxp - exp) < (bw + ew) / 2 && Math.abs(b.y - e.y) < (bh + eh) / 2) {
+            // 主弹道伤害
+            const rawDmg = b.atk;
+            const dmg = Math.max(1, Math.round(rawDmg * (1 - e.armor)));
+            damageEnemy(e, dmg, b.crit, b.owner === 'player');
+            hit = true;
+            // 爆炸弹 - 主角子弹在命中位置爆炸 (不穿透, splice 已经处理)
+            if (b.owner === 'player' && G.perks && G.perks.explosive) {
+              const splashR = 30;
+              const splashDmg = Math.max(1, Math.round(rawDmg * 0.4));
+              splashAround(e.x, e.y, splashR, splashDmg, e);
+              // 视觉: 圆形爆炸圈
+              G.explosions = G.explosions || [];
+              G.explosions.push({ x: e.x, y: e.y, r: splashR, bornAt: G.now, life: 280 });
+            }
+            // 弹射弹 - 主角子弹弹射到下一个目标
+            if (b.owner === 'player' && G.perks && G.perks.ricochet && !b._ricocheted) {
+              const next = findNextRicochetTarget(e);
+              if (next) {
+                const ricDmg = Math.max(1, Math.round(rawDmg * 0.6 * (1 - next.armor)));
+                damageEnemy(next, ricDmg, false, true);
+                floatText(next.x, next.y - 4, '弹射', '#4dffea', false);
+              }
+            }
+            break;
+          }
+        }
+      }
+    }
+
+    if (hit) {
+      G.bullets.splice(i, 1);
+    }
+  }
+}
+
+// ============================================================
+// 配件 / buff 工具函数
+// ============================================================
+
+// 给一个敌人扣血 + 处理飘字 + 死亡 (从 enemies 数组里 splice)
+function damageEnemy(e, dmg, isCrit, fromPlayer) {
+  e.hp -= dmg;
+  e.flashUntil = G.now + 80;
+  SFX.play('hit');
+  // 飘字
+  if (isCrit) {
+    floatText(e.x, e.y - 10, '暴击 ' + dmg + '!', '#ffd441', true);
+  } else if (e.armor >= 0.4) {
+    floatText(e.x + (Math.random()-0.5)*20, e.y - 10, '-' + dmg + ' 硬', '#aaccff', false);
+  } else {
+    floatText(e.x + (Math.random()-0.5)*20, e.y - 10, '-' + dmg, '#ffd441', false);
+  }
+  if (e.hp <= 0) {
+    SFX.play('explode');
+    if (e.isFinalBoss) {
+      floatText(e.x, e.y - 30, 'BOSS 倒下', '#ffd700', true);
+      G.victory = true;
+    } else if (e.isMiniBoss) {
+      floatText(e.x, e.y - 30, '小 BOSS ' + e.isMiniBoss + ' 击破!', '#4dff9d', true);
+      G.miniBossKilled = (G.miniBossKilled || 0) + 1;
+    } else if (e.type === 'elite') {
+      floatText(e.x, e.y - 25, '精英击破', '#a64dff', true);
+      G.eliteKilled = (G.eliteKilled || 0) + 1;
+    } else {
+      floatText(e.x, e.y - 25, 'KILL', '#4dff9d', false);
+    }
+    const idx = G.enemies.indexOf(e);
+    if (idx >= 0) G.enemies.splice(idx, 1);
+    G.kills += (e.score >= 200 ? 5 : e.score >= 60 ? 2 : 1);
+    const killsEl = document.getElementById('hud-kills');
+    if (killsEl) killsEl.textContent = G.kills;
+  }
+}
+
+// 爆炸弹 - 在 (cx, cy) 周围 radius 内除 except 之外的敌人扣 splashDmg
+function splashAround(cx, cy, radius, splashDmg, except) {
+  // 反向遍历 (因为 damageEnemy 会 splice)
+  const targets = G.enemies.filter(e => {
+    if (e === except) return false;
+    const dx = e.x - cx;
+    const dy = e.y - cy;
+    return Math.sqrt(dx*dx + dy*dy) <= radius;
+  });
+  targets.forEach(e => {
+    const dmg = Math.max(1, Math.round(splashDmg * (1 - e.armor)));
+    damageEnemy(e, dmg, false, true);
+  });
+}
+
+// 弹射弹 - 找离 from 最近的另一个敌人 (相同 lane 优先)
+function findNextRicochetTarget(from) {
+  let best = null;
+  let bestDist = Infinity;
+  G.enemies.forEach(e => {
+    if (e === from) return;
+    const dx = e.x - from.x;
+    const dy = e.y - from.y;
+    const d = Math.sqrt(dx*dx + dy*dy);
+    if (d < bestDist && d < 200) {  // 最大弹射距离 200px
+      bestDist = d;
+      best = e;
+    }
+  });
+  return best;
+}
+
+// ============================================================
+// 主角持续 buff tick (fireRate / multiShot / atkUp)
+// ============================================================
+
+// 射速强化: 每秒把当前 bulletInterval 乘以 0.99 (= +1%)
+function tickFireRate() {
+  if (!G.perks || !G.perks.fireRate) return;
+  if (!G.fireRateTickAt || G.now < G.fireRateTickAt) return;
+  G.fireRateTickAt = G.now + 1000;
+  CFG.player.bulletInterval = Math.max(40, CFG.player.bulletInterval * 0.99);
+}
+
+// 多弹道: 每 30s +1, 上限 5
+function tickMultiShot() {
+  if (!G.perks || !G.perks.multiShot) return;
+  if (!G.multiShotNextAt || G.now < G.multiShotNextAt) return;
+  G.multiShotNextAt = G.now + 30000;
+  if ((G.multiShot || 1) < 5) {
+    G.multiShot = (G.multiShot || 1) + 1;
+    showBuffToast('弹道 +1 → ' + G.multiShot, true);
+  }
+}
+
+// 攻击强化: 每 5s +1 (累加 atkBonus)
+function tickAtkUp() {
+  if (!G.perks || !G.perks.atkUp) return;
+  if (!G.atkUpTickAt || G.now < G.atkUpTickAt) return;
+  G.atkUpTickAt = G.now + 5000;
+  G.playerAtkBonus = (G.playerAtkBonus || 0) + 1;
+}
+
+// 散射激光 - 每 3s 触发, 从主角找最近敌人, 折射 3 次
+function tickLaser() {
+  if (!G.perks || !G.perks.laser) return;
+  if (!G.laserNextAt || G.now < G.laserNextAt) return;
+  G.laserNextAt = G.now + 3000;
+  // 找起点 = 主角
+  const origin = { x: G.player.x, y: G.player.y - G.player.h/2 };
+  let from = origin;
+  const segments = [];  // 用于绘制
+  let lastTarget = null;
+  const laserDmg = 60;
+  for (let hop = 0; hop < 4; hop++) {   // 起点 + 3 次折射 = 4 段
+    // 找最近敌人 (排除上次目标)
+    const target = findNearestEnemy(from.x, from.y, lastTarget);
+    if (!target) break;
+    segments.push({ from: {...from}, to: { x: target.x, y: target.y } });
+    // 扣伤害
+    const dmg = Math.max(1, Math.round(laserDmg * (1 - target.armor)));
+    damageEnemy(target, dmg, false, true);
+    // 飘字
+    floatText(target.x, target.y - 5, '激光', '#a64dff', false);
+    from = { x: target.x, y: target.y };
+    lastTarget = target;
+  }
+  if (segments.length > 0) {
+    G.laserVisuals = G.laserVisuals || [];
+    G.laserVisuals.push({ segments, bornAt: G.now, life: 250 });
+  }
+}
+
+function findNearestEnemy(cx, cy, exclude) {
+  let best = null;
+  let bestDist = Infinity;
+  G.enemies.forEach(e => {
+    if (e === exclude) return;
+    const dx = e.x - cx;
+    const dy = e.y - cy;
+    const d = Math.sqrt(dx*dx + dy*dy);
+    if (d < bestDist) { bestDist = d; best = e; }
+  });
+  return best;
+}
+
+function updateLaserVisuals(dt) {
+  if (G.laserVisuals) {
+    for (let i = G.laserVisuals.length - 1; i >= 0; i--) {
+      if (G.now - G.laserVisuals[i].bornAt > G.laserVisuals[i].life) {
+        G.laserVisuals.splice(i, 1);
+      }
+    }
+  }
+  // 爆炸视觉同步过期
+  if (G.explosions) {
+    for (let i = G.explosions.length - 1; i >= 0; i--) {
+      if (G.now - G.explosions[i].bornAt > G.explosions[i].life) {
+        G.explosions.splice(i, 1);
+      }
+    }
+  }
+}
+
+function drawLaserVisuals() {
+  if (G.laserVisuals && G.laserVisuals.length > 0) {
+    ctx.save();
+    G.laserVisuals.forEach(lv => {
+      const t = (G.now - lv.bornAt) / lv.life;
+      const alpha = Math.max(0, 1 - t);
+      ctx.globalAlpha = alpha;
+      // 外光
+      ctx.strokeStyle = '#a64dff';
+      ctx.lineWidth = 6;
+      ctx.shadowColor = '#a64dff';
+      ctx.shadowBlur = 12;
+      ctx.beginPath();
+      lv.segments.forEach(seg => {
+        ctx.moveTo(seg.from.x, seg.from.y);
+        ctx.lineTo(seg.to.x, seg.to.y);
+      });
+      ctx.stroke();
+      // 内核 - 白色
+      ctx.strokeStyle = '#fff';
+      ctx.lineWidth = 2;
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      lv.segments.forEach(seg => {
+        ctx.moveTo(seg.from.x, seg.from.y);
+        ctx.lineTo(seg.to.x, seg.to.y);
+      });
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+  // 爆炸圈
+  if (G.explosions && G.explosions.length > 0) {
+    ctx.save();
+    G.explosions.forEach(ex => {
+      const t = (G.now - ex.bornAt) / ex.life;
+      const alpha = Math.max(0, 1 - t);
+      const r = ex.r * (0.4 + t * 1.2);   // 圈从 0.4r 扩散到 1.6r
+      ctx.globalAlpha = alpha * 0.8;
+      ctx.fillStyle = '#ff8c00';
+      ctx.beginPath();
+      ctx.arc(ex.x, ex.y, r, 0, Math.PI * 2);
+      ctx.fill();
+      // 环
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = '#ffdd66';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.arc(ex.x, ex.y, r, 0, Math.PI * 2);
+      ctx.stroke();
+    });
+    ctx.restore();
+  }
+}
+
+// 终极技能 - 每 10s 全屏所有敌人扣血 + 1.5s 冰冻
+function tickUltimate() {
+  if (!G.perks || !G.perks.ultimate) return;
+  if (!G.ultNextAt || G.now < G.ultNextAt) return;
+  G.ultNextAt = G.now + 10000;
+  // 全屏闪光 + 屏震
+  G.ultFlashUntil = G.now + 400;
+  // 全敌人扣血 + 冰冻
+  const ultDmg = 200;
+  // 反向遍历副本, 防止 damageEnemy splice 影响
+  const all = G.enemies.slice();
+  all.forEach(e => {
+    const dmg = Math.max(1, Math.round(ultDmg * (1 - e.armor)));
+    damageEnemy(e, dmg, false, true);
+    e.frozenUntil = G.now + 1500;
+  });
+  floatText(W/2, H/2 - 30, '终极爆发!', '#ffd700', true);
+}
+
+// ============================================================
+// 敌人
+// ============================================================
+// ============================================================
+// 敌人 spawn 系统 - 参考 v04 phase/wave 节奏
+// 6 个 elite, 3 个 mini-boss, 1 个 final boss
+// 总单局时长 ~3 分钟 (击杀 final boss 通关)
+// ============================================================
+const ENEMY_FORMATIONS = {
+  // 单波 - 早期
+  's1':         [{type:'small',lane:1,y:0}],
+  'h3-small':   [{type:'small',lane:0,y:0},{type:'small',lane:1,y:0},{type:'small',lane:2,y:0}],
+  // 三列 V 形
+  'v3':         [{type:'small',lane:1,y:0},{type:'small',lane:0,y:30},{type:'small',lane:2,y:30}],
+  // 5x1 横排
+  '5x1':        [{type:'small',lane:0,y:0},{type:'small',lane:0,y:0,xOff:0.5},{type:'small',lane:1,y:0},
+                 {type:'small',lane:2,y:0,xOff:-0.5},{type:'small',lane:2,y:0}],
+  // 精英卫队 (small 护精英)
+  'elite-guard':[{type:'elite',lane:1,y:0},{type:'small',lane:0,y:20},{type:'small',lane:2,y:20}],
+  // 双精英 + 群小兵
+  'double-elite':[{type:'elite',lane:0,y:0},{type:'elite',lane:2,y:0},{type:'small',lane:1,y:30}],
+  // 三排方阵 3x3
+  '3x3-mixed':  [{type:'small',lane:0,y:0},{type:'small',lane:1,y:0},{type:'small',lane:2,y:0},
+                 {type:'small',lane:0,y:35},{type:'small',lane:1,y:35},{type:'small',lane:2,y:35},
+                 {type:'small',lane:0,y:70},{type:'small',lane:1,y:70},{type:'small',lane:2,y:70}],
+  // 高压方阵 3x4
+  '3x4-pressure':[{type:'small',lane:0,y:0},{type:'small',lane:1,y:0},{type:'small',lane:2,y:0},
+                  {type:'small',lane:0,y:35},{type:'small',lane:1,y:35},{type:'small',lane:2,y:35},
+                  {type:'small',lane:0,y:70},{type:'small',lane:1,y:70},{type:'small',lane:2,y:70},
+                  {type:'small',lane:0,y:105},{type:'small',lane:1,y:105},{type:'small',lane:2,y:105}],
+  // 极限方阵 3x6 swarm - 整通道铺满
+  '3x6-swarm':  [{type:'small',lane:0,y:0},{type:'small',lane:1,y:0},{type:'small',lane:2,y:0},
+                 {type:'small',lane:0,y:35},{type:'small',lane:1,y:35},{type:'small',lane:2,y:35},
+                 {type:'small',lane:0,y:70},{type:'small',lane:1,y:70},{type:'small',lane:2,y:70},
+                 {type:'small',lane:0,y:105},{type:'small',lane:1,y:105},{type:'small',lane:2,y:105},
+                 {type:'small',lane:0,y:140},{type:'small',lane:1,y:140},{type:'small',lane:2,y:140},
+                 {type:'small',lane:0,y:175},{type:'small',lane:1,y:175},{type:'small',lane:2,y:175}],
+  // 精英开路 + 小兵尾随
+  'elite-trail':[{type:'elite',lane:1,y:0},{type:'small',lane:0,y:50},{type:'small',lane:1,y:50},{type:'small',lane:2,y:50}],
+};
+
+// Phase 时间表 - 每段配 wave 池 + 节奏 + 在结尾插 elite/miniBoss
+// 总目标: 6 elite + 3 miniBoss 渐进释放, 最后 final boss
+const PHASES = [
+  // start: 秒, end: 秒, waveInterval: 秒, pool: formation 名, eliteInjects: 一次性事件, boss: 一次性 spawn
+  // v3: 前期降难度 (0-25s, 25-50s)，给玩家上手时间
+  { start: 0,   end: 25,  waveInterval: 4.5, pool: ['h3-small','v3','5x1','h3-small'], eliteInjects: [] },
+  // 25-50s: 加压期, elite 插入
+  { start: 25,  end: 50,  waveInterval: 3.5, pool: ['h3-small','5x1','3x3-mixed','v3'], eliteInjects: [{t:38, type:'elite'}, {t:48, type:'elite'}] },
+  // 50-70s: 双精英压制
+  { start: 50,  end: 70,  waveInterval: 2.2, pool: ['3x3-mixed','elite-guard','5x1','3x4-pressure'],
+    eliteInjects: [{t:55,type:'elite'},{t:60,type:'elite'},{t:65,type:'elite'}] },
+  // 70-85s: mini-boss A
+  { start: 70,  end: 85,  waveInterval: 2.0, pool: ['h3-small','5x1','3x3-mixed'], boss: {t:70, type:'miniA'} },
+  // 85-105s: 加压
+  { start: 85,  end: 105, waveInterval: 1.8, pool: ['elite-guard','3x4-pressure','elite-trail','3x3-mixed'],
+    eliteInjects: [{t:92,type:'elite'},{t:100,type:'elite'}] },
+  // 105-120s: mini-boss B
+  { start: 105, end: 120, waveInterval: 1.8, pool: ['3x3-mixed','5x1','elite-trail'], boss: {t:105, type:'miniB'} },
+  // 120-140s: 大群涌入
+  { start: 120, end: 140, waveInterval: 1.6, pool: ['3x4-pressure','3x6-swarm','elite-trail','elite-guard'], eliteInjects: [{t:130,type:'elite'}] },
+  // 140-155s: mini-boss C
+  { start: 140, end: 155, waveInterval: 1.6, pool: ['3x4-pressure','elite-trail'], boss: {t:140, type:'miniC'} },
+  // 155-175s: 双精英 + swarm
+  { start: 155, end: 175, waveInterval: 1.4, pool: ['3x6-swarm','3x4-pressure','elite-guard','double-elite'], eliteInjects: [{t:165,type:'elite'},{t:170,type:'elite'}] },
+  // 175s+: FINAL BOSS, 其他敌人继续 spawn (高频率)
+  { start: 175, end: 9999, waveInterval: 2.0, pool: ['3x4-pressure','elite-trail','elite-guard'], boss: {t:175, type:'boss'} },
+];
+
+// 获取右通道 3 lane 的 x 中点
+function rightLaneX(lane) {
+  // 0=左 1=中 2=右
+  const laneW = TRACK_R_WIDTH / 3;
+  return TRACK_R_LEFT + laneW * (lane + 0.5);
+}
+
+// 现在 phase
+function currentPhase(elapsed) {
+  for (const p of PHASES) {
+    if (elapsed >= p.start && elapsed < p.end) return p;
+  }
+  return PHASES[PHASES.length - 1];
+}
+
+// 释放一个方阵到屏幕
+function spawnFormation(name) {
+  const f = ENEMY_FORMATIONS[name];
+  if (!f) { console.warn('Unknown formation:', name); return; }
+  f.forEach(spec => {
+    const tcfg = CFG.enemy.types[spec.type];
+    if (!tcfg) return;
+    let x = rightLaneX(spec.lane);
+    if (spec.xOff != null) {
+      const laneW = TRACK_R_WIDTH / 3;
+      x += spec.xOff * laneW;
+    }
+    // clamp 到通道内
+    x = clamp(x, TRACK_R_LEFT + tcfg.w/2, TRACK_R_RIGHT - tcfg.w/2);
+    // BUG-FIX (6/29 K 反馈): spec.y 之前是 + 偏移, 大方阵后排 spawn 在屏幕中部 (空降 bug)
+    // 改为 - 偏移: 方阵第一排在地平线, 后排在屏外, 从屏顶滑入画面
+    const y = HORIZON_Y + 5 - (spec.y || 0);
+    const e = createEnemy(spec.type, x, y);
+    if (e) G.enemies.push(e);
+  });
+}
+
+function spawnEnemies() {
+  // 复活反推期: 不刷新新敌人
+  if (G.spawnFreezeUntil && G.now < G.spawnFreezeUntil) return;
+  const elapsed = (G.now - G.startTime) / 1000;
+  const phase = currentPhase(elapsed);
+
+  // 1. 触发 phase 一次性事件: elite inject + boss spawn
+  if (phase.eliteInjects) {
+    for (const inject of phase.eliteInjects) {
+      const key = `${phase.start}-${inject.t}`;
+      if (!G._eliteInjected) G._eliteInjected = new Set();
+      if (elapsed >= inject.t && !G._eliteInjected.has(key)) {
+        G._eliteInjected.add(key);
+        const e = createEnemy(inject.type);
+        if (e) G.enemies.push(e);
+      }
+    }
+  }
+  if (phase.boss) {
+    const key = `boss-${phase.boss.type}`;
+    if (!G._bossSpawned) G._bossSpawned = new Set();
+    if (elapsed >= phase.boss.t && !G._bossSpawned.has(key)) {
+      G._bossSpawned.add(key);
+      // boss 在中央生成, 大 boss 站位
+      const tcfg = CFG.enemy.types[phase.boss.type];
+      const cx = TRACK_R_LEFT + TRACK_R_WIDTH / 2;
+      const e = createEnemy(phase.boss.type, cx, HORIZON_Y + 5);
+      if (e) {
+        G.enemies.push(e);
+        // boss 出场提示
+        floatText(W/2, H/2, e.isFinalBoss ? 'FINAL BOSS' : `小 BOSS ${e.isMiniBoss}`,
+                  e.isFinalBoss ? '#ffd700' : '#ff3d6b', true);
+        SFX.play('boss_alert');
+      }
+    }
+  }
+
+  // 2. wave 节奏 - 只在 waveInterval > 0 且当前没有 boss 在场时 spawn
+  const hasActiveBoss = G.enemies.some(e => e.isMiniBoss || e.isFinalBoss);
+  if (phase.waveInterval > 0 && !hasActiveBoss) {
+    if (G.now >= G.nextEnemyAt) {
+      const formation = pick(phase.pool);
+      spawnFormation(formation);
+      G.nextEnemyAt = G.now + phase.waveInterval * 1000;
+    }
+  }
+}
+
+function updateEnemies(dt) {
+  G.enemies.forEach(e => {
+    // 冰冻 - 终极技能效果, 1.5s 内不动也不攻击
+    if (e.frozenUntil && G.now < e.frozenUntil) return;
+    // 复活反推期: 敌人按各自 speed 倒退, 期间不攻击防线 (脱离攻击范围)
+    // 不 clamp 到屏顶 — 让 e.y 一直减 (可为负, 即跑到屏幕外), 这样退满 5 秒 + 推回 5 秒 = 严格 10 秒
+    // 绘制时 viewport 裁切会自动处理屏外不画
+    if (e.rewindUntil && G.now < e.rewindUntil) {
+      e.y -= e.speed * dt;
+      return;
+    }
+    if (!e.atDefense) {
+      e.y += e.speed * dt;
+      if (e.y + e.h >= DEFENSE_Y) {
+        e.y = DEFENSE_Y - e.h;
+        e.atDefense = true;
+      }
+    } else {
+      // 攻击防线
+      G.defenseHP -= e.dps * dt;
+      if (G.defenseHP < 0) G.defenseHP = 0;
+    }
+  });
+  updateDefenseBar();
+}
+
+function updateDefenseBar() {
+  const bar = document.getElementById('def-bar');
+  const pct = G.defenseHP / G.defenseMax;
+  bar.style.width = (pct * 100) + '%';
+  bar.classList.remove('warn', 'danger');
+  if (pct < 0.3) bar.classList.add('danger');
+  else if (pct < 0.6) bar.classList.add('warn');
+}
+
+// ============================================================
+// 宝箱与障碍
+// ============================================================
+function spawnTreasures() {
+  if (G.now < G.nextTreasureAt) return;
+  // 找最少占用的列
+  const colCount = CFG.treasure.colCount;
+  const colCounts = new Array(colCount).fill(0);
+  G.treasures.forEach(t => { colCounts[t.col]++; });
+  const minColCount = Math.min(...colCounts);
+  // 每列最多 5 个 (DEFENSE_Y ≈ 600, topY=120, slotHeight=46 → 容纳 (600-120)/46 ≈ 10 个但留 5 个上限)
+  const maxPerCol = 5;
+  if (minColCount >= maxPerCol) {
+    G.nextTreasureAt = G.now + 500;
+    return;
+  }
+  // 在最少占用的列里随机一个
+  const candidates = [];
+  for (let i = 0; i < colCount; i++) {
+    if (colCounts[i] === minColCount) candidates.push(i);
+  }
+  const col = pick(candidates);
+  const t = createTreasure();
+  t.col = col;
+  t.x = treasureColX(col);
+  // targetY 由 reflowTreasures 计算 - 先设到列顶
+  G.treasures.push(t);
+  reflowTreasures();
+  G.nextTreasureAt = G.now + CFG.treasure.spawnInterval / G.diffMult;
+}
+
+// 重新计算每列宝箱的 targetY (从上到下叠)
+function reflowTreasures() {
+  const colCount = CFG.treasure.colCount;
+  const slotH = CFG.treasure.slotHeight;
+  const topY = CFG.treasure.topY;
+  // 按列分组, 按 targetY 排序 (老的在上, 新的在下)
+  for (let c = 0; c < colCount; c++) {
+    const colTreasures = G.treasures.filter(t => t.col === c);
+    // 排序: 老宝箱保持位置 (按 createdAt) - 这里简化为按 y 升序
+    colTreasures.sort((a, b) => a.targetY - b.targetY);
+    colTreasures.forEach((t, i) => {
+      t.targetY = topY + i * slotH;
+    });
+  }
+}
+
+// 宝箱下落补位 + 出生下降
+function updateTreasures(dt) {
+  const fallSpeed = CFG.treasure.fallSpeed;
+  G.treasures.forEach(t => {
+    if (t.y < t.targetY) {
+      t.y += fallSpeed * dt;
+      if (t.y > t.targetY) t.y = t.targetY;
+    }
+  });
+}
+
+// spawnObstacles 已删除 (obstacle 整合进 treasure decoy)
+
+// 击破宝箱 - 装备武器
+function applyTreasure(t) {
+  // 1. decoy: 无效, 不给 buff
+  if (t.kind === 'decoy') {
+    showBuffToast('无效', false);
+    return;
+  }
+
+  // 2. perk: 累积式配件解锁 (8 件序列)
+  if (t.kind === 'perk') {
+    G.perks = G.perks || {};
+    if (G.perks[t.perkId]) {
+      showBuffToast(t.label + ' (已有)', false);
+      return;
+    }
+    G.perks[t.perkId] = true;
+    G.perkUnlockedIdx = (G.perkUnlockedIdx || 0) + 1;
+
+    // 即时效果 + 启动周期 tick
+    if (t.perkId === 'fireRate') {
+      // 射速 +1%/s 持续: 启动 tick, 每秒把 bulletInterval 乘以 0.99
+      G.fireRateTickAt = G.now + 1000;
+      G.fireRateBaseInterval = CFG.player.bulletInterval;
+    }
+    if (t.perkId === 'multiShot') {
+      // 弹道 +1 初始, 之后每 30s +1, 上限 5
+      G.multiShot = 2;   // 1 → 2
+      G.multiShotNextAt = G.now + 30000;
+    }
+    if (t.perkId === 'atkUp') {
+      // 攻击每 5s +1
+      G.atkUpTickAt = G.now + 5000;
+    }
+    if (t.perkId === 'mirror') {
+      if (!G.hasMirror) {
+        G.nuos.push(createNuo(-18, true));
+        G.hasMirror = true;
+        const tag = document.getElementById('nuo-mirror-tag');
+        if (tag) tag.style.display = 'inline';
+      }
+    }
+    if (t.perkId === 'laser') {
+      G.laserNextAt = G.now + 3000;
+    }
+    if (t.perkId === 'ultimate') {
+      G.ultNextAt = G.now + 10000;
+    }
+    showBuffToast(t.label + ' 解锁!', true);
+    return;
+  }
+
+  // 3. buff: 循环 buff (主角强化)
+  if (t.kind === 'buff') {
+    if (t.buffId === 'atk++') {
+      G.playerAtkMult = (G.playerAtkMult || 1) * 1.25;
+      showBuffToast('攻击 +25%', true);
+    } else if (t.buffId === 'spd++') {
+      CFG.player.bulletInterval = Math.max(40, CFG.player.bulletInterval * 0.83);
+      showBuffToast('射速 +20%', true);
+    } else if (t.buffId === 'crit++') {
+      G.playerCritBonus = (G.playerCritBonus || 0) + 0.03;
+      showBuffToast('暴击率 +3%', true);
+    }
+    return;
+  }
+}
+
+// ============================================================
+// 状态门更新
+// ============================================================
+function updateStateGate(dt) {
+  // 生成规则:
+  //   1. 同屏上限 CFG.gate.maxConcurrent (默认 2)
+  //   2. 首道按 G.nextGateAt 时间间隔触发
+  //   3. 已有门时, 如果"最远进度"门已经 ≥ 80% (向 vmax 方向 80%), 立刻可以再生一道
+  G.stateGates = G.stateGates || [];
+
+  function maxProgress() {
+    // 取当前门 (未释放) 中, 进度最高的一道 (value / vmax 的比例)
+    let best = 0;
+    for (const g of G.stateGates) {
+      if (g.released) continue;
+      const prog = g.value / g.dim.vmax;
+      if (prog > best) best = prog;
+    }
+    return best;
+  }
+
+  const underCap = G.stateGates.length < CFG.gate.maxConcurrent;
+  const timeOk = G.now >= G.nextGateAt;
+  // 6/29 K 反馈: 状态门密集. 去掉 progressOk 提前生成分支, 严格按 maxConcurrent + 时间间隔
+  if (underCap && timeOk) {
+    G.stateGates.push(createStateGate());
+    G.nextGateAt = G.now + G.gateInterval * 1000;
+  }
+
+  // 移动 / 碰撞 / 流出 — 反向遍历 (会 splice)
+  const playerBox = {x: G.player.x - G.player.w/2, y: G.player.y - G.player.h/2, w: G.player.w, h: G.player.h};
+  for (let i = G.stateGates.length - 1; i >= 0; i--) {
+    const gate = G.stateGates[i];
+    gate.y += gate.speed * dt;
+
+    // 碰撞: rectOverlap 把 g.x 当左上角左侧, gate.x 是中心 → 转盒
+    const gateBox = { x: gate.x - gate.w/2, y: gate.y - gate.h/2, w: gate.w, h: gate.h };
+    if (rectOverlap(gateBox, playerBox)) {
+      applyGateToNuo(gate);
+      G.stateGates.splice(i, 1);
+      continue;
+    }
+
+    // 流出底部
+    if (gate.y > H + 10) {
+      G.stateGates.splice(i, 1);
+    }
+  }
+}
+
+function applyGateToNuo(gate) {
+  const v = gate.value;
+  const dim = gate.dim;
+  // 应用到 NUO stats (主 NUO + 镜像 同步)
+  if (dim.key === 'silence') {
+    if (v < 0) {
+      // 减益: 静默, ms
+      G.nuoStats.silenceUntil = G.now + Math.abs(v);
+    } else if (v > 0) {
+      // 增益: 双倍火力, 用减少 silence interval 模拟 - 给一段攻速 buff
+      G.nuoStats.spd = Math.min(2.5, G.nuoStats.spd + v/1000);
+      // v ms 后衰减
+      setTimeout(() => { G.nuoStats.spd = Math.max(0.3, G.nuoStats.spd - v/1000); updateNuoUI(); }, v);
+    }
+  } else {
+    G.nuoStats[dim.key] = clamp(
+      (G.nuoStats[dim.key] || 0) + v,
+      // crt 和 critDmg 都不允许跌破 0 (避免暴击率负数 / 暴击伤害低于 ×2)
+      (dim.key === 'crt' || dim.key === 'critDmg') ? 0 : -999,
+      999
+    );
+    if (dim.key === 'spd') G.nuoStats.spd = Math.max(0.2, G.nuoStats.spd);
+    if (dim.key === 'blt') G.nuoStats.blt = Math.max(1, G.nuoStats.blt);
+    if (dim.key === 'vel') G.nuoStats.vel = Math.max(0.3, G.nuoStats.vel);
+  }
+  updateNuoUI();
+  // toast
+  const isBuff = v > 0;
+  const sign = v > 0 ? '+' : '';
+  const display = dim.unit === '%' ? `${(v*100).toFixed(0)}${dim.unit}` :
+                  dim.unit === 'x' ? `${v.toFixed(2)}${dim.unit}` :
+                  dim.unit === 'ms' ? `${Math.abs(v)}${dim.unit}` :
+                  v.toFixed(1);
+  showBuffToast(`${dim.label} ${sign}${display}`, isBuff);
+}
+
+function updateNuoUI() {
+  const s = G.nuoStats;
+  const set = (id, val, isBuffed) => {
+    const el = document.getElementById(id);
+    el.textContent = val;
+    if (isBuffed) el.classList.add('buffed'); else el.classList.remove('buffed');
+  };
+  set('nuo-atk', s.atk.toFixed(1), s.atk > CFG.nuo.base.atk);
+  set('nuo-spd', s.spd.toFixed(2) + 'x', s.spd > CFG.nuo.base.spd);
+  set('nuo-blt', Math.round(s.blt), s.blt > CFG.nuo.base.blt);
+  set('nuo-vel', s.vel.toFixed(2) + 'x', s.vel > CFG.nuo.base.vel);
+  set('nuo-crt', (s.crt * 100).toFixed(0) + '%', s.crt > CFG.nuo.base.crt);
+  document.getElementById('nuo-silence').style.display =
+    G.nuoStats.silenceUntil > G.now ? 'block' : 'none';
+}
+
+function showBuffToast(text, isBuff) {
+  const t = document.getElementById('buffToast');
+  t.textContent = text;
+  t.classList.toggle('debuff', !isBuff);
+  t.style.opacity = '1';
+  t.style.transform = 'translate(-50%,-60%) scale(1.1)';
+  setTimeout(() => {
+    t.style.transition = 'all 0.6s';
+    t.style.opacity = '0';
+    t.style.transform = 'translate(-50%,-90%) scale(1)';
+    setTimeout(() => { t.style.transition = ''; }, 600);
+  }, 700);
+}
+</script>
+
+<script>
+// ============================================================
+// 渲染 draw
+// ============================================================
+function draw() {
+  // 背景 - 一点透视通道
+  drawBackground();
+
+  // 宝箱通道内容
+  G.treasures.forEach(drawTreasure);
+  // G.obstacles 渲染已删除 - obstacle 整合进 treasure decoy
+
+  // 状态门
+  if (G.stateGates && G.stateGates.length > 0) G.stateGates.forEach(drawStateGate);
+
+  // 敌人
+  G.enemies.forEach(drawEnemy);
+
+  // 子弹
+  G.bullets.forEach(drawBullet);
+
+  // 主角散射激光视觉
+  drawLaserVisuals();
+
+  // 主角 + NUO
+  drawPlayer();
+  G.nuos.forEach(drawNuo);
+
+  // 终极闪光 (覆盖全屏)
+  if (G.ultFlashUntil && G.now < G.ultFlashUntil) {
+    const t = (G.ultFlashUntil - G.now) / 400;
+    ctx.fillStyle = 'rgba(255,215,0,' + (t * 0.45) + ')';
+    ctx.fillRect(0, 0, W, H);
+  }
+
+  // 屏幕顶部 boss 血条 (找最强的 boss)
+  const activeBoss = G.enemies.find(e => e.isFinalBoss) || G.enemies.find(e => e.isMiniBoss);
+  if (activeBoss) {
+    const padding = 14;
+    const barW = W - padding * 2;
+    const barH = 16;
+    const barX = padding;
+    const barY = 6;
+    ctx.fillStyle = 'rgba(0,0,0,0.7)';
+    ctx.fillRect(barX, barY, barW, barH);
+    const pct = activeBoss.hp / activeBoss.maxHp;
+    ctx.fillStyle = activeBoss.isFinalBoss ? '#ffd700' : '#ff3d6b';
+    ctx.fillRect(barX, barY, barW * pct, barH);
+    // 边框
+    ctx.strokeStyle = activeBoss.isFinalBoss ? '#fff' : '#aaa';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(barX, barY, barW, barH);
+    // 标签 + 数字
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    const label = activeBoss.isFinalBoss ? 'FINAL BOSS' : '小 BOSS ' + activeBoss.isMiniBoss;
+    ctx.strokeStyle = '#000';
+    ctx.lineWidth = 3;
+    ctx.strokeText(`${label}  ${Math.round(activeBoss.hp)}/${activeBoss.maxHp}`, W/2, barY + barH/2);
+    ctx.fillText(`${label}  ${Math.round(activeBoss.hp)}/${activeBoss.maxHp}`, W/2, barY + barH/2);
+  }
+
+  // 飘字 (最上层)
+  drawFloatTexts();
+
+  // 调试: 通道分界线
+  ctx.strokeStyle = 'rgba(255,255,255,0.07)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(SPLIT_X, 0);
+  ctx.lineTo(SPLIT_X, H);
+  ctx.stroke();
+}
+
+function drawBackground() {
+  // 整屏夜空背景
+  ctx.fillStyle = '#05080a';
+  ctx.fillRect(0, 0, W, H);
+
+  // ==== 一点透视: 梯形地面 ====
+  // 底部 = 屏幕全宽 (近)
+  // 顶部 = 远端收窄到 PERSPECTIVE_SCALE_FAR (0.55)
+  const farScale = PERSPECTIVE_SCALE_FAR;
+  const horizonY = HORIZON_Y;                   // 地平线 (远端通道顶端)
+  const centerX = W / 2;
+  const farLeftEdge = centerX - (W/2) * farScale;
+  const farRightEdge = centerX + (W/2) * farScale;
+  const farSplit = centerX + (SPLIT_X - centerX) * farScale; // 远端分界点
+
+  // 左通道 - 梯形 - 暗紫
+  ctx.fillStyle = '#1a1320';
+  ctx.beginPath();
+  ctx.moveTo(0, H);              // 底左
+  ctx.lineTo(SPLIT_X, H);        // 底右 (分界)
+  ctx.lineTo(farSplit, horizonY); // 顶右
+  ctx.lineTo(farLeftEdge, horizonY); // 顶左
+  ctx.closePath();
+  ctx.fill();
+  // 边框
+  ctx.strokeStyle = 'rgba(120,90,150,0.25)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  // 右通道 - 梯形 - 深绿
+  ctx.fillStyle = '#0e1614';
+  ctx.beginPath();
+  ctx.moveTo(SPLIT_X, H);
+  ctx.lineTo(W, H);
+  ctx.lineTo(farRightEdge, horizonY);
+  ctx.lineTo(farSplit, horizonY);
+  ctx.closePath();
+  ctx.fill();
+  ctx.strokeStyle = 'rgba(90,150,140,0.25)';
+  ctx.stroke();
+
+  // 地平线远端 - 雾化
+  const gradient = ctx.createLinearGradient(0, horizonY, 0, horizonY + 100);
+  gradient.addColorStop(0, 'rgba(50,60,80,0.55)');
+  gradient.addColorStop(1, 'rgba(50,60,80,0)');
+  ctx.fillStyle = gradient;
+  ctx.fillRect(farLeftEdge - 10, horizonY, farRightEdge - farLeftEdge + 20, 100);
+
+  // 透视参考线 (横向 - 模拟地砖深度)
+  ctx.strokeStyle = 'rgba(120,150,140,0.08)';
+  ctx.lineWidth = 1;
+  for (let i = 0; i <= 8; i++) {
+    // 非线性: 越靠上越密
+    const t = i / 8;
+    const yLine = horizonY + (H - horizonY) * (t * t);
+    const scale = perspectiveScale(yLine);
+    const lineLeft = centerX - (W/2) * scale;
+    const lineRight = centerX + (W/2) * scale;
+    ctx.beginPath();
+    ctx.moveTo(lineLeft, yLine);
+    ctx.lineTo(lineRight, yLine);
+    ctx.stroke();
+  }
+
+  // 透视收窄竖线 - 左通道 2 条 + 右通道 3 条 (都汇向同一灭点)
+  ctx.strokeStyle = 'rgba(120,150,140,0.07)';
+  // 左通道 - 把底部均分 3 份, 各点连到地平线对应位置
+  for (let i = 1; i <= 2; i++) {
+    const baseX = i * SPLIT_X / 3;
+    const farX = centerX + (baseX - centerX) * farScale;
+    ctx.beginPath();
+    ctx.moveTo(baseX, H);
+    ctx.lineTo(farX, horizonY);
+    ctx.stroke();
+  }
+  // 右通道
+  for (let i = 1; i <= 3; i++) {
+    const baseX = SPLIT_X + i * (W - SPLIT_X) / 4;
+    const farX = centerX + (baseX - centerX) * farScale;
+    ctx.beginPath();
+    ctx.moveTo(baseX, H);
+    ctx.lineTo(farX, horizonY);
+    ctx.stroke();
+  }
+
+  // 中间分界透视线 - 加粗
+  ctx.strokeStyle = 'rgba(180,180,200,0.18)';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(SPLIT_X, H);
+  ctx.lineTo(farSplit, horizonY);
+  ctx.stroke();
+}
+
+// 一点透视: X 也要按透视收缩 — 输入实体的逻辑 X (底部坐标), 返回当前 y 的画面 X
+function perspectiveX(logicalX, y) {
+  const centerX = W / 2;
+  const scale = perspectiveScale(y);
+  return centerX + (logicalX - centerX) * scale;
+}
+
+function drawPlayer() {
+  const p = G.player;
+  const scale = perspectiveScale(p.y);
+  const w = p.w * scale;
+  const h = p.h * scale;
+  const px = perspectiveX(p.x, p.y);
+  // 白模: 圆角方块
+  ctx.fillStyle = '#e8e0d4';
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, px - w/2, p.y - h/2, w, h, 3, true, true);
+  // 标签
+  ctx.fillStyle = '#222';
+  ctx.font = '9px ui-monospace,Menlo,monospace';
+  ctx.textAlign = 'center';
+  ctx.fillText('主角', px, p.y + 3);
+}
+
+function drawNuo(n) {
+  const scale = perspectiveScale(n.y);
+  const w = n.w * scale;
+  const nx = perspectiveX(n.x, n.y);
+  ctx.fillStyle = n.isMirror ? '#ff88dd' : '#88c0d4';
+  ctx.strokeStyle = n.isMirror ? '#aa44aa' : '#5a8a9c';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.arc(nx, n.y, w/2, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#222';
+  ctx.font = '8px ui-sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText(n.isMirror ? 'M' : 'N', nx, n.y + 2);
+}
+
+function drawBullet(b) {
+  // PERF-01: viewport 裁切
+  if (b.y < -50 || b.y > H + 50 || b.x < -50 || b.x > W + 50) return;
+  const scale = perspectiveScale(b.y);
+  const w = b.w * scale;
+  const h = b.h * scale;
+  const bx = perspectiveX(b.x, b.y);
+  // 颜色按 owner
+  const colors = {
+    player: '#ffeb6e',
+    nuo: '#88c0d4',
+    mirror: '#ff88dd',
+  };
+  ctx.fillStyle = colors[b.owner] || '#fff';
+  if (b.crit) {
+    ctx.shadowColor = '#fff';
+    ctx.shadowBlur = 6;
+  }
+  ctx.fillRect(bx - w/2, b.y - h/2, w, h);
+  ctx.shadowBlur = 0;
+}
+
+function drawEnemy(e) {
+  // PERF-01: viewport 裁切
+  if (e.y < -80 || e.y > H + 80 || e.x < -100 || e.x > W + 100) return;
+  const scale = perspectiveScale(e.y);
+  const w = e.w * scale;
+  const h = e.h * scale;
+  const ex = perspectiveX(e.x, e.y);
+  // 闪白 (被击中后短暂变白)
+  const flashing = e.flashUntil > G.now;
+  // 冰冻 = 青蓝
+  const frozen = e.frozenUntil && G.now < e.frozenUntil;
+  ctx.fillStyle = flashing ? '#fff' : (frozen ? '#88e0ff' : e.color);
+  ctx.strokeStyle = frozen ? '#fff' : '#000';
+  ctx.lineWidth = 1.2;
+  // 简化外星生物 = 圆
+  ctx.beginPath();
+  ctx.arc(ex, e.y + e.h/2, w/2, 0, Math.PI*2);
+  ctx.fill();
+  ctx.stroke();
+  // 冰冻额外光圈
+  if (frozen) {
+    ctx.strokeStyle = 'rgba(150,220,255,0.7)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath();
+    ctx.arc(ex, e.y + e.h/2, w/2 + 4, 0, Math.PI*2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+  // hp 条 + 数字 (只对精英/mini/final boss 显示, 小兵不显示)
+  // 6/29 K 反馈: small 敌人血条隐藏, 画面干净点
+  if (e.type !== 'small') {
+    const hpPct = e.hp / e.maxHp;
+    const barW = Math.max(20, w);
+    const barH = 4;
+    const barY = e.y - 8;
+    ctx.fillStyle = 'rgba(0,0,0,0.6)';
+    ctx.fillRect(ex - barW/2, barY, barW, barH);
+    ctx.fillStyle = hpPct > 0.5 ? '#4dff9d' : hpPct > 0.25 ? '#ffaa44' : '#ff5544';
+    ctx.fillRect(ex - barW/2, barY, barW * hpPct, barH);
+    // hp 数字 - 头顶, 描边白填充
+    const hpText = Math.max(0, Math.round(e.hp));
+    const fontPx = Math.max(10, Math.round(14 * Math.max(0.6, scale)));
+    ctx.font = `bold ${fontPx}px ui-monospace,Menlo,monospace`;
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.strokeStyle = 'rgba(0,0,0,0.9)';
+    ctx.lineWidth = 3;
+    ctx.strokeText(hpText, ex, barY - 10);
+    ctx.fillStyle = '#fff';
+    ctx.fillText(hpText, ex, barY - 10);
+  }
+  // 攻击防线时震动效果
+  if (e.atDefense) {
+    ctx.strokeStyle = 'rgba(255,80,80,0.5)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.arc(ex, e.y + e.h/2, w/2 + 3 + Math.sin(G.now/100)*2, 0, Math.PI*2);
+    ctx.stroke();
+  }
+}
+
+function drawTreasure(t) {
+  // PERF-01: viewport 裁切
+  if (t.y < -50 || t.y > H + 50) return;
+  const scale = perspectiveScale(t.y);
+  const w = t.w * scale;
+  const h = t.h * scale;
+  const tx = perspectiveX(t.x, t.y);
+  const flashing = t.flashUntil > G.now;
+  const isDecoy = t.kind === 'decoy';
+  ctx.fillStyle = flashing ? '#fff' : t.color;
+  ctx.strokeStyle = isDecoy ? '#222' : '#000';
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, tx - w/2, t.y - h/2, w, h, 4, true, true);
+  // decoy 加 X 纹理 (画两条对角线 + 警示色边缘)
+  if (isDecoy) {
+    ctx.strokeStyle = 'rgba(180,180,180,0.5)';
+    ctx.lineWidth = 1.5;
+    ctx.beginPath();
+    ctx.moveTo(tx - w/2 + 8, t.y - h/2 + 6);
+    ctx.lineTo(tx + w/2 - 8, t.y + h/2 - 6);
+    ctx.moveTo(tx + w/2 - 8, t.y - h/2 + 6);
+    ctx.lineTo(tx - w/2 + 8, t.y + h/2 - 6);
+    ctx.stroke();
+  }
+  // 标签
+  ctx.fillStyle = flashing ? '#222' : (isDecoy ? '#aaa' : '#fff');
+  const labelPx = Math.max(9, Math.round(11 * scale));
+  ctx.font = `bold ${labelPx}px ui-monospace,Menlo,monospace`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(t.label || '', tx, t.y);
+  // hp 条 - 固定显示在宝箱下方
+  const hpPct = t.hp / t.maxHp;
+  const barW = w;
+  const barH = 5;
+  const barY = t.y + h/2 + 4;
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(tx - barW/2, barY, barW, barH);
+  ctx.fillStyle = isDecoy ? '#888' : (hpPct > 0.5 ? '#4dff9d' : hpPct > 0.25 ? '#ffaa44' : '#ff5544');
+  ctx.fillRect(tx - barW/2, barY, barW * hpPct, barH);
+  // hp 数字 - 血条下方
+  const hpText = Math.max(0, Math.round(t.hp)) + '/' + t.maxHp;
+  const fontPx = Math.max(10, Math.round(12 * Math.max(0.7, scale)));
+  ctx.font = `bold ${fontPx}px ui-monospace,Menlo,monospace`;
+  ctx.strokeStyle = 'rgba(0,0,0,0.9)';
+  ctx.lineWidth = 3;
+  ctx.strokeText(hpText, tx, barY + barH + 9);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(hpText, tx, barY + barH + 9);
+}
+
+function drawObstacle(o) {
+  const scale = perspectiveScale(o.y);
+  const w = o.w * scale;
+  const h = o.h * scale;
+  const ox = perspectiveX(o.x, o.y);
+  const flashing = o.flashUntil > G.now;
+  ctx.fillStyle = flashing ? '#fff' : o.color;
+  ctx.strokeStyle = '#000';
+  ctx.lineWidth = 1.5;
+  roundRect(ctx, ox - w/2, o.y - h/2, w, h, 3, true, true);
+  // 斜线纹理表示障碍
+  ctx.strokeStyle = '#888';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  for (let i = -w; i < w; i += 6) {
+    ctx.moveTo(ox + i - h/2, o.y + h/2);
+    ctx.lineTo(ox + i + h/2, o.y - h/2);
+  }
+  ctx.stroke();
+  // 标签
+  ctx.fillStyle = flashing ? '#222' : '#fff';
+  ctx.font = `bold ${Math.max(8, Math.round(10*scale))}px ui-sans-serif`;
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('障碍', ox, o.y);
+  // hp 数字 + 条
+  const hpPct = o.hp / o.maxHp;
+  const barW = w;
+  const barH = 4;
+  const barY = o.y + h/2 + 3;
+  ctx.fillStyle = 'rgba(0,0,0,0.6)';
+  ctx.fillRect(ox - barW/2, barY, barW, barH);
+  ctx.fillStyle = '#aaa';
+  ctx.fillRect(ox - barW/2, barY, barW * hpPct, barH);
+  const hpText = Math.max(0, Math.round(o.hp));
+  ctx.font = `bold ${Math.max(9, Math.round(11*scale))}px ui-monospace,Menlo,monospace`;
+  ctx.strokeStyle = 'rgba(0,0,0,0.9)';
+  ctx.lineWidth = 2;
+  ctx.strokeText(hpText, ox, barY + barH + 8);
+  ctx.fillStyle = '#fff';
+  ctx.fillText(hpText, ox, barY + barH + 8);
+}
+
+function drawStateGate(g) {
+  // 颜色按 state
+  let fillColor, strokeColor;
+  if (g.released) {
+    fillColor = 'rgba(46,107,58,0.25)';
+    strokeColor = '#4dff9d';
+  } else if (g.state === 'debuff') {
+    fillColor = 'rgba(184,69,30,0.35)';
+    strokeColor = '#b8451e';
+  } else if (g.state === 'buff') {
+    fillColor = 'rgba(46,107,58,0.35)';
+    strokeColor = '#2e6b3a';
+  } else {
+    fillColor = 'rgba(120,120,120,0.3)';
+    strokeColor = '#888';
+  }
+  ctx.fillStyle = fillColor;
+  ctx.strokeStyle = strokeColor;
+  ctx.lineWidth = g.released ? 2 : 2.5;
+  ctx.setLineDash(g.released ? [4, 3] : []);
+  ctx.fillRect(g.x - g.w/2, g.y - g.h/2, g.w, g.h);
+  ctx.strokeRect(g.x - g.w/2, g.y - g.h/2, g.w, g.h);
+  ctx.setLineDash([]);
+
+  // 数值文字
+  const v = g.value;
+  const dim = g.dim;
+  let display;
+  if (dim.unit === '%') display = `${(v*100).toFixed(0)}%`;
+  else if (dim.unit === 'x') display = `${v >= 0 ? '+' : ''}${v.toFixed(2)}x`;
+  else if (dim.unit === 'ms') display = `${v >= 0 ? '+' : ''}${(v/1000).toFixed(1)}s`;
+  else display = `${v >= 0 ? '+' : ''}${v.toFixed(1)}`;
+
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(`${dim.label}`, g.x, g.y - 4);
+  ctx.font = 'bold 13px ui-monospace,Menlo,monospace';
+  ctx.fillText(display, g.x, g.y + 9);
+
+  // 释放标志
+  if (g.released) {
+    ctx.fillStyle = '#4dff9d';
+    ctx.font = 'bold 9px ui-monospace';
+    ctx.fillText('★ MAX', g.x + g.w/2 - 22, g.y - g.h/2 + 8);
+  }
+}
+
+// 圆角矩形
+function roundRect(ctx, x, y, w, h, r, fill, stroke) {
+  ctx.beginPath();
+  ctx.moveTo(x + r, y);
+  ctx.arcTo(x + w, y, x + w, y + h, r);
+  ctx.arcTo(x + w, y + h, x, y + h, r);
+  ctx.arcTo(x, y + h, x, y, r);
+  ctx.arcTo(x, y, x + w, y, r);
+  ctx.closePath();
+  if (fill) ctx.fill();
+  if (stroke) ctx.stroke();
+}
+
+// ============================================================
+// 主循环
+// ============================================================
+function loop(ts) {
+  if (!G.running) return;
+  if (G.paused || G.gameOver) {
+    requestAnimationFrame(loop);
+    return;
+  }
+  if (!G.lastFrame) G.lastFrame = ts;
+  const dt = Math.min(0.05, (ts - G.lastFrame) / 1000);
+  G.lastFrame = ts;
+
+  // 时间显示
+  G.now = nowMs();
+  const elapsed = (G.now - G.startTime) / 1000;
+  const m = Math.floor(elapsed / 60).toString().padStart(2,'0');
+  const s = Math.floor(elapsed % 60).toString().padStart(2,'0');
+  document.getElementById('hud-time').textContent = `${m}:${s}`;
+
+  // PERF-01: FPS 计数 (HUD 角落显示, 用于性能诊断)
+  G._fpsFrames = (G._fpsFrames || 0) + 1;
+  G._fpsLastSec = G._fpsLastSec || G.now;
+  if (G.now - G._fpsLastSec >= 1000) {
+    const fpsEl = document.getElementById('hud-fps');
+    if (fpsEl) {
+      fpsEl.textContent = G._fpsFrames + ' FPS';
+      fpsEl.style.color = G._fpsFrames >= 55 ? '#44dd99' : G._fpsFrames >= 40 ? '#ffaa44' : '#ff5544';
+    }
+    G._fpsFrames = 0;
+    G._fpsLastSec = G.now;
+  }
+
+  update(dt);
+  draw();
+  requestAnimationFrame(loop);
+}
+
+// ============================================================
+// 输入
+// ============================================================
+function setupInput() {
+  const stage = document.getElementById('stage');
+
+  function localX(clientX) {
+    const r = cv.getBoundingClientRect();
+    const scaleX = cv.width / r.width;
+    return (clientX - r.left) * scaleX;
+  }
+
+  // mouse
+  cv.addEventListener('mousedown', e => {
+    G.pointerDown = true;
+    G.pointerX = localX(e.clientX);
+  });
+  window.addEventListener('mousemove', e => {
+    if (G.pointerDown) G.pointerX = localX(e.clientX);
+  });
+  window.addEventListener('mouseup', () => {
+    G.pointerDown = false;
+    G.pointerX = null;
+  });
+
+  // touch
+  cv.addEventListener('touchstart', e => {
+    e.preventDefault();
+    G.pointerDown = true;
+    G.pointerX = localX(e.touches[0].clientX);
+  }, {passive: false});
+  cv.addEventListener('touchmove', e => {
+    e.preventDefault();
+    G.pointerX = localX(e.touches[0].clientX);
+  }, {passive: false});
+  cv.addEventListener('touchend', () => {
+    G.pointerDown = false;
+    G.pointerX = null;
+  });
+
+  // 键盘
+  document.addEventListener('keydown', e => {
+    if (e.key === 'p' || e.key === 'P') togglePause();
+    if (e.key === 'r' || e.key === 'R') reset();
+    if (e.key === 'm' || e.key === 'M') SFX.toggle();
+  });
+
+  // 按钮
+  document.getElementById('pauseBtn').addEventListener('click', togglePause);
+  document.getElementById('resetBtn').addEventListener('click', reset);
+  document.getElementById('muteBtn').addEventListener('click', () => SFX.toggle());
+  document.getElementById('startBtn').addEventListener('click', startGame);
+  document.getElementById('reviveBtn').addEventListener('click', reviveWithAd);
+  document.getElementById('retryBtn').addEventListener('click', () => {
+    document.getElementById('gameOverPanel').style.display = 'none';
+    reset();
+    startGame();
+  });
+
+  // tweaks
+  const twBtn = document.getElementById('tweaksBtn');
+  const twPanel = document.getElementById('tweaks');
+  twBtn.addEventListener('click', () => twPanel.classList.toggle('show'));
+  document.getElementById('tw-diff').addEventListener('input', e => G.diffMult = parseFloat(e.target.value));
+  document.getElementById('tw-gate').addEventListener('input', e => G.gateInterval = parseFloat(e.target.value));
+  document.getElementById('tw-enemy').addEventListener('input', e => G.enemyMult = parseFloat(e.target.value));
+  document.getElementById('tw-mirror').addEventListener('click', () => {
+    if (!G.hasMirror) {
+      G.nuos.push(createNuo(-18, true));
+      G.hasMirror = true;
+      document.getElementById('nuo-mirror-tag').style.display = 'inline';
+      showBuffToast('镜像 NUO ×2!', true);
+    }
+  });
+  document.getElementById('tw-clear').addEventListener('click', () => {
+    G.enemies = [];
+  });
+}
+
+function togglePause() {
+  if (!G.running || G.gameOver) return;
+  G.paused = !G.paused;
+  if (G.paused) {
+    G.pausedAt = performance.now();
+  } else {
+    G.pauseAccum += performance.now() - G.pausedAt;
+  }
+  document.getElementById('pauseBtn').textContent = G.paused ? '▶' : '⏸';
+}
+
+function reset() {
+  G.player = createPlayer();
+  G.nuoStats = createNuoStats();
+  G.nuos = [createNuo(18, false)];
+  G.hasMirror = false;
+  // 配件累积状态
+  G.perks = {};
+  G.perkUnlockedIdx = 0;
+  G.pendingPerkIdx = 0;
+  G.lastTreasureKind = null;       // 强制空宝箱穿插
+  G.treasureSlotIdx = 0;           // 全局宝箱出场计数, 用于 slot HP 倍率
+  G.repeatBuffCount = 0;           // repeat buff 已发数, 用于 HP 递增
+  G.playerAtkMult = 1;
+  G.playerAtkBonus = 0;
+  G.playerCritBonus = 0;
+  G.multiShot = 1;
+  G.multiShotNextAt = 0;
+  G.fireRateTickAt = 0;
+  G.fireRateBaseInterval = CFG.player.bulletInterval;
+  G.atkUpTickAt = 0;
+  G.laserNextAt = 0;
+  G.laserVisuals = [];
+  G.explosions = [];
+  G.ultNextAt = 0;
+  G.ultFlashUntil = 0;
+  G.enemies = [];
+  G.bullets = [];
+  G.treasures = [];
+  G.obstacles = [];     // 保留空数组防止 legacy 引用报错, 不再 spawn 任何东西进去
+  G.floatTexts = [];
+  G.stateGate = null;       // legacy 兼容字段, 不再使用
+  G.stateGates = [];        // 新: array, 同屏多门
+  G.defenseHP = CFG.defense.maxHP;
+  G.defenseMax = CFG.defense.maxHP;
+  G.kills = 0;
+  G.eliteKilled = 0;
+  G.miniBossKilled = 0;
+  G.victory = false;
+  G._eliteInjected = new Set();   // phase 一次性事件去重
+  G._bossSpawned = new Set();
+  G.pauseAccum = 0;
+  G.lastFrame = 0;
+  G.startTime = performance.now();
+  G.now = G.startTime;
+  G.nextGateAt = G.startTime + 3000;
+  G.nextEnemyAt = G.startTime + 1500;
+  G.nextTreasureAt = G.startTime + 4500;  // 开局已有 5 个, 4.5s 后才补
+  G.nextObstacleAt = G.startTime + 5000;
+  G.gameOver = false;
+  G.revivesUsed = 0;
+  G.paused = false;
+  CFG.player.bulletInterval = 280; // 重置主角武器
+  document.getElementById('hud-kills').textContent = '0';
+  document.getElementById('hud-time').textContent = '00:00';
+  document.getElementById('nuo-mirror-tag').style.display = 'none';
+  document.getElementById('pauseBtn').textContent = '⏸';
+  document.getElementById('defense').classList.remove('line-warning');
+
+  // 开局排满宝箱
+  for (let i = 0; i < CFG.treasure.initCount; i++) {
+    const t = createTreasure();
+    t.col = 0;
+    t.x = treasureColX(0);
+    G.treasures.push(t);
+  }
+  reflowTreasures();
+  // 直接把 y = targetY (不要从屏幕顶部下落, 开局就是排好的)
+  G.treasures.forEach(t => { t.y = t.targetY; });
+
+  updateNuoUI();
+  updateDefenseBar();
+}
+
+function startGame() {
+  document.getElementById('startPanel').style.display = 'none';
+  reset();
+  G.running = true;
+  G.startTime = performance.now();
+  G.pauseAccum = 0;
+  G.lastFrame = 0;
+  requestAnimationFrame(loop);
+}
+
+// T06 IAA 钩子: 看广告复活 (mock 版, 真接入时换 wx.createRewardedVideoAd)
+function reviveWithAd() {
+  const MAX_REVIVES = 3;
+  if ((G.revivesUsed || 0) >= MAX_REVIVES) return;  // 双重保险
+  const btn = document.getElementById('reviveBtn');
+  if (!btn) return;
+  btn.classList.add('loading');
+  btn.textContent = '广告播放中';
+  setTimeout(() => {
+    G.revivesUsed = (G.revivesUsed || 0) + 1;
+    G.gameOver = false;
+    G.defenseHP = Math.floor(G.defenseMax * 0.5);
+    // 反推 5 秒: 给敌人贴 rewindUntil. 移动逻辑按 speed 倒走, 期间脱离防线攻击范围
+    // 终极冻结对反推中敌人也照常生效 (frozenUntil 优先于 rewindUntil)
+    const REWIND_MS = 10000;
+    const rewindEnd = G.now + REWIND_MS;
+    G.spawnFreezeUntil = rewindEnd;  // 反推期不刷新新敌人
+    for (const e of G.enemies) {
+      e.rewindUntil = rewindEnd;
+      if (e.atDefense) e.atDefense = false;
+    }
+    G.bullets = [];
+    const defBarEl = document.getElementById('def-bar');
+    if (defBarEl) defBarEl.style.width = (G.defenseHP / G.defenseMax * 100) + '%';
+    document.getElementById('gameOverPanel').style.display = 'none';
+    btn.classList.remove('loading');
+    const remaining = MAX_REVIVES - G.revivesUsed;
+    floatText(W/2, H/2, remaining > 0 ? `继续战斗 · 剩 ${remaining} 次复活` : '继续战斗 · 最后一次', '#44dd99', true);
+  }, 1500);
+}
+
+function triggerGameOver(isVictory) {
+  G.gameOver = true;
+  const elapsed = (G.now - G.startTime) / 1000;
+  const m = Math.floor(elapsed / 60).toString().padStart(2,'0');
+  const s = Math.floor(elapsed % 60).toString().padStart(2,'0');
+  // T07: 最高分 - mobile 单关卡, 用统一 key
+  const highKey = 'highScore.mobile';
+  const prevHigh = Storage.get(highKey, 0);
+  const isNewHigh = G.kills > prevHigh;
+  if (isNewHigh) Storage.set(highKey, G.kills);
+  const displayHigh = Math.max(prevHigh, G.kills);
+  // 新纪录独立横幅着重展示, 没破就在 go-sub 末尾追加"最高 N"
+  const newRecordEl = document.getElementById('go-newrecord');
+  const newRecordValEl = document.getElementById('go-newrecord-value');
+  if (isNewHigh) {
+    if (newRecordEl) {
+      newRecordEl.style.display = 'block';
+      newRecordEl.style.animation = 'none';
+      void newRecordEl.offsetWidth;
+      newRecordEl.style.animation = '';
+    }
+    if (newRecordValEl) newRecordValEl.textContent = '击破 ' + G.kills;
+    SFX.play('boss_alert');
+  } else {
+    if (newRecordEl) newRecordEl.style.display = 'none';
+  }
+  const highSuffix = isNewHigh ? '' : ` · 最高 ${displayHigh}`;
+  if (isVictory) {
+    const titleEl = document.getElementById('go-title');
+    if (titleEl) titleEl.textContent = '通关!';
+    document.getElementById('go-sub').textContent = `CLEARED ${m}:${s} · KILLS ${G.kills} · ELITE ${G.eliteKilled}/6 · BOSS ${G.miniBossKilled}/3+1${highSuffix}`;
+    document.getElementById('go-desc').textContent = '';
+    // T06: 胜利时隐藏复活按钮
+    const reviveBtnWin = document.getElementById('reviveBtn');
+    if (reviveBtnWin) reviveBtnWin.style.display = 'none';
+  } else {
+    const titleEl = document.getElementById('go-title');
+    if (titleEl) titleEl.textContent = 'GAME OVER';
+    document.getElementById('go-sub').textContent = `SURVIVED ${m}:${s} · KILLS ${G.kills} · ELITE ${G.eliteKilled}/6 · BOSS ${G.miniBossKilled}/3${highSuffix}`;
+    const taunts = ['外星人请客了', '守不住了吧', '再来一局?', '防线呢防线呢', 'NUO 哭了'];
+    document.getElementById('go-desc').textContent = pick(taunts);
+    // T06: 失败时显示复活按钮 (按剩余次数控制)
+    const reviveBtn = document.getElementById('reviveBtn');
+    const remaining = 3 - (G.revivesUsed || 0);
+    if (reviveBtn) {
+      reviveBtn.style.display = remaining > 0 ? '' : 'none';
+      reviveBtn.textContent = remaining > 0 ? `📺 看广告复活 (剩 ${remaining} 次)` : '📺 复活次数已用完';
+      reviveBtn.classList.remove('loading');
+      reviveBtn.disabled = remaining <= 0;
+    }
+  }
+  document.getElementById('gameOverPanel').style.display = 'flex';
+}
+
+// ============================================================
+// 启动
+// ============================================================
+// T09: 新手引导浮层控制
+function setupOnboard() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('onboard') === 'reset') {
+    Storage.remove('onboarded');
+  }
+  const panel = document.getElementById('onboardPanel');
+  if (!panel) return;
+  if (Storage.get('onboarded', false)) return;
+  panel.style.display = 'flex';
+  let currentPage = 0;
+  const totalPages = 3;
+  const pages = document.querySelectorAll('.onboard-page');
+  const dots = document.querySelectorAll('.onboard-dot');
+  const nextBtn = document.getElementById('onboardNextBtn');
+  const skipBtn = document.getElementById('onboardSkipBtn');
+  function gotoPage(idx) {
+    currentPage = idx;
+    pages.forEach((p, i) => p.classList.toggle('active', i === idx));
+    dots.forEach((d, i) => d.classList.toggle('active', i === idx));
+    nextBtn.textContent = idx === totalPages - 1 ? '开始游戏' : '下一页 →';
+  }
+  function finish() {
+    Storage.set('onboarded', true);
+    panel.style.display = 'none';
+  }
+  nextBtn.addEventListener('click', () => {
+    if (currentPage < totalPages - 1) gotoPage(currentPage + 1);
+    else finish();
+  });
+  skipBtn.addEventListener('click', finish);
+}
+
+window.addEventListener('load', () => {
+  SFX.init();
+  setupInput();
+  reset();
+  // 在 start panel 上先渲染一帧背景
+  draw();
+  setupOnboard();
+});
+
+
+
+// ==== Mobile-specific: 适配 viewport ====
+function fitMobileCanvas() {
+  const cv = document.getElementById('game');
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const targetRatio = 414 / 736;
+  const vRatio = vw / vh;
+  let cssW, cssH;
+  if (vRatio > targetRatio) { cssH = vh; cssW = vh * targetRatio; }
+  else { cssW = vw; cssH = vw / targetRatio; }
+  cv.style.width = cssW + 'px';
+  cv.style.height = cssH + 'px';
+  cv.style.left = ((vw - cssW) / 2) + 'px';
+  cv.style.top = ((vh - cssH) / 2) + 'px';
+}
+window.addEventListener('load', fitMobileCanvas);
+window.addEventListener('resize', fitMobileCanvas);
+window.addEventListener('orientationchange', fitMobileCanvas);
+</script>
+</body>
+</html>
