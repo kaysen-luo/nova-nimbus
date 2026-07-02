@@ -120,6 +120,14 @@ html,body{
 #reviveBtn.loading{background:#666 !important;cursor:wait;pointer-events:none}
 #reviveBtn.loading::after{content:'';display:inline-block;width:14px;height:14px;margin-left:8px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;vertical-align:middle}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* v3.1 预体验战术警告条脉动 */
+@keyframes previewWarnPulse{
+  0%,100%{box-shadow:0 0 32px rgba(184,84,120,0.5)}
+  50%{box-shadow:0 0 48px rgba(184,84,120,0.85)}
+}
+/* v3.1 主菜单锁定态 */
+.mode-btn.locked{opacity:0.4;cursor:not-allowed;position:relative;filter:grayscale(0.6)}
+.mode-btn.locked::after{content:'🔒 需先通关预体验';position:absolute;right:12px;top:50%;transform:translateY(-50%);font-size:9px;color:#aaa;background:rgba(0,0,0,0.5);padding:2px 8px;border-radius:8px;letter-spacing:0.5px}
 
 /* 全屏面板 (start / game over) */
 .panel{
@@ -425,14 +433,12 @@ html,body{
     </div>
   </div>
 
-  <!-- ============ 预体验关卡战术警告 (10s 静默期) ============ -->
-  <div class="panel" id="previewIntroPanel" style="display:none;background:rgba(0,0,0,0.4)">
-    <div id="previewWarningBox" style="max-width:280px;padding:24px 28px;background:rgba(20,10,15,0.92);border:2px solid #b85478;border-radius:14px;text-align:center;box-shadow:0 0 40px rgba(184,84,120,0.4);font-family:ui-monospace,Menlo,monospace;line-height:2">
-      <div style="font-size:14px;color:#ff8ba8;letter-spacing:2px;margin-bottom:12px">⚠️ 战术警告</div>
-      <div style="font-size:13px;color:#ddd;margin-bottom:4px">检测到大规模敌军集群</div>
-      <div style="font-size:13px;color:#ddd;margin-bottom:12px">全部火力单元已激活</div>
-      <div style="font-size:20px;color:#b85478;font-weight:700"><span id="previewCountdown">10</span> 秒后开火</div>
-    </div>
+  <!-- ============ 预体验关卡战术警告 (5s 后浮现的非阻塞顶部提示条) ============ -->
+  <div id="previewWarningBar" style="display:none;position:absolute;top:56px;left:50%;transform:translateX(-50%);z-index:15;pointer-events:none;padding:12px 20px;background:rgba(20,10,15,0.88);border:2px solid #b85478;border-radius:12px;box-shadow:0 0 32px rgba(184,84,120,0.5);font-family:ui-monospace,Menlo,monospace;line-height:1.9;text-align:center;min-width:220px;animation:previewWarnPulse 1s ease-in-out infinite">
+    <div style="font-size:12px;color:#ff8ba8;letter-spacing:2px;margin-bottom:4px">⚠️ 战术警告</div>
+    <div style="font-size:11.5px;color:#ddd">检测到大规模敌军集群</div>
+    <div style="font-size:11.5px;color:#ddd">全部火力单元已激活</div>
+    <div style="font-size:16px;color:#b85478;font-weight:700;margin-top:4px"><span id="previewCountdown">5</span> 秒后开火</div>
   </div>
 
   <!-- ============ 预体验通关衔接过场 (Preview → Normal 剧情) ============ -->
@@ -1173,8 +1179,10 @@ function update(dt) {
 // 射击
 // ============================================================
 function shootLoop() {
+  // v3.1: 预体验静默期, 主角+NUO 都不开火 (通过 G.playerSilenceUntil 控制)
+  const playerSilenced = G.playerSilenceUntil && G.now < G.playerSilenceUntil;
   // 主角射击 - 多弹道 + 暴击 + atkMult + atkBonus
-  if (G.now - G.player.lastShot >= CFG.player.bulletInterval) {
+  if (!playerSilenced && G.now - G.player.lastShot >= CFG.player.bulletInterval) {
     const baseAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
     const bltCount = Math.max(1, Math.round(G.multiShot || 1));
     const spread = 10;
@@ -1683,6 +1691,8 @@ function spawnFormation(name) {
 }
 
 function spawnEnemies() {
+  // v3.1: 预体验模式使用预排列队, 不走 PHASES 时序 spawn
+  if (V31 && V31.mode === 'preview') return;
   // 复活反推期: 不刷新新敌人
   if (G.spawnFreezeUntil && G.now < G.spawnFreezeUntil) return;
   const elapsed = (G.now - G.startTime) / 1000;
@@ -2819,7 +2829,7 @@ const V31 = {
 function showMenu() {
   document.getElementById('startPanel').style.display = 'flex';
   document.getElementById('gameOverPanel').style.display = 'none';
-  document.getElementById('previewIntroPanel').style.display = 'none';
+  document.getElementById('previewWarningBar').style.display = 'none';
   document.getElementById('previewOutroPanel').style.display = 'none';
   document.getElementById('leaderboardPanel').style.display = 'none';
   document.getElementById('hud-mode-badge').style.display = 'none';
@@ -2827,8 +2837,23 @@ function showMenu() {
   document.getElementById('hud-score-row').style.display = 'none';
   // 停止 loop
   G.running = false;
+  refreshMenuLockState();  // 刷新 btnNormal/btnEndless 锁化态
   reset();
   draw();
+}
+
+// v3.1: 主菜单锁化 - 未通关预体验时, btnNormal + btnEndless 灰化 + 锁标签
+function refreshMenuLockState() {
+  const cleared = localStorage.getItem('previewCleared') === '1';
+  const btnNormal = document.getElementById('btnNormal');
+  const btnEndless = document.getElementById('btnEndless');
+  if (cleared) {
+    btnNormal.classList.remove('locked');
+    btnEndless.classList.remove('locked');
+  } else {
+    btnNormal.classList.add('locked');
+    btnEndless.classList.add('locked');
+  }
 }
 
 function setModeBadge(mode) {
@@ -2848,53 +2873,89 @@ function setModeBadge(mode) {
   }
 }
 
-// ---- 预体验关卡: 10s 静默 + 60s 战斗 · 火力 2× · 反弹护盾 ----
+// ---- 预体验关卡: 一键进入, 静默期直接可见游戏画面 (不遮罩) ----
+// 时序:  0s 进入 → 敌人列队+主角+NUO 全部 silent → 5s 顶部弹提示条 → 10s 提示条消失, 全体解封 → 120s 战斗
+// 通关条件: 击杀最后一只小 Boss (不是计时到)
 function startPreview() {
   V31.mode = 'preview';
   document.getElementById('startPanel').style.display = 'none';
-  document.getElementById('previewIntroPanel').style.display = 'flex';
+  document.getElementById('previewWarningBar').style.display = 'none';
 
-  // 10s 倒计时
-  const countdownEl = document.getElementById('previewCountdown');
-  let remaining = 10;
-  countdownEl.textContent = remaining;
-  const timerId = setInterval(() => {
-    remaining--;
-    countdownEl.textContent = remaining;
-    if (remaining <= 0) {
-      clearInterval(timerId);
-      document.getElementById('previewIntroPanel').style.display = 'none';
-      _actuallyStartPreviewCombat();
-    }
-  }, 1000);
-}
-
-function _actuallyStartPreviewCombat() {
   reset();
   setModeBadge('preview');
   document.getElementById('hud-wave-row').style.display = 'none';
   document.getElementById('hud-score-row').style.display = 'none';
 
   // === 预体验独有火力配置 (spec §07.5.4 定稿) ===
-  // 主角: 2× 射速 + 双弹道
-  CFG.player.bulletInterval = Math.floor(V31._origPlayerInterval / 2);
-  G.multiShot = 2;
-  // NUO: 2× 射速 + 双弹道 (改 G.nuoStats, 不污染 CFG.nuo.base)
-  G.nuoStats.spd = 2.0;
-  G.nuoStats.blt = 2;
-  // 显式声明: 无穿透、无 AoE (老 demo 默认就是, 不装 explosive/pierce perk 即可)
-  G.perks = {};  // 清空所有 perk, 保证纯净基础武器
+  CFG.player.bulletInterval = Math.floor(V31._origPlayerInterval / 2);  // 主角 2× 射速
+  G.multiShot = 2;                                                        // 主角双弹道
+  G.nuoStats.spd = 2.0;                                                   // NUO 2× 射速
+  G.nuoStats.blt = 2;                                                     // NUO 双弹道
+  G.perks = {};                                                            // 清 perk (无穿透/无 AoE)
 
-  // 反弹护盾 (v3.1 独有, 预留字段供后续挂接)
+  // === 时序状态 ===
+  const now = performance.now();
+  V31.previewStartAt = now;
+  V31.previewSilenceUntil = now + 10000;    // 10s 静默期
+  V31.previewWarnAt = now + 5000;           // 5s 后弹提示
+  V31.previewCombatUntil = now + 130000;    // 10s 静默 + 120s 战斗兜底 (真正通关看 boss)
+  V31.previewBossKilled = false;
+  V31.previewWarnShown = false;
+
+  // === 静默期: 冻结主角火力 + 冻结敌人 ===
+  G.playerSilenceUntil = V31.previewSilenceUntil;
+  G.nuoStats.silenceUntil = V31.previewSilenceUntil;
+
+  // === 敌人列队 (spec §07.5.5 四段节奏, 预排在右通道等待) ===
+  // 结构: 前排小兵方阵 (20 只) + 中排精英 (3 只) + 后排小 Boss (1 只)
+  spawnPreviewFormation();
+
+  // === 反弹护盾 ===
   V31.previewShieldHP = V31.previewShieldMax;
-  V31.previewCombatUntil = performance.now() + 60000;  // 60s 战斗
 
-  updateNuoUI();  // 刷新 NUO 属性面板显示新 stats
+  updateNuoUI();
   G.running = true;
-  G.startTime = performance.now();
+  G.startTime = now;
   G.pauseAccum = 0;
   G.lastFrame = 0;
   requestAnimationFrame(loop);
+}
+
+// 预体验列队 spawn: 敌人已在右通道排队等推进
+function spawnPreviewFormation() {
+  // 全部敌人冻结, 静默期结束才解封 (通过 e.frozenUntil)
+  const silentUntil = V31.previewSilenceUntil;
+
+  // 计算列队坐标 (从右通道顶部往下排, 3 lane × 多排)
+  // 后排先 spawn (Boss 最深处), 前排后 spawn (小兵在最前面接触)
+  const enemyLayout = [
+    // 最后排: 小 Boss (中 lane)
+    { type: 'miniA', lane: 1, yOffset: 0 },
+    // 中排: 3 只精英分 3 lane
+    { type: 'elite', lane: 0, yOffset: 60 },
+    { type: 'elite', lane: 1, yOffset: 60 },
+    { type: 'elite', lane: 2, yOffset: 60 },
+    // 前排: 小兵方阵 4 排 × 3 lane = 12 只
+    { type: 'small', lane: 0, yOffset: 110 }, { type: 'small', lane: 1, yOffset: 110 }, { type: 'small', lane: 2, yOffset: 110 },
+    { type: 'small', lane: 0, yOffset: 140 }, { type: 'small', lane: 1, yOffset: 140 }, { type: 'small', lane: 2, yOffset: 140 },
+    { type: 'small', lane: 0, yOffset: 170 }, { type: 'small', lane: 1, yOffset: 170 }, { type: 'small', lane: 2, yOffset: 170 },
+    { type: 'small', lane: 0, yOffset: 200 }, { type: 'small', lane: 1, yOffset: 200 }, { type: 'small', lane: 2, yOffset: 200 },
+  ];
+
+  enemyLayout.forEach(spec => {
+    const tcfg = CFG.enemy.types[spec.type];
+    if (!tcfg) return;
+    let x = rightLaneX(spec.lane);
+    x = clamp(x, TRACK_R_LEFT + tcfg.w/2, TRACK_R_RIGHT - tcfg.w/2);
+    // 列队位置: HORIZON_Y + 5 是"敌人生成的地平线", 加 yOffset 让敌人已经推进了一段
+    // 前排小兵最接近防线, 后排 Boss 最远
+    const y = HORIZON_Y + 5 + spec.yOffset;
+    const e = createEnemy(spec.type, x, y);
+    if (e) {
+      e.frozenUntil = silentUntil;  // 静默期冻结: 不推进不攻击 (updateEnemies L1736)
+      G.enemies.push(e);
+    }
+  });
 }
 
 // 预体验通关衔接过场
@@ -2905,6 +2966,11 @@ function showPreviewOutro() {
 
 // ---- 正式关卡: 完全复用老 demo 玩法 ----
 function startNormal() {
+  // 未通关预体验 → 拦截
+  if (localStorage.getItem('previewCleared') !== '1') {
+    floatText(W/2, H/2, '需先通关预体验', '#ff8ba8', true);
+    return;
+  }
   V31.mode = 'normal';
   document.getElementById('startPanel').style.display = 'none';
   setModeBadge('normal');  // 会隐藏
@@ -2912,11 +2978,17 @@ function startNormal() {
   document.getElementById('hud-score-row').style.display = 'none';
   // 还原基线 (预体验模式可能改过 CFG.player.bulletInterval)
   CFG.player.bulletInterval = V31._origPlayerInterval;
+  G.playerSilenceUntil = 0;
   startGame();  // 走老 demo 原生流程 (reset 内部会重置 G.nuoStats/G.multiShot)
 }
 
 // ---- 无尽模式: wave 递增 · 分数公式 · top10 ----
 function startEndless() {
+  // 未通关预体验 → 拦截
+  if (localStorage.getItem('previewCleared') !== '1') {
+    floatText(W/2, H/2, '需先通关预体验', '#ff8ba8', true);
+    return;
+  }
   V31.mode = 'endless';
   document.getElementById('startPanel').style.display = 'none';
   setModeBadge('endless');
@@ -2924,6 +2996,7 @@ function startEndless() {
   document.getElementById('hud-score-row').style.display = 'block';
   // 还原基线
   CFG.player.bulletInterval = V31._origPlayerInterval;
+  G.playerSilenceUntil = 0;
 
   reset();
   V31.endlessWaveIdx = 1;
@@ -2963,15 +3036,47 @@ function endlessTick(now) {
   G._endlessSurvived = survivedSec;
 }
 
-// 挂到主 loop: patch loop 函数, 加 endlessTick
+// 挂到主 loop: patch loop 函数, 加 endlessTick 和预体验时序控制
 const _origLoop = loop;
 loop = function(t) {
   if (V31.mode === 'endless' && G.running && !G.paused && !G.gameOver) {
     endlessTick(t);
   }
-  // 预体验战斗期到时判定胜利
-  if (V31.mode === 'preview' && G.running && !G.gameOver && t >= V31.previewCombatUntil) {
-    triggerGameOver(true);
+  // === 预体验时序控制 ===
+  if (V31.mode === 'preview' && G.running && !G.gameOver) {
+    // 5s 弹提示条 (仅一次)
+    if (!V31.previewWarnShown && t >= V31.previewWarnAt) {
+      V31.previewWarnShown = true;
+      document.getElementById('previewWarningBar').style.display = 'block';
+      // 5s 倒计时: 从 5 数到 0
+      const cdEl = document.getElementById('previewCountdown');
+      cdEl.textContent = '5';
+      let remaining = 5;
+      const timerId = setInterval(() => {
+        remaining--;
+        if (remaining <= 0) {
+          clearInterval(timerId);
+          document.getElementById('previewWarningBar').style.display = 'none';
+        } else {
+          cdEl.textContent = remaining;
+        }
+      }, 1000);
+    }
+    // 通关判定: 打死最后一只小 Boss (或所有敌人清完)
+    // 注意: 老 demo damageEnemy 里 boss 死会 G.miniBossKilled++, 但我们只 spawn 1 只 miniA, 所以 >= 1 即通关
+    if (!V31.previewBossKilled && G.miniBossKilled >= 1) {
+      V31.previewBossKilled = true;
+      // 标记已通关
+      localStorage.setItem('previewCleared', '1');
+      // 延迟 800ms 触发结算 (给最后爆炸特效时间)
+      setTimeout(() => {
+        if (!G.gameOver) triggerGameOver(true);
+      }, 800);
+    }
+    // 兜底: 130s 到还没通关 = 判失败 (spec 定 120s 战斗兜底)
+    if (t >= V31.previewCombatUntil) {
+      triggerGameOver(false);
+    }
   }
   return _origLoop(t);
 };
@@ -3110,6 +3215,11 @@ function setupV31Menu() {
   document.getElementById('btnNormal').addEventListener('click', startNormal);
   document.getElementById('btnEndless').addEventListener('click', startEndless);
   document.getElementById('btnLeaderboard').addEventListener('click', () => {
+    // 未通关预体验也拦榜单入口
+    if (localStorage.getItem('previewCleared') !== '1') {
+      floatText(W/2, H/2, '需先通关预体验', '#ff8ba8', true);
+      return;
+    }
     document.getElementById('startPanel').style.display = 'none';
     document.getElementById('leaderboardPanel').style.display = 'flex';
     renderLeaderboard();
@@ -3123,12 +3233,12 @@ function setupV31Menu() {
   });
   document.getElementById('previewContinueBtn').addEventListener('click', () => {
     document.getElementById('previewOutroPanel').style.display = 'none';
-    startNormal();  // 衔接到正式关卡
+    // 通关衔接跳正式关卡 (此时 previewCleared 已置 1, 不会被拦截)
+    startNormal();
   });
 
   // retryBtn 需要按模式重玩
   const retryBtn = document.getElementById('retryBtn');
-  const _origRetry = retryBtn.onclick;
   retryBtn.onclick = null;
   retryBtn.addEventListener('click', () => {
     document.getElementById('gameOverPanel').style.display = 'none';
@@ -3136,6 +3246,25 @@ function setupV31Menu() {
     else if (V31.mode === 'endless') startEndless();
     else startNormal();
   });
+
+  // 初次刷新锁化态
+  refreshMenuLockState();
+
+  // v3.1: 首次进游戏 (未通关预体验) → 跳过主菜单直接进预体验
+  // 支持 ?menu 参数强制看菜单 (调试用)
+  const params = new URLSearchParams(window.location.search);
+  const forceMenu = params.get('menu') !== null;
+  const resetPreview = params.get('reset') === 'preview';
+  if (resetPreview) {
+    localStorage.removeItem('previewCleared');
+    refreshMenuLockState();
+  }
+  const cleared = localStorage.getItem('previewCleared') === '1';
+  if (!cleared && !forceMenu) {
+    // 首次进 → 隐藏 startPanel, 延迟 200ms 直接跑预体验 (等 canvas 初始化)
+    document.getElementById('startPanel').style.display = 'none';
+    setTimeout(() => startPreview(), 200);
+  }
 }
 
 window.addEventListener('load', () => {
