@@ -253,11 +253,11 @@ footer {
 
   <header class="masthead">
     <div class="masthead-row">
-      <span class="accent">GAME SPEC · v3.0</span>
-      <span>2026 · 06 · 26</span>
+      <span class="accent">GAME SPEC · v3.1</span>
+      <span>2026 · 07 · 02</span>
     </div>
     <h1 class="title">《舰舰别炸》v3<br>玩法改造规格说明书</h1>
-    <p class="subtitle">从原版"飞机推进式 shooter"重构为"人物 + NUO 守线塔防"</p>
+    <p class="subtitle">v3.1 增补: 预体验关卡 (关卡 0) + 无尽模式 (通关解锁)</p>
   </header>
 
   <div class="tldr">
@@ -315,6 +315,16 @@ footer {
         <div class="cl-mod">08 失败</div>
         <div class="cl-from"><s>飞机被击落 = Game Over</s></div>
         <div class="cl-to">敌人攻击 <strong>防线持久度</strong> 归零 = Game Over</div>
+      </div>
+      <div class="cl-row">
+        <div class="cl-mod">09 <span style="color:#e0a93a">v3.1 新增</span></div>
+        <div class="cl-from"><s>—</s></div>
+        <div class="cl-to"><strong>预体验关卡 (关卡 0)</strong>: 新玩家首次强制体验 60s 爽感关, 双倍火力 + 反弹护盾</div>
+      </div>
+      <div class="cl-row">
+        <div class="cl-mod">10 <span style="color:#e0a93a">v3.1 新增</span></div>
+        <div class="cl-from"><s>—</s></div>
+        <div class="cl-to"><strong>无尽模式</strong>: 最高难度 3 关通关后解锁, 分 wave 递增难度, 好友榜刷分</div>
       </div>
     </div>
   </section>
@@ -816,6 +826,184 @@ footer {
     </ul>
   </section>
 
+  <!-- ============ v3.1 增补 §07.5 预体验关卡 ============ -->
+  <section>
+    <span class="section-num">§ 07.5 · v3.1 新增 · 预体验关卡</span>
+    <h2>关卡 0<br>新玩家 0 秒钩子, 60s 建立"这游戏很爽"</h2>
+    <p class="lead">新玩家首次进游戏强制体验的一个短关。目标 = 直接展现游戏最爽的战斗峰值, 建立第一印象, 通关后进入正式 3 关系统。</p>
+
+    <h3>7.5.1 定位与触发规则</h3>
+    <ul>
+      <li><span class="tag tag-must">必须</span><strong>首次进游戏强制体验</strong>, 无法跳过</li>
+      <li><span class="tag tag-must">必须</span>通关后主菜单出现"关卡 0 · 重玩"入口, 玩家可随时回味</li>
+      <li><span class="tag tag-must">必须</span>关卡 0 不解锁任何长期道具/成就, 单纯体验用途</li>
+      <li><span class="tag tag-must">必须</span>关卡 0 通关直接跳到关卡 1 (第一关 · 新手训练), 中间过场为衔接剧情弹窗</li>
+    </ul>
+
+    <h3>7.5.2 结构 · 静默期 + 战斗期</h3>
+    <table class="spec-table">
+      <tr><th>阶段</th><th>时长</th><th>玩家可操作</th><th>说明</th></tr>
+      <tr><td>静默期</td><td>10 秒</td><td>可移动, 不可开火</td><td>顶部展示战术警告文案, 敌人在屏顶远端已可见但未进入攻击范围</td></tr>
+      <tr><td>战斗期</td><td>60 秒</td><td>全操作</td><td>敌人开始推进, 玩家与 NUO 自动开火</td></tr>
+    </table>
+    <div class="callout callout-warn">
+      <strong>时长计算</strong>: 战斗期 60s 是"总时长", 静默期 10s 不计入。整关玩家实际感知 = 10s 屏息 + 60s 爆爽 = 70s。
+    </div>
+
+    <h3>7.5.3 静默期文案 (定稿版本 B · 紧迫感)</h3>
+    <div class="callout" style="font-family: ui-monospace, Menlo, monospace; text-align: center; line-height: 2;">
+      ⚠️ <strong>战术警告</strong><br>
+      检测到大规模敌军集群<br>
+      全部火力单元已激活<br>
+      <span style="color: #b85478">10 秒后开火</span>
+    </div>
+
+    <h3>7.5.4 火力配置 (预体验独有强化)</h3>
+    <table class="spec-table">
+      <tr><th>单位</th><th>基础 (正式关卡)</th><th>预体验关卡</th><th>差异</th></tr>
+      <tr><td>主角</td><td>1× 射速, 单弹道</td><td><strong>2× 射速, 双弹道</strong></td><td>火力密度 4×</td></tr>
+      <tr><td>NUO</td><td>1× 射速, 单弹道</td><td><strong>2× 射速, 双弹道</strong></td><td>火力密度 4×</td></tr>
+      <tr><td>穿透</td><td>无</td><td><strong>无</strong></td><td>不加, 保留"小兵成群依次爆"的爽感, 不要"一颗清一排"</td></tr>
+      <tr><td>AoE</td><td>无</td><td><strong>无</strong></td><td>同上, 拒绝范围伤害</td></tr>
+    </table>
+    <p><strong>设计意图</strong>: 火力密度拉满但不加特殊机制, 玩家爽在"打得又快又准", 而不是"技能秒全屏"。后者会稀释操作反馈。</p>
+
+    <h3>7.5.5 战斗节奏 (60s 分段)</h3>
+    <table class="spec-table">
+      <tr><th>时间段</th><th>敌人类型</th><th>目标体验</th></tr>
+      <tr><td>0-20s</td><td><strong>小兵方阵爆刷</strong></td><td>火力爽感, 大量爆炸反馈</td></tr>
+      <tr><td>20-40s</td><td><strong>精英怪 2-3 只</strong></td><td>提高单体 HP, 玩家感受到"精准击杀"</td></tr>
+      <tr><td>40-58s</td><td><strong>小 Boss</strong></td><td>体量对比 + 击杀高潮</td></tr>
+      <tr><td>58-60s</td><td>收尾</td><td>击杀 Boss → 战斗结束, 无 wave 拖尾</td></tr>
+    </table>
+
+    <h3>7.5.6 左通道宝箱 (预排列, 掉削弱版真实内容)</h3>
+    <ul>
+      <li><span class="tag tag-must">必须</span>预体验关卡左通道<strong>宝箱预排列</strong>, 不走正式关卡的随机 spawn</li>
+      <li><span class="tag tag-must">必须</span>宝箱 HP 拉高<strong>不能秒破</strong>, 玩家需要多次击打才能拿到内容 (让玩家体验"打宝箱换武器"这个动作)</li>
+      <li><span class="tag tag-must">必须</span>宝箱掉<strong>削弱版真实宝箱内容</strong>, 让玩家提前感知武器升级线路 (而不是给一个 OP 武器)</li>
+      <li><span class="tag tag-may">可选</span>具体掉落内容 <strong>待 T02 正式宝箱打磨完成后</strong>再定 (v3.1 spec 阶段留 placeholder)</li>
+    </ul>
+
+    <h3>7.5.7 特殊防线机制 · 反弹护盾</h3>
+    <p><strong>预体验关卡独有</strong>的双层保护机制: 反弹护盾 + 防线血量。</p>
+    <table class="spec-table">
+      <tr><th>层</th><th>触发</th><th>效果</th></tr>
+      <tr><td>反弹护盾</td><td>近战敌人贴脸攻击防线 X 伤害</td><td><strong>护盾 HP -X</strong> 且 <strong>敌人反受等量 X 伤害</strong></td></tr>
+      <tr><td>反弹护盾</td><td>远程敌人子弹命中防线</td><td>护盾 HP -X, <strong>不反弹</strong> (只对近战反弹)</td></tr>
+      <tr><td>防线血量</td><td>护盾归零后, 继续受击</td><td>防线 HP -X, 归零 = Game Over</td></tr>
+    </table>
+
+    <div class="callout callout-warn">
+      <strong>反弹护盾 · 跨关卡定位 (D13 拍板, 2026-07-02)</strong>: 反弹护盾<strong>仅在预体验关卡存在</strong>, 正式 1/2/3 关无。剧情逻辑 = 敌人启动"虚空屏蔽场"切断补给, 一并剥夺护盾。<br><br>
+      <strong>未来复活路径</strong>: v4 材料合成系统上线后, 反弹护盾作为一个<strong>合成配方产物</strong>可解锁使用 (不是永久掉落, 是配方组合)。留作 v4 玩法钩子, v3.1 spec 不展开。
+    </div>
+
+    <h3>7.5.8 衔接剧情文案 (定稿版本 A · 剧情弹窗)</h3>
+    <p>关卡 0 通关 → 弹窗过场 → 关卡 1:</p>
+    <div class="callout" style="text-align: center; line-height: 2; border-left: 4px solid #b85478;">
+      <strong>【警告 · 通讯中断】</strong><br>
+      敌人启动<strong style="color: #a64dff">虚空屏蔽场</strong><br>
+      补给通道切断<br>
+      前往真正的战场<br>
+      <span style="color: #888">— 继续 —</span>
+    </div>
+
+    <h3>7.5.9 待 K 拍板 · 火力峰值节奏点</h3>
+    <div class="callout callout-ok">
+      <strong>已定 (D13, 2026-07-02)</strong>: <strong>不加</strong>火力峰值装饰 (如中段 NUO 全屏激光扫射)。理由: 60s 战斗窗口本就短, 4 段自然节奏 (小兵→精英→小 Boss→收尾) 已经形成钩子密度, 塞额外大动作反而稀释操作反馈; 且大动作会让玩家期待"正式关卡也有", 落空。
+    </div>
+
+    <h3>7.5.10 成本估算</h3>
+    <table class="spec-table">
+      <tr><th>项</th><th>估算</th><th>说明</th></tr>
+      <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 v3 现有内容 (敌人/防线/主角/NUO/武器/宝箱)</td></tr>
+      <tr><td>代码成本</td><td><strong>2-4 小时</strong></td><td>特殊关卡模板 + 火力参数覆盖 + 2 个 UI 弹窗 (战术警告 + 衔接过场)</td></tr>
+      <tr><td>art-spec-v3.html 影响</td><td><strong>无</strong></td><td>反弹护盾特效独立成资产, 不影响荻子已在推进的 P0/P1 交付</td></tr>
+      <tr><td>数值平衡影响</td><td><strong>无</strong></td><td>预体验关卡是独立配置, 不影响 v2.1 数值表 (正式 3 关的 cfg-v2-90s.json)</td></tr>
+    </table>
+  </section>
+
+  <!-- ============ v3.1 增补 §07.6 无尽模式 ============ -->
+  <section>
+    <span class="section-num">§ 07.6 · v3.1 新增 · 无尽模式</span>
+    <h2>撑多久 = 分多少<br>通关解锁的长线刷分玩法</h2>
+    <p class="lead">最高难度 3 关全部通关后解锁。核心目标 = 解玩家"打通就丢, 没动力再玩"的核心病, 用刷分破纪录 + 好友榜社交贴合建立长线留存钩子。</p>
+
+    <h3>7.6.1 定位与解锁</h3>
+    <ul>
+      <li><span class="tag tag-must">必须</span><strong>解锁条件</strong>: 最高难度 (第三关 · 殊死决战) 通关</li>
+      <li><span class="tag tag-must">必须</span>解锁后主菜单出现"无尽模式"入口, 与关卡选择平级</li>
+      <li><span class="tag tag-must">必须</span>无尽模式无失败复活 (与正式关卡一致), 死一次即结算</li>
+      <li><span class="tag tag-must">必须</span>每次开局记录本局分数, 保留个人历史最高分</li>
+    </ul>
+
+    <h3>7.6.2 玩法与场景复用</h3>
+    <ul>
+      <li><span class="tag tag-must">必须</span>视角 / 双通道 / 主角+NUO 双弹道 / 状态门 / 宝箱 <strong>与正式关卡完全一致</strong></li>
+      <li><span class="tag tag-must">必须</span>敌人库复用正式关卡的小兵/精英/Boss, <strong>无新美术资源</strong></li>
+      <li><span class="tag tag-must">必须</span>无关卡结束条件, 只有玩家死亡或主动退出结算</li>
+    </ul>
+
+    <h3>7.6.3 敌人爬升 · 分 Wave + 指数阶跃 (D13 拍板)</h3>
+    <p><strong>决策</strong>: 分 wave 结构, 每 60s 一个 wave, wave 内节奏固定, wave 间难度阶跃; <strong>阶跃幅度指数增长</strong> — 早期温和好上手, 后期陡峭卡水平。</p>
+    <table class="spec-table">
+      <tr><th>Wave</th><th>时间段</th><th>难度阶跃 (相对上一 wave)</th><th>说明</th></tr>
+      <tr><td>Wave 1</td><td>0-60s</td><td>基线</td><td>参照正式第一关新手训练强度, 玩家熟悉节奏</td></tr>
+      <tr><td>Wave 2</td><td>60-120s</td><td>+5%</td><td>敌人 HP/出怪率轻微上涨, 玩家仍有余裕</td></tr>
+      <tr><td>Wave 3</td><td>120-180s</td><td>+7%</td><td>开始感受到压力</td></tr>
+      <tr><td>Wave 4</td><td>180-240s</td><td>+10%</td><td>普通玩家可能在此死亡</td></tr>
+      <tr><td>Wave 5</td><td>240-300s</td><td>+13%</td><td>高手区</td></tr>
+      <tr><td>Wave 6+</td><td>300s+</td><td>+15%, +18%, +22%...</td><td>指数陡增, 卡最强玩家水平</td></tr>
+    </table>
+    <div class="callout callout-warn">
+      <strong>具体每 wave 数值 (敌人 HP / 出怪率 / 特殊组合)</strong> 待数值配平阶段用模拟器 v2 跑出, spec 阶段先定曲线形状, 不定具体值 (T07 待定项)。
+    </div>
+
+    <h3>7.6.4 分数公式 · 均衡 (D13 拍板)</h3>
+    <p><strong>决策</strong>: C 均衡方案, 存活时间 + 防线 HP + 杀敌数 三者都要兼顾, 逼玩家平衡"活久 vs 打多"。</p>
+    <div class="callout" style="font-family: ui-monospace, Menlo, monospace; text-align: center; font-size: 18px; padding: 20px;">
+      分数 = <strong>存活时间(秒) × 5</strong> + <strong>剩余防线 HP × 2</strong> + <strong>累计杀敌数 × 5</strong>
+    </div>
+    <ul>
+      <li><strong>存活时间权重 5</strong>: 主导因素, 撑得越久分越高</li>
+      <li><strong>防线 HP 权重 2</strong>: 低权重, 但撑到最后 HP 还很高可以拉分</li>
+      <li><strong>杀敌数权重 5</strong>: 主导因素, 逼玩家主动打怪, 不能只守不打混时间</li>
+    </ul>
+    <div class="callout callout-warn">
+      <strong>反 exploit 设计意图</strong>: 单一维度主导 (纯存活 / 纯击杀) 会被玩家挖出捷径 (比如只守不打拖时间)。均衡公式使玩家必须兼顾"活久 + 打多", 天然形成策略深度; 且"综合分"比"单一数字"更适合截图分享。
+    </div>
+
+    <h3>7.6.5 好友榜 · 微信开放数据域 (D13 拍板)</h3>
+    <p><strong>决策</strong>: B 方案, 走<strong>微信开放数据域</strong> — 免费、微信原生 API, 好友之间对比自己 vs TA 的最高分。</p>
+    <ul>
+      <li><span class="tag tag-must">必须</span>无尽模式结算面板显示 <strong>好友榜 top 10</strong>, 高亮玩家自己的位置</li>
+      <li><span class="tag tag-must">必须</span>破纪录时弹出 <strong>荣誉横幅</strong> (独立设计, 金色 + 缩放呼吸动画 + 大事件音), 参考 skill html5-minigame-polish-pipeline 荣誉成就规范</li>
+      <li><span class="tag tag-should">建议</span>结算面板加"分享到微信"按钮 (可选), 用微信原生分享 API, 图片带分数展示</li>
+      <li><span class="tag tag-may">可选</span>陌生人全球榜<strong>不做</strong> — 休闲游戏留存意义不大, 且需要自建服务器</li>
+    </ul>
+    <div class="callout callout-ok">
+      <strong>技术选型理由</strong>: 微信开放数据域是白嫖社交的最佳解 — 0 服务器成本, 用微信关系链好友的比较自然产生比拼欲, 参考《向僵尸开炮》同款架构。集成时多加一个开放数据域子包 (微信文档有现成模板)。
+    </div>
+
+    <h3>7.6.6 UI 需求</h3>
+    <ul>
+      <li>主菜单入口: "无尽模式" 按钮 (通关前 disabled + 锁图标 + 提示 "通关第三关解锁")</li>
+      <li>局内 HUD: 当前 Wave 显示 (WAVE 5 大字体), 存活时间, 累计击杀, 实时分数</li>
+      <li>结算面板: 本局分数 + 击杀 + 存活时间 + 历史最高分 + 好友榜 top 10 + 分享按钮</li>
+      <li>破纪录横幅: 独立触发, 金色, 呼吸动画, "NEW RECORD! 累计击杀 XXX"</li>
+    </ul>
+
+    <h3>7.6.7 成本估算</h3>
+    <table class="spec-table">
+      <tr><th>项</th><th>估算</th><th>说明</th></tr>
+      <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 3 关美术, 仅 UI 加 wave 计数 + 好友榜卡片 + 破纪录横幅</td></tr>
+      <tr><td>代码成本</td><td><strong>1-2 周</strong></td><td>Wave 系统 + 分数公式 + 微信开放数据域集成 + UI 3 个</td></tr>
+      <tr><td>数值成本</td><td><strong>3-5 天</strong></td><td>模拟器 v2 跑每 wave 数值 + 手工微调</td></tr>
+      <tr><td>art-spec-v3.html 影响</td><td><strong>轻微</strong></td><td>需补 UI 资产列表 (wave 计数器 / 分数字体 / 破纪录横幅), 但不影响荻子 P0/P1 主线</td></tr>
+    </table>
+  </section>
+
   <section>
     <span class="section-num">§ 08 · 边缘情况清单</span>
     <h2>16 条规则边界<br>+ 处理预案</h2>
@@ -854,6 +1042,8 @@ footer {
       <tr><td>T03</td><td>外星生物形态库</td><td>小兵 / 精英 / Boss 三档具体长什么样</td><td>美术 brief 阶段</td></tr>
       <tr><td>T04</td><td>状态门维度库</td><td>当前 5 个属性(攻击力 / 攻速 / 弹道数 / 弹道速度 / 暴击率) 外, 是否扩展(范围 / 穿透 / 反弹...)</td><td>v3.1 玩法扩展时</td></tr>
       <tr><td>T05</td><td>多镜像 NUO 上限</td><td>初版限 2 个, 后续是否开放 3-4 个(数值与画面挤占问题)</td><td>白模 demo 平衡性验证后</td></tr>
+      <tr><td>T06</td><td><span style="color:#e0a93a">v3.1</span> 预体验关卡宝箱掉落表</td><td>关卡 0 左通道预排列宝箱的具体掉落内容 (削弱版真实宝箱), 依赖 T02 正式宝箱库先定</td><td>T02 完成后</td></tr>
+      <tr><td>T07</td><td><span style="color:#e0a93a">v3.1</span> 无尽模式 wave 数值表</td><td>每 wave 敌人 HP / 出怪率 / 特殊组合的具体值 (spec 已定曲线形状, 未定数值)</td><td>模拟器 v2 阶段</td></tr>
     </table>
   </section>
 
@@ -874,7 +1064,7 @@ footer {
   </section>
 
   <footer>
-    <span>NOVA · GAME SPEC v3.0</span>
+    <span>NOVA · GAME SPEC v3.1</span>
     <span>FOR KAYSEN · INTERNAL</span>
   </footer>
 
