@@ -1,272 +1,426 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>《舰舰别炸》v3 · 玩法改造规格说明书</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v3.1</title>
 <style>
-:root {
-  --ink: #111;
-  --ink-2: #2b2b2b;
-  --muted: #6b6b6b;
-  --line: #d8d4cc;
-  --line-soft: #ece8e0;
-  --paper: #f5f1e8;
-  --paper-2: #fbf8f0;
-  --accent: #b8451e;
-  --accent-soft: #f4e4d8;
-  --ok: #2e6b3a;
-  --warn: #8a6d00;
-  --buff: #2e6b3a;
-  --debuff: #b8451e;
-  --neutral: #555;
-  --bg-channel: #1c2826;
-  --bg-treasure: #2a2230;
-  --serif: ui-serif, "Source Han Serif SC", "Noto Serif CJK SC", Georgia, serif;
-  --sans: -apple-system, BlinkMacSystemFont, "PingFang SC", "Helvetica Neue", sans-serif;
-  --mono: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
-}
 * { box-sizing: border-box; margin: 0; padding: 0; }
-html { font-size: 16px; }
-body {
-  font-family: var(--sans);
-  color: var(--ink);
-  background: var(--paper);
-  line-height: 1.65;
+html, body {
+  background: #0a0e1a;
+  color: #c5cce0;
+  font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", Roboto, sans-serif;
+  font-size: 14.5px;
+  line-height: 1.75;
   -webkit-font-smoothing: antialiased;
-  text-rendering: optimizeLegibility;
 }
-.page {
-  max-width: 920px;
-  margin: 0 auto;
-  padding: 80px 56px 120px;
-  background: var(--paper-2);
-  border-left: 1px solid var(--line-soft);
-  border-right: 1px solid var(--line-soft);
+a { color: #ff6b35; text-decoration: none; }
+a:hover { color: #ffa040; }
+
+/* === LAYOUT === */
+.layout {
+  display: grid;
+  grid-template-columns: 280px 1fr;
   min-height: 100vh;
 }
-.masthead { border-bottom: 2px solid var(--ink); padding-bottom: 24px; margin-bottom: 48px; }
-.masthead-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: baseline;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  text-transform: uppercase;
-  margin-bottom: 16px;
+.sidebar {
+  background: #0d1220;
+  border-right: 1px solid #1f2940;
+  padding: 32px 24px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow-y: auto;
 }
-.masthead-row .accent { color: var(--accent); font-weight: 600; }
-h1.title {
-  font-family: var(--serif);
-  font-size: 46px;
-  font-weight: 600;
-  line-height: 1.12;
-  letter-spacing: -0.01em;
-  margin-bottom: 14px;
-  text-wrap: balance;
-}
-.subtitle { font-family: var(--serif); font-size: 19px; font-style: italic; color: var(--ink-2); font-weight: 400; }
-section { margin-bottom: 56px; }
-.section-num {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: var(--accent);
-  text-transform: uppercase;
-  font-weight: 600;
-  margin-bottom: 8px;
-  display: block;
-}
-h2 {
-  font-family: var(--serif);
-  font-size: 30px;
-  font-weight: 600;
-  letter-spacing: -0.005em;
+.sidebar h2 {
+  color: #ff6b35;
+  font-size: 12px;
+  letter-spacing: 2px;
   margin-bottom: 20px;
-  line-height: 1.22;
+  font-weight: 700;
 }
-h3 {
-  font-family: var(--sans);
-  font-size: 16px;
-  font-weight: 600;
-  margin: 28px 0 12px;
-  letter-spacing: 0.005em;
+.sidebar ol { list-style: none; padding: 0; counter-reset: chapter; }
+.sidebar li {
+  margin-bottom: 6px;
+  counter-increment: chapter;
+  font-size: 13px;
 }
-h4 {
-  font-family: var(--sans);
-  font-size: 14px;
-  font-weight: 600;
-  margin: 18px 0 8px;
-  color: var(--ink-2);
-}
-p { font-size: 15px; color: var(--ink-2); margin-bottom: 14px; text-wrap: pretty; }
-p.lead { font-family: var(--serif); font-size: 18px; line-height: 1.62; color: var(--ink); margin-bottom: 24px; }
-ul, ol { margin: 12px 0 16px 22px; }
-li { font-size: 15px; color: var(--ink-2); margin-bottom: 6px; line-height: 1.62; }
-strong { color: var(--ink); font-weight: 600; }
-em { color: var(--accent); font-style: normal; font-weight: 500; }
-code { font-family: var(--mono); font-size: 13px; background: var(--accent-soft); padding: 1px 6px; border-radius: 2px; color: var(--ink); }
-.tldr {
-  background: var(--paper);
-  border-left: 3px solid var(--accent);
-  padding: 24px 28px;
-  margin-bottom: 56px;
-}
-.tldr-label {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.12em;
-  color: var(--accent);
-  text-transform: uppercase;
-  font-weight: 600;
-  margin-bottom: 10px;
-}
-.tldr p { font-family: var(--serif); font-size: 16.5px; line-height: 1.65; color: var(--ink); margin-bottom: 8px; }
-.tldr p:last-child { margin-bottom: 0; }
-.changelog {
-  border-top: 1px solid var(--line);
-  margin: 20px 0;
-}
-.cl-row {
-  display: grid;
-  grid-template-columns: 100px 1fr 1.5fr;
-  gap: 16px;
-  padding: 14px 0;
-  border-bottom: 1px solid var(--line-soft);
-  align-items: baseline;
-  font-size: 14px;
-}
-.cl-row.head {
-  border-bottom: 1px solid var(--ink);
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  padding: 10px 0;
-}
-.cl-mod { font-family: var(--mono); font-size: 12px; font-weight: 700; color: var(--accent); }
-.cl-from { color: var(--muted); }
-.cl-from s { color: var(--muted); }
-.cl-to { color: var(--ink); }
-.cl-to strong { color: var(--accent); }
-.svg-wrap {
-  background: var(--paper);
-  border: 1px solid var(--line);
-  padding: 24px;
-  margin: 24px 0;
-  border-radius: 2px;
-  text-align: center;
-}
-.svg-wrap .caption {
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  text-transform: uppercase;
-  margin-top: 14px;
+.sidebar li a {
+  color: #c5cce0;
   display: block;
+  padding: 8px 12px;
+  border-radius: 6px;
+  transition: all .15s;
+  border-left: 2px solid transparent;
 }
-table.spec-table {
+.sidebar li a:hover {
+  background: #131a2e;
+  border-left-color: #ff6b35;
+  color: #fff;
+}
+.sidebar li a::before {
+  content: counter(chapter, decimal-leading-zero);
+  color: #6b7494;
+  font-family: "SF Mono", monospace;
+  font-size: 11px;
+  margin-right: 10px;
+}
+.sidebar .new-tag {
+  display: inline-block;
+  background: #ff6b35;
+  color: #0a0e1a;
+  font-size: 9px;
+  padding: 1px 6px;
+  border-radius: 8px;
+  margin-left: 6px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+.sidebar-footer {
+  margin-top: 32px;
+  padding-top: 20px;
+  border-top: 1px solid #1f2940;
+  color: #6b7494;
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+main {
+  padding: 48px 56px 80px;
+  max-width: 960px;
+}
+
+/* === DOC HEADER === */
+.doc-header { margin-bottom: 56px; }
+.badge {
+  display: inline-block;
+  background: #ff6b35;
+  color: #0a0e1a;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 4px;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+.doc-header h1 {
+  font-size: 34px;
+  line-height: 1.35;
+  color: #fff;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+.doc-header .subtitle {
+  color: #b0b8d0;
+  font-size: 15px;
+  margin-bottom: 28px;
+}
+.meta-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 14px;
+  margin: 24px 0;
+}
+.meta-card {
+  background: #131a2e;
+  border: 1px solid #1f2940;
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+.meta-card .label {
+  color: #6b7494;
+  font-size: 11px;
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+  text-transform: uppercase;
+}
+.meta-card .value {
+  color: #fff;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+/* === CHAPTER === */
+section.chapter {
+  margin-bottom: 72px;
+  padding-top: 20px;
+}
+section.chapter h2 {
+  font-size: 26px;
+  color: #fff;
+  font-weight: 700;
+  margin: 16px 0 8px;
+  line-height: 1.4;
+}
+.chapter-num {
+  display: block;
+  color: #ff6b35;
+  font-size: 12px;
+  letter-spacing: 2px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  text-transform: uppercase;
+}
+section.chapter h3 {
+  font-size: 18px;
+  color: #fff;
+  margin: 32px 0 14px;
+  padding-left: 12px;
+  border-left: 3px solid #ff6b35;
+  font-weight: 600;
+}
+p { margin: 12px 0; color: #c5cce0; }
+p.lead {
+  color: #d0d8ee;
+  font-size: 15.5px;
+  margin: 16px 0 24px;
+  padding: 14px 18px;
+  background: rgba(255, 107, 53, 0.06);
+  border-left: 3px solid #ff6b35;
+  border-radius: 4px;
+}
+strong { color: #fff; }
+em { color: #ffa040; font-style: normal; }
+ul, ol { padding-left: 24px; margin: 12px 0; color: #c5cce0; }
+li { margin-bottom: 8px; }
+code {
+  background: #1a2138;
+  color: #ffa040;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-family: "SF Mono", Monaco, Consolas, monospace;
+  font-size: 13px;
+}
+s { color: #6b7494; }
+
+/* === TABLES === */
+table {
   width: 100%;
   border-collapse: collapse;
-  margin: 16px 0;
-  font-size: 14px;
+  margin: 16px 0 24px;
+  background: #131a2e;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13.5px;
 }
-table.spec-table th, table.spec-table td {
-  border-bottom: 1px solid var(--line-soft);
-  padding: 10px 12px;
+thead, table > tr:first-child { background: #1a2138; }
+th {
   text-align: left;
+  padding: 12px 14px;
+  font-weight: 600;
+  color: #ffa040;
+  font-size: 12.5px;
+  letter-spacing: 0.4px;
+  border-bottom: 1px solid #1f2940;
+}
+td {
+  padding: 11px 14px;
+  border-bottom: 1px solid #1a2138;
+  color: #c5cce0;
   vertical-align: top;
 }
-table.spec-table th {
-  border-bottom: 1px solid var(--ink);
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--muted);
-  font-weight: 600;
-}
-table.spec-table td:first-child { font-weight: 600; color: var(--ink); white-space: nowrap; }
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: #161d33; }
+
+/* === CALLOUT BOXES === */
 .callout {
-  background: var(--accent-soft);
-  border-left: 3px solid var(--accent);
-  padding: 14px 18px;
+  border-radius: 8px;
+  padding: 16px 20px;
   margin: 16px 0;
+  border-left: 4px solid;
   font-size: 14px;
+  background: rgba(255, 255, 255, 0.02);
+  border-left-color: #6b7494;
+  color: #c5cce0;
 }
-.callout strong { color: var(--accent); }
-.callout-warn {
-  background: #fff8e0;
-  border-left: 3px solid var(--warn);
+.callout.info {
+  background: rgba(64, 156, 255, 0.08);
+  border-left-color: #409cff;
+  color: #b3d4ff;
 }
-.callout-warn strong { color: var(--warn); }
-.callout-ok {
-  background: #e8f1e9;
-  border-left: 3px solid var(--ok);
+.callout.warn {
+  background: rgba(255, 160, 64, 0.08);
+  border-left-color: #ffa040;
+  color: #ffd9a8;
 }
-.callout-ok strong { color: var(--ok); }
+.callout.success {
+  background: rgba(80, 200, 120, 0.08);
+  border-left-color: #50c878;
+  color: #b8f0c8;
+}
+.callout strong { color: inherit; font-weight: 700; }
+
+/* === TAGS === */
 .tag {
   display: inline-block;
-  font-family: var(--mono);
-  font-size: 10px;
-  padding: 2px 6px;
-  border-radius: 2px;
-  letter-spacing: 0.04em;
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-right: 6px;
+  letter-spacing: 0.3px;
+  font-weight: 700;
+  vertical-align: 1px;
+}
+.tag-must   { background: #ff5050; color: #fff; }
+.tag-should { background: #ffa040; color: #0a0e1a; }
+.tag-may    { background: #6b7494; color: #fff; }
+.tag-todo   { background: #8a5cff; color: #fff; }
+
+/* === CHANGELOG (§00 diff 表) === */
+.changelog {
+  display: table;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 16px 0 24px;
+  background: #131a2e;
+  border-radius: 8px;
+  overflow: hidden;
+  font-size: 13.5px;
+}
+.changelog .head {
+  display: table-row;
+  background: #1a2138;
+  color: #ffa040;
   font-weight: 600;
-  margin-right: 4px;
+  font-size: 12.5px;
+  letter-spacing: 0.4px;
 }
-.tag-must { background: var(--accent); color: var(--paper); }
-.tag-should { background: var(--warn); color: var(--paper); }
-.tag-may { background: var(--neutral); color: var(--paper); }
-.tag-todo { background: var(--line); color: var(--ink); }
-footer {
-  margin-top: 80px;
-  padding-top: 24px;
-  border-top: 1px solid var(--line);
-  display: flex;
-  justify-content: space-between;
-  font-family: var(--mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  color: var(--muted);
-  text-transform: uppercase;
+.changelog .head > div {
+  display: table-cell;
+  padding: 12px 14px;
+  border-bottom: 1px solid #1f2940;
 }
+.cl-row {
+  display: table-row;
+}
+.cl-row > div {
+  display: table-cell;
+  padding: 11px 14px;
+  border-bottom: 1px solid #1a2138;
+  vertical-align: top;
+}
+.cl-row:last-child > div { border-bottom: none; }
+.cl-row:hover > div { background: #161d33; }
+.cl-mod { color: #ff6b35; font-weight: 600; width: 15%; }
+.cl-from { color: #6b7494; width: 40%; }
+.cl-to { color: #c5cce0; width: 45%; }
+
+/* === SVG WRAP === */
+.svg-wrap {
+  margin: 24px 0;
+  padding: 24px;
+  background: #0d1220;
+  border: 1px solid #1f2940;
+  border-radius: 10px;
+  text-align: center;
+}
+.svg-wrap svg {
+  max-width: 100%;
+  height: auto;
+  background: #12172a;
+  border-radius: 6px;
+  padding: 12px;
+}
+.svg-wrap .caption {
+  display: block;
+  margin-top: 14px;
+  color: #6b7494;
+  font-size: 12px;
+  font-family: "SF Mono", monospace;
+}
+
+/* === PRINT === */
 @media print {
-  body { background: white; }
-  .page { padding: 40px; border: none; }
-  section { page-break-inside: avoid; }
+  .sidebar { display: none; }
+  .layout { grid-template-columns: 1fr; }
+  body { background: #fff; color: #000; }
+  section.chapter { page-break-inside: avoid; }
 }
-@media (max-width: 720px) {
-  .page { padding: 40px 24px 80px; }
-  h1.title { font-size: 32px; }
-  h2 { font-size: 24px; }
-  .cl-row { grid-template-columns: 1fr; gap: 4px; }
+
+/* === MOBILE === */
+@media (max-width: 900px) {
+  .layout { grid-template-columns: 1fr; }
+  .sidebar {
+    position: static;
+    height: auto;
+    border-right: none;
+    border-bottom: 1px solid #1f2940;
+  }
+  main { padding: 32px 20px 60px; }
+  .doc-header h1 { font-size: 26px; }
 }
 </style>
 </head>
 <body>
-<div class="page">
+<div class="layout">
 
-  <header class="masthead">
-    <div class="masthead-row">
-      <span class="accent">GAME SPEC · v3.1</span>
-      <span>2026 · 07 · 02</span>
-    </div>
-    <h1 class="title">《舰舰别炸》v3<br>玩法改造规格说明书</h1>
-    <p class="subtitle">v3.1 增补: 预体验关卡 (关卡 0) + 无尽模式 (通关解锁)</p>
-  </header>
+<aside class="sidebar">
+<h2>目录</h2>
+<ol>
+  <li><a href="#ch-00">改造速览</a></li>
+  <li><a href="#ch-01">视角与世界观</a></li>
+  <li><a href="#ch-02">角色系统</a></li>
+  <li><a href="#ch-03">战场布局</a></li>
+  <li><a href="#ch-04">宝箱通道(左)</a></li>
+  <li><a href="#ch-05">接敌通道(右) · 状态门核心机制</a></li>
+  <li><a href="#ch-06">躲门空间几何</a></li>
+  <li><a href="#ch-07">防线与失败条件</a></li>
+  <li><a href="#ch-07-5">预体验关卡 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-07-6">无尽模式 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-08">边缘情况清单</a></li>
+  <li><a href="#ch-09">待定项 (需 Kaysen 后续拍板)</a></li>
+  <li><a href="#ch-10">实施路径</a></li>
+</ol>
+<div class="sidebar-footer">
+v3.1 · 2026-07-02<br>
+Alien Fizzle · 玩法规格<br>
+<a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
+<a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
+</div>
+</aside>
 
-  <div class="tldr">
-    <div class="tldr-label">TL;DR · 改造一句话</div>
-    <p>把"飞机大战往上推"改成"主角 + 悬浮球 NUO 守底部防线", 引入双通道资源/属性分离 + 状态门主动修正机制, 把节奏从"无脑推进"变成"贪 vs 守"的双轨决策。</p>
-  </div>
+<main>
+<div class="doc-header">
+<span class="badge">GAME SPEC · v3.1</span>
+<h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
+<div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
+<div class="meta-grid">
+<div class="meta-card">
+<div class="label">项目版本</div>
+<div class="value">v3.1 (守线版)</div>
+</div>
+<div class="meta-card">
+<div class="label">发布日期</div>
+<div class="value">2026-07-02</div>
+</div>
+<div class="meta-card">
+<div class="label">游戏类型</div>
+<div class="value">endless wave 塔防</div>
+</div>
+<div class="meta-card">
+<div class="label">目标平台</div>
+<div class="value">微信小游戏</div>
+</div>
+<div class="meta-card">
+<div class="label">商业模型</div>
+<div class="value">纯 IAA</div>
+</div>
+<div class="meta-card">
+<div class="label">对应文档</div>
+<div class="value">art-spec-v3.html</div>
+</div>
+</div>
 
-  <section>
-    <span class="section-num">§ 00 · 改造速览</span>
+<div class="callout info" style="margin-top:24px;">
+<strong>📌 v3.1 版本说明</strong><br>
+本文档是 <strong>v3.1 玩法规格</strong>,基于 v3.0 守线版扩充两项内容:
+<code>§07.5 预体验关卡</code> (30s 开场引导 + 反射盾专属) 与 <code>§07.6 无尽模式</code> (通关难度 3 后解锁, wave-based 递增, 微信好友榜)。
+v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩法从推进改为守线塔防、玩家角色从飞机改为主角 + NUO 悬浮球。
+</div>
+</div>
+
+<section class="chapter" id="ch-00">
+    <span class="chapter-num">§ 00 · 改造速览</span>
     <h2>v2 → v3 八条核心变更</h2>
     <p class="lead">下表是本次改造的 diff 清单, 每一条都对应正文一节。后续所有美术 / 程序 / 数值工作都以本表为锚点。</p>
 
@@ -330,8 +484,8 @@ footer {
   </section>
 
 
-  <section>
-    <span class="section-num">§ 01 · 视角与世界观</span>
+  <section class="chapter" id="ch-01">
+    <span class="chapter-num">§ 01 · 视角与世界观</span>
     <h2>从俯视到一点透视<br>从飞机到守线人</h2>
 
     <h3>1.1 视角</h3>
@@ -343,7 +497,7 @@ footer {
     </ul>
 
     <h3>1.2 题材与节奏转换</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>维度</th><th>v2 飞机大战</th><th>v3 人物守线</th></tr>
       <tr><td>玩家角色</td><td>飞机, 屏幕底部向上推进</td><td>主角 + NUO, 站定底部防线</td></tr>
       <tr><td>敌人动线</td><td>从顶部冲下</td><td>从顶部推进, 直到防线前停下攻击</td></tr>
@@ -357,12 +511,12 @@ footer {
     </div>
   </section>
 
-  <section>
-    <span class="section-num">§ 02 · 角色系统</span>
+  <section class="chapter" id="ch-02">
+    <span class="chapter-num">§ 02 · 角色系统</span>
     <h2>主角 + NUO + 外星生物<br>三方关系定义</h2>
 
     <h3>2.1 主角</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>属性</th><th>规格</th></tr>
       <tr><td>形象</td><td>人物(具体设计待美术 brief), 站姿守线</td></tr>
       <tr><td>站位</td><td>屏幕底部防线上方约 1 个角色身位</td></tr>
@@ -374,7 +528,7 @@ footer {
     </table>
 
     <h3>2.2 NUO (悬浮球辅助机器人)</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>属性</th><th>规格</th></tr>
       <tr><td>形象</td><td>小型悬浮球体, 科技感, 跟主角风格统一</td></tr>
       <tr><td>站位</td><td>默认贴身主角右侧约 0.5 个身位, 与主角同步横移</td></tr>
@@ -405,8 +559,8 @@ footer {
     </ul>
   </section>
 
-  <section>
-    <span class="section-num">§ 03 · 战场布局</span>
+  <section class="chapter" id="ch-03">
+    <span class="chapter-num">§ 03 · 战场布局</span>
     <h2>双通道 2 : 3 空间几何</h2>
     <p class="lead">这是 v3 改造的物理基础。所有后续机制(状态门躲避 / 主角横移 / 子弹方向)都建立在这套空间几何上。</p>
 
@@ -491,7 +645,7 @@ footer {
     </div>
 
     <h3>3.2 主角横移规则</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>规则</th><th>说明</th></tr>
       <tr><td>横移范围</td><td>整个屏幕宽 <code>5U</code> 自由滑动, 含宝箱通道和接敌通道</td></tr>
       <tr><td>纵向限制</td><td><strong>仅横轴</strong>移动, 不离开防线高度(主角守线职责)</td></tr>
@@ -507,14 +661,14 @@ footer {
       <li><span class="tag tag-must">必须</span>子弹不能跨通道(物理一致性)</li>
     </ul>
 
-    <div class="callout callout-ok">
+    <div class="callout success">
       <strong>临界情况 · 不抢行修正</strong>: 主角恰好骑在两通道分界线上时, 会出现 <em>主角弹道在宝箱通道 + NUO 弹道在接敌通道</em> 的分裂状态。这是 <strong>feature 不是 bug</strong>, 代码不要做任何对齐 / 吸附 / 偏移修正, 让玩家自由利用这个边界位置做"边贪宝箱边守接敌"的精妙操作。
     </div>
   </section>
 
 
-  <section>
-    <span class="section-num">§ 04 · 宝箱通道(左)</span>
+  <section class="chapter" id="ch-04">
+    <span class="chapter-num">§ 04 · 宝箱通道(左)</span>
     <h2>冻结卡位 · 主角武器仓库</h2>
 
     <h3>4.1 宝箱机制</h3>
@@ -527,7 +681,7 @@ footer {
     </ul>
 
     <h3>4.2 武器分级</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>等级</th><th>击破难度</th><th>武器档次</th><th>预期出现频率</th></tr>
       <tr><td>基础</td><td>低血量(2-3 颗子弹)</td><td>普通武器(单发增强 / 散射 / 穿透...)</td><td>高 60%</td></tr>
       <tr><td>精良</td><td>中血量(5-8 颗子弹)</td><td>精良武器(范围 / 弹反 / 追踪...)</td><td>中 30%</td></tr>
@@ -552,18 +706,18 @@ footer {
       <li><span class="tag tag-may">可选</span>主角骑分界线时, 闪烁强度减半(部分覆盖)</li>
     </ul>
 
-    <div class="callout callout-warn">
+    <div class="callout warn">
       <strong>设计张力</strong>: 主角去左通道贪宝箱时, 右通道弹道空缺, 敌人推进无人拦截。警告反馈 = 心理压迫源, 让"贪 vs 守"成为玩家每秒都要重新计算的决策。
     </div>
   </section>
 
-  <section>
-    <span class="section-num">§ 05 · 接敌通道(右) · 状态门核心机制</span>
+  <section class="chapter" id="ch-05">
+    <span class="chapter-num">§ 05 · 接敌通道(右) · 状态门核心机制</span>
     <h2>修正即翻转<br>状态门的状态机</h2>
     <p class="lead">这是 v3 改造的灵魂机制 — 所有减益最终能通过射击修正到 0 并翻转为增益, 上限永远是 buff。把"被动遭遇 debuff"变成"主动消减 + 充能 buff"的双向操作。</p>
 
     <h3>5.1 状态门基础规格</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>属性</th><th>规格</th></tr>
       <tr><td>出现位置</td><td>接敌通道顶部, X 坐标 <strong>随机</strong>(0 到接敌通道宽减去 1.5U 之间)</td></tr>
       <tr><td>固定宽度</td><td><code>1.5U</code> (接敌通道一半), <strong>始终不变</strong>, 不随数值缩放</td></tr>
@@ -663,7 +817,7 @@ footer {
 
     <h3>5.6 示例 · 火力静默门完整生命周期</h3>
     <p>以你给的例子(火力静默 -4s)走完整流程:</p>
-    <table class="spec-table">
+    <table>
       <tr><th>阶段</th><th>子弹击中次数</th><th>当前数值</th><th>状态</th><th>视觉</th></tr>
       <tr><td>出生</td><td>0</td><td>-4s</td><td>S1 DEBUFF</td><td>红, 阻挡</td></tr>
       <tr><td>射击中</td><td>2</td><td>-3s</td><td>S1 DEBUFF</td><td>红, 阻挡</td></tr>
@@ -677,7 +831,7 @@ footer {
     </table>
 
     <h3>5.7 示例 · 弹道+1 门(初始即 buff)</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>阶段</th><th>子弹击中次数</th><th>当前数值</th><th>状态</th><th>视觉</th></tr>
       <tr><td>出生</td><td>0</td><td>+1 弹道</td><td>S3 BUFF</td><td>绿, 阻挡</td></tr>
       <tr><td>射击中</td><td>4</td><td>+2 弹道</td><td>S4 上限释放</td><td>亮绿虚边, 子弹穿透</td></tr>
@@ -690,13 +844,13 @@ footer {
   </section>
 
 
-  <section>
-    <span class="section-num">§ 06 · 躲门空间几何</span>
+  <section class="chapter" id="ch-06">
+    <span class="chapter-num">§ 06 · 躲门空间几何</span>
     <h2>主角与状态门<br>3 种关系判定</h2>
     <p class="lead">状态门宽 1.5U + 接敌通道宽 3U, 意味着主角在接敌通道内本来就有躲门空间, 不必每次都横跨到宝箱通道。这套几何决定了核心操作手感。</p>
 
     <h3>6.1 数值推演</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>项</th><th>数值</th><th>说明</th></tr>
       <tr><td>接敌通道宽</td><td>3U</td><td>右通道全宽</td></tr>
       <tr><td>状态门宽</td><td>1.5U</td><td>固定一半</td></tr>
@@ -791,12 +945,12 @@ footer {
     </div>
   </section>
 
-  <section>
-    <span class="section-num">§ 07 · 防线与失败条件</span>
+  <section class="chapter" id="ch-07">
+    <span class="chapter-num">§ 07 · 防线与失败条件</span>
     <h2>持久度归零 = Game Over</h2>
 
     <h3>7.1 防线规格</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>属性</th><th>规格</th></tr>
       <tr><td>位置</td><td>屏幕底部, 横跨整个屏幕宽 5U</td></tr>
       <tr><td>高度</td><td>约 1U 高度的横向带</td></tr>
@@ -827,8 +981,8 @@ footer {
   </section>
 
   <!-- ============ v3.1 增补 §07.5 预体验关卡 ============ -->
-  <section>
-    <span class="section-num">§ 07.5 · v3.1 新增 · 预体验关卡</span>
+  <section class="chapter" id="ch-07-5">
+    <span class="chapter-num">§ 07.5 · v3.1 新增 · 预体验关卡</span>
     <h2>关卡 0<br>新玩家 0 秒钩子, 60s 建立"这游戏很爽"</h2>
     <p class="lead">新玩家首次进游戏强制体验的一个短关。目标 = 直接展现游戏最爽的战斗峰值, 建立第一印象, 通关后进入正式 3 关系统。</p>
 
@@ -841,12 +995,12 @@ footer {
     </ul>
 
     <h3>7.5.2 结构 · 静默期 + 战斗期</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>阶段</th><th>时长</th><th>玩家可操作</th><th>说明</th></tr>
       <tr><td>静默期</td><td>10 秒</td><td>可移动, 不可开火</td><td>顶部展示战术警告文案, 敌人在屏顶远端已可见但未进入攻击范围</td></tr>
       <tr><td>战斗期</td><td>60 秒</td><td>全操作</td><td>敌人开始推进, 玩家与 NUO 自动开火</td></tr>
     </table>
-    <div class="callout callout-warn">
+    <div class="callout warn">
       <strong>时长计算</strong>: 战斗期 60s 是"总时长", 静默期 10s 不计入。整关玩家实际感知 = 10s 屏息 + 60s 爆爽 = 70s。
     </div>
 
@@ -859,7 +1013,7 @@ footer {
     </div>
 
     <h3>7.5.4 火力配置 (预体验独有强化)</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>单位</th><th>基础 (正式关卡)</th><th>预体验关卡</th><th>差异</th></tr>
       <tr><td>主角</td><td>1× 射速, 单弹道</td><td><strong>2× 射速, 双弹道</strong></td><td>火力密度 4×</td></tr>
       <tr><td>NUO</td><td>1× 射速, 单弹道</td><td><strong>2× 射速, 双弹道</strong></td><td>火力密度 4×</td></tr>
@@ -869,7 +1023,7 @@ footer {
     <p><strong>设计意图</strong>: 火力密度拉满但不加特殊机制, 玩家爽在"打得又快又准", 而不是"技能秒全屏"。后者会稀释操作反馈。</p>
 
     <h3>7.5.5 战斗节奏 (60s 分段)</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>时间段</th><th>敌人类型</th><th>目标体验</th></tr>
       <tr><td>0-20s</td><td><strong>小兵方阵爆刷</strong></td><td>火力爽感, 大量爆炸反馈</td></tr>
       <tr><td>20-40s</td><td><strong>精英怪 2-3 只</strong></td><td>提高单体 HP, 玩家感受到"精准击杀"</td></tr>
@@ -887,14 +1041,14 @@ footer {
 
     <h3>7.5.7 特殊防线机制 · 反弹护盾</h3>
     <p><strong>预体验关卡独有</strong>的双层保护机制: 反弹护盾 + 防线血量。</p>
-    <table class="spec-table">
+    <table>
       <tr><th>层</th><th>触发</th><th>效果</th></tr>
       <tr><td>反弹护盾</td><td>近战敌人贴脸攻击防线 X 伤害</td><td><strong>护盾 HP -X</strong> 且 <strong>敌人反受等量 X 伤害</strong></td></tr>
       <tr><td>反弹护盾</td><td>远程敌人子弹命中防线</td><td>护盾 HP -X, <strong>不反弹</strong> (只对近战反弹)</td></tr>
       <tr><td>防线血量</td><td>护盾归零后, 继续受击</td><td>防线 HP -X, 归零 = Game Over</td></tr>
     </table>
 
-    <div class="callout callout-warn">
+    <div class="callout warn">
       <strong>反弹护盾 · 跨关卡定位 (D13 拍板, 2026-07-02)</strong>: 反弹护盾<strong>仅在预体验关卡存在</strong>, 正式 1/2/3 关无。剧情逻辑 = 敌人启动"虚空屏蔽场"切断补给, 一并剥夺护盾。<br><br>
       <strong>未来复活路径</strong>: v4 材料合成系统上线后, 反弹护盾作为一个<strong>合成配方产物</strong>可解锁使用 (不是永久掉落, 是配方组合)。留作 v4 玩法钩子, v3.1 spec 不展开。
     </div>
@@ -910,12 +1064,12 @@ footer {
     </div>
 
     <h3>7.5.9 待 K 拍板 · 火力峰值节奏点</h3>
-    <div class="callout callout-ok">
+    <div class="callout success">
       <strong>已定 (D13, 2026-07-02)</strong>: <strong>不加</strong>火力峰值装饰 (如中段 NUO 全屏激光扫射)。理由: 60s 战斗窗口本就短, 4 段自然节奏 (小兵→精英→小 Boss→收尾) 已经形成钩子密度, 塞额外大动作反而稀释操作反馈; 且大动作会让玩家期待"正式关卡也有", 落空。
     </div>
 
     <h3>7.5.10 成本估算</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>项</th><th>估算</th><th>说明</th></tr>
       <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 v3 现有内容 (敌人/防线/主角/NUO/武器/宝箱)</td></tr>
       <tr><td>代码成本</td><td><strong>2-4 小时</strong></td><td>特殊关卡模板 + 火力参数覆盖 + 2 个 UI 弹窗 (战术警告 + 衔接过场)</td></tr>
@@ -925,8 +1079,8 @@ footer {
   </section>
 
   <!-- ============ v3.1 增补 §07.6 无尽模式 ============ -->
-  <section>
-    <span class="section-num">§ 07.6 · v3.1 新增 · 无尽模式</span>
+  <section class="chapter" id="ch-07-6">
+    <span class="chapter-num">§ 07.6 · v3.1 新增 · 无尽模式</span>
     <h2>撑多久 = 分多少<br>通关解锁的长线刷分玩法</h2>
     <p class="lead">最高难度 3 关全部通关后解锁。核心目标 = 解玩家"打通就丢, 没动力再玩"的核心病, 用刷分破纪录 + 好友榜社交贴合建立长线留存钩子。</p>
 
@@ -947,7 +1101,7 @@ footer {
 
     <h3>7.6.3 敌人爬升 · 分 Wave + 指数阶跃 (D13 拍板)</h3>
     <p><strong>决策</strong>: 分 wave 结构, 每 60s 一个 wave, wave 内节奏固定, wave 间难度阶跃; <strong>阶跃幅度指数增长</strong> — 早期温和好上手, 后期陡峭卡水平。</p>
-    <table class="spec-table">
+    <table>
       <tr><th>Wave</th><th>时间段</th><th>难度阶跃 (相对上一 wave)</th><th>说明</th></tr>
       <tr><td>Wave 1</td><td>0-60s</td><td>基线</td><td>参照正式第一关新手训练强度, 玩家熟悉节奏</td></tr>
       <tr><td>Wave 2</td><td>60-120s</td><td>+5%</td><td>敌人 HP/出怪率轻微上涨, 玩家仍有余裕</td></tr>
@@ -956,7 +1110,7 @@ footer {
       <tr><td>Wave 5</td><td>240-300s</td><td>+13%</td><td>高手区</td></tr>
       <tr><td>Wave 6+</td><td>300s+</td><td>+15%, +18%, +22%...</td><td>指数陡增, 卡最强玩家水平</td></tr>
     </table>
-    <div class="callout callout-warn">
+    <div class="callout warn">
       <strong>具体每 wave 数值 (敌人 HP / 出怪率 / 特殊组合)</strong> 待数值配平阶段用模拟器 v2 跑出, spec 阶段先定曲线形状, 不定具体值 (T07 待定项)。
     </div>
 
@@ -970,7 +1124,7 @@ footer {
       <li><strong>防线 HP 权重 2</strong>: 低权重, 但撑到最后 HP 还很高可以拉分</li>
       <li><strong>杀敌数权重 5</strong>: 主导因素, 逼玩家主动打怪, 不能只守不打混时间</li>
     </ul>
-    <div class="callout callout-warn">
+    <div class="callout warn">
       <strong>反 exploit 设计意图</strong>: 单一维度主导 (纯存活 / 纯击杀) 会被玩家挖出捷径 (比如只守不打拖时间)。均衡公式使玩家必须兼顾"活久 + 打多", 天然形成策略深度; 且"综合分"比"单一数字"更适合截图分享。
     </div>
 
@@ -982,7 +1136,7 @@ footer {
       <li><span class="tag tag-should">建议</span>结算面板加"分享到微信"按钮 (可选), 用微信原生分享 API, 图片带分数展示</li>
       <li><span class="tag tag-may">可选</span>陌生人全球榜<strong>不做</strong> — 休闲游戏留存意义不大, 且需要自建服务器</li>
     </ul>
-    <div class="callout callout-ok">
+    <div class="callout success">
       <strong>技术选型理由</strong>: 微信开放数据域是白嫖社交的最佳解 — 0 服务器成本, 用微信关系链好友的比较自然产生比拼欲, 参考《向僵尸开炮》同款架构。集成时多加一个开放数据域子包 (微信文档有现成模板)。
     </div>
 
@@ -995,7 +1149,7 @@ footer {
     </ul>
 
     <h3>7.6.7 成本估算</h3>
-    <table class="spec-table">
+    <table>
       <tr><th>项</th><th>估算</th><th>说明</th></tr>
       <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 3 关美术, 仅 UI 加 wave 计数 + 好友榜卡片 + 破纪录横幅</td></tr>
       <tr><td>代码成本</td><td><strong>1-2 周</strong></td><td>Wave 系统 + 分数公式 + 微信开放数据域集成 + UI 3 个</td></tr>
@@ -1004,12 +1158,12 @@ footer {
     </table>
   </section>
 
-  <section>
-    <span class="section-num">§ 08 · 边缘情况清单</span>
+  <section class="chapter" id="ch-08">
+    <span class="chapter-num">§ 08 · 边缘情况清单</span>
     <h2>16 条规则边界<br>+ 处理预案</h2>
     <p class="lead">这些是规格执行中可能会冒出"那这种情况怎么办"的边缘情况。提前定下来, 程序对照实现, 避免做完才争论。</p>
 
-    <table class="spec-table">
+    <table>
       <tr><th>#</th><th>场景</th><th>处理</th></tr>
       <tr><td>E01</td><td>主角刚拿到新武器瞬间, 旧武器子弹还在飞</td><td>旧子弹继续按旧武器属性飞完, 新子弹从主角位置按新武器发射</td></tr>
       <tr><td>E02</td><td>状态门 S4 上限释放后, 子弹穿透打到后方敌人</td><td>正常造成伤害, 不被门吸收</td></tr>
@@ -1030,12 +1184,12 @@ footer {
     </table>
   </section>
 
-  <section>
-    <span class="section-num">§ 09 · 待定项 (需 Kaysen 后续拍板)</span>
+  <section class="chapter" id="ch-09">
+    <span class="chapter-num">§ 09 · 待定项 (需 Kaysen 后续拍板)</span>
     <h2>5 个未定数值 / 规则</h2>
     <p class="lead">这些项目本规格暂留 placeholder, 不阻塞美术与基础玩法验证, 在白模 demo 调试或数值策划阶段补齐。</p>
 
-    <table class="spec-table">
+    <table>
       <tr><th>#</th><th>待定项</th><th>说明</th><th>建议时机</th></tr>
       <tr><td>T01</td><td>数值表全量</td><td>所有武器属性 / 敌人血量 dps / 状态门步进值 / 防线 HP / NUO 基础属性</td><td>白模 demo 跑通后, 数值策划阶段</td></tr>
       <tr><td>T02</td><td>武器库内容</td><td>基础 / 精良 / 稀有 各档具体有哪些武器, 各自的视觉与机制</td><td>美术 brief 阶段</td></tr>
@@ -1047,8 +1201,8 @@ footer {
     </table>
   </section>
 
-  <section>
-    <span class="section-num">§ 10 · 实施路径</span>
+  <section class="chapter" id="ch-10">
+    <span class="chapter-num">§ 10 · 实施路径</span>
     <h2>从规格到可玩 demo<br>下一步 4 个动作</h2>
 
     <ol>
@@ -1058,16 +1212,12 @@ footer {
       <li><strong>数值与美术 brief</strong>: 验证通过后启动 T01 数值表 + T02/T03 美术外包规格, 进入 MVP 制作</li>
     </ol>
 
-    <div class="callout callout-ok">
+    <div class="callout success">
       <strong>规格闭环原则</strong>: 本规格是 Nova 与 Kaysen 多轮对齐后的 v1 定稿。如白模 demo 阶段发现规则有漏洞或体验不对, 优先修订本规格再改 demo, 不在 demo 里 hack 绕过规格。规格是 single source of truth。
     </div>
   </section>
 
-  <footer>
-    <span>NOVA · GAME SPEC v3.1</span>
-    <span>FOR KAYSEN · INTERNAL</span>
-  </footer>
-
+</main>
 </div>
 </body>
 </html>
