@@ -2798,6 +2798,9 @@ function setupOnboard() {
 
 const V31 = {
   mode: 'normal',              // 'preview' | 'normal' | 'endless'
+  // 原始 CFG 快照 (启动时抓一次, 用于模式切换时正确还原基线)
+  _origPlayerInterval: 280,    // CFG.player.bulletInterval 原值 (init 时校准)
+  _origNuoInterval: 320,       // CFG.nuo.bulletInterval 原值
   // 预体验关卡
   previewSilenceUntil: 0,      // 静默期截止时间 (ms)
   previewCombatUntil: 0,       // 战斗期截止时间 (ms)
@@ -2872,17 +2875,21 @@ function _actuallyStartPreviewCombat() {
   document.getElementById('hud-wave-row').style.display = 'none';
   document.getElementById('hud-score-row').style.display = 'none';
 
-  // 预体验独有强化: 主角+NUO 火力 2× (bulletInterval 减半)
-  CFG.player.bulletInterval = Math.floor(CFG.player.bulletInterval / 2);
-  if (CFG.nuo && CFG.nuo.bulletInterval) {
-    CFG.nuo.bulletInterval = Math.floor(CFG.nuo.bulletInterval / 2);
-  }
-  G.multiShot = 2;  // 双弹道
+  // === 预体验独有火力配置 (spec §07.5.4 定稿) ===
+  // 主角: 2× 射速 + 双弹道
+  CFG.player.bulletInterval = Math.floor(V31._origPlayerInterval / 2);
+  G.multiShot = 2;
+  // NUO: 2× 射速 + 双弹道 (改 G.nuoStats, 不污染 CFG.nuo.base)
+  G.nuoStats.spd = 2.0;
+  G.nuoStats.blt = 2;
+  // 显式声明: 无穿透、无 AoE (老 demo 默认就是, 不装 explosive/pierce perk 即可)
+  G.perks = {};  // 清空所有 perk, 保证纯净基础武器
 
-  // 反弹护盾
+  // 反弹护盾 (v3.1 独有, 预留字段供后续挂接)
   V31.previewShieldHP = V31.previewShieldMax;
   V31.previewCombatUntil = performance.now() + 60000;  // 60s 战斗
 
+  updateNuoUI();  // 刷新 NUO 属性面板显示新 stats
   G.running = true;
   G.startTime = performance.now();
   G.pauseAccum = 0;
@@ -2903,7 +2910,9 @@ function startNormal() {
   setModeBadge('normal');  // 会隐藏
   document.getElementById('hud-wave-row').style.display = 'none';
   document.getElementById('hud-score-row').style.display = 'none';
-  startGame();  // 走老 demo 原生流程
+  // 还原基线 (预体验模式可能改过 CFG.player.bulletInterval)
+  CFG.player.bulletInterval = V31._origPlayerInterval;
+  startGame();  // 走老 demo 原生流程 (reset 内部会重置 G.nuoStats/G.multiShot)
 }
 
 // ---- 无尽模式: wave 递增 · 分数公式 · top10 ----
@@ -2913,6 +2922,8 @@ function startEndless() {
   setModeBadge('endless');
   document.getElementById('hud-wave-row').style.display = 'block';
   document.getElementById('hud-score-row').style.display = 'block';
+  // 还原基线
+  CFG.player.bulletInterval = V31._origPlayerInterval;
 
   reset();
   V31.endlessWaveIdx = 1;
@@ -3091,6 +3102,10 @@ triggerGameOver = function(isVictory) {
 
 // ---- 事件绑定 ----
 function setupV31Menu() {
+  // 抓 CFG 原始基线快照 (供预体验模式除法用, 避免累积除)
+  V31._origPlayerInterval = CFG.player.bulletInterval;
+  V31._origNuoInterval = CFG.nuo.bulletInterval;
+
   document.getElementById('btnPreview').addEventListener('click', startPreview);
   document.getElementById('btnNormal').addEventListener('click', startNormal);
   document.getElementById('btnEndless').addEventListener('click', startEndless);
