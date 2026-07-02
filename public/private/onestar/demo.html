@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no,viewport-fit=cover">
-<title>《舰舰别炸》v3 白模 demo · 桌面窗口版</title>
+<title>《舰舰别炸》v3 白模 demo · 响应式版</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
 html,body{
@@ -22,6 +22,26 @@ html,body{
   flex-shrink:0;
 }
 #game{position:absolute;inset:0;width:100%;height:100%;display:block;background:#0b0f0e;touch-action:none}
+
+/* ========== Mobile 响应式 (≤500px, 手机浏览器自动切) ========== */
+@media (max-width: 500px){
+  html,body{
+    height:100%;padding:0;overflow:hidden;
+    background:#0b0f0e;
+    display:block;align-items:initial;justify-content:initial;
+  }
+  #stage{
+    position:fixed;inset:0;width:100vw;height:100vh;
+    max-width:none;max-height:none;
+    border-radius:0;box-shadow:none;
+  }
+  #game{
+    position:absolute;inset:auto;
+    /* JS fitMobileCanvas() 会覆盖 width/height/left/top 保持 414x736 比例 */
+    width:100%;height:100%;
+  }
+  .hint-desktop{display:none !important}
+}
 
 /* 桌面侧边提示 (mobile 版会隐藏) */
 .hint-desktop{
@@ -2818,6 +2838,31 @@ window.addEventListener('load', () => {
   draw();
   setupOnboard();
 });
+
+// ==== Mobile 响应式: 保持 414x736 比例, 铺满可视区居中 ====
+// 触发条件: viewport <= 500px (跟 CSS @media 断点一致)
+function isMobileMode(){
+  return window.matchMedia && window.matchMedia('(max-width: 500px)').matches;
+}
+function fitMobileCanvas(){
+  if (!isMobileMode()) return;
+  const cv = document.getElementById('game');
+  if (!cv) return;
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const targetRatio = 414 / 736;
+  const vRatio = vw / vh;
+  let cssW, cssH;
+  if (vRatio > targetRatio) { cssH = vh; cssW = vh * targetRatio; }
+  else { cssW = vw; cssH = vw / targetRatio; }
+  cv.style.width  = cssW + 'px';
+  cv.style.height = cssH + 'px';
+  cv.style.left   = ((vw - cssW) / 2) + 'px';
+  cv.style.top    = ((vh - cssH) / 2) + 'px';
+}
+window.addEventListener('load', fitMobileCanvas);
+window.addEventListener('resize', fitMobileCanvas);
+window.addEventListener('orientationchange', fitMobileCanvas);
 
 </script>
 </body>
