@@ -65,7 +65,7 @@ html,body{
 #hud .val.warn{color:#ffaa44}
 #hud .val.danger{color:#ff5544}
 
-/* NUO 属性面板 - 左上小卡 */
+/* BOBO 属性面板 - 左上小卡 */
 #nuoStats{
   position:absolute;top:64px;left:8px;
   background:rgba(0,30,40,0.55);
@@ -324,9 +324,9 @@ html,body{
       </div>
   </div>
 
-  <!-- NUO 属性卡 -->
+  <!-- BOBO 属性卡 -->
   <div id="nuoStats">
-    <div class="nuo-head">NUO <span id="nuo-mirror-tag" style="float:right;display:none;color:#ff88dd">×2</span></div>
+    <div class="nuo-head">BOBO <span id="nuo-mirror-tag" style="float:right;display:none;color:#ff88dd">×2</span></div>
     <div class="nuo-row"><span class="k">ATK</span><span class="v" id="nuo-atk">10</span></div>
     <div class="nuo-row"><span class="k">SPD</span><span class="v" id="nuo-spd">1.0</span></div>
     <div class="nuo-row"><span class="k">BLT</span><span class="v" id="nuo-blt">1</span></div>
@@ -362,7 +362,7 @@ html,body{
     <label>难度 <input type="range" id="tw-diff" min="0.5" max="2" step="0.1" value="1"></label>
     <label>状态门间隔 <input type="range" id="tw-gate" min="3" max="10" step="0.5" value="6"></label>
     <label>敌人频率 <input type="range" id="tw-enemy" min="0.5" max="3" step="0.1" value="1"></label>
-    <button id="tw-mirror">立即获得镜像 NUO</button>
+    <button id="tw-mirror">立即获得镜像 BOBO</button>
     <button id="tw-clear">清空场上敌人</button>
   </div>
 
@@ -416,7 +416,7 @@ html,body{
       <div class="panel-title">舰舰别炸 V3</div>
       <div class="panel-sub">WHITEBOX DEMO · 0627</div>
       <div class="panel-desc">
-        <div>· <span class="key">主角 + NUO</span> 守底部防线</div>
+        <div>· <span class="key">主角 + BOBO</span> 守底部防线</div>
         <div>· 左 <span class="key">宝箱通道</span> 击破得武器</div>
         <div>· 右 <span class="key">接敌通道</span> 状态门修正属性</div>
         <div>· 减益射满转增益 · 上限释放阻挡位</div>
@@ -667,7 +667,7 @@ const G = {
 
   // 实体
   player: null,
-  nuos: [],         // 包含主 NUO + 可能的镜像 NUO
+  nuos: [],         // 包含主 BOBO + 可能的镜像 BOBO
   hasMirror: false,
   enemies: [],
   bullets: [],
@@ -706,7 +706,7 @@ const CFG = {
     height: 30,
     bulletInterval: 280, // ms
   },
-  // NUO 初始属性
+  // BOBO 初始属性
   nuo: {
     base: {
       atk: 10,
@@ -745,7 +745,7 @@ const CFG = {
   // 宝箱 - 单列全宽排布 (整条左通道 165 宽), 开局默认排满 5 个
   // v3 设计: 8 件累积配件按固定顺序解锁, 真实宝箱之间强制穿插 decoy
   // HP 曲线: 所有宝箱 (perk + decoy + repeat buff) 共享递增倍率, 出场 idx 越大 HP 越高
-  // 全部配件只强化主角, 不影响 NUO
+  // 全部配件只强化主角, 不影响 BOBO
   treasure: {
     spawnInterval: 4500,
     // 8 件配件序列 - 基础 HP 大幅拔高 (相比 v2 普遍 +50% 以上, 给递增倍率留头部)
@@ -908,11 +908,11 @@ function createNuo(offsetX, isMirror=false) {
     offsetX,
     isMirror,
     lastShot: 0,
-    // 属性副本 (主 NUO 和镜像 NUO 共享一份 stats 引用通过 G.nuoStats)
+    // 属性副本 (主 BOBO 和镜像 BOBO 共享一份 stats 引用通过 G.nuoStats)
   };
 }
 
-// NUO 属性集中管理 - 主 NUO 和镜像 NUO 共享这份 stats
+// BOBO 属性集中管理 - 主 BOBO 和镜像 BOBO 共享这份 stats
 function createNuoStats() {
   return {...CFG.nuo.base, silenceUntil: 0};
 }
@@ -1083,11 +1083,11 @@ function update(dt) {
     G.player.x = clamp(G.pointerX, G.player.w/2, W - G.player.w/2);
   }
 
-  // NUO 跟随
+  // BOBO 跟随
   G.nuos.forEach(n => {
     n.x = G.player.x + n.offsetX;
     n.y = PLAYER_Y + 2;
-    // 边界保护 - NUO 顶到屏幕边时贴主角另一侧 (E05)
+    // 边界保护 - BOBO 顶到屏幕边时贴主角另一侧 (E05)
     if (n.x < n.w/2) n.x = G.player.x + Math.abs(n.offsetX);
     if (n.x > W - n.w/2) n.x = G.player.x - Math.abs(n.offsetX);
   });
@@ -1129,7 +1129,7 @@ function update(dt) {
     triggerGameOver(true);
   }
 
-  // NUO 静默剩余时间扣减
+  // BOBO 静默剩余时间扣减
   if (G.nuoStats.silenceUntil > G.now) {
     // still silenced
   } else {
@@ -1158,8 +1158,8 @@ function shootLoop() {
     const baseAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
     const bltCount = Math.max(1, Math.round(G.multiShot || 1));
     const spread = 10;
-    // 暴击率 = NUO 状态门给的暴击率 (G.nuoStats.crt 含上限 15%) + buff 的 critBonus
-    // 注意: 老板要求主角暴击和 NUO 暴击解耦, 但目前 stats 还共享, 先按 stats.crt + bonus 算
+    // 暴击率 = BOBO 状态门给的暴击率 (G.nuoStats.crt 含上限 15%) + buff 的 critBonus
+    // 注意: 老板要求主角暴击和 BOBO 暴击解耦, 但目前 stats 还共享, 先按 stats.crt + bonus 算
     const critRate = Math.min(1, (G.playerCritRate !== undefined ? G.playerCritRate : G.nuoStats.crt) + (G.playerCritBonus || 0));
     // 暴击伤害 = 基础 ×2 + critDmg 加成 (来自状态门 critDmg 维度)
     const critMult = 2 + (G.nuoStats.critDmg || 0);
@@ -1173,7 +1173,7 @@ function shootLoop() {
     SFX.play('fire');
   }
 
-  // NUO 群射击 - 共享 stats, 受静默影响
+  // BOBO 群射击 - 共享 stats, 受静默影响
   const silenced = G.nuoStats.silenceUntil > G.now;
   if (!silenced) {
     const interval = CFG.nuo.bulletInterval / Math.max(0.2, G.nuoStats.spd);
@@ -1933,7 +1933,7 @@ function updateStateGate(dt) {
 function applyGateToNuo(gate) {
   const v = gate.value;
   const dim = gate.dim;
-  // 应用到 NUO stats (主 NUO + 镜像 同步)
+  // 应用到 BOBO stats (主 BOBO + 镜像 同步)
   if (dim.key === 'silence') {
     if (v < 0) {
       // 减益: 静默, ms
@@ -2021,7 +2021,7 @@ function draw() {
   // 主角散射激光视觉
   drawLaserVisuals();
 
-  // 主角 + NUO
+  // 主角 + BOBO
   drawPlayer();
   G.nuos.forEach(drawNuo);
 
@@ -2564,7 +2564,7 @@ function setupInput() {
       G.nuos.push(createNuo(-18, true));
       G.hasMirror = true;
       document.getElementById('nuo-mirror-tag').style.display = 'inline';
-      showBuffToast('镜像 NUO ×2!', true);
+      showBuffToast('镜像 BOBO ×2!', true);
     }
   });
   document.getElementById('tw-clear').addEventListener('click', () => {

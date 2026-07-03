@@ -368,11 +368,11 @@ h3:hover .anchor-link, h2:hover .anchor-link { opacity: 1; }
 </li>
 <li><a href="#ch3">资源清单总表</a></li>
 <li><a href="#ch0-view"><strong>视角原则 (v3.1 新增)</strong></a></li>
-<li><a href="#ch4">主角 + NUO 系统</a>
+<li><a href="#ch4">主角 + BOBO 系统</a>
   <ul>
     <li><a href="#ch4-hero">主角 (人物)</a></li>
-    <li><a href="#ch4-nuo">NUO 悬浮球</a></li>
-    <li><a href="#ch4-mirror-nuo">镜像 NUO</a></li>
+    <li><a href="#ch4-nuo">BOBO 悬浮球</a></li>
+    <li><a href="#ch4-mirror-nuo">镜像 BOBO</a></li>
   </ul>
 </li>
 <li><a href="#ch5">外星生物 + 状态门</a>
@@ -390,7 +390,7 @@ h3:hover .anchor-link, h2:hover .anchor-link { opacity: 1; }
 </li>
 <li><a href="#ch7">弹幕与特效粒子</a>
   <ul>
-    <li><a href="#ch7-bullets">双弹道 (主角 + NUO)</a></li>
+    <li><a href="#ch7-bullets">双弹道 (主角 + BOBO)</a></li>
     <li><a href="#ch7-particles">通用特效粒子</a></li>
   </ul>
 </li>
@@ -423,7 +423,7 @@ v3.1 (视角修订) · 2026-07-03<br>
 <div class="doc-header">
 <span class="badge">ART SPEC · v3.1 视角修订版</span>
 <h1>《舰舰别炸》v3.1<br>美术资源需求文档</h1>
-<div class="subtitle">一点透视 · 双通道守线 · 主角 + NUO 双弹道 · 微信小游戏 · 写实科幻风</div>
+<div class="subtitle">一点透视 · 双通道守线 · 主角 + BOBO 双弹道 · 微信小游戏 · 写实科幻风</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -448,20 +448,30 @@ v3.1 (视角修订) · 2026-07-03<br>
 本文档是 <strong>v3.1 视角修订版</strong> 美术资源规格说明书,基于 <code>spec.html</code> v3 玩法规格制作,
 取代 v1.1 飞机大战版本(已归档为 <code>art-spec-v1.html.v2-archive-*</code>)。
 v3 与 v1 的核心差异: 视角从俯视改为一点透视斜俯视、玩法从推进式改为守线塔防、
-玩家角色从飞机改为人物 + NUO 悬浮球。所有资源全部基于 v3 玩法重新规划。
+玩家角色从飞机改为人物 + BOBO 悬浮球。所有资源全部基于 v3 玩法重新规划。
 </div>
 
 <div class="callout warn" style="margin-top:16px;">
 <span class="callout-title">📝 v3.1 修订日志 (2026-07-03)</span>
-<strong>关键修正: 主角 + NUO 视角定义 (v3.0 里写错了)</strong>
+<strong>关键修正: 主角 + BOBO 视角定义 (v3.0 里写错了)</strong>
 <ul style="margin-top:8px;">
 <li><strong>§0 新增视角原则总纲</strong> — 明确"玩家和主角同视线"= 主角背对镜头, 摄像机从主角后上方 30-40° 俯拍 (一点透视斜俯视)。参考: 皇室战争 / Kingdom Rush 塔防守线经典视角。</li>
 <li><strong>§4.1 主角朝向</strong> — 从"正面朝屏幕外" 改为 "3/4 背视角"; 表情相关验收要点 (兴奋 / 委屈) 保留但改为"通过肢体语言+微侧脸传达", 因为背视角看不到正脸。</li>
-<li><strong>§4.2 NUO 朝向</strong> — 从"瞳孔朝屏幕外" 改为 "瞳孔面朝画面深处不入镜, 玩家看到球体后半"; 新增背面识别锚 (散热接缝 / 后脑 LED / 两侧推进器); buff/debuff 瞳孔变化改为"侧透 + 底部光晕颜色变化"传达。</li>
+<li><strong>§4.2 BOBO 朝向</strong> — 从"瞳孔朝屏幕外" 改为 "瞳孔面朝画面深处不入镜, 玩家看到球体后半"; 新增背面识别锚 (散热接缝 / 后脑 LED / 两侧推进器); buff/debuff 瞳孔变化改为"侧透 + 底部光晕颜色变化"传达。</li>
 <li><strong>§4.1 / §4.2 增加"背面能看到的装备特征"清单</strong> — 因为背视角看不到脸和瞳孔, 需要靠装备轮廓做视觉识别。</li>
 <li>其他章节 (敌人 / UI / 背景) 未修订, 但视角原则同样适用: 外星生物从远方推进 → 玩家看到的是它们正面朝下 (朝防线) 的样子, 这一档不变。</li>
 </ul>
 <strong>本次修订原因</strong>: v3.0 §4.1 / §4.2 里的"正面朝屏幕外"是想当然写错, Nova 2026-07-03 写主角 sprite prompt 时被 Kaysen 抓出。守线塔防的"玩家视角"= 玩家和主角同视线看向敌人来袭方向, 不是角色面朝玩家。
+</div>
+
+<div class="callout warn" style="margin-top:16px;">
+<span class="callout-title">📝 v3.1 二次修订 (2026-07-03 晚)</span>
+<strong>K 拍板 3 项细节修订</strong>
+<ul style="margin-top:8px;">
+<li><strong>俯角加大</strong>: §0 总纲 §1 摄像机位, 30-40° → <strong>40-50°</strong> 明显加强俯视 (更接近皇室战争俯瞰战场视角)。§4.1 主角 sprite 朝向同步修正。</li>
+<li><strong>主角双手隐藏</strong>: §4.1 明确 "双手完全隐藏" 是取巧化解持枪问题的手段 — 双臂被身体和肩甲遮挡, 或插腰后带里, 从背视角完全看不到手指/手掌/手套。半持枪折中方案 (右手持枪 + 左手藏) 保留为可选备选。</li>
+<li><strong>BOBO 改名</strong>: NUO → BOBO 全线改名 (原名"陪伴/应答"承诺感在 K 反馈里没落地, 改为"陪伴+活泼"感更强的双字名)。所有活文档 (spec/demo/art-spec/pm/compliance) 285 处人类可读 NUO 全部替换; 代码变量名 <code>nuo_orb / nuo_mirror / #ch4-nuo</code> 等保留不动 (工程零成本), 只改显示文本 + ID (NUO-001 → BOBO-001)。</li>
+</ul>
 </div>
 </div>
 
@@ -544,7 +554,7 @@ v3 与 v1 的核心差异: 视角从俯视改为一点透视斜俯视、玩法�
 </div>
 <div class="info-card">
 <div class="info-label">核心爽点</div>
-<div class="info-value">数字爽感 (杀敌堆数) + 反差萌 (NUO 反应)</div>
+<div class="info-value">数字爽感 (杀敌堆数) + 反差萌 (BOBO 反应)</div>
 </div>
 <div class="info-card">
 <div class="info-label">付费意愿</div>
@@ -577,11 +587,11 @@ v3 与 v1 的核心差异: 视角从俯视改为一点透视斜俯视、玩法�
 </div>
 <div class="info-card">
 <div class="info-label">情感基调</div>
-<div class="info-value">紧张感 (敌人推进) + 反差萌 (NUO 表情)</div>
+<div class="info-value">紧张感 (敌人推进) + 反差萌 (BOBO 表情)</div>
 </div>
 <div class="info-card">
 <div class="info-label">差异化卖点</div>
-<div class="info-value">NUO 悬浮球可成长,镜像 NUO 双倍火力反差萌</div>
+<div class="info-value">BOBO 悬浮球可成长,镜像 BOBO 双倍火力反差萌</div>
 </div>
 </div>
 
@@ -592,10 +602,10 @@ v3 与 v1 的核心差异: 视角从俯视改为一点透视斜俯视、玩法�
 </thead>
 <tbody>
 <tr><td><span class="swatch" style="background:#FFB13C;"></span> 主橙</td><td>#FFB13C</td><td>主角弹道 · 警告 · 高亮</td></tr>
-<tr><td><span class="swatch" style="background:#3CC8FF;"></span> NUO 青</td><td>#3CC8FF</td><td>NUO 弹道 · 镜像 NUO · UI 主色</td></tr>
+<tr><td><span class="swatch" style="background:#3CC8FF;"></span> BOBO 青</td><td>#3CC8FF</td><td>BOBO 弹道 · 镜像 BOBO · UI 主色</td></tr>
 <tr><td><span class="swatch" style="background:#FF4444;"></span> 危险红</td><td>#FF4444</td><td>状态门 DEBUFF · 防线低血 · 失败</td></tr>
 <tr><td><span class="swatch" style="background:#4CFF80;"></span> 增益绿</td><td>#4CFF80</td><td>状态门 BUFF · 武器升级</td></tr>
-<tr><td><span class="swatch" style="background:#A864FF;"></span> 稀有紫</td><td>#A864FF</td><td>稀有敌人 · 镜像 NUO 武器</td></tr>
+<tr><td><span class="swatch" style="background:#A864FF;"></span> 稀有紫</td><td>#A864FF</td><td>稀有敌人 · 镜像 BOBO 武器</td></tr>
 <tr><td><span class="swatch" style="background:#0A0E1A;"></span> 太空黑</td><td>#0A0E1A</td><td>背景基底 · UI 底色</td></tr>
 <tr><td><span class="swatch" style="background:#1A2238;"></span> 太空蓝</td><td>#1A2238</td><td>视差远景 · UI 卡片</td></tr>
 <tr><td><span class="swatch" style="background:#E8ECF4;"></span> 高光白</td><td>#E8ECF4</td><td>UI 文字 · 高亮反光</td></tr>
@@ -639,7 +649,7 @@ v3 与 v1 的核心差异: 视角从俯视改为一点透视斜俯视、玩法�
 <tr><td>主光源</td><td><strong>右上 45° 顶光</strong>, 白色冷光 (v3.1 修订)</td><td>所有角色阴影统一往左下投 · 详见 <a href="#ch0-view">视角原则总纲 §3</a></td></tr>
 <tr><td>环境光</td><td>蓝紫色调环境光 (#3A4670)</td><td>太空冷色环境基调</td></tr>
 <tr><td>角色高光</td><td>边缘高光 + 内反射光</td><td>金属质感 / 球体反射</td></tr>
-<tr><td>弹道发光</td><td>外发光 (glow) 8-12px</td><td>主角橙 / NUO 青 区分</td></tr>
+<tr><td>弹道发光</td><td>外发光 (glow) 8-12px</td><td>主角橙 / BOBO 青 区分</td></tr>
 <tr><td>状态门发光</td><td>外发光脉动 (12px → 24px)</td><td>5 态变化时的视觉强度</td></tr>
 <tr><td>防线低血</td><td>红色脉动外发光</td><td>HP < 30% 时整条防线警示</td></tr>
 </tbody>
@@ -658,7 +668,7 @@ v3 与 v1 的核心差异: 视角从俯视改为一点透视斜俯视、玩法�
 <tbody>
 <tr><td><span class="tag tag-p0">P0</span></td><td>首发必备 (M1 交付)</td><td>没这个资源游戏跑不起来</td></tr>
 <tr><td><span class="tag tag-p1">P1</span></td><td>首发增强 (M2 交付)</td><td>没这个不影响核心玩法,但首发会显得粗糙</td></tr>
-<tr><td><span class="tag tag-p2">P2</span></td><td>v3.1+ 扩展</td><td>玩法扩展后再做 (如 Boss / 多镜像 NUO)</td></tr>
+<tr><td><span class="tag tag-p2">P2</span></td><td>v3.1+ 扩展</td><td>玩法扩展后再做 (如 Boss / 多镜像 BOBO)</td></tr>
 </tbody>
 </table>
 
@@ -683,9 +693,9 @@ v3 与 v1 的核心差异: 视角从俯视改为一点透视斜俯视、玩法�
 <tr><th>类别</th><th>资源</th><th>数量</th><th>优先级</th><th>预估体积 (@1x)</th><th>交付章节</th></tr>
 </thead>
 <tbody>
-<tr><td rowspan="3">主角 + NUO</td><td>主角 (人物)</td><td>1 套 (5 状态)</td><td><span class="tag tag-p0">P0</span></td><td>~80 KB</td><td>§4.1</td></tr>
-<tr><td>NUO 悬浮球</td><td>1 套 (3 状态)</td><td><span class="tag tag-p0">P0</span></td><td>~60 KB</td><td>§4.2</td></tr>
-<tr><td>镜像 NUO</td><td>1 套 (复用 NUO + 紫色调)</td><td><span class="tag tag-p1">P1</span></td><td>~20 KB</td><td>§4.3</td></tr>
+<tr><td rowspan="3">主角 + BOBO</td><td>主角 (人物)</td><td>1 套 (5 状态)</td><td><span class="tag tag-p0">P0</span></td><td>~80 KB</td><td>§4.1</td></tr>
+<tr><td>BOBO 悬浮球</td><td>1 套 (3 状态)</td><td><span class="tag tag-p0">P0</span></td><td>~60 KB</td><td>§4.2</td></tr>
+<tr><td>镜像 BOBO</td><td>1 套 (复用 BOBO + 紫色调)</td><td><span class="tag tag-p1">P1</span></td><td>~20 KB</td><td>§4.3</td></tr>
 <tr><td rowspan="3">外星生物</td><td>基础敌 (小兵)</td><td>3 种形态</td><td><span class="tag tag-p0">P0</span></td><td>~150 KB</td><td>§5.1</td></tr>
 <tr><td>精良敌</td><td>2 种形态</td><td><span class="tag tag-p1">P1</span></td><td>~120 KB</td><td>§5.1</td></tr>
 <tr><td>稀有敌</td><td>2 种形态</td><td><span class="tag tag-p1">P1</span></td><td>~140 KB</td><td>§5.1</td></tr>
@@ -693,7 +703,7 @@ v3 与 v1 的核心差异: 视角从俯视改为一点透视斜俯视、玩法�
 <tr><td rowspan="3">关卡元素</td><td>防线带</td><td>1 套 (3 血量状态)</td><td><span class="tag tag-p0">P0</span></td><td>~80 KB</td><td>§6.1</td></tr>
 <tr><td>宝箱 + 武器掉落</td><td>1 套 (3 等级 + 击破动画)</td><td><span class="tag tag-p0">P0</span></td><td>~120 KB</td><td>§6.2</td></tr>
 <tr><td>障碍物</td><td>2-3 种</td><td><span class="tag tag-p1">P1</span></td><td>~80 KB</td><td>§6.3</td></tr>
-<tr><td rowspan="2">弹幕粒子</td><td>双弹道 (主角橙 + NUO 青)</td><td>2 套基础</td><td><span class="tag tag-p0">P0</span></td><td>~50 KB</td><td>§7.1</td></tr>
+<tr><td rowspan="2">弹幕粒子</td><td>双弹道 (主角橙 + BOBO 青)</td><td>2 套基础</td><td><span class="tag tag-p0">P0</span></td><td>~50 KB</td><td>§7.1</td></tr>
 <tr><td>通用特效粒子</td><td>6 种 (爆炸/火花/光斑/烟/电/光环)</td><td><span class="tag tag-p0">P0</span></td><td>~120 KB</td><td>§7.2</td></tr>
 <tr><td rowspan="2">背景场景</td><td>一点透视主背景</td><td>1 套 (含地平线 / 消失点)</td><td><span class="tag tag-p0">P0</span></td><td>~300 KB</td><td>§8.1</td></tr>
 <tr><td>视差远景层</td><td>3 层 (近 / 中 / 远)</td><td><span class="tag tag-p1">P1</span></td><td>~250 KB</td><td>§8.2</td></tr>
@@ -766,8 +776,8 @@ P0 单资源不得超过其 "预估体积" 的 <strong>+20%</strong>。
 </thead>
 <tbody>
 <tr><td>主角 hero_main</td><td>3/4 背视角, 朝画面深处</td><td>背影 + 右侧脸颊轮廓 + 右耳</td></tr>
-<tr><td>NUO nuo_orb</td><td>3/4 背视角, 瞳孔面朝画面深处</td><td>球体后半 + 右侧一小段弧面 (瞳孔不入镜)</td></tr>
-<tr><td>镜像 NUO nuo_mirror</td><td>3/4 背视角, 主角对称位 (左侧)</td><td>球体后半 (紫色调) · 复用 NUO 结构</td></tr>
+<tr><td>BOBO nuo_orb</td><td>3/4 背视角, 瞳孔面朝画面深处</td><td>球体后半 + 右侧一小段弧面 (瞳孔不入镜)</td></tr>
+<tr><td>镜像 BOBO nuo_mirror</td><td>3/4 背视角, 主角对称位 (左侧)</td><td>球体后半 (紫色调) · 复用 BOBO 结构</td></tr>
 <tr><td>外星生物 (所有档)</td><td>正面朝下 (朝防线, 朝玩家方向)</td><td>脸 / 触手 / 眼睛等表情载体 · 反差萌情绪的主战场</td></tr>
 <tr><td>状态门</td><td>侧面 45° (跨在通道上)</td><td>门面 + 状态图标 (buff/debuff 符号)</td></tr>
 <tr><td>宝箱</td><td>3/4 前视角 (朝玩家)</td><td>盖面 + 锁扣 + 稀有度颜色</td></tr>
@@ -779,7 +789,7 @@ P0 单资源不得超过其 "预估体积" 的 <strong>+20%</strong>。
 <h3>3. 光源方向 (v3.1 修订)</h3>
 <div class="callout info">
 <strong>主光源统一: 画面右上 45°</strong> (与摄像机同侧, 从"右后上方"打下)。
-背视角角色 (主角 / NUO) 的<strong>高光落在角色的右后肩 / 右后上方</strong>, 玩家能看到高光边缘;
+背视角角色 (主角 / BOBO) 的<strong>高光落在角色的右后肩 / 右后上方</strong>, 玩家能看到高光边缘;
 正面朝下的敌人 <strong>高光落在头顶 / 后脑</strong>, 玩家从上方俯视也能感受立体感。
 <br><br>
 <strong>为什么改右上不再是左上</strong>: v1 时代是俯视视角, 光源方位相对随意; v3 定为背视角后, 光源必须
@@ -793,10 +803,10 @@ P0 单资源不得超过其 "预估体积" 的 <strong>+20%</strong>。
 <strong>3 个信号通道 (从主到辅)</strong>:
 <ol style="margin-top:6px; padding-left:20px;">
 <li><strong>肢体语言</strong> (主角): 肩膀高度 + 头部倾角 + 站姿重心 + 手部动作</li>
-<li><strong>发光元件颜色变化</strong> (NUO): 底部悬浮光晕 + 侧透弧 + 后脑 LED 亮度</li>
+<li><strong>发光元件颜色变化</strong> (BOBO): 底部悬浮光晕 + 侧透弧 + 后脑 LED 亮度</li>
 <li><strong>侧脸微表情</strong> (主角): 右侧脸颊轮廓 + 右耳位置微调, 辅助不主导</li>
 </ol>
-<strong>不要试图</strong>: 让角色频繁扭头看镜头 (破坏"守线专注感") / 让 NUO 变成"卡通眼球" (破坏机械感)。
+<strong>不要试图</strong>: 让角色频繁扭头看镜头 (破坏"守线专注感") / 让 BOBO 变成"卡通眼球" (破坏机械感)。
 </div>
 
 <h3>5. 视角原则的例外情况</h3>
@@ -810,14 +820,14 @@ P0 单资源不得超过其 "预估体积" 的 <strong>+20%</strong>。
 </section>
 
 
-<!-- ============ CHAPTER 4 · 主角 + NUO 系统 ============ -->
+<!-- ============ CHAPTER 4 · 主角 + BOBO 系统 ============ -->
 <section class="chapter" id="ch4">
-<h2><span class="chapter-num">CHAPTER 04</span>主角 + NUO 系统</h2>
+<h2><span class="chapter-num">CHAPTER 04</span>主角 + BOBO 系统</h2>
 
 <div class="callout primary">
 <span class="callout-title">📌 v3 玩法核心</span>
-v3 的玩家角色不再是飞机,而是 <strong>主角 (人物) + NUO (悬浮球辅助机器人)</strong> 的双体组合。
-主角站在屏幕底部防线上方,左右滑动横移; NUO 贴身右侧同步横移; 拿到镜像 NUO 后,
+v3 的玩家角色不再是飞机,而是 <strong>主角 (人物) + BOBO (悬浮球辅助机器人)</strong> 的双体组合。
+主角站在屏幕底部防线上方,左右滑动横移; BOBO 贴身右侧同步横移; 拿到镜像 BOBO 后,
 对称位置出现一个紫色镜像球,组成 <strong>三体火力</strong>。这是 v3 的核心反差萌钩子。
 </div>
 
@@ -863,7 +873,7 @@ v3 的玩家角色不再是飞机,而是 <strong>主角 (人物) + NUO (悬浮�
 </thead>
 <tbody>
 <tr><td>头盔顶部</td><td>纵向散热槽 + 后脑勺小型青色 LED (#3CC8FF, 直径约头盔的 8%, 微亮)</td><td>头部指向锚 · 远看也知道是"角色的后脑"</td></tr>
-<tr><td>背包</td><td>战术能源背包占背部 1/2 面积, 顶部中央<strong>橙色发光核心 (#FFB13C, 柔和外发光 8px)</strong></td><td>整个 sprite 的最强视觉焦点 · 也是与 NUO 青光形成"主橙 vs NUO 青"色语系统的一半</td></tr>
+<tr><td>背包</td><td>战术能源背包占背部 1/2 面积, 顶部中央<strong>橙色发光核心 (#FFB13C, 柔和外发光 8px)</strong></td><td>整个 sprite 的最强视觉焦点 · 也是与 BOBO 青光形成"主橙 vs BOBO 青"色语系统的一半</td></tr>
 <tr><td>肩甲</td><td>分片式硬质护肩, 深蓝 #2A3A6A + 银灰分片缝合线</td><td>体现"守线打工人"的战术感, 不是英雄式披风</td></tr>
 <tr><td>腰带</td><td>战术腰带挂 2 块能源电池在两侧腰后</td><td>轮廓细节, 增加"装备重"感</td></tr>
 <tr><td>披风/斗篷</td><td><strong>无</strong> (v3.1 明确禁止)</td><td>披风会挡背包核心 + 影响横移动画流畅度 + 不符合"打工人"设定</td></tr>
@@ -913,7 +923,7 @@ v3 的玩家角色不再是飞机,而是 <strong>主角 (人物) + NUO (悬浮�
 
 </div>
 
-<h3 id="ch4-nuo">4.2 NUO (悬浮球辅助机器人)</h3>
+<h3 id="ch4-nuo">4.2 BOBO (悬浮球辅助机器人)</h3>
 
 <div class="asset-card">
 <div class="asset-head">
@@ -922,30 +932,30 @@ v3 的玩家角色不再是飞机,而是 <strong>主角 (人物) + NUO (悬浮�
 <span class="tag tag-seq">PNG 序列</span>
 <span class="asset-name">nuo_orb</span>
 </div>
-<div class="asset-id">ID: NUO-001</div>
+<div class="asset-id">ID: BOBO-001</div>
 </div>
 
 <h4>设计描述</h4>
-<p>NUO 是一个小型悬浮球体,科技感 + 萌系,设计参考: <strong>BB-8 的可爱感 + 守望先锋 Zenyatta 的飘浮球感</strong>。
+<p>BOBO 是一个小型悬浮球体,科技感 + 萌系,设计参考: <strong>BB-8 的可爱感 + 守望先锋 Zenyatta 的飘浮球感</strong>。
 默认贴主角右侧约 0.5 个身位浮空,跟随主角横移。球体有"瞳孔",
-吃到状态门 buff 时瞳孔变绿放大、吃到 debuff 时瞳孔变红收缩,这是 NUO 表达情绪的核心方式。</p>
+吃到状态门 buff 时瞳孔变绿放大、吃到 debuff 时瞳孔变红收缩,这是 BOBO 表达情绪的核心方式。</p>
 
 <div class="callout warn" style="margin-top:12px;">
 <span class="callout-title">🎥 视角 (v3.1 修订)</span>
-NUO 的 sprite 是 <strong>3/4 背视角</strong>: 玩家从 NUO 的右后上方 30-40° 俯拍, 与主角同视角。
-NUO 的"正面" (有瞳孔的那一面) <strong>朝向画面深处 (面向敌人来袭方向), 不入镜</strong>。
-玩家看到的是球体的<strong>后半 + 右侧一小段弧面</strong>, 类似看主角一样看到 NUO 的"后脑勺"。
+BOBO 的 sprite 是 <strong>3/4 背视角</strong>: 玩家从 BOBO 的右后上方 30-40° 俯拍, 与主角同视角。
+BOBO 的"正面" (有瞳孔的那一面) <strong>朝向画面深处 (面向敌人来袭方向), 不入镜</strong>。
+玩家看到的是球体的<strong>后半 + 右侧一小段弧面</strong>, 类似看主角一样看到 BOBO 的"后脑勺"。
 <br><br>
 <strong>瞳孔情绪如何传达 (背视角看不到瞳孔怎么办)</strong>:
 <ul style="margin-top:6px;">
 <li><strong>方案 A · 侧透 (推荐)</strong>: 球体右侧稍稍探出的那部分弧面上, 允许露出瞳孔颜色的一小道"透光弧" — buff 时右侧弧透青绿光, debuff 时透红光</li>
-<li><strong>方案 B · 底部光晕</strong>: NUO 底部悬浮光晕的颜色<strong>直接同步瞳孔情绪</strong> — 默认青色 (#3CC8FF), buff 时绿 (#4CFF80), debuff 时红 (#FF5050)</li>
+<li><strong>方案 B · 底部光晕</strong>: BOBO 底部悬浮光晕的颜色<strong>直接同步瞳孔情绪</strong> — 默认青色 (#3CC8FF), buff 时绿 (#4CFF80), debuff 时红 (#FF5050)</li>
 <li>两种同时用最稳: 侧透 (细腻表达) + 底部光晕 (远看也能识别)</li>
 </ul>
 </div>
 
 <h4>背面识别锚 (v3.1 新增)</h4>
-<p>NUO 的正面 (瞳孔) 不入镜, 所以背半球的<strong>结构细节</strong>就是玩家识别 NUO 的核心信号:</p>
+<p>BOBO 的正面 (瞳孔) 不入镜, 所以背半球的<strong>结构细节</strong>就是玩家识别 BOBO 的核心信号:</p>
 <table>
 <thead>
 <tr><th>部位</th><th>特征</th><th>视觉作用</th></tr>
@@ -970,7 +980,7 @@ NUO 的"正面" (有瞳孔的那一面) <strong>朝向画面深处 (面向敌人
 <tr><td>锚点</td><td>中心 (0.5, 0.5)</td></tr>
 <tr><td>朝向 (v3.1 修订)</td><td><strong>3/4 背视角</strong> · 瞳孔面朝画面深处不入镜 · 玩家看到球体后半</td></tr>
 <tr><td>体积预算</td><td>≤ 60 KB (atlas 内)</td></tr>
-<tr><td>主色调</td><td>NUO 青 #3CC8FF + 金属白高光</td></tr>
+<tr><td>主色调</td><td>BOBO 青 #3CC8FF + 金属白高光</td></tr>
 <tr><td>悬浮高度</td><td>距离主角头顶 30-50 px, 有 ±10px 上下漂浮</td></tr>
 </tbody>
 </table>
@@ -996,33 +1006,33 @@ NUO 的"正面" (有瞳孔的那一面) <strong>朝向画面深处 (面向敌人
 <li>后脑 LED (#3CC8FF) 默认微亮, 与主角后脑 LED 呼应形成"角色朝向指示"统一语言</li>
 <li>开火闪光不抢戏, 只在球体内部不外溢</li>
 <li>金属反光跟主角同光源 (右上 45°)</li>
-<li>NUO 大小不超过主角头部 1.5x, 避免视觉抢戏</li>
+<li>BOBO 大小不超过主角头部 1.5x, 避免视觉抢戏</li>
 <li>球体后半必须能看出"是球不是圆盘" — 靠球顶纵向接缝 + 侧面光影层次</li>
 </ul>
 
 </div>
 
-<h3 id="ch4-mirror-nuo">4.3 镜像 NUO (特殊武器)</h3>
+<h3 id="ch4-mirror-nuo">4.3 镜像 BOBO (特殊武器)</h3>
 
 <div class="asset-card">
 <div class="asset-head">
 <div>
 <span class="tag tag-p1">P1</span>
-<span class="tag tag-seq">PNG 序列 (复用 NUO)</span>
+<span class="tag tag-seq">PNG 序列 (复用 BOBO)</span>
 <span class="asset-name">nuo_mirror</span>
 </div>
-<div class="asset-id">ID: NUO-002</div>
+<div class="asset-id">ID: BOBO-002</div>
 </div>
 
 <h4>设计描述</h4>
-<p>镜像 NUO 是从宝箱获得的特殊武器 (不是普通武器),
-出现时一段华丽的 <strong>召唤动画</strong> 后,在主角对称位置 (左侧约 0.5 身位) 生成一个紫色调的 NUO。
-镜像 NUO 与原 NUO <strong>属性完全同步</strong> (吃 buff 一起涨,吃 debuff 一起跌),
+<p>镜像 BOBO 是从宝箱获得的特殊武器 (不是普通武器),
+出现时一段华丽的 <strong>召唤动画</strong> 后,在主角对称位置 (左侧约 0.5 身位) 生成一个紫色调的 BOBO。
+镜像 BOBO 与原 BOBO <strong>属性完全同步</strong> (吃 buff 一起涨,吃 debuff 一起跌),
 组成三体火力。</p>
 
 <div class="callout primary">
 <span class="callout-title">🎨 美术处理 (复用策略)</span>
-镜像 NUO <strong>复用原 NUO 资源</strong>,只做<strong>色调替换</strong> (青 → 紫 #A864FF),
+镜像 BOBO <strong>复用原 BOBO 资源</strong>,只做<strong>色调替换</strong> (青 → 紫 #A864FF),
 不重新画。引擎里通过 TintColor 滤镜或 shader 调色实现,
 所以美术只需额外交付: ① 紫色召唤动画 (1 套 8 帧) ② 紫色弹道粒子 (1 套)。
 </div>
@@ -1056,14 +1066,14 @@ NUO 的"正面" (有瞳孔的那一面) <strong>朝向画面深处 (面向敌人
 <ul>
 <li>召唤动画必须有 "稀有感",紫光要醒目但不刺眼</li>
 <li>粒子聚拢逻辑: 从外向内汇集到球体中心点</li>
-<li>调色后的紫不能 "脏",保持 NUO 的科技感</li>
+<li>调色后的紫不能 "脏",保持 BOBO 的科技感</li>
 <li>复用资源时,确认引擎调色后的紫色与设计稿一致 (HEX #A864FF)</li>
 </ul>
 
 <div class="callout warn" style="margin-top:16px;">
 <span class="callout-title">⚠️ Kaysen 反馈 (回标)</span>
-<strong>"镜像 NUO 出现在主角对称位"</strong> — 不要让镜像 NUO 飘到屏幕中央或随机位置,
-固定在主角左侧对称位 (主角 + NUO 在右,镜像 NUO 在左),保持视觉对称感。
+<strong>"镜像 BOBO 出现在主角对称位"</strong> — 不要让镜像 BOBO 飘到屏幕中央或随机位置,
+固定在主角左侧对称位 (主角 + BOBO 在右,镜像 BOBO 在左),保持视觉对称感。
 </div>
 
 </div>
@@ -1089,7 +1099,7 @@ v3 敌人是 <strong>萌系外星生物</strong>,不是恐怖系怪物。
 v3 当前阶段<strong>击杀敌人不掉落任何物品</strong>。玩家奖励来源<strong>只有两条</strong>:
 <ul style="margin-top:8px;">
 <li>① <strong>左侧宝箱通道</strong>: 击破宝箱掉落武器 → 增益主角 (覆盖式装备)</li>
-<li>② <strong>右侧接敌通道状态门</strong>: 主角射击翻转 buff,撞门让 NUO 吃修正 → 增益 NUO</li>
+<li>② <strong>右侧接敌通道状态门</strong>: 主角射击翻转 buff,撞门让 BOBO 吃修正 → 增益 BOBO</li>
 </ul>
 所以三档敌人的差异是 <strong>"血量 / 出现频率 / 压迫感"</strong>,不是"掉落奖励"。
 稀有敌的价值在于"血厚拖时间 + 压迫感强迫玩家集中火力",而不是"杀完掉好东西"。
@@ -1274,7 +1284,7 @@ v3 当前阶段<strong>击杀敌人不掉落任何物品</strong>。玩家奖励
 <div class="callout primary">
 <span class="callout-title">📌 状态门是 v3 的灵魂机制</span>
 状态门是从顶部下来的 <strong>buff/debuff 修正装置</strong>,有 5 个状态阶段。
-玩家通过 "射击修正" 把 DEBUFF 翻转为 BUFF,然后让 NUO 撞门吃 BUFF。
+玩家通过 "射击修正" 把 DEBUFF 翻转为 BUFF,然后让 BOBO 撞门吃 BUFF。
 这是 v3 唯一的玩家主动决策点,必须做出强烈的视觉辨识度。
 </div>
 
@@ -1310,7 +1320,7 @@ v3 当前阶段<strong>击杀敌人不掉落任何物品</strong>。玩家奖励
 <tr><td>S2 · NEUTRAL (瞬态)</td><td>灰白闪一下 (0.2s)</td><td>#E8ECF4</td><td>实体阻挡</td><td>从 DEBUFF 翻转 BUFF 的过渡</td></tr>
 <tr><td>S3 · BUFF</td><td>绿色实边 + 绿色阻挡位 + 数值绿字</td><td>#4CFF80</td><td>实体阻挡</td><td>充能中的正面状态 (如 +2)</td></tr>
 <tr><td>S4 · 上限释放</td><td>亮绿虚边 + 阻挡位透明 + 数值闪烁</td><td>#4CFF80 (半透明)</td><td>子弹穿透</td><td>BUFF 充满最大值 · 子弹直接穿过</td></tr>
-<tr><td>S5 · 消失</td><td>淡出 + 粒子消散</td><td>—</td><td>—</td><td>主角撞门后 NUO 吃满 buff · 0.4s 消散</td></tr>
+<tr><td>S5 · 消失</td><td>淡出 + 粒子消散</td><td>—</td><td>—</td><td>主角撞门后 BOBO 吃满 buff · 0.4s 消散</td></tr>
 </tbody>
 </table>
 
@@ -1339,7 +1349,7 @@ v3 当前阶段<strong>击杀敌人不掉落任何物品</strong>。玩家奖励
 <tr><td>state_idle (5 态待机)</td><td>0.8s × 5</td><td>循环</td><td>S1-S5 各自的待机脉动 (颜色 + 阻挡位)</td></tr>
 <tr><td>flip_to_buff (DEBUFF→BUFF 翻转)</td><td>0.2s</td><td>单次</td><td>S2 闪一下后切到 S3 · 关键反馈帧</td></tr>
 <tr><td>release_unlock (上限释放)</td><td>0.3s</td><td>单次</td><td>S3 → S4 · 阻挡位 fade-out + 边框虚化</td></tr>
-<tr><td>vanish (消散)</td><td>0.4s</td><td>单次</td><td>S5 · 粒子消散 + NUO 吸入 buff 视觉</td></tr>
+<tr><td>vanish (消散)</td><td>0.4s</td><td>单次</td><td>S5 · 粒子消散 + BOBO 吸入 buff 视觉</td></tr>
 </tbody>
 </table>
 
@@ -1362,7 +1372,7 @@ v3 当前阶段<strong>击杀敌人不掉落任何物品</strong>。玩家奖励
 <li>5 态颜色辨识度必须强 (远看也能区分红 / 绿 / 灰)</li>
 <li>翻转 BUFF 的 S2 灰闪是<strong>关键反馈帧</strong>,必须强烈到 "玩家立刻知道翻转成功"</li>
 <li>上限释放 S4 的虚边必须让玩家 "看到能穿过"</li>
-<li>消散 S5 必须有 "被吸走" 的感觉 (粒子聚到 NUO 方向)</li>
+<li>消散 S5 必须有 "被吸走" 的感觉 (粒子聚到 BOBO 方向)</li>
 <li>数值文字在任何状态背景下都必须清晰可读</li>
 </ul>
 
@@ -1503,7 +1513,7 @@ v3 玩法是守线塔防,这一章是 v3 独有的关卡元素,v2 飞机大战�
 <tbody>
 <tr><td>普通</td><td>单发增强 / 散射 / 穿透</td><td>白色描边 + 简单形状</td></tr>
 <tr><td>精良</td><td>范围 / 弹反 / 追踪</td><td>蓝色描边 + 发光</td></tr>
-<tr><td>稀有</td><td>镜像 NUO / 激光 / 黑洞</td><td>紫色描边 + 强发光</td></tr>
+<tr><td>稀有</td><td>镜像 BOBO / 激光 / 黑洞</td><td>紫色描边 + 强发光</td></tr>
 </tbody>
 </table>
 
@@ -1550,7 +1560,7 @@ v3 玩法是守线塔防,这一章是 v3 独有的关卡元素,v2 飞机大战�
 
 <h4>验收要点</h4>
 <ul>
-<li>视觉上不抢戏 (饱和度 ≤ 主角 NUO 的 70%)</li>
+<li>视觉上不抢戏 (饱和度 ≤ 主角 BOBO 的 70%)</li>
 <li>必须让玩家一眼看出 "这是障碍" (有体积感 + 阴影)</li>
 <li>不需要动画 (静态贴图)</li>
 <li>体积合计 ≤ 80KB</li>
@@ -1564,13 +1574,13 @@ v3 玩法是守线塔防,这一章是 v3 独有的关卡元素,v2 飞机大战�
 <section class="chapter" id="ch7">
 <h2><span class="chapter-num">CHAPTER 07</span>弹幕与特效粒子</h2>
 
-<h3 id="ch7-bullets">7.1 双弹道系统 (主角 + NUO)</h3>
+<h3 id="ch7-bullets">7.1 双弹道系统 (主角 + BOBO)</h3>
 
 <div class="callout primary">
 <span class="callout-title">📌 v3 弹道核心</span>
-v3 是<strong>双弹道</strong>玩法,主角和 NUO 同时自动垂直向上射击。
-颜色必须强区分: <strong>主角弹道 = 主橙 #FFB13C</strong>,<strong>NUO 弹道 = 青色 #3CC8FF</strong>。
-拿到镜像 NUO 后,镜像弹道用紫色 #A864FF。
+v3 是<strong>双弹道</strong>玩法,主角和 BOBO 同时自动垂直向上射击。
+颜色必须强区分: <strong>主角弹道 = 主橙 #FFB13C</strong>,<strong>BOBO 弹道 = 青色 #3CC8FF</strong>。
+拿到镜像 BOBO 后,镜像弹道用紫色 #A864FF。
 </div>
 
 <div class="asset-card">
@@ -1590,8 +1600,8 @@ v3 是<strong>双弹道</strong>玩法,主角和 NUO 同时自动垂直向上射
 </thead>
 <tbody>
 <tr><td>主角基础弹</td><td>主橙 #FFB13C</td><td>椭圆 + 拖尾</td><td>8 × 24 px</td><td>外发光 8px</td></tr>
-<tr><td>NUO 基础弹</td><td>NUO 青 #3CC8FF</td><td>圆形 + 拖尾</td><td>10 × 20 px</td><td>外发光 8px</td></tr>
-<tr><td>镜像 NUO 弹</td><td>稀有紫 #A864FF</td><td>圆形 + 拖尾</td><td>10 × 20 px</td><td>外发光 10px</td></tr>
+<tr><td>BOBO 基础弹</td><td>BOBO 青 #3CC8FF</td><td>圆形 + 拖尾</td><td>10 × 20 px</td><td>外发光 8px</td></tr>
+<tr><td>镜像 BOBO 弹</td><td>稀有紫 #A864FF</td><td>圆形 + 拖尾</td><td>10 × 20 px</td><td>外发光 10px</td></tr>
 </tbody>
 </table>
 
@@ -1625,7 +1635,7 @@ v3 是<strong>双弹道</strong>玩法,主角和 NUO 同时自动垂直向上射
 
 <h4>验收要点</h4>
 <ul>
-<li>主角橙弹 / NUO 青弹 / 镜像紫弹 三色辨识度必须强 (混在一起也能区分)</li>
+<li>主角橙弹 / BOBO 青弹 / 镜像紫弹 三色辨识度必须强 (混在一起也能区分)</li>
 <li>所有弹道有外发光 (glow) 8-12px,夜空背景下醒目</li>
 <li>拖尾长度 ≤ 子弹本体的 2x,不能拖得太长干扰视觉</li>
 <li>武器变体不重画底图,只在引擎做 tint / scale / particle 叠加</li>
@@ -1655,7 +1665,7 @@ v3 是<strong>双弹道</strong>玩法,主角和 NUO 同时自动垂直向上射
 <tr><td>火花粒子</td><td>子弹命中 / 状态门翻转</td><td>16 × 16 px</td><td>白色高光</td></tr>
 <tr><td>光斑粒子</td><td>状态门吸入 / 武器拾取</td><td>24 × 24 px</td><td>状态色 (绿 / 紫)</td></tr>
 <tr><td>烟雾粒子</td><td>敌人死亡尾烟 / 防线低血</td><td>40 × 40 px</td><td>灰色半透明</td></tr>
-<tr><td>电流粒子</td><td>NUO 开火 / 镜像召唤</td><td>20 × 20 px</td><td>青色 / 紫色</td></tr>
+<tr><td>电流粒子</td><td>BOBO 开火 / 镜像召唤</td><td>20 × 20 px</td><td>青色 / 紫色</td></tr>
 <tr><td>光环粒子</td><td>稀有敌登场 / Game Over</td><td>80 × 80 px</td><td>状态色发光环</td></tr>
 </tbody>
 </table>
@@ -1767,7 +1777,7 @@ v3 视角是<strong>一点透视斜俯视 30-40°</strong>,不再是 v2 的垂�
 <li>透视纵深感必须强 (玩家一眼就感觉到 "敌人从远处来")</li>
 <li>消失点位置必须准确 (X=375, Y=200,所有透视线都要收敛到此)</li>
 <li>双通道分隔线必须可视但不抢戏 (玩家能看到但不刺眼)</li>
-<li>太空深色背景上,主角 + NUO + 子弹的颜色必须醒目</li>
+<li>太空深色背景上,主角 + BOBO + 子弹的颜色必须醒目</li>
 <li>JPEG 压缩后视觉无明显劣化 (推荐 80% 质量)</li>
 </ul>
 
@@ -1945,7 +1955,7 @@ v3 视角是<strong>一点透视斜俯视 30-40°</strong>,不再是 v2 的垂�
 <tr><th>类别</th><th>图标</th><th>数量</th></tr>
 </thead>
 <tbody>
-<tr><td>武器图标</td><td>单发 / 散射 / 穿透 / 范围 / 追踪 / 激光 / 黑洞 / 镜像 NUO</td><td>8 个</td></tr>
+<tr><td>武器图标</td><td>单发 / 散射 / 穿透 / 范围 / 追踪 / 激光 / 黑洞 / 镜像 BOBO</td><td>8 个</td></tr>
 <tr><td>状态门 buff/debuff</td><td>攻击力 / 攻速 / 弹道数 / 弹道速度 / 暴击率 (绿 + 红 两套)</td><td>10 个</td></tr>
 <tr><td>UI 控制</td><td>暂停 / 继续 / 重玩 / 退出 / 设置 / 音效 / 排行榜</td><td>7 个</td></tr>
 <tr><td>结算</td><td>击杀 / 时长 / 最高分</td><td>3 个</td></tr>
@@ -2013,7 +2023,7 @@ v3 视角是<strong>一点透视斜俯视 30-40°</strong>,不再是 v2 的垂�
 </thead>
 <tbody>
 <tr><td>主角 walk 第 3 帧</td><td><code>hero_main_walk_003.png</code></td></tr>
-<tr><td>NUO idle 第 1 帧</td><td><code>nuo_orb_idle_001.png</code></td></tr>
+<tr><td>BOBO idle 第 1 帧</td><td><code>nuo_orb_idle_001.png</code></td></tr>
 <tr><td>基础敌蘑菇头 walk 第 5 帧</td><td><code>enemy_basic_mushroom_walk_005.png</code></td></tr>
 <tr><td>状态门 S3 BUFF 待机 (DragonBones)</td><td><code>gate_status_s3_buff.json</code> + <code>gate_status.atlas</code></td></tr>
 <tr><td>主角橙弹基础</td><td><code>bullet_hero_basic.png</code></td></tr>
@@ -2160,10 +2170,10 @@ v3 视角是<strong>一点透视斜俯视 30-40°</strong>,不再是 v2 的垂�
 <tbody>
 <tr><td>风格统一</td><td>对比 Mood Board (Sky Force + 蛋仔派对)</td><td>美术 + Kaysen 共同评审</td></tr>
 <tr><td>主角反差萌</td><td>装备硬核 + 表情萌 — 是否做出反差</td><td>5 个用户盲测打分 (>= 4 / 5)</td></tr>
-<tr><td>NUO 表情辨识</td><td>buff / debuff 瞳孔变化是否一眼可辨</td><td>3 米外远看测试</td></tr>
+<tr><td>BOBO 表情辨识</td><td>buff / debuff 瞳孔变化是否一眼可辨</td><td>3 米外远看测试</td></tr>
 <tr><td>状态门 5 态辨识</td><td>S1-S5 颜色 + 阻挡位状态差异</td><td>戴模糊滤镜也能区分</td></tr>
 <tr><td>一点透视感</td><td>玩家是否感觉 "敌人从远处来"</td><td>5 个新玩家盲玩 30s 后描述</td></tr>
-<tr><td>双弹道色彩</td><td>主角橙 + NUO 青 + 镜像紫,混在一起也能区分</td><td>截图 + 色彩取样</td></tr>
+<tr><td>双弹道色彩</td><td>主角橙 + BOBO 青 + 镜像紫,混在一起也能区分</td><td>截图 + 色彩取样</td></tr>
 <tr><td>低血告警</td><td>玩家在 HP < 30% 时是否立刻感到压力</td><td>盲测玩家心率 / 反馈</td></tr>
 </tbody>
 </table>
@@ -2215,8 +2225,8 @@ v3 视角是<strong>一点透视斜俯视 30-40°</strong>,不再是 v2 的垂�
 <tr><th>Milestone</th><th>内容</th><th>工时估算</th><th>交付时间</th></tr>
 </thead>
 <tbody>
-<tr><td><strong>M1</strong></td><td>核心 P0 资源 (主角 + NUO + 基础敌 + 状态门 + 防线 + 弹道 + 主背景)</td><td>20 工日</td><td>3 周</td></tr>
-<tr><td><strong>M2</strong></td><td>P1 增强资源 (镜像 NUO + 精良/稀有敌 + 视差远景 + 障碍 + UI 完整套件)</td><td>15 工日</td><td>3 周</td></tr>
+<tr><td><strong>M1</strong></td><td>核心 P0 资源 (主角 + BOBO + 基础敌 + 状态门 + 防线 + 弹道 + 主背景)</td><td>20 工日</td><td>3 周</td></tr>
+<tr><td><strong>M2</strong></td><td>P1 增强资源 (镜像 BOBO + 精良/稀有敌 + 视差远景 + 障碍 + UI 完整套件)</td><td>15 工日</td><td>3 周</td></tr>
 <tr><td><strong>M3</strong></td><td>验收修订 + 最终打包 atlas</td><td>5 工日</td><td>1 周</td></tr>
 <tr><td><strong>合计</strong></td><td><strong>P0 + P1 完整首发</strong></td><td><strong>40 工日</strong></td><td><strong>7 周</strong></td></tr>
 </tbody>
@@ -2229,8 +2239,8 @@ v3 视角是<strong>一点透视斜俯视 30-40°</strong>,不再是 v2 的垂�
 <tr><th>周</th><th>交付资源</th><th>工日</th></tr>
 </thead>
 <tbody>
-<tr><td>W1</td><td>主角 (idle + walk + 2 表情) + NUO (idle + buff/debuff 表情)</td><td>5 工日</td></tr>
-<tr><td>W1</td><td>主角 + NUO 弹道基础 (橙弹 + 青弹)</td><td>1 工日</td></tr>
+<tr><td>W1</td><td>主角 (idle + walk + 2 表情) + BOBO (idle + buff/debuff 表情)</td><td>5 工日</td></tr>
+<tr><td>W1</td><td>主角 + BOBO 弹道基础 (橙弹 + 青弹)</td><td>1 工日</td></tr>
 <tr><td>W2</td><td>基础敌 3 形态 (walk + hit + death + attack)</td><td>5 工日</td></tr>
 <tr><td>W2</td><td>主背景 (一点透视) + 双通道分隔线</td><td>2 工日</td></tr>
 <tr><td>W3</td><td>状态门 5 态 (DragonBones)</td><td>4 工日</td></tr>
@@ -2246,7 +2256,7 @@ v3 视角是<strong>一点透视斜俯视 30-40°</strong>,不再是 v2 的垂�
 <tr><th>周</th><th>交付资源</th><th>工日</th></tr>
 </thead>
 <tbody>
-<tr><td>W4</td><td>镜像 NUO 召唤动画 + 紫色弹道</td><td>2 工日</td></tr>
+<tr><td>W4</td><td>镜像 BOBO 召唤动画 + 紫色弹道</td><td>2 工日</td></tr>
 <tr><td>W4</td><td>精良敌 2 形态</td><td>3 工日</td></tr>
 <tr><td>W5</td><td>稀有敌 2 形态 (含登场动画)</td><td>4 工日</td></tr>
 <tr><td>W5</td><td>宝箱 3 等级 + 武器掉落 + 障碍物 2 种</td><td>3 工日</td></tr>
@@ -2317,7 +2327,7 @@ v3 视角是<strong>一点透视斜俯视 30-40°</strong>,不再是 v2 的垂�
 <tr><td>T02</td><td>武器库扩展</td><td>基础 / 精良 / 稀有 各档具体有哪些武器,各自的视觉与弹道差异</td><td>v3.1 美术 brief 阶段</td></tr>
 <tr><td>T03</td><td>Boss 资源 (P2)</td><td>v3 当前是 endless wave,无 Boss 关卡。Boss 资源延后到 v3.1+ 关卡化扩展</td><td>v3.1+ 玩法扩展时</td></tr>
 <tr><td>T04</td><td>状态门维度扩展</td><td>当前 5 个属性维度,后续可能扩展到 8-10 个 (生命恢复 / 减伤 / 闪避等)</td><td>v3.1 玩法扩展时</td></tr>
-<tr><td>T05</td><td>多镜像 NUO 上限</td><td>初版限 2 个,后续是否开放 3-4 个 (数值与画面挤占问题)</td><td>白模 demo 平衡性验证后</td></tr>
+<tr><td>T05</td><td>多镜像 BOBO 上限</td><td>初版限 2 个,后续是否开放 3-4 个 (数值与画面挤占问题)</td><td>白模 demo 平衡性验证后</td></tr>
 </tbody>
 </table>
 
