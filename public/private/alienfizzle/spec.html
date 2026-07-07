@@ -203,6 +203,16 @@ table {
   overflow: hidden;
   font-size: 13.5px;
 }
+/* Monster table · 4 列布局, prompt-cell 允许自动换行 */
+table.monster-table td:first-child { width: 60px; color: #ffa040; text-align: center; }
+table.monster-table td:nth-child(2) { width: 90px; color: #7edcff; white-space: nowrap; }
+table.monster-table td:nth-child(3) { width: 220px; color: #c5cce0; }
+table.monster-table td.prompt-cell {
+  color: #a0acc5;
+  font-size: 12.5px;
+  line-height: 1.6;
+  word-break: break-word;
+}
 thead, table > tr:first-child { background: #1a2138; }
 th {
   text-align: left;
@@ -549,14 +559,69 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
     </ul>
 
     <h3>2.4 外星生物 (敌人)</h3>
+    <p class="lead">分 <strong>4 档 20 只</strong>, 每档功能位错开 (小兵消耗火力 / 精英引入策略应对 / 小 BOSS 集火转折 / 大 BOSS 关卡终局)。名字四字诀, 附美术提示词供外包 (荻子) 和 AI 生图使用。数值 (HP / 推进速度 / 攻击力 / 出现时机) 待美术定稿后单独填 art-spec-v3.html。</p>
+
+    <h4>2.4.1 通用规则</h4>
     <ul>
       <li><span class="tag tag-must">必须</span>从屏幕顶部出现, <strong>仅在右通道(接敌通道)推进</strong>, 不进入左通道</li>
       <li><span class="tag tag-must">必须</span>推进速度 <strong>慢于状态门</strong>(状态门会从敌人之间穿过到达主角)</li>
       <li><span class="tag tag-must">必须</span>到达防线前 <strong>停下并攻击防线</strong>, 持续消耗防线持久度</li>
       <li><span class="tag tag-must">必须</span>被击杀后立即消失, 不掉落物品</li>
-      <li><span class="tag tag-should">建议</span>分 3 档: 小兵 / 精英 / Boss, 推进速度与血量递增, 视觉差异明显</li>
-      <li><span class="tag tag-may">可选</span>外星生物形态: 软体 / 机甲 / 触手, 美术自由发挥, 保持卡通可识别</li>
+      <li><span class="tag tag-must">必须</span>4 档 20 只全部实装, 不允许砍档 (每档功能不可替代)</li>
+      <li><span class="tag tag-should">建议</span>美术风格: 卡通可识别, 独眼为主视觉锚点, 配色遵循「小兵冷色 → 精英暖色 → BOSS 混色」的渐进层次</li>
     </ul>
+
+    <h4>2.4.2 小兵 · 4 款</h4>
+    <p><em>消耗火力, 制造压迫, 单只弱, 群体强</em></p>
+    <table class="monster-table">
+      <thead><tr><th>编号</th><th>名字</th><th>威胁模型</th><th>美术提示词</th></tr></thead>
+      <tbody>
+        <tr><td><strong>01</strong></td><td><strong>跳弹菌</strong></td><td>单只 HP 极低, 死亡时向前弹跳 0.5U 位移</td><td class="prompt-cell">小圆软体怪, 湖水绿半透明胶质外皮, 单只独眼位于身体正中呈亮黄色, 顶部两根短触角像天线, 底部无腿靠身体收缩弹跳前进, 体型极小约主角 1/4, 死亡时化作绿色水花溅开, 卡通可爱不吓人</td></tr>
+        <tr><td><strong>02</strong></td><td><strong>刺蒲团</strong></td><td>身体带 4 根尖刺, 靠近防线时刺爆造成小范围溅射</td><td class="prompt-cell">紫色圆球软体怪, 通体覆盖 4 根粉红尖刺呈放射状, 身体中央独眼血红瞪大, 无手脚靠身体旋转滚动前进, 体型比跳弹菌略大, 死亡爆炸时尖刺四散化紫烟, 卡通像海胆变异版本</td></tr>
+        <tr><td><strong>03</strong></td><td><strong>泡泡兵</strong></td><td>外层泡泡吸收 1 发子弹, 破泡后本体才受伤</td><td class="prompt-cell">透明玻璃泡内包裹一只湖水绿小怪, 独眼在泡内呆萌张望, 泡外壁反射彩虹光晕, 底部机械小脚快速倒腾, 体型中等, 破泡时玻璃碎裂声效, 内部小怪露出后极度惊慌表情, 卡通萌系</td></tr>
+        <tr><td><strong>04</strong></td><td><strong>自爆熊</strong></td><td>推进到防线时自爆, 造成大伤害但被击杀阻止爆炸</td><td class="prompt-cell">橙黄色三眼小胖子, 头顶引信冒火花冒白烟, 双手举高作投降状实际是护住身体, 表情又愤怒又害怕, 短腿快速小跑前进, 体型小胖, 死亡时引信被打断呈失望脸, 卡通像小炸弹拟人</td></tr>
+      </tbody>
+    </table>
+
+    <h4>2.4.3 精英怪 · 7 款</h4>
+    <p><em>引入功能位, 每只有独特威胁模型, 需策略应对</em></p>
+    <table class="monster-table">
+      <thead><tr><th>编号</th><th>名字</th><th>威胁模型</th><th>美术提示词</th></tr></thead>
+      <tbody>
+        <tr><td><strong>05</strong></td><td><strong>盾墙客</strong></td><td>正面举盾抵挡子弹, 需绕射或穿透打</td><td class="prompt-cell">紫色巨胖独眼壮汉, 双手举一面矩形能量盾泛紫光, 独眼在盾后透出凶光, 盾遮挡上半身, 底部粗腿稳步前进, 体型是小兵 2 倍, 盾破裂时紫光爆散露出惊恐表情, 卡通魁梧感</td></tr>
+        <tr><td><strong>06</strong></td><td><strong>喷毒手</strong></td><td>远程发射绿色毒液弹, 命中防线额外持续伤害</td><td class="prompt-cell">深绿色瘦长独眼怪, 手持喇叭状喷毒枪, 独眼眯成缝专注瞄准, 嘴角滴绿毒液笑得阴险, 身体前倾作射击姿态, 体型中等偏瘦, 死亡时毒液罐爆开自爆一小范围, 卡通反派感</td></tr>
+        <tr><td><strong>07</strong></td><td><strong>脑罐博士</strong></td><td>边走边给周围友军回复少量 HP</td><td class="prompt-cell">透明玻璃罐里泡着一颗粉色大脑, 罐底四根机械蜘蛛腿快速爬行, 罐外挂着治疗仪表盘发绿光, 脑组织脉动发出淡光, 无眼但脑纹清晰, 体型中等, 死亡时罐子碎脑落地萎缩, 卡通克苏鲁软萌版</td></tr>
+        <tr><td><strong>08</strong></td><td><strong>重炮蓝</strong></td><td>蓄力 1s 后发射直线大子弹, 前置暴力</td><td class="prompt-cell">蓝色四方独眼怪, 双手扛巨型双管加特林机枪重心不稳, 独眼激动瞪大, 蓄力时枪管发红光, 底部履带装置代替脚, 体型高大结实, 死亡时机枪炸膛倒地, 卡通军事拟人</td></tr>
+        <tr><td><strong>09</strong></td><td><strong>心灵者</strong></td><td>用紫色光球射向主角本体 (非防线), 逼迫玩家横移</td><td class="prompt-cell">深紫色三角独眼法师怪, 双手悬浮一颗紫色能量球泛神秘光, 头顶两根橙红色骨角, 身体缠绕紫色能量丝随风飘动, 无脚靠悬浮前进, 体型细长, 死亡时能量球爆散化紫雾, 卡通神秘系</td></tr>
+        <tr><td><strong>10</strong></td><td><strong>祭司眼镜</strong></td><td>每 3s 给最近一只友军叠一层护盾</td><td class="prompt-cell">翠绿独眼老怪, 戴着圆片金边眼镜显知识分子, 手持发绿光的十字权杖, 嘴角慈祥微笑但眼神狡诈, 身体披绿色斗篷拖地, 缓慢挪步前进, 体型中等, 死亡时权杖坠地绿光渐熄, 卡通老学究感</td></tr>
+        <tr><td><strong>11</strong></td><td><strong>毒爆胖</strong></td><td>死亡时爆炸留下一片持续 3s 毒雾区域</td><td class="prompt-cell">橙黄色球形胖怪, 通体覆盖尖刺状小疙瘩, 单独眼在正中血红瞪大, 张开血盆大口露尖牙, 身体膨胀欲裂状快爆炸, 无手脚靠肚皮滚动前进, 体型大胖, 死亡时轰然炸开留橙黄毒雾, 卡通极度愤怒感</td></tr>
+      </tbody>
+    </table>
+
+    <h4>2.4.4 小 BOSS · 6 款</h4>
+    <p><em>HP 高, 每只是关键局面的转折点, 需集火 3-5s</em></p>
+    <table class="monster-table">
+      <thead><tr><th>编号</th><th>名字</th><th>威胁模型</th><th>美术提示词</th></tr></thead>
+      <tbody>
+        <tr><td><strong>12</strong></td><td><strong>钻地兽</strong></td><td>从地下钻出攻击, 会短暂无敌</td><td class="prompt-cell">紫色机械独眼巨兽, 身体前半部像巨型钻头带螺旋纹, 后半部是机甲身躯露齿轮, 独眼在钻头顶部发红光, 钻地时激起沙尘, 露头时钻头旋转, 体型是精英 1.5 倍, 死亡时钻头卡住机甲冒电火花, 卡通重工感</td></tr>
+        <tr><td><strong>13</strong></td><td><strong>蛛母眼</strong></td><td>生成 2 只跳弹菌小兵在其周围</td><td class="prompt-cell">橙红色蜘蛛型 BOSS, 身体是巨型独眼直径占全身一半, 眼周长 8 只细长节肢腿快速交替, 眼球布满血丝愤怒感, 眼睑周围有小獠牙, 体型宽大, 死亡时眼球爆裂流红汁, 腿部抽搐蜷缩, 卡通蜘蛛女王感</td></tr>
+        <tr><td><strong>14</strong></td><td><strong>腐化嘴</strong></td><td>吞噬前方友军尸体回复自身 HP</td><td class="prompt-cell">翠绿色巨型软体怪, 全身像化脓的胶质团, 身体上开一张巨大血盆大口占身体 1/3 露排排利齿, 嘴上方一只小独眼贪婪转动, 身体粘液滴落, 无脚靠身体蠕动前进, 体型肥大, 死亡时化作绿色黏液瘫地, 卡通僵尸感</td></tr>
+        <tr><td><strong>15</strong></td><td><strong>浮游炮台</strong></td><td>悬浮在空中不停射击, 无法近战</td><td class="prompt-cell">银紫色 UFO 飞碟形状, 底部悬浮发紫色能量束, 顶部圆穹罩内一颗巨型独眼旋转警戒, 侧面若干小炮口不停旋转, 无脚全悬浮飞行, 体型扁圆宽大, 死亡时飞碟旋转坠落爆炸, 卡通科幻感</td></tr>
+        <tr><td><strong>16</strong></td><td><strong>熔岩龙</strong></td><td>冲刺攻击, 命中防线大伤害</td><td class="prompt-cell">深蓝色小型飞龙, 双翼展开有琥珀金脉纹, 身体覆盖蓝色鳞片带火焰纹, 独眼位于额头闪红光, 嘴中吐熔岩橙色火焰, 尾巴带火焰, 短爪, 体型中等偏长, 死亡时鳞片碎裂如玻璃火焰熄灭, 卡通龙族感</td></tr>
+        <tr><td><strong>17</strong></td><td><strong>机甲首</strong></td><td>召唤 2 只自爆熊小兵冲锋</td><td class="prompt-cell">翠绿色巨型机甲, 头部是透明玻璃穹顶内一颗独眼绿色司令, 双肩装小型导弹发射架, 双腿粗壮机械液压杆, 手部是机械爪, 胸甲发绿光, 体型是精英 2 倍, 死亡时穹顶碎裂司令头萎缩, 卡通机甲司令感</td></tr>
+      </tbody>
+    </table>
+
+    <h4>2.4.5 大 BOSS · 3 款</h4>
+    <p><em>关卡终局, HP 极高, 集火 8-12s, 每只有多阶段变身</em></p>
+    <table class="monster-table">
+      <thead><tr><th>编号</th><th>名字</th><th>威胁模型</th><th>美术提示词</th></tr></thead>
+      <tbody>
+        <tr><td><strong>18</strong></td><td><strong>冰白触手王</strong></td><td>多触手轮流攻击, 每失一根触手加速一次</td><td class="prompt-cell">灰白色巨型头足类 BOSS, 中央一只巨型独眼直径占身体大半, 眼周长 8 根粗大触手每根有细节吸盘, 触手末端有小獠牙, 眼睑周围布满尖刺, 身体近乎透明泛冰蓝光, 体型是小 BOSS 2 倍, 死亡时触手一根根断落眼球爆裂, 卡通克苏鲁 BOSS 感</td></tr>
+        <tr><td><strong>19</strong></td><td><strong>翠绿魔王</strong></td><td>召唤精英怪, 手持权杖发射能量波</td><td class="prompt-cell">翠绿色巨型独角魔王, 头顶两根粗大琥珀金螺旋角, 单只巨型独眼血红瞪出獠牙, 双手持琥珀金雕纹权杖顶端悬浮黄色能量球, 身体披紫色魔王披风拖地, 脚边有 2 只小兵护卫, 体型高大威严, 死亡时权杖爆开能量球坠地, 卡通魔王感</td></tr>
+        <tr><td><strong>20</strong></td><td><strong>水晶脑主</strong></td><td>全场释放紫色心灵冲击波, 逼玩家躲避</td><td class="prompt-cell">透明玻璃穹顶罩住一颗巨型粉色大脑, 脑组织脉动发粉红光带琥珀金脉纹, 穹顶下是机械蜘蛛式六足底座, 每足末端带小炮口, 无独立眼但脑体自身即视觉器官, 底座周围环绕能量场, 体型宏大, 死亡时穹顶爆裂脑体焦化, 卡通终极智慧体感</td></tr>
+      </tbody>
+    </table>
   </section>
 
   <section class="chapter" id="ch-03">
