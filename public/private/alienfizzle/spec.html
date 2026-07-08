@@ -576,14 +576,18 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
       <li><span class="tag tag-should">建议</span>无尽最高分同样走 localStorage + 微信开放数据域 (见 §7.6.5)</li>
     </ul>
 
-    <h3>0.5.4 过场 (风格 A 严肃流)</h3>
+    <h3>0.5.4 过场 (风格 A 严肃流 · K7 顺序钉死)</h3>
     <p><strong>时机</strong>: 预体验关卡结束 (步骤 ③ → 步骤 ⑤ 之间) 触发一次, 之后不再重复。</p>
+    <div class="callout warn">
+      <strong>K7 原话 (msg #30966)</strong>: 加到弹窗前, 场景改一下, <strong>先弹窗写"总部: 战况如何? / 玩家: 哈哈哈不过如此, 脆得跟纸一样。" 然后</strong>再弹出<strong>虚空屏蔽场</strong>弹窗。<strong>对话在虚空屏蔽场弹窗之前</strong>, 顺序不可反。
+    </div>
     <table>
       <tr><th>时序</th><th>时长</th><th>视觉</th></tr>
       <tr><td>空跑</td><td>5s</td><td>纯黑屏, 无任何 UI</td></tr>
       <tr><td>LOADING 呼吸</td><td>2s</td><td>屏幕中央 "LOADING" 文字呼吸淡入淡出</td></tr>
-      <tr><td>逐字对话</td><td>—</td><td>纯字幕居中样式, 逐字打字机, 见下方对话内容</td></tr>
+      <tr><td><strong>① 总部/主角对话</strong></td><td>—</td><td>纯字幕居中样式, 逐字打字机, 见下方对话内容 (<strong>先出</strong>)</td></tr>
       <tr><td>通讯中断</td><td>—</td><td>字幕消失, 屏幕闪一下噪点/雪花</td></tr>
+      <tr><td><strong>② 虚空屏蔽场弹窗</strong></td><td>—</td><td>敌人启动虚空屏蔽场 / 深空信号被压制 / 补给通道被切断 / 主基地失联 / 看来只能靠我们自己了…… (<strong>后出</strong>)</td></tr>
     </table>
     <div class="callout" style="text-align:center; line-height:2.2; font-family: ui-monospace, Menlo, monospace;">
       <span style="color:#7edcff;">总部</span>: 战况如何?<br>
@@ -599,16 +603,22 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
       </ul>
     </div>
 
-    <h3>0.5.5 主菜单 · 三级导航</h3>
+    <h3>0.5.5 主菜单 · 三级导航 (K8 原话钉死)</h3>
+    <div class="callout warn">
+      <strong>K8 原话 (msg #30968, 一字未改)</strong>: 主菜单: 可选<strong>预体验、正式关卡、无尽模式</strong>。第一二三关是<strong>正式关卡下的二级页面</strong>。预体验通关后正式关卡按钮 Enable, 点进去第一关 Enable, 第二三关 Disable; 通关第一关后, 第二关 Enable, 第三关 Disable。通关第三关后, 主菜单的无尽模式 Enable。
+    </div>
     <table>
       <tr><th>层级</th><th>入口</th><th>说明</th></tr>
-      <tr><td>Lv1</td><td><strong>预体验</strong></td><td>始终可见, 支持复玩 (通关后入口保留)</td></tr>
-      <tr><td>Lv1</td><td><strong>正式关卡</strong></td><td>点入展开 Lv2 关卡列表</td></tr>
-      <tr><td>Lv1</td><td><strong>无尽模式</strong></td><td>关卡 3 通关前 disabled + 锁图标 + "通关第三关解锁"</td></tr>
-      <tr><td>Lv2</td><td>关卡 1 / 关卡 2 / 关卡 3</td><td>挂在 "正式关卡" 下, 依次解锁</td></tr>
+      <tr><td>Lv1</td><td><strong>预体验</strong></td><td>始终可见可点, 支持复玩 (通关后入口保留)</td></tr>
+      <tr><td>Lv1</td><td><strong>正式关卡</strong></td><td>预体验未通关 = <strong>置灰</strong>; 通关后 Enable, 点入展开 Lv2 关卡列表</td></tr>
+      <tr><td>Lv1</td><td><strong>无尽模式</strong></td><td><strong>关卡 3 通关前 disabled</strong> + 锁图标 + "通关第三关解锁"</td></tr>
+      <tr><td>Lv2</td><td>关卡 1</td><td>正式关卡 Enable 后, 第一关默认 Enable</td></tr>
+      <tr><td>Lv2</td><td>关卡 2</td><td>关卡 1 通关后 Enable</td></tr>
+      <tr><td>Lv2</td><td>关卡 3</td><td>关卡 2 通关后 Enable</td></tr>
     </table>
+    <p><strong>解锁链一句话总结</strong>: 预体验 → 正式关卡入口 · 第 1 关 · 第 2 关 · 第 3 关 · 无尽模式, 每一层通关解锁下一层。</p>
     <ul>
-      <li><span class="tag tag-must">必须</span>解锁链持久化 (localStorage), 键名: <code>af.progress.stage</code> / <code>af.progress.endlessUnlocked</code></li>
+      <li><span class="tag tag-must">必须</span>解锁链持久化 (localStorage), 键名建议 <code>alienfizzle_unlock_state</code>, 值 JSON: <code>{preview, level1, level2, level3, endless}</code> 各 boolean</li>
       <li><span class="tag tag-must">必须</span>预体验通关后主菜单入口保留 (支持复玩), 复玩不再触发过场</li>
       <li><span class="tag tag-should">建议</span>无尽解锁瞬间加一个短横幅 "无尽模式已解锁"</li>
     </ul>
@@ -656,6 +666,9 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
       <tr><td>武器</td><td>覆盖式 — 拿到新武器立即替换旧武器, 不叠加</td></tr>
       <tr><td>武器作用范围</td><td><strong>仅影响主角自身弹道</strong>, 不影响 BOBO</td></tr>
       <tr><td>初始武器</td><td>基础单发直射(数值待定)</td></tr>
+      <tr><td><strong>基础攻击力 (K1/K2 v3.2 定稿)</strong></td><td><strong>全局翻倍</strong> — 玩家基础 atk ×2, 敌人 HP 对应 ×2 (§2.4.1)</td></tr>
+      <tr><td><strong>暴击 (K1/K4 v3.2 定稿)</strong></td><td>暴击 = <strong>多造成 50% 伤害</strong>, 同样作用于<strong>普通攻击</strong> (K4 追问 1 答: "暴击伤害同样也会作用于普通攻击")</td></tr>
+      <tr><td><strong>常规局时长 (K2 v3.2 定稿)</strong></td><td>60s → <strong>180s (3 分钟)</strong> — K2 "暂时调整为 3 分钟试试"</td></tr>
     </table>
 
     <h3>2.2 BOBO (悬浮球辅助机器人)</h3>
@@ -689,6 +702,7 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
       <li><span class="tag tag-must">必须</span>到达防线前 <strong>停下并攻击防线</strong>, 持续消耗防线持久度</li>
       <li><span class="tag tag-must">必须</span>被击杀后立即消失, 不掉落物品</li>
       <li><span class="tag tag-must">必须</span>4 档 20 只全部实装, 不允许砍档 (每档功能不可替代)</li>
+      <li><span class="tag tag-must">必须</span><strong>敌人 HP 全局 ×2 (K3 v3.2 定稿)</strong> — "敌人双倍血量是全局", 适用于所有正式关卡 + 无尽模式 (预体验关卡另有满配, 不受此影响)</li>
       <li><span class="tag tag-should">建议</span>美术风格: 卡通可识别, 独眼为主视觉锚点, 配色遵循「小兵冷色 → 精英暖色 → BOSS 混色」的渐进层次</li>
     </ul>
 
@@ -874,7 +888,7 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
       <tr><td>稀有</td><td>高血量(15-25 颗子弹)</td><td>稀有武器(含 <strong>镜像 BOBO</strong> 等特殊武器)</td><td>低 10%</td></tr>
     </table>
 
-    <h3>4.3 特殊武器: 镜像 BOBO</h3>
+    <h3>4.3 特殊武器: 镜像 BOBO (保留 · 移入 §4.5 6 号位)</h3>
     <ul>
       <li><span class="tag tag-must">必须</span>归类为 <strong>稀有宝箱</strong>(高血量, 低频出现)</li>
       <li><span class="tag tag-must">必须</span>装备瞬间在主角左侧 0.5U 位置 <strong>生成镜像 BOBO</strong></li>
@@ -895,6 +909,23 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
     <div class="callout warn">
       <strong>设计张力</strong>: 主角去左通道贪宝箱时, 右通道弹道空缺, 敌人推进无人拦截。警告反馈 = 心理压迫源, 让"贪 vs 守"成为玩家每秒都要重新计算的决策。
     </div>
+
+    <h3>4.5 宝箱库全表 (v3.2 定稿 · 8 件 · 激光/终极下架)</h3>
+    <p class="lead">v3.2 相对 v3.1 <strong>全部推倒重排</strong>: 激光 / 终极技能太超模, 一手下架 (K3 原话)。以下 8 件按 K3/K4 原话逐条落, 一字未改。<strong>通用规则</strong>: 所有存在 cd 的技能, 在装备的瞬间就直接触发第一次 (K2 末段)。</p>
+    <table>
+      <tr><th>#</th><th>名称</th><th>规格 (K4 原话 · 一字未改)</th></tr>
+      <tr><td><strong>1</strong></td><td><strong>枪械精通</strong></td><td>为主角提供<strong>成长属性</strong>: 成长攻击力 + 成长攻速 + 成长弹道 (<code>+1/30s</code>, cap <code>+3</code>)</td></tr>
+      <tr><td><strong>2</strong></td><td><strong>别站一起</strong></td><td>每隔 <strong>10s</strong> 主角丢一枚<strong>手雷</strong>, 以主要目标为圆心、直径 <strong>1/3 通道宽度</strong>的圆形爆炸区域, 造成 <strong>50 点</strong>爆炸伤害</td></tr>
+      <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong></td><td>(K3/K4 只提名字, 无新细节) — 引用 v3 旧规格: 子弹命中点触发小范围爆炸</td></tr>
+      <tr><td><strong>4</strong></td><td><strong>弹射弹</strong></td><td>弹射 <strong>3 次</strong> (从击中第 1 敌人开始算能打到第 4 敌人), <strong>弹射后的子弹也能触发爆炸弹效果</strong></td></tr>
+      <tr><td><strong>5</strong></td><td><strong>飞轮海</strong></td><td>每隔 <strong>10s</strong> 发射一个飞轮到接敌通道, 触碰第 1 敌人后展开旋转, 形成直径 = 接敌通道宽度的圆形伤害区域, <strong>每秒 50 点</strong>伤害, <strong>持续 6s</strong></td></tr>
+      <tr><td><strong>6</strong></td><td><strong>镜像 BOBO</strong></td><td>(引用 §4.3 旧规格, 保留) 装备瞬间在主角左侧 0.5U 生成镜像 BOBO, 属性完全继承原 BOBO, 后续状态门同步作用于两个 BOBO</td></tr>
+      <tr><td><strong>7</strong></td><td><strong>恩赐解脱</strong></td><td>每隔 <strong>5s</strong> 自动瞄准生命值最高的敌人, 发射一颗<strong>超级子弹</strong>造成 <strong>n 倍攻击力真实伤害</strong> (n 待评估, 目标 = 中期一发秒精英怪); 对目标身后<strong>锥形区域</strong>敌人造成<strong>恐惧</strong>效果, 倒行 <strong>5s</strong></td></tr>
+      <tr><td><strong>8</strong></td><td><strong>高压领域</strong></td><td>每隔 <strong>20s</strong> 在接敌通道<strong>下半部分</strong>创造一片高压电区域, <strong>持续 10s</strong>; 穿区子弹自带电属性 (击中敌人麻痹 <strong>0.5s</strong>); 进区敌人每 <strong>2s</strong> 被麻痹 <strong>0.5s</strong> 并造成 <strong>100 点</strong>伤害</td></tr>
+    </table>
+    <div class="callout">
+      <strong>下架名单 (K3 一手下架 · v3.2 不再实装)</strong>: 散射激光 · 终极技能 (全屏爆炸) — 太超模, 教它做人。demo 里的 <code>perks.laser</code> / <code>perks.ultimate</code> 从 spawn 池删除。
+    </div>
   </section>
 
   <section class="chapter" id="ch-05">
@@ -910,9 +941,20 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
       <tr><td>移动方向</td><td>从顶部向下匀速移动</td></tr>
       <tr><td>移动速度</td><td><strong>显著快于小兵推进速度</strong>(约 1.5x - 2x), 保证门会穿过敌人到达主角</td></tr>
       <tr><td>同时存在数</td><td><strong>始终只 1 个</strong>, 上一个消失才生成下一个</td></tr>
+      <tr><td>出现频率 (K4 v3.2 定稿)</td><td><strong>固定 10 秒钟出现一次</strong></td></tr>
       <tr><td>初始数值</td><td>随机 buff 或 debuff, 数值范围按数值表(待数值策划)</td></tr>
-      <tr><td>属性维度</td><td>攻击力 / 攻击速度 / 弹道数量 / 弹道速度 / 暴击率 / ... (可扩展)</td></tr>
+      <tr><td>属性维度 (K4 v3.2 定稿)</td><td>攻击力 / 攻击速度 / 弹道 (<strong>只取整数</strong>: 1.9=1, 2.1=2) / 暴击率 / 暴击伤害 / 火力静默</td></tr>
     </table>
+
+    <h3>5.1.1 火力静默 · 独立小节 (K3/K4 定稿)</h3>
+    <div class="callout warn">
+      <strong>K3 原话</strong>: 火力静默<strong>减益为正数</strong>, 默认为 <strong>+4s</strong> 就是火力静默 4 秒, 状态色为<strong style="color:#ff5050">红</strong>。通过射击将数值变为 <strong>-1</strong>, 为增益, <strong>双倍火力 1 秒</strong>, 状态色为<strong style="color:#44dd66">绿色</strong>。<strong>因为火力静默这个词本身就是减益描述</strong>。
+    </div>
+    <ul>
+      <li><span class="tag tag-must">必须</span>火力静默门<strong>数值符号反向</strong>: 正数 = 减益 (射击才能扣到 0 再翻转负数), 负数 = 增益 (双倍火力持续 -N 秒)</li>
+      <li><span class="tag tag-must">必须</span>状态色: 正数 → 红 · 0 → 灰 · 负数 → 绿</li>
+      <li><span class="tag tag-must">必须</span>其他 5 个维度 (攻击力 / 攻速 / 弹道 / 暴击率 / 暴击伤害) 保持<strong>正数 = 增益 · 负数 = 减益</strong>的常规约定</li>
+    </ul>
 
     <h3>5.2 受击与数值变化</h3>
     <ul>
@@ -1180,7 +1222,10 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
       <li><span class="tag tag-must">必须</span>关卡 0 通关触发过场 (§0.5.4), 过场结束进主菜单; 复玩通关<strong>不再触发过场</strong>, 直回主菜单</li>
     </ul>
 
-    <h3>7.5.2 反寸止守则 (v3.2 钉死)</h3>
+    <h3>7.5.2 反寸止守则 (v3.2 钉死 · K7 原话)</h3>
+    <div class="callout warn">
+      <strong>K7 原话 (msg #30966, 一字未改)</strong>: 60 秒出不完就 120 秒, 120 秒出不完就 240 秒。<strong>时间长短并不重要, 重要的是要让玩家爽</strong>。玩家正爽着呢, 你直接给人家强制弹走了, 搁这儿搞寸止呢?
+    </div>
     <div class="callout warn">
       <strong>时长哲学</strong>: 预体验时长<strong>保持不封顶</strong>, 60s / 120s / 240s 都不是问题。时间是配合方阵推进的自然产物, <strong>不要用时长做为强度约束</strong>。
     </div>
@@ -1225,7 +1270,7 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
       <tr><td rowspan="2"><strong>BOBO</strong></td><td>射速</td><td><strong>2×</strong></td><td>1×</td></tr>
       <tr><td>弹道数</td><td><strong>双弹道</strong></td><td>单弹道</td></tr>
     </table>
-    <p><strong>设计意图</strong>: 满配拉爽感峰值。BOBO 同步 2× 射速 + 双弹道, 主角属性面板拉满, 让玩家立刻感受到 "全套加满是这个样子", 建立追求锚点。</p>
+    <p><strong>设计意图</strong>: 满配拉爽感峰值。<strong>K6 原话钉死</strong>: 主角和 BOBO <strong>两者属性一样</strong> (atk=60 / spd=1.5 / blt=3 / crit=25% / critDmg=+50% 全部同步)。让玩家立刻感受到 "全套加满是这个样子", 建立追求锚点。</p>
 
     <h3>7.5.5 敌人 · 8 方阵制 (强度递增不封顶)</h3>
     <ul>
@@ -1283,6 +1328,9 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
     <p class="lead">最高难度 3 关全部通关后解锁。核心目标 = 解玩家"打通就丢, 没动力再玩"的核心病, 用刷分破纪录 + 好友榜社交贴合建立长线留存钩子。</p>
 
     <h3>7.6.1 定位与解锁</h3>
+    <div class="callout warn">
+      <strong>K2 通关率目标 (v3.2 定稿 · 一字未改)</strong>: "我希望该模式下<strong>通关率维持在 1% 以下</strong>, 顶多是<strong>时间到了还存活着</strong>, 不能是时间还没到就被玩家杀光了。" — 所有后续 wave 数值调整必须以此为顶层约束。
+    </div>
     <ul>
       <li><span class="tag tag-must">必须</span><strong>解锁条件</strong>: 最高难度 (第三关 · 殊死决战) 通关</li>
       <li><span class="tag tag-must">必须</span>解锁后主菜单出现"无尽模式"入口, 与关卡选择平级</li>

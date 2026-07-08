@@ -488,13 +488,39 @@ html,body{
         <button class="panel-btn mode-btn" id="btnEndless" style="background:linear-gradient(135deg,#8a5cff,#6a3fd6);position:relative;padding-left:52px;text-align:left">
           <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:22px">♾️</span>
           <span style="font-size:15px;font-weight:700">无尽模式</span>
-          <span style="display:block;font-size:10.5px;color:rgba(255,255,255,0.75);font-weight:400;margin-top:2px;letter-spacing:0.5px">wave 递增 · 分数榜 · 挑战极限</span>
+          <span style="display:block;font-size:10.5px;color:rgba(255,255,255,0.75);font-weight:400;margin-top:2px;letter-spacing:0.5px">通关第三关解锁 · wave 递增 · 分数榜</span>
         </button>
       </div>
       <div style="margin-top:16px;text-align:center">
         <button id="btnLeaderboard" style="background:transparent;border:1px solid #444;color:#888;padding:6px 14px;border-radius:14px;font-size:11px;cursor:pointer;letter-spacing:1px">🏆 无尽榜 TOP 10</button>
       </div>
-      <div style="margin-top:18px;text-align:center;color:#555;font-size:10px;letter-spacing:1.5px">v3.1 · 2026-07-02</div>
+      <div style="margin-top:18px;text-align:center;color:#555;font-size:10px;letter-spacing:1.5px">v3.2 · K8 三级导航 · 2026-07-08</div>
+    </div>
+  </div>
+
+  <!-- ============ v3.2 · Lv2 正式关卡子页面 (K8: 1/2/3 关) ============ -->
+  <div class="panel" id="normalLevelsPanel" style="display:none">
+    <div class="panel-inner" style="max-width:340px;padding:32px 28px 28px">
+      <div class="panel-title" style="font-size:20px;letter-spacing:2px">正式关卡</div>
+      <div class="panel-sub" style="letter-spacing:2px;color:#888">选择关卡</div>
+      <div style="margin-top:20px;display:flex;flex-direction:column;gap:10px">
+        <button class="panel-btn mode-btn" id="btnLevel1" style="background:linear-gradient(135deg,#2a6b7c,#1e4e5a);position:relative;padding-left:52px;text-align:left">
+          <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:20px">1️⃣</span>
+          <span style="font-size:14px;font-weight:700">第 1 关</span>
+          <span style="display:block;font-size:10px;color:rgba(255,255,255,0.7);font-weight:400">首战 · 摸底</span>
+        </button>
+        <button class="panel-btn mode-btn" id="btnLevel2" style="background:linear-gradient(135deg,#7c4a2a,#5a3520);position:relative;padding-left:52px;text-align:left">
+          <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:20px">2️⃣</span>
+          <span style="font-size:14px;font-weight:700">第 2 关</span>
+          <span style="display:block;font-size:10px;color:rgba(255,255,255,0.7);font-weight:400">通关第 1 关解锁</span>
+        </button>
+        <button class="panel-btn mode-btn" id="btnLevel3" style="background:linear-gradient(135deg,#7c2a4a,#5a2035);position:relative;padding-left:52px;text-align:left">
+          <span style="position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:20px">3️⃣</span>
+          <span style="font-size:14px;font-weight:700">第 3 关</span>
+          <span style="display:block;font-size:10px;color:rgba(255,255,255,0.7);font-weight:400">通关第 2 关解锁</span>
+        </button>
+      </div>
+      <button class="panel-btn" id="btnLvBack" style="margin-top:14px;background:#444;font-size:13px;padding:10px 20px">← 返回主菜单</button>
     </div>
   </div>
 
@@ -526,8 +552,8 @@ html,body{
 
   <!-- ============ v3.2 · 预体验启动加载页 (splash screen) ============ -->
   <div id="previewSplash">
-    <div class="splash-title-en">STARSHIP EXTERMINATION SIMULATOR</div>
-    <div class="splash-title-zh">战舰灭杀模拟器</div>
+    <div class="splash-title-en">ALIEN FIZZLE</div>
+    <div class="splash-title-zh">舰舰别炸</div>
     <div class="splash-version">v 3 . 2</div>
     <div class="splash-bar"><div class="splash-bar-fill"></div></div>
     <div class="splash-hint">INITIALIZING</div>
@@ -871,16 +897,18 @@ const CFG = {
   // 全部配件只强化主角, 不影响 BOBO
   treasure: {
     spawnInterval: 4500,
-    // 8 件配件序列 - 基础 HP 大幅拔高 (相比 v2 普遍 +50% 以上, 给递增倍率留头部)
+    // 8 件配件序列 - v3.2 K3/K4 定稿: 激光/终极下架, 替换为 别站一起/飞轮海/恩赐解脱/高压领域
+    // 白模阶段: 名字/顺序对齐 spec §4.5, 图标/占位有. 细节效果沿用原有实现 (爆炸弹/弹射弹/镜像 BOBO 已实装)
+    // 顺序: 1 枪械精通 / 2 别站一起 / 3 爆炸弹 / 4 弹射弹 / 5 飞轮海 / 6 镜像BOBO / 7 恩赐解脱 / 8 高压领域
     perks: [
-      { id: 'fireRate',   hp: 80,   color: '#ffcc44', label: '射速+',   desc: '主角射速 +1%/s 持续' },
-      { id: 'multiShot',  hp: 200,  color: '#44dd99', label: '多弹道',  desc: '弹道 +1, 每 30s +1' },
-      { id: 'atkUp',      hp: 400,  color: '#ff5544', label: '攻击+',   desc: '主角攻击每 5s +1' },
-      { id: 'explosive',  hp: 650,  color: '#ff8c00', label: '爆炸弹',  desc: '命中点小范围爆炸' },
-      { id: 'ricochet',   hp: 950,  color: '#4dffea', label: '弹射弹',  desc: '子弹弹射下一个敌人' },
-      { id: 'mirror',     hp: 1400, color: '#ff88dd', label: '镜像 NUO', desc: '复制副手 NUO' },
-      { id: 'laser',      hp: 2000, color: '#a64dff', label: '散射激光', desc: '每 3s 折射激光' },
-      { id: 'ultimate',   hp: 2800, color: '#ffd700', label: '终极技能', desc: '每 10s 全屏爆炸' },
+      { id: 'gunMastery', hp: 80,   color: '#ffcc44', label: '枪械精通', desc: '成长攻击/攻速/弹道 +1/30s (cap +3)' },
+      { id: 'grenade',    hp: 200,  color: '#ff8c00', label: '别站一起', desc: '每10s丢手雷 1/3通道宽 50伤' },
+      { id: 'explosive',  hp: 400,  color: '#ff5544', label: '爆炸弹',   desc: '命中点小范围爆炸' },
+      { id: 'ricochet',   hp: 650,  color: '#4dffea', label: '弹射弹',   desc: '弹射3次 且触发爆炸弹效果' },
+      { id: 'flywheel',   hp: 950,  color: '#44dd99', label: '飞轮海',   desc: '每10s发飞轮 6s内每秒50伤' },
+      { id: 'mirror',     hp: 1400, color: '#ff88dd', label: '镜像BOBO', desc: '复制副手 BOBO' },
+      { id: 'graceRelease', hp: 2000, color: '#a64dff', label: '恩赐解脱', desc: '每5s锁血最高敌 真伤+身后锥形恐惧5s' },
+      { id: 'highVoltage',  hp: 2800, color: '#ffd700', label: '高压领域', desc: '每20s下半通道电区 10s 麻痹+100伤' },
     ],
     repeatBuffs: [
       { id: 'atk++',  color: '#ff5544', label: '攻击++', desc: '主角伤害 +25%' },
@@ -1054,10 +1082,13 @@ function createEnemy(type, customX, customY) {
   const x = customX != null ? customX
     : rand(TRACK_R_LEFT + tcfg.w/2, TRACK_R_RIGHT - tcfg.w/2);
   const y = customY != null ? customY : HORIZON_Y + 5;
+  // v3.2 K3 · 敌人 HP 全局 ×2 (预体验关卡另有独立 HP 逻辑, 不受此影响)
+  const hpMult = (V31 && V31.mode === 'preview') ? 1 : 2;
+  const enemyHp = tcfg.hp * hpMult;
   return {
     x, y,
     w: tcfg.w, h: tcfg.h,
-    hp: tcfg.hp, maxHp: tcfg.hp,
+    hp: enemyHp, maxHp: enemyHp,
     speed: tcfg.speed * G.diffMult,
     dps: tcfg.dps * G.diffMult,
     color: tcfg.color,
@@ -1271,7 +1302,7 @@ function shootLoop() {
   const playerSilenced = G.playerSilenceUntil && G.now < G.playerSilenceUntil;
   // 主角射击 - 多弹道 + 暴击 + atkMult + atkBonus
   if (!playerSilenced && G.now - G.player.lastShot >= CFG.player.bulletInterval) {
-    const baseAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
+    const baseAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1) * (V31 && V31.mode === 'preview' ? 1 : 2);   // v3.2 K1/K2 · 玩家 atk 全局 ×2 (预体验独立满配, 不受此影响)
     const bltCount = Math.max(1, Math.round(G.multiShot || 1));
     const spread = 10;
     // 暴击率 = BOBO 状态门给的暴击率 (G.nuoStats.crt 含上限 15%) + buff 的 critBonus
@@ -1510,34 +1541,36 @@ function findNextRicochetTarget(from) {
 // 主角持续 buff tick (fireRate / multiShot / atkUp)
 // ============================================================
 
-// 射速强化: 每秒把当前 bulletInterval 乘以 0.99 (= +1%)
+// 射速强化: 每秒把当前 bulletInterval 乘以 0.99 (= +1%) — v3.2 归属枪械精通
 function tickFireRate() {
-  if (!G.perks || !G.perks.fireRate) return;
+  if (!G.perks || !G.perks.gunMastery) return;
   if (!G.fireRateTickAt || G.now < G.fireRateTickAt) return;
   G.fireRateTickAt = G.now + 1000;
   CFG.player.bulletInterval = Math.max(40, CFG.player.bulletInterval * 0.99);
 }
 
-// 多弹道: 每 30s +1, 上限 5
+// 多弹道: 每 30s +1, cap +3 (v3.2 枪械精通 K4 cap +3)
 function tickMultiShot() {
-  if (!G.perks || !G.perks.multiShot) return;
+  if (!G.perks || !G.perks.gunMastery) return;
   if (!G.multiShotNextAt || G.now < G.multiShotNextAt) return;
   G.multiShotNextAt = G.now + 30000;
-  if ((G.multiShot || 1) < 5) {
+  const base = 1;
+  const cap = base + (G.gunMasteryCap || 3);
+  if ((G.multiShot || 1) < cap) {
     G.multiShot = (G.multiShot || 1) + 1;
     showBuffToast('弹道 +1 → ' + G.multiShot, true);
   }
 }
 
-// 攻击强化: 每 5s +1 (累加 atkBonus)
+// 攻击强化: 每 5s +1 (累加 atkBonus) — v3.2 归属枪械精通
 function tickAtkUp() {
-  if (!G.perks || !G.perks.atkUp) return;
+  if (!G.perks || !G.perks.gunMastery) return;
   if (!G.atkUpTickAt || G.now < G.atkUpTickAt) return;
   G.atkUpTickAt = G.now + 5000;
   G.playerAtkBonus = (G.playerAtkBonus || 0) + 1;
 }
 
-// 散射激光 - 每 3s 触发, 从主角找最近敌人, 折射 3 次
+// [v3.2 K3 一手下架] 散射激光 - dead code, guard 永远 false
 function tickLaser() {
   if (!G.perks || !G.perks.laser) return;
   if (!G.laserNextAt || G.now < G.laserNextAt) return;
@@ -1712,6 +1745,11 @@ const ENEMY_FORMATIONS = {
   // 精英开路 + 小兵尾随
   'elite-trail':[{type:'elite',lane:1,y:0},{type:'small',lane:0,y:50},{type:'small',lane:1,y:50},{type:'small',lane:2,y:50}],
 };
+
+// v3.2 K2 · 常规局目标时长 · GAME_DURATION = 180_000 ms (3 分钟, 从 v3.1 60s 上调)
+// 结构: PHASES 时间轴已覆盖 0-175s + 175s FINAL BOSS 登场, 总目标 ≈ 180s 击杀 FINAL BOSS 通关
+// 预体验关卡不受此影响 (§7.5 反寸止守则, K7 原话: 60/120/240 都不是问题)
+const GAME_DURATION = 180000;   // ms · v3.2 K2 常规局时长基准 (60000 → 180000)
 
 // Phase 时间表 - 每段配 wave 池 + 节奏 + 在结尾插 elite/miniBoss
 // 总目标: 6 elite + 3 miniBoss 渐进释放, 最后 final boss
@@ -1941,20 +1979,21 @@ function applyTreasure(t) {
     G.perks[t.perkId] = true;
     G.perkUnlockedIdx = (G.perkUnlockedIdx || 0) + 1;
 
-    // 即时效果 + 启动周期 tick
-    if (t.perkId === 'fireRate') {
-      // 射速 +1%/s 持续: 启动 tick, 每秒把 bulletInterval 乘以 0.99
+    // 即时效果 + 启动周期 tick (v3.2 K3/K4: 装备瞬间就直接触发第一次)
+    if (t.perkId === 'gunMastery') {
+      // 枪械精通 (K4): 成长攻击力 + 成长攻速 + 成长弹道 +1/30s (cap +3)
+      // 白模: 用原有 fireRate/multiShot/atkUp 三合一 tick 模拟
       G.fireRateTickAt = G.now + 1000;
       G.fireRateBaseInterval = CFG.player.bulletInterval;
-    }
-    if (t.perkId === 'multiShot') {
-      // 弹道 +1 初始, 之后每 30s +1, 上限 5
-      G.multiShot = 2;   // 1 → 2
+      G.multiShot = 2;
       G.multiShotNextAt = G.now + 30000;
-    }
-    if (t.perkId === 'atkUp') {
-      // 攻击每 5s +1
       G.atkUpTickAt = G.now + 5000;
+      G.gunMasteryCap = 3;
+    }
+    if (t.perkId === 'grenade') {
+      // 别站一起 (K4): 每 10s 主角丢手雷, 直径 1/3 通道宽度圆形爆炸, 50 伤
+      // 白模: cd tick 占位, 装备瞬间触发首发
+      G.grenadeNextAt = G.now;
     }
     if (t.perkId === 'mirror') {
       if (!G.hasMirror) {
@@ -1964,11 +2003,17 @@ function applyTreasure(t) {
         if (tag) tag.style.display = 'inline';
       }
     }
-    if (t.perkId === 'laser') {
-      G.laserNextAt = G.now + 3000;
+    if (t.perkId === 'flywheel') {
+      // 飞轮海 (K4): 每 10s 发飞轮, 触碰第 1 敌人后展开旋转, 每秒 50 伤持续 6s
+      G.flywheelNextAt = G.now;
     }
-    if (t.perkId === 'ultimate') {
-      G.ultNextAt = G.now + 10000;
+    if (t.perkId === 'graceRelease') {
+      // 恩赐解脱 (K4): 每 5s 锁血最高敌人发超级子弹 n 倍真实伤害 + 身后锥形恐惧 5s
+      G.graceReleaseNextAt = G.now;
+    }
+    if (t.perkId === 'highVoltage') {
+      // 高压领域 (K4): 每 20s 下半通道电区, 10s 内穿区子弹麻痹, 进区敌人每 2s 麻痹+100 伤
+      G.highVoltageNextAt = G.now;
     }
     showBuffToast(t.label + ' 解锁!', true);
     return;
@@ -2879,6 +2924,17 @@ function setupOnboard() {
   function finish() {
     Storage.set('onboarded', true);
     panel.style.display = 'none';
+    // 问题 3 修复: 新手引导跳过/看完后, 若未通关预体验 → 串行进预体验 (不能直接进正式关卡)
+    // spec §0.5.5 / §7.5: 预体验关卡首次强制体验, 引导 → 预体验 串行链
+    const cleared = localStorage.getItem('previewCleared') === '1';
+    const params = new URLSearchParams(window.location.search);
+    const forceMenu = params.get('menu') !== null;
+    if (!cleared && !forceMenu && typeof showPreviewSplash === 'function' && typeof startPreview === 'function') {
+      // 若 V31.mode 已经是 preview (setupV31Menu 已启动首次预体验流程) → 不重复触发
+      if (typeof V31 !== 'undefined' && V31.mode === 'preview') return;
+      document.getElementById('startPanel').style.display = 'none';
+      showPreviewSplash(() => startPreview());
+    }
   }
   nextBtn.addEventListener('click', () => {
     if (currentPage < totalPages - 1) gotoPage(currentPage + 1);
@@ -2914,12 +2970,41 @@ const V31 = {
 };
 
 // ---- 主菜单入口 ----
+// v3.2 K8 · 解锁链持久化 (localStorage key: alienfizzle_unlock_state)
+// preview → level1 → level2 → level3 → endless
+const UNLOCK_KEY = 'alienfizzle_unlock_state';
+function getUnlockState() {
+  try {
+    const raw = localStorage.getItem(UNLOCK_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch(e) {}
+  // 兼容旧 previewCleared key: 若旧标志存在, 迁移到新 state
+  const legacy = localStorage.getItem('previewCleared') === '1';
+  return { preview: legacy, level1: false, level2: false, level3: false, endless: false };
+}
+function setUnlockState(state) {
+  try { localStorage.setItem(UNLOCK_KEY, JSON.stringify(state)); } catch(e) {}
+}
+function unlockNext(key) {
+  const s = getUnlockState();
+  s[key] = true;
+  setUnlockState(s);
+  // 同步旧 previewCleared 兼容位
+  if (key === 'preview') try { localStorage.setItem('previewCleared', '1'); } catch(e){}
+  // 关卡 3 通关 → 无尽解锁
+  if (key === 'level3') s.endless = true;
+  setUnlockState(s);
+  return s;
+}
+
 function showMenu() {
   document.getElementById('startPanel').style.display = 'flex';
   document.getElementById('gameOverPanel').style.display = 'none';
   document.getElementById('previewWarningBar').style.display = 'none';
   document.getElementById('previewOutroPanel').style.display = 'none';
   document.getElementById('leaderboardPanel').style.display = 'none';
+  const lp = document.getElementById('normalLevelsPanel');
+  if (lp) lp.style.display = 'none';
   document.getElementById('hud-mode-badge').style.display = 'none';
   document.getElementById('hud-wave-row').style.display = 'none';
   document.getElementById('hud-score-row').style.display = 'none';
@@ -2930,18 +3015,36 @@ function showMenu() {
   draw();
 }
 
-// v3.1: 主菜单锁化 - 未通关预体验时, btnNormal + btnEndless 灰化 + 锁标签
+// v3.2 K8: 主菜单锁化 - 预体验未通关 → 正式关卡置灰; 关卡3未通关 → 无尽模式置灰
 function refreshMenuLockState() {
-  const cleared = localStorage.getItem('previewCleared') === '1';
+  const s = getUnlockState();
   const btnNormal = document.getElementById('btnNormal');
   const btnEndless = document.getElementById('btnEndless');
-  if (cleared) {
-    btnNormal.classList.remove('locked');
-    btnEndless.classList.remove('locked');
-  } else {
-    btnNormal.classList.add('locked');
-    btnEndless.classList.add('locked');
+  if (s.preview) btnNormal.classList.remove('locked');
+  else btnNormal.classList.add('locked');
+  // 无尽模式 K8: 通关关卡3后才解锁 (不再是"通关预体验")
+  if (s.endless || s.level3) btnEndless.classList.remove('locked');
+  else btnEndless.classList.add('locked');
+  // Lv2 关卡锁化 (若面板存在)
+  const b1 = document.getElementById('btnLevel1');
+  const b2 = document.getElementById('btnLevel2');
+  const b3 = document.getElementById('btnLevel3');
+  if (b1) { if (s.preview) b1.classList.remove('locked'); else b1.classList.add('locked'); }
+  if (b2) { if (s.level1)  b2.classList.remove('locked'); else b2.classList.add('locked'); }
+  if (b3) { if (s.level2)  b3.classList.remove('locked'); else b3.classList.add('locked'); }
+}
+
+// v3.2 K8: 打开正式关卡二级页面
+function showNormalLevels() {
+  const s = getUnlockState();
+  if (!s.preview) {
+    floatText(W/2, H/2, '需先通关预体验', '#ff8ba8', true);
+    return;
   }
+  document.getElementById('startPanel').style.display = 'none';
+  const lp = document.getElementById('normalLevelsPanel');
+  if (lp) lp.style.display = 'flex';
+  refreshMenuLockState();
 }
 
 function setModeBadge(mode) {
@@ -3014,6 +3117,11 @@ function startPreview() {
   // === 反弹护盾 ===
   V31.previewShieldHP = V31.previewShieldMax;
 
+  // 问题 6 修复: 状态门时机 = 战斗触发后 10s 出第一个
+  // spec §7.5.2: 开局静默期 10s 不出状态门. 战斗期开始后再等 10s 才 spawn 第一道
+  // (原来 reset() 内设的 startTime + 3000 会在静默期就 spawn, 违反 spec)
+  G.nextGateAt = V31.previewSilenceUntil + 10000;   // = 战斗开始 + 10s
+
   updateNuoUI();
   G.running = true;
   G.startTime = now;
@@ -3069,16 +3177,22 @@ function spawnPreviewFormation(idx) {
   const total = allEnemies.length;
   if (total === 0) return;
 
-  // 分布: 每 3 只一行 (3 lane), 从后往前铺 (yOffset 递减 = 前面的先接触防线)
+  // 分布: 每 6 只一行 (6 列), 从后往前铺 (yOffset 递增 = 后排在上/远端)
+  // 问题 5 修复: 6 列 (spec §7.5.5 · 6×10 密集方阵), 之前误设为 3 lane/行
+  // 问题 4 修复: 开局方阵集结在通道上半部分 (远端顶部). HORIZON_Y=30 即通道最远端, 
+  //             10 行 × 32px = 320px, 覆盖 y=[35, 355] ≈ 通道上半部分 (canvas 高 736, 防线 ~y=594)
   let placed = 0;
-  const rowSpacing = 32;   // 行间距 (零间距贴合 small w=31)
-  const startYOffset = 0;  // 后排最深
+  const cols = 6;                                        // spec §7.5.5 · 6 列
+  const rowSpacing = 32;                                 // 行间距 (零间距, ~small.h)
+  const startYOffset = 0;                                // 从远端 (HORIZON_Y) 开始铺
+  // 6 列均分接敌通道: col 中心 X = TRACK_R_LEFT + (col + 0.5) * (TRACK_R_WIDTH / 6)
+  const colWidth = TRACK_R_WIDTH / cols;
   allEnemies.forEach((eSpec, i) => {
-    const row = Math.floor(i / 3);
-    const lane = i % 3;
+    const row = Math.floor(i / cols);
+    const col = i % cols;
     const tcfg = CFG.enemy.types[eSpec.type];
     if (!tcfg) return;
-    let x = rightLaneX(lane);
+    let x = TRACK_R_LEFT + colWidth * (col + 0.5);
     x = clamp(x, TRACK_R_LEFT + tcfg.w/2, TRACK_R_RIGHT - tcfg.w/2);
     const y = HORIZON_Y + 5 + startYOffset + row * rowSpacing;
     const e = createEnemy(eSpec.type, x, y);
@@ -3109,7 +3223,7 @@ function checkPreviewFormationProgress() {
       if (!V31.previewCleared) {
         V31.previewCleared = true;
         V31.previewBossKilled = true;
-        localStorage.setItem('previewCleared', '1');
+        unlockNext('preview');
         setTimeout(() => showPreviewOutro(), 500);
       }
     } else {
@@ -3128,7 +3242,8 @@ function checkPreviewFormationProgress() {
 }
 
 // v3.2 · 预体验通关过场 (§0.5.4 · 7 阶段时序 · 打字机效果)
-// 阶段: 1 空跑 5s → 2 弹窗接入 → 3 LOADING 呼吸 2s → 4 对话打字机 → 5 通讯中断抖动 → 6 警告打字机 → 7 继续按钮
+// K7 顺序钉死: 阶段 4 总部/主角对话 (先出) → 阶段 6 虚空屏蔽场警告 (后出), 不可反
+// 阶段: 1 空跑 5s → 2 弹窗接入 → 3 LOADING 呼吸 2s → 4 对话打字机 (K7:先) → 5 通讯中断抖动 → 6 警告打字机 (K7:后) → 7 继续按钮
 function showPreviewOutro() {
   document.getElementById('gameOverPanel').style.display = 'none';
 
@@ -3312,15 +3427,19 @@ function playStaticNoise() {
   noise.stop(ctx.currentTime + 0.2);
 }
 
-// ---- 正式关卡: 完全复用老 demo 玩法 ----
-function startNormal() {
+// ---- 正式关卡: 完全复用老 demo 玩法 (v3.2 K8: 可传入 level 1/2/3, 通关后解锁下一关) ----
+function startNormal(level) {
+  const s = getUnlockState();
   // 未通关预体验 → 拦截
-  if (localStorage.getItem('previewCleared') !== '1') {
+  if (!s.preview) {
     floatText(W/2, H/2, '需先通关预体验', '#ff8ba8', true);
     return;
   }
   V31.mode = 'normal';
+  V31.currentLevel = level || 1;
   document.getElementById('startPanel').style.display = 'none';
+  const lp = document.getElementById('normalLevelsPanel');
+  if (lp) lp.style.display = 'none';
   setModeBadge('normal');  // 会隐藏
   document.getElementById('hud-wave-row').style.display = 'none';
   document.getElementById('hud-score-row').style.display = 'none';
@@ -3330,11 +3449,11 @@ function startNormal() {
   startGame();  // 走老 demo 原生流程 (reset 内部会重置 G.nuoStats/G.multiShot)
 }
 
-// ---- 无尽模式: wave 递增 · 分数公式 · top10 ----
+// ---- 无尽模式: wave 递增 · 分数公式 · top10 (v3.2 K8: 通关关卡3后解锁) ----
 function startEndless() {
-  // 未通关预体验 → 拦截
-  if (localStorage.getItem('previewCleared') !== '1') {
-    floatText(W/2, H/2, '需先通关预体验', '#ff8ba8', true);
+  const s = getUnlockState();
+  if (!s.endless && !s.level3) {
+    floatText(W/2, H/2, '通关第 3 关解锁', '#ff8ba8', true);
     return;
   }
   V31.mode = 'endless';
@@ -3538,6 +3657,11 @@ triggerGameOver = function(isVictory) {
 
   // 正式关卡 / 预体验失败: 走原逻辑
   document.getElementById('go-endless-detail').style.display = 'none';
+  // v3.2 K8: 正式关卡胜利 → 解锁下一关 (level3 通关顺带解锁 endless, 在 unlockNext 内联)
+  if (V31.mode === 'normal' && isVictory) {
+    const lv = V31.currentLevel || 1;
+    unlockNext('level' + lv);
+  }
   const result = _origTriggerGameOver(isVictory);
 
   // v3.2 · §7.5.2.1 · 预体验失败 → 覆盖标准 game-over 面板, 弹出复活面板
@@ -3596,7 +3720,28 @@ function setupV31Menu() {
     document.getElementById('startPanel').style.display = 'none';
     showPreviewSplash(() => startPreview());
   });
-  document.getElementById('btnNormal').addEventListener('click', startNormal);
+  document.getElementById('btnNormal').addEventListener('click', () => {
+    // v3.2 K8: 主菜单"正式关卡"→ 展开 Lv2 三关选择面板
+    const s = getUnlockState();
+    if (!s.preview) {
+      floatText(W/2, H/2, '需先通关预体验', '#ff8ba8', true);
+      return;
+    }
+    showNormalLevels();
+  });
+  const _bindLv = (id, lv) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener('click', () => startNormal(lv));
+  };
+  _bindLv('btnLevel1', 1);
+  _bindLv('btnLevel2', 2);
+  _bindLv('btnLevel3', 3);
+  const btnLvBack = document.getElementById('btnLvBack');
+  if (btnLvBack) btnLvBack.addEventListener('click', () => {
+    const lp = document.getElementById('normalLevelsPanel');
+    if (lp) lp.style.display = 'none';
+    showMenu();
+  });
   document.getElementById('btnEndless').addEventListener('click', startEndless);
   document.getElementById('btnLeaderboard').addEventListener('click', () => {
     // 未通关预体验也拦榜单入口
@@ -3617,8 +3762,8 @@ function setupV31Menu() {
   });
   document.getElementById('previewContinueBtn').addEventListener('click', () => {
     document.getElementById('previewOutroPanel').style.display = 'none';
-    // 通关衔接跳正式关卡 (此时 previewCleared 已置 1, 不会被拦截)
-    startNormal();
+    // 通关衔接跳正式关卡第 1 关 (此时 preview 已解锁, 不会被拦截)
+    startNormal(1);
   });
 
   // retryBtn 需要按模式重玩
@@ -3628,7 +3773,7 @@ function setupV31Menu() {
     document.getElementById('gameOverPanel').style.display = 'none';
     if (V31.mode === 'preview') startPreview();
     else if (V31.mode === 'endless') startEndless();
-    else startNormal();
+    else startNormal(V31.currentLevel || 1);
   });
 
   // v3.2 · §7.5.2.1 · 复活按钮 = 隐藏复活面板 + 重置当前方阵进度 + 重新 spawn 当前方阵
@@ -3676,7 +3821,13 @@ function setupV31Menu() {
   if (!cleared && !forceMenu) {
     // 首次进 → 隐藏 startPanel, 先跑 splash, splash 完成后再进预体验 (等 canvas 初始化)
     document.getElementById('startPanel').style.display = 'none';
-    setTimeout(() => showPreviewSplash(() => startPreview()), 200);
+    // 问题 3 修复: 若新手引导还没走 (onboarded 未置), 让引导先展示, finish 里再触发预体验
+    // 避免引导浮层与预体验战场并行显示
+    const onboarded = (typeof Storage !== 'undefined') && Storage.get && Storage.get('onboarded', false);
+    if (onboarded) {
+      setTimeout(() => showPreviewSplash(() => startPreview()), 200);
+    }
+    // 否则: 由 setupOnboard() 的 finish() 分支接管 (引导跳过/看完后启动预体验)
   }
 }
 
