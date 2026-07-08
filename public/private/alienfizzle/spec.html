@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v3.1</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v3.2</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -368,6 +368,7 @@ tr:hover td { background: #161d33; }
 <h2>目录</h2>
 <ol>
   <li><a href="#ch-00">改造速览</a></li>
+  <li><a href="#ch-00-5">游玩路径总览 <span class="new-tag">NEW</span></a></li>
   <li><a href="#ch-01">视角与世界观</a></li>
   <li><a href="#ch-02">角色系统</a></li>
   <li><a href="#ch-03">战场布局</a></li>
@@ -491,6 +492,126 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
         <div class="cl-to"><strong>无尽模式</strong>: 最高难度 3 关通关后解锁, 分 wave 递增难度, 好友榜刷分</div>
       </div>
     </div>
+  </section>
+
+
+  <!-- ============ v3.2 增补 §00.5 游玩路径总览 ============ -->
+  <section class="chapter" id="ch-00-5">
+    <span class="chapter-num">§ 00.5 · v3.2 新增 · 游玩路径总览</span>
+    <h2>玩家从点开小程序到解锁无尽<br>完整 7 步路径</h2>
+    <p class="lead">本节把玩家从冷启动到长线留存的完整路径拆成 7 步串联。所有后续章节 (§07.5 预体验、§07.6 无尽模式、§0.5.4 过场、§0.5.5 主菜单) 都锚在这条主链上。</p>
+
+    <h3>0.5.1 7 步路径流程图</h3>
+    <div class="svg-wrap">
+    <svg viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#ff6b35"/>
+        </marker>
+        <style>
+          .n { fill:#131a2e; stroke:#ff6b35; stroke-width:1.5; }
+          .n2 { fill:#131a2e; stroke:#409cff; stroke-width:1.5; }
+          .n3 { fill:#131a2e; stroke:#50c878; stroke-width:1.5; }
+          .lbl { fill:#fff; font-size:12px; font-family:-apple-system,sans-serif; font-weight:600; text-anchor:middle; }
+          .sub { fill:#a0acc5; font-size:10px; font-family:-apple-system,sans-serif; text-anchor:middle; }
+          .arrow { stroke:#ff6b35; stroke-width:1.5; fill:none; }
+        </style>
+      </defs>
+      <!-- 7 nodes -->
+      <rect class="n" x="10"  y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="65"  y="62">① 加载页</text>
+      <text class="sub" x="65"  y="78">ALIEN FIZZLE 品牌</text>
+
+      <rect class="n2" x="135" y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="190" y="62">② 紧急警报</text>
+      <text class="sub" x="190" y="78">首次进入触发</text>
+
+      <rect class="n" x="260" y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="315" y="62">③ 预体验关卡</text>
+      <text class="sub" x="315" y="78">关卡 0 · 强制</text>
+
+      <rect class="n2" x="385" y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="440" y="62">④ 过场</text>
+      <text class="sub" x="440" y="78">§0.5.4 严肃流</text>
+
+      <rect class="n" x="510" y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="565" y="62">⑤ 主菜单</text>
+      <text class="sub" x="565" y="78">三级导航 §0.5.5</text>
+
+      <rect class="n3" x="635" y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="690" y="62">⑥ 正式关卡</text>
+      <text class="sub" x="690" y="78">关卡 1/2/3</text>
+
+      <rect class="n3" x="760" y="40" width="130" height="52" rx="6"/>
+      <text class="lbl" x="825" y="62">⑦ 无尽模式</text>
+      <text class="sub" x="825" y="78">通关关卡 3 解锁</text>
+
+      <!-- arrows -->
+      <path class="arrow" d="M120,66 L133,66" marker-end="url(#arr)"/>
+      <path class="arrow" d="M245,66 L258,66" marker-end="url(#arr)"/>
+      <path class="arrow" d="M370,66 L383,66" marker-end="url(#arr)"/>
+      <path class="arrow" d="M495,66 L508,66" marker-end="url(#arr)"/>
+      <path class="arrow" d="M620,66 L633,66" marker-end="url(#arr)"/>
+      <path class="arrow" d="M745,66 L758,66" marker-end="url(#arr)"/>
+    </svg>
+    <span class="caption">Player Journey · v3.2 · 冷启动 → 长线留存</span>
+    </div>
+
+    <h3>0.5.2 7 步路径口径</h3>
+    <table>
+      <tr><th>#</th><th>步骤</th><th>触发/前置</th><th>说明 · 锚点</th></tr>
+      <tr><td>①</td><td><strong>加载页</strong></td><td>每次冷启动</td><td>ALIEN FIZZLE 品牌页 + 资源预载进度条</td></tr>
+      <tr><td>②</td><td><strong>紧急警报弹窗</strong></td><td>首次进入 (localStorage 判定)</td><td>剧情钩子, 文案见 §7.5.2.1 定稿</td></tr>
+      <tr><td>③</td><td><strong>预体验关卡</strong></td><td>首次强制, 无法跳过</td><td>关卡 0 · 满配爽感 · 详见 §07.5 全量口径</td></tr>
+      <tr><td>④</td><td><strong>过场</strong></td><td>预体验结束触发</td><td>严肃流 · 无角色头像 · 详见 §0.5.4</td></tr>
+      <tr><td>⑤</td><td><strong>主菜单</strong></td><td>过场后 / 之后每次冷启动直达</td><td>三级导航 · 详见 §0.5.5</td></tr>
+      <tr><td>⑥</td><td><strong>正式关卡</strong></td><td>主菜单选择</td><td>关卡 1/2/3 依次解锁, 数值走 v2.1 表</td></tr>
+      <tr><td>⑦</td><td><strong>无尽模式</strong></td><td>关卡 3 通关解锁</td><td>5 段 × 6 潮 × 5 回合 · 详见 §07.6</td></tr>
+    </table>
+
+    <h3>0.5.3 状态持久化</h3>
+    <ul>
+      <li><span class="tag tag-must">必须</span>首次进入判定 / 预体验通关标记 / 正式关卡解锁链 / 无尽解锁标记 <strong>全部走 localStorage</strong></li>
+      <li><span class="tag tag-must">必须</span>清缓存 / 换设备 = 重走 ② → ③ → ④, 不做云同步 (v3.2 阶段)</li>
+      <li><span class="tag tag-should">建议</span>无尽最高分同样走 localStorage + 微信开放数据域 (见 §7.6.5)</li>
+    </ul>
+
+    <h3>0.5.4 过场 (风格 A 严肃流)</h3>
+    <p><strong>时机</strong>: 预体验关卡结束 (步骤 ③ → 步骤 ⑤ 之间) 触发一次, 之后不再重复。</p>
+    <table>
+      <tr><th>时序</th><th>时长</th><th>视觉</th></tr>
+      <tr><td>空跑</td><td>5s</td><td>纯黑屏, 无任何 UI</td></tr>
+      <tr><td>LOADING 呼吸</td><td>2s</td><td>屏幕中央 "LOADING" 文字呼吸淡入淡出</td></tr>
+      <tr><td>逐字对话</td><td>—</td><td>纯字幕居中样式, 逐字打字机, 见下方对话内容</td></tr>
+      <tr><td>通讯中断</td><td>—</td><td>字幕消失, 屏幕闪一下噪点/雪花</td></tr>
+    </table>
+    <div class="callout" style="text-align:center; line-height:2.2; font-family: ui-monospace, Menlo, monospace;">
+      <span style="color:#7edcff;">总部</span>: 战况如何?<br>
+      <span style="color:#ffa040;">主角</span>: 哈哈哈不过如此, 脆得跟纸一样。
+    </div>
+    <div class="callout warn">
+      <strong>视觉规范 (硬约束)</strong>:
+      <ul style="margin-top:8px;">
+        <li><strong>无角色头像</strong> · 不出任何角色立绘或头像</li>
+        <li>只显示 "<strong>总部</strong>" / "<strong>主角</strong>" 字样 + 对话文本</li>
+        <li>纯字幕居中样式, 底色黑, 字色白, 说话方名靠色标区分 (总部青 / 主角橙)</li>
+        <li>不出角色名字 (总部代号即 "总部", 主角不署名)</li>
+      </ul>
+    </div>
+
+    <h3>0.5.5 主菜单 · 三级导航</h3>
+    <table>
+      <tr><th>层级</th><th>入口</th><th>说明</th></tr>
+      <tr><td>Lv1</td><td><strong>预体验</strong></td><td>始终可见, 支持复玩 (通关后入口保留)</td></tr>
+      <tr><td>Lv1</td><td><strong>正式关卡</strong></td><td>点入展开 Lv2 关卡列表</td></tr>
+      <tr><td>Lv1</td><td><strong>无尽模式</strong></td><td>关卡 3 通关前 disabled + 锁图标 + "通关第三关解锁"</td></tr>
+      <tr><td>Lv2</td><td>关卡 1 / 关卡 2 / 关卡 3</td><td>挂在 "正式关卡" 下, 依次解锁</td></tr>
+    </table>
+    <ul>
+      <li><span class="tag tag-must">必须</span>解锁链持久化 (localStorage), 键名: <code>af.progress.stage</code> / <code>af.progress.endlessUnlocked</code></li>
+      <li><span class="tag tag-must">必须</span>预体验通关后主菜单入口保留 (支持复玩), 复玩不再触发过场</li>
+      <li><span class="tag tag-should">建议</span>无尽解锁瞬间加一个短横幅 "无尽模式已解锁"</li>
+    </ul>
   </section>
 
 
@@ -1047,99 +1168,111 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
 
   <!-- ============ v3.1 增补 §07.5 预体验关卡 ============ -->
   <section class="chapter" id="ch-07-5">
-    <span class="chapter-num">§ 07.5 · v3.1 新增 · 预体验关卡</span>
-    <h2>关卡 0<br>新玩家 0 秒钩子, 60s 建立"这游戏很爽"</h2>
-    <p class="lead">新玩家首次进游戏强制体验的一个短关。目标 = 直接展现游戏最爽的战斗峰值, 建立第一印象, 通关后进入正式 3 关系统。</p>
+    <span class="chapter-num">§ 07.5 · v3.2 全量重写 · 预体验关卡</span>
+    <h2>关卡 0 · 满配爽感<br>不封顶时长 · 反寸止 · 允许死亡</h2>
+    <p class="lead">新玩家首次进游戏强制体验的一个短关。目标 = 直接展现游戏最爽的战斗峰值, 建立第一印象。<strong>v3.2 相对 v3.1 重写</strong>: 废弃 60s 收尾寸止逻辑, 改为不封顶时长 + 8 方阵递增强度 + 死亡复活闭环。</p>
 
     <h3>7.5.1 定位与触发规则</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span><strong>首次进游戏强制体验</strong>, 无法跳过</li>
-      <li><span class="tag tag-must">必须</span>通关后主菜单出现"关卡 0 · 重玩"入口, 玩家可随时回味</li>
+      <li><span class="tag tag-must">必须</span><strong>首次进游戏强制体验</strong>, 无法跳过 (紧急警报弹窗 → 关卡 0 直入)</li>
+      <li><span class="tag tag-must">必须</span>通关后主菜单 "预体验" 入口<strong>永久保留</strong>, 玩家可随时复玩</li>
       <li><span class="tag tag-must">必须</span>关卡 0 不解锁任何长期道具/成就, 单纯体验用途</li>
-      <li><span class="tag tag-must">必须</span>关卡 0 通关直接跳到关卡 1 (第一关 · 新手训练), 中间过场为衔接剧情弹窗</li>
+      <li><span class="tag tag-must">必须</span>关卡 0 通关触发过场 (§0.5.4), 过场结束进主菜单; 复玩通关<strong>不再触发过场</strong>, 直回主菜单</li>
     </ul>
 
-    <h3>7.5.2 结构 · 静默期 + 战斗期</h3>
-    <table>
-      <tr><th>阶段</th><th>时长</th><th>玩家可操作</th><th>说明</th></tr>
-      <tr><td>静默期</td><td>10 秒</td><td>可移动, 不可开火</td><td>顶部展示战术警告文案, 敌人在屏顶远端已可见但未进入攻击范围</td></tr>
-      <tr><td>战斗期</td><td>60 秒</td><td>全操作</td><td>敌人开始推进, 玩家与 BOBO 自动开火</td></tr>
-    </table>
+    <h3>7.5.2 反寸止守则 (v3.2 钉死)</h3>
     <div class="callout warn">
-      <strong>时长计算</strong>: 战斗期 60s 是"总时长", 静默期 10s 不计入。整关玩家实际感知 = 10s 屏息 + 60s 爆爽 = 70s。
+      <strong>时长哲学</strong>: 预体验时长<strong>保持不封顶</strong>, 60s / 120s / 240s 都不是问题。时间是配合方阵推进的自然产物, <strong>不要用时长做为强度约束</strong>。
     </div>
-
-    <h3>7.5.3 静默期文案 (定稿版本 B · 紧迫感)</h3>
-    <div class="callout" style="font-family: ui-monospace, Menlo, monospace; text-align: center; line-height: 2;">
-      ⚠️ <strong>战术警告</strong><br>
-      检测到大规模敌军集群<br>
-      全部火力单元已激活<br>
-      <span style="color: #b85478">10 秒后开火</span>
-    </div>
-
-    <h3>7.5.4 火力配置 (预体验独有强化)</h3>
-    <table>
-      <tr><th>单位</th><th>基础 (正式关卡)</th><th>预体验关卡</th><th>差异</th></tr>
-      <tr><td>主角</td><td>1× 射速, 单弹道</td><td><strong>2× 射速, 双弹道</strong></td><td>火力密度 4×</td></tr>
-      <tr><td>BOBO</td><td>1× 射速, 单弹道</td><td><strong>2× 射速, 双弹道</strong></td><td>火力密度 4×</td></tr>
-      <tr><td>穿透</td><td>无</td><td><strong>无</strong></td><td>不加, 保留"小兵成群依次爆"的爽感, 不要"一颗清一排"</td></tr>
-      <tr><td>AoE</td><td>无</td><td><strong>无</strong></td><td>同上, 拒绝范围伤害</td></tr>
-    </table>
-    <p><strong>设计意图</strong>: 火力密度拉满但不加特殊机制, 玩家爽在"打得又快又准", 而不是"技能秒全屏"。后者会稀释操作反馈。</p>
-
-    <h3>7.5.5 战斗节奏 (60s 分段)</h3>
-    <table>
-      <tr><th>时间段</th><th>敌人类型</th><th>目标体验</th></tr>
-      <tr><td>0-20s</td><td><strong>小兵方阵爆刷</strong></td><td>火力爽感, 大量爆炸反馈</td></tr>
-      <tr><td>20-40s</td><td><strong>精英怪 2-3 只</strong></td><td>提高单体 HP, 玩家感受到"精准击杀"</td></tr>
-      <tr><td>40-58s</td><td><strong>小 Boss</strong></td><td>体量对比 + 击杀高潮</td></tr>
-      <tr><td>58-60s</td><td>收尾</td><td>击杀 Boss → 战斗结束, 无 wave 拖尾</td></tr>
-    </table>
-
-    <h3>7.5.6 左通道宝箱 (预排列, 掉削弱版真实内容)</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span>预体验关卡左通道<strong>宝箱预排列</strong>, 不走正式关卡的随机 spawn</li>
-      <li><span class="tag tag-must">必须</span>宝箱 HP 拉高<strong>不能秒破</strong>, 玩家需要多次击打才能拿到内容 (让玩家体验"打宝箱换武器"这个动作)</li>
-      <li><span class="tag tag-must">必须</span>宝箱掉<strong>削弱版真实宝箱内容</strong>, 让玩家提前感知武器升级线路 (而不是给一个 OP 武器)</li>
-      <li><span class="tag tag-may">可选</span>具体掉落内容 <strong>待 T02 正式宝箱打磨完成后</strong>再定 (v3.1 spec 阶段留 placeholder)</li>
+      <li><strong>设计判据</strong>: 玩家节奏顺 → 快清 → 时长自然短; 玩家节奏乱 → 慢清 → 时长自然长</li>
+      <li><strong>禁反面</strong>: 之前 v3.1 spec 的 "60s 收尾" 逻辑属于寸止思维, <span style="color:#ff5050;font-weight:700;">已废弃</span></li>
+      <li><strong>推论</strong>: 敌人方阵不封顶, 强度递增到玩家死 (走 §7.5.2.1 复活) 或过关 (打完设定的最后一波小 Boss)</li>
     </ul>
 
-    <h3>7.5.7 特殊防线机制 · 反弹护盾</h3>
+    <h3>7.5.2.1 死亡复活 (v3.2 新增)</h3>
+    <table>
+      <tr><th>项</th><th>处理</th></tr>
+      <tr><td>死亡处理</td><td><strong>允许死亡</strong> — 预体验不做无敌保护</td></tr>
+      <tr><td>复活弹窗</td><td>死亡即弹, 单按钮 <strong>「再来一次」</strong></td></tr>
+      <tr><td>复活方式</td><td><strong>从头重开</strong> (方阵进度归零, 属性重置)</td></tr>
+      <tr><td>复活次数</td><td><strong>无次数限制</strong>, 想死几次死几次</td></tr>
+      <tr><td>嘲讽 BOSS</td><td><strong>不触发</strong> · 预体验不做嘲讽机制</td></tr>
+    </table>
+    <div class="callout info">
+      <strong>意图</strong>: 预体验是 "试爽" 不是 "试刚", 玩家死了立刻能再来一次, 保护第一印象的正向反馈。不惩罚 = 不劝退。
+    </div>
+
+    <h3>7.5.3 紧急警报弹窗 (首次进入触发 · 定稿文案)</h3>
+    <p>加载页 (①) 之后、进入预体验战斗 (③) 之前, 弹一次警报窗。<strong>文案原文原字, 不改</strong>:</p>
+    <div class="callout" style="font-family: ui-monospace, Menlo, monospace; text-align: center; line-height: 2; border-left: 4px solid #ff5050;">
+      ⚠️ <strong>紧急警报</strong><br><br>
+      敌人启动虚空屏蔽场,<br>
+      深空信号被压制,<br>
+      补给通道被切断,<br>
+      主基地失联。<br>
+      看来只能靠我们自己了……
+    </div>
+
+    <h3>7.5.4 火力配置 (主角满配 + BOBO 同步)</h3>
+    <table>
+      <tr><th>单位</th><th>属性</th><th>预体验值</th><th>正式关卡对照</th></tr>
+      <tr><td rowspan="5"><strong>主角</strong></td><td>atk 攻击力</td><td><strong>60</strong> (满配)</td><td>基础值</td></tr>
+      <tr><td>spd 移动速度</td><td><strong>1.5×</strong></td><td>1×</td></tr>
+      <tr><td>blt 弹道数</td><td><strong>3</strong></td><td>1</td></tr>
+      <tr><td>crt 暴击率</td><td><strong>25%</strong></td><td>0</td></tr>
+      <tr><td>critDmg 暴击伤害</td><td><strong>+50%</strong></td><td>+0</td></tr>
+      <tr><td rowspan="2"><strong>BOBO</strong></td><td>射速</td><td><strong>2×</strong></td><td>1×</td></tr>
+      <tr><td>弹道数</td><td><strong>双弹道</strong></td><td>单弹道</td></tr>
+    </table>
+    <p><strong>设计意图</strong>: 满配拉爽感峰值。BOBO 同步 2× 射速 + 双弹道, 主角属性面板拉满, 让玩家立刻感受到 "全套加满是这个样子", 建立追求锚点。</p>
+
+    <h3>7.5.5 敌人 · 8 方阵制 (强度递增不封顶)</h3>
+    <ul>
+      <li><span class="tag tag-must">必须</span><strong>6×10 密集列队</strong>, 零间距</li>
+      <li><span class="tag tag-must">必须</span>共 <strong>8 个方阵</strong>依次推进, 强度递增, <strong>不封顶</strong> — 直到玩家死或过关 (打完第 8 阵 + 小 Boss)</li>
+      <li><span class="tag tag-must">必须</span>开局位置: 敌人在<strong>通道上半部分集结列队</strong>, 远端 y = <code>HORIZON_Y</code> 起, 玩家看到密集列队直接给到压迫感</li>
+      <li><span class="tag tag-must">必须</span>大 BOSS <strong>不出</strong>, 预体验只到<strong>小 BOSS</strong>层级 (在最后一阵后作为终局收尾)</li>
+    </ul>
+
+    <h3>7.5.6 宝箱 (预体验独有: 效果双倍)</h3>
+    <ul>
+      <li><span class="tag tag-must">必须</span>预体验关卡宝箱效果 <strong>双倍</strong> (正式关卡是 1×)</li>
+      <li><span class="tag tag-must">必须</span>左通道宝箱走<strong>预排列</strong>, 不用正式关卡随机 spawn</li>
+      <li><span class="tag tag-must">必须</span>宝箱 HP 不能秒破, 保留 "打宝箱换武器" 的动作反馈</li>
+      <li><span class="tag tag-may">可选</span>具体掉落内容 (削弱版真实内容) 待 T02 定完再补</li>
+    </ul>
+
+    <h3>7.5.7 状态门时机</h3>
+    <ul>
+      <li><span class="tag tag-must">必须</span>状态门在<strong>战斗触发后 10s</strong> 出第一个</li>
+      <li><span class="tag tag-must">必须</span>静默期 (进入战斗前) <strong>不出</strong>状态门</li>
+      <li><span class="tag tag-should">建议</span>后续状态门频率同正式关卡节奏</li>
+    </ul>
+
+    <h3>7.5.8 反弹护盾 (预体验独有 · v4 复活路径保留)</h3>
     <p><strong>预体验关卡独有</strong>的双层保护机制: 反弹护盾 + 防线血量。</p>
     <table>
       <tr><th>层</th><th>触发</th><th>效果</th></tr>
       <tr><td>反弹护盾</td><td>近战敌人贴脸攻击防线 X 伤害</td><td><strong>护盾 HP -X</strong> 且 <strong>敌人反受等量 X 伤害</strong></td></tr>
       <tr><td>反弹护盾</td><td>远程敌人子弹命中防线</td><td>护盾 HP -X, <strong>不反弹</strong> (只对近战反弹)</td></tr>
-      <tr><td>防线血量</td><td>护盾归零后, 继续受击</td><td>防线 HP -X, 归零 = Game Over</td></tr>
+      <tr><td>防线血量</td><td>护盾归零后, 继续受击</td><td>防线 HP -X, 归零 = 死亡 → 触发 §7.5.2.1 复活弹窗</td></tr>
     </table>
-
     <div class="callout warn">
-      <strong>反弹护盾 · 跨关卡定位 (D13 拍板, 2026-07-02)</strong>: 反弹护盾<strong>仅在预体验关卡存在</strong>, 正式 1/2/3 关无。剧情逻辑 = 敌人启动"虚空屏蔽场"切断补给, 一并剥夺护盾。<br><br>
-      <strong>未来复活路径</strong>: v4 材料合成系统上线后, 反弹护盾作为一个<strong>合成配方产物</strong>可解锁使用 (不是永久掉落, 是配方组合)。留作 v4 玩法钩子, v3.1 spec 不展开。
+      <strong>跨关卡定位</strong>: 反弹护盾<strong>仅在预体验关卡存在</strong>, 正式 1/2/3 关无。剧情逻辑 = 敌人启动 "虚空屏蔽场" 切断补给, 一并剥夺护盾。<br><br>
+      <strong>未来复活路径</strong>: v4 材料合成系统上线后, 反弹护盾作为<strong>合成配方产物</strong>可通过配方解锁使用 (不是永久掉落, 是配方组合)。留作 v4 玩法钩子, v3.2 spec 不展开。
     </div>
 
-    <h3>7.5.8 衔接剧情文案 (定稿版本 A · 剧情弹窗)</h3>
-    <p>关卡 0 通关 → 弹窗过场 → 关卡 1:</p>
-    <div class="callout" style="text-align: center; line-height: 2; border-left: 4px solid #b85478;">
-      <strong>【警告 · 通讯中断】</strong><br>
-      敌人启动<strong style="color: #a64dff">虚空屏蔽场</strong><br>
-      补给通道切断<br>
-      前往真正的战场<br>
-      <span style="color: #888">— 继续 —</span>
-    </div>
-
-    <h3>7.5.9 待 K 拍板 · 火力峰值节奏点</h3>
-    <div class="callout success">
-      <strong>已定 (D13, 2026-07-02)</strong>: <strong>不加</strong>火力峰值装饰 (如中段 BOBO 全屏激光扫射)。理由: 60s 战斗窗口本就短, 4 段自然节奏 (小兵→精英→小 Boss→收尾) 已经形成钩子密度, 塞额外大动作反而稀释操作反馈; 且大动作会让玩家期待"正式关卡也有", 落空。
-    </div>
+    <h3>7.5.9 衔接 · 过场 (锚点 §0.5.4)</h3>
+    <p>预体验通关 → 触发过场 (风格 A 严肃流) → 主菜单。<strong>详细口径见 §0.5.4</strong>, 本节不重复。</p>
 
     <h3>7.5.10 成本估算</h3>
     <table>
       <tr><th>项</th><th>估算</th><th>说明</th></tr>
-      <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 v3 现有内容 (敌人/防线/主角/BOBO/武器/宝箱)</td></tr>
-      <tr><td>代码成本</td><td><strong>2-4 小时</strong></td><td>特殊关卡模板 + 火力参数覆盖 + 2 个 UI 弹窗 (战术警告 + 衔接过场)</td></tr>
-      <tr><td>art-spec-v3.html 影响</td><td><strong>无</strong></td><td>反弹护盾特效独立成资产, 不影响荻子已在推进的 P0/P1 交付</td></tr>
-      <tr><td>数值平衡影响</td><td><strong>无</strong></td><td>预体验关卡是独立配置, 不影响 v2.1 数值表 (正式 3 关的 cfg-v2-90s.json)</td></tr>
+      <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 v3 现有内容, 反弹护盾特效独立成资产</td></tr>
+      <tr><td>代码成本</td><td><strong>3-5 小时</strong></td><td>关卡 0 模板 + 满配属性覆盖 + 8 方阵调度 + 复活弹窗 + 紧急警报弹窗</td></tr>
+      <tr><td>art-spec-v3.html 影响</td><td><strong>无</strong></td><td>不影响荻子已在推进的 P0/P1 交付</td></tr>
+      <tr><td>数值平衡影响</td><td><strong>无</strong></td><td>预体验是独立配置, 不影响 v2.1 正式关卡数值表</td></tr>
     </table>
   </section>
 
@@ -1164,20 +1297,71 @@ v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩�
       <li><span class="tag tag-must">必须</span>无关卡结束条件, 只有玩家死亡或主动退出结算</li>
     </ul>
 
-    <h3>7.6.3 敌人爬升 · 分 Wave + 指数阶跃 (D13 拍板)</h3>
-    <p><strong>决策</strong>: 分 wave 结构, 每 60s 一个 wave, wave 内节奏固定, wave 间难度阶跃; <strong>阶跃幅度指数增长</strong> — 早期温和好上手, 后期陡峭卡水平。</p>
-    <table>
-      <tr><th>Wave</th><th>时间段</th><th>难度阶跃 (相对上一 wave)</th><th>说明</th></tr>
-      <tr><td>Wave 1</td><td>0-60s</td><td>基线</td><td>参照正式第一关新手训练强度, 玩家熟悉节奏</td></tr>
-      <tr><td>Wave 2</td><td>60-120s</td><td>+5%</td><td>敌人 HP/出怪率轻微上涨, 玩家仍有余裕</td></tr>
-      <tr><td>Wave 3</td><td>120-180s</td><td>+7%</td><td>开始感受到压力</td></tr>
-      <tr><td>Wave 4</td><td>180-240s</td><td>+10%</td><td>普通玩家可能在此死亡</td></tr>
-      <tr><td>Wave 5</td><td>240-300s</td><td>+13%</td><td>高手区</td></tr>
-      <tr><td>Wave 6+</td><td>300s+</td><td>+15%, +18%, +22%...</td><td>指数陡增, 卡最强玩家水平</td></tr>
-    </table>
+    <h3>7.6.3 无尽模式难度曲线总纲 (v3.2 定稿 · 二期开发)</h3>
     <div class="callout warn">
-      <strong>具体每 wave 数值 (敌人 HP / 出怪率 / 特殊组合)</strong> 待数值配平阶段用模拟器 v2 跑出, spec 阶段先定曲线形状, 不定具体值 (T07 待定项)。
+      <strong>版本说明</strong>: v3.2 相对 v3.1 <strong>推翻</strong>了 "60s 一 wave · 指数阶跃" 的旧结构, 改为 <strong>5 段 × 6 潮 × 5 回合 = 150 回合硬核马拉松</strong>。本节及 6 个子章节是二期开发的锚点。
     </div>
+    <table>
+      <tr><th>项</th><th>定稿值</th><th>说明</th></tr>
+      <tr><td><strong>结构</strong></td><td>5 段 × 6 潮 × 5 回合 = <strong>150 回合</strong></td><td>硬核马拉松, 无尽但可推演终点</td></tr>
+      <tr><td><strong>回合时长</strong></td><td>玩家节奏 10s (段 1-2) / 系统节奏 15s (段 3-5)</td><td>详见 §7.6.3.4</td></tr>
+      <tr><td><strong>潮间</strong></td><td>5s</td><td>短喘息, 不给主动退出机会</td></tr>
+      <tr><td><strong>目标死亡曲线</strong></td><td>中位数 ≈ <strong>19 min</strong> (段 3 结束)</td><td>普通玩家死在段 3 附近</td></tr>
+      <tr><td><strong>顶级通关</strong></td><td>≈ <strong>35 min</strong></td><td>能撑穿段 5 叹息之壁的极少数</td></tr>
+      <tr><td><strong>强度爬升</strong></td><td>每回合 <strong>+20%</strong></td><td>首版建议值, demo 阶段可调 +15%~+25%</td></tr>
+    </table>
+
+    <h3>7.6.3.1 五段命名与节奏</h3>
+    <table>
+      <tr><th>段</th><th>名称</th><th>节奏模式</th><th>回合时长</th></tr>
+      <tr><td>1</td><td>适中</td><td>玩家节奏 (清完提前推进)</td><td>10s (上限)</td></tr>
+      <tr><td>2</td><td>较大</td><td>玩家节奏</td><td>10s</td></tr>
+      <tr><td>3</td><td><strong>困难</strong></td><td><strong>系统节奏首入</strong></td><td>15s (强制)</td></tr>
+      <tr><td>4</td><td>地狱</td><td>系统节奏</td><td>15s</td></tr>
+      <tr><td>5</td><td><strong>叹息之壁</strong></td><td>系统节奏</td><td>15s</td></tr>
+    </table>
+
+    <h3>7.6.3.2 切段文案 (1-1-1-3 分布)</h3>
+    <table>
+      <tr><th>切点</th><th>文案</th><th>备注</th></tr>
+      <tr><td>段 1 → 段 2</td><td><strong>「试探结束」</strong></td><td>常规横幅</td></tr>
+      <tr><td>段 2 → 段 3</td><td><strong>「倒计时启动」</strong></td><td>特殊处理, 见 §7.6.3.3</td></tr>
+      <tr><td>段 3 → 段 4</td><td><strong>「下沉深渊」</strong></td><td>常规横幅</td></tr>
+      <tr><td>段 4 → 段 5</td><td><strong>「叹息之壁 · 此刻起每一次呼吸都是奇迹」</strong></td><td>长文案 · 加权重</td></tr>
+    </table>
+
+    <h3>7.6.3.3 切点 2 特殊处理 (段 2 → 段 3 · 机制切换点)</h3>
+    <p>切点 2 是 <strong>玩家节奏 → 系统节奏</strong> 的机制切换, 必须重点提示:</p>
+    <ul>
+      <li><span class="tag tag-must">必须</span><strong>5s 横幅</strong>: "倒计时启动" (红色渐变字, 全屏中央)</li>
+      <li><span class="tag tag-must">必须</span><strong>HUD 顶部 15s 提示条</strong>: 提醒机制从 "清完自动推进" 切到 "15s 定时推进"</li>
+      <li><span class="tag tag-todo">TODO</span>段 3 首回合是否加 <strong>3-2-1 准备倒计时</strong>: 待定 (T07 数值组阶段决定)</li>
+    </ul>
+
+    <h3>7.6.3.4 玩家节奏 vs 系统节奏</h3>
+    <table>
+      <tr><th>节奏模式</th><th>覆盖段</th><th>推进逻辑</th><th>体验</th></tr>
+      <tr><td><strong>玩家节奏</strong></td><td>段 1-2</td><td>回合内清完立刻提前推进下潮; <strong>10s 是防挂机上限</strong></td><td>爽感 · 打得越快节奏越紧</td></tr>
+      <tr><td><strong>系统节奏</strong></td><td>段 3-5</td><td><strong>15s 固定</strong>, 清不完自动进下潮 (敌人堆积)</td><td>压迫感 · 手感差就雪崩</td></tr>
+    </table>
+
+    <h3>7.6.3.5 大 BOSS 曲线</h3>
+    <table>
+      <tr><th>段</th><th>大 BOSS 数</th></tr>
+      <tr><td>段 1</td><td>0</td></tr>
+      <tr><td>段 2</td><td>1</td></tr>
+      <tr><td>段 3</td><td>2-3</td></tr>
+      <tr><td>段 4</td><td>4-5</td></tr>
+      <tr><td>段 5</td><td>6+</td></tr>
+    </table>
+    <p><strong>具体数值 (每段哪几潮出、组合形态) 待 T07 数值组细化</strong>。</p>
+
+    <h3>7.6.3.6 悬案 (二期启动时处理)</h3>
+    <ul>
+      <li><strong>每回合 +20% 强度爬升</strong> 是首版建议值, demo 阶段用模拟器验证; 可能调整到 +15%~+25% 区间</li>
+      <li><strong>段 3 首回合 3-2-1 准备倒计时是否加</strong>: 待 T07 数值组决定</li>
+      <li><strong>好友榜 / 结算面板视觉细节</strong>: 二期开工时定 (荻子出图)</li>
+    </ul>
 
     <h3>7.6.4 分数公式 · 均衡 (D13 拍板)</h3>
     <p><strong>决策</strong>: C 均衡方案, 存活时间 + 防线 HP + 杀敌数 三者都要兼顾, 逼玩家平衡"活久 vs 打多"。</p>
