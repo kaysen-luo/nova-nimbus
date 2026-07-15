@@ -358,6 +358,29 @@ html,body{
   75% { transform: translateX(6px); }
 }
 </style>
+<!-- 议题 12 · 二版调整: 预体验复活弹窗 (只在预体验触发) -->
+<div id="preExpReviveDialog" style="
+  position:fixed; inset:0; z-index:9998;
+  background: rgba(5, 8, 20, 0.94);
+  display:none;
+  align-items:center; justify-content:center;
+">
+  <div style="max-width: 400px; padding: 32px; text-align: center;
+              background: linear-gradient(135deg, #1a1520, #0a0812);
+              border: 2px solid #ff4444; border-radius: 8px;
+              box-shadow: 0 0 40px rgba(255, 68, 68, 0.4);">
+    <div style="color:#ff6666; font: bold 24px sans-serif; letter-spacing:6px; margin-bottom:16px;">阵 亡</div>
+    <div style="color:#d8dce8; font-size:15px; line-height:1.9; margin-bottom:24px;">
+      外星人比想象的硬。<br>再来一次?
+    </div>
+    <button id="preExpReviveBtn" style="
+      background: linear-gradient(135deg, #ff4444, #cc2222);
+      color:white; border:none; padding:12px 32px;
+      font: bold 16px sans-serif; letter-spacing:3px;
+      border-radius:4px; cursor:pointer;
+    ">再来一次 ↻</button>
+  </div>
+</div>
 <div id="preExpTransition" style="
   position:fixed; inset:0; z-index:9997;
   background: rgba(5, 8, 20, 0.94);
@@ -703,7 +726,7 @@ function rollDemonGamble() {
 // --- 4. BOBO_LASER_CONFIG (Bobo 激光基础参数) ---
 const BOBO_LASER_CONFIG = {
   attackSpeed: 0.7, // 秒/发
-  rangeRatio: 999,  // 射程无限 (屏幕内任意位置均可锁定)
+  rangeRatio: 0.5,  // 议题 12 · 二版调整: 射程改回通道高度 1/2
   damageRatio: 0.6, // 相对主角固定攻击力的比例
   hatredPriority: ['attacking_defense', 'boss', 'elite', 'minion'],  // 高到低
   // 同仇恨值优先血量少的敌人
@@ -1041,16 +1064,16 @@ const CFG = {
   // 全部配件只强化主角, 不影响 BOBO
   treasure: {
     spawnInterval: 4500,
-    // 8 件配件序列 - 基础 HP 大幅拔高 (相比 v2 普遍 +50% 以上, 给递增倍率留头部)
+    // 议题 12 · 二版调整: label 改编号 "1"..."8", HP × 4 拔高不能秒破
     perks: [
-      { id: 'fireRate',   hp: 80,   color: '#ffcc44', label: '射速+',   desc: '主角射速 +1%/s 持续' },
-      { id: 'multiShot',  hp: 200,  color: '#44dd99', label: '多弹道',  desc: '弹道 +1, 每 30s +1' },
-      { id: 'atkUp',      hp: 400,  color: '#ff5544', label: '攻击+',   desc: '主角攻击每 5s +1' },
-      { id: 'explosive',  hp: 650,  color: '#ff8c00', label: '爆炸弹',  desc: '命中点小范围爆炸' },
-      { id: 'ricochet',   hp: 950,  color: '#4dffea', label: '弹射弹',  desc: '子弹弹射下一个敌人' },
-      { id: 'laser',      hp: 1400, color: '#a64dff', label: '散射激光', desc: '每 3s 折射激光' },
-      { id: 'mirror',     hp: 2000, color: '#ff88dd', label: '镜像 NUO', desc: '复制副手 NUO' },
-      { id: 'ultimate',   hp: 2800, color: '#ffd700', label: '终极技能', desc: '每 10s 全屏爆炸' },
+      { id: 'fireRate',   hp: 320,   color: '#ffcc44', label: '1', desc: '主角射速 +1%/s 持续' },
+      { id: 'multiShot',  hp: 800,   color: '#44dd99', label: '2', desc: '弹道 +1, 每 30s +1' },
+      { id: 'atkUp',      hp: 1600,  color: '#ff5544', label: '3', desc: '主角攻击每 5s +1' },
+      { id: 'explosive',  hp: 2600,  color: '#ff8c00', label: '4', desc: '命中点小范围爆炸' },
+      { id: 'ricochet',   hp: 3800,  color: '#4dffea', label: '5', desc: '子弹弹射下一个敌人' },
+      { id: 'laser',      hp: 5600,  color: '#a64dff', label: '6', desc: '每 3s 折射激光' },
+      { id: 'mirror',     hp: 8000,  color: '#ff88dd', label: '7', desc: '复制副手 NUO' },
+      { id: 'ultimate',   hp: 11200, color: '#ffd700', label: '8', desc: '每 10s 全屏爆炸' },
     ],
     repeatBuffs: [
       { id: 'atk++',  color: '#ff5544', label: '攻击++', desc: '主角伤害 +25%' },
@@ -1375,6 +1398,14 @@ function update(dt) {
 
   G.now = nowMs();
 
+  // 议题 12 · 二版调整: 静默期到期解除
+  if (G.isPreExperience && G.preExpSilentUntil && performance.now() >= G.preExpSilentUntil) {
+    G.preExpSilentUntil = null;
+    G.preExpEnemyFrozen = false;
+    // 开火解禁飘字
+    floatText(W/2, H*0.35, '开 火 !', '#ff6666', true);
+  }
+
   // 主角横移 (鼠标 / 触屏)
   if (G.pointerX !== null) {
     G.player.x = clamp(G.pointerX, G.player.w/2, W - G.player.w/2);
@@ -1426,9 +1457,13 @@ function update(dt) {
   updateStateGate(dt);
 
   // 防线 HP 检查
-  // 防线 HP 检查
   if (G.defenseHP <= 0) {
-    triggerGameOver(false);
+    // 议题 12 · 二版调整: 预体验死亡 → 复活弹窗, 不走 Game Over
+    if (G.isPreExperience && !G.preExpCompleted) {
+      showPreExpReviveDialog();
+    } else {
+      triggerGameOver(false);
+    }
   }
   // 通关检测 - victory 由击杀 final boss 触发
   if (G.victory && !G.gameOver) {
@@ -1459,6 +1494,8 @@ function update(dt) {
 // 射击
 // ============================================================
 function shootLoop() {
+  // 议题 12 · 二版调整: 预体验静默期主角不开火
+  if (G.isPreExperience && G.preExpSilentUntil) return;
   // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: 主角攻速修饰 =====
   // 计算综合攻速倍率 (c_feast + c_meltdown)
   let playerSpdMult = 1;
@@ -1506,27 +1543,26 @@ function shootLoop() {
     SFX.play('fire');
   }
 
-  // BOBO 群射击 - 共享 stats, 受静默影响
-  const silenced = G.nuoStats.silenceUntil > G.now;
-  if (!silenced) {
-    const interval = CFG.nuo.bulletInterval / Math.max(0.2, G.nuoStats.spd);
-    G.nuos.forEach(n => {
-      if (G.now - n.lastShot >= interval) {
-        // 弹道数
-        const bltCount = Math.max(1, Math.round(G.nuoStats.blt));
-        const spread = 8;
-        for (let i = 0; i < bltCount; i++) {
-          const offset = (i - (bltCount-1)/2) * spread;
-          const crit = Math.random() < G.nuoStats.crt;
-          // critDmg = 暴击伤害加成 (0 = ×2, +0.10 = ×2.1)
-          const critMult = 2 + (G.nuoStats.critDmg || 0);
-          const atk = G.nuoStats.atk * (crit ? critMult : 1);
-          G.bullets.push(createBullet(n.x + offset, n.y - n.h/2, n.isMirror ? 'mirror' : 'nuo', atk, G.nuoStats.vel, crit));
-        }
-        n.lastShot = G.now;
-      }
-    });
-  }
+  // 议题 12 · 二版调整: BOBO 撤子弹, 仅保留激光输出 (updateBoboLasers)
+  // 原 BOBO 群射子弹逻辑整段停用
+  // const silenced = G.nuoStats.silenceUntil > G.now;
+  // if (!silenced) {
+  //   const interval = CFG.nuo.bulletInterval / Math.max(0.2, G.nuoStats.spd);
+  //   G.nuos.forEach(n => {
+  //     if (G.now - n.lastShot >= interval) {
+  //       const bltCount = Math.max(1, Math.round(G.nuoStats.blt));
+  //       const spread = 8;
+  //       for (let i = 0; i < bltCount; i++) {
+  //         const offset = (i - (bltCount-1)/2) * spread;
+  //         const crit = Math.random() < G.nuoStats.crt;
+  //         const critMult = 2 + (G.nuoStats.critDmg || 0);
+  //         const atk = G.nuoStats.atk * (crit ? critMult : 1);
+  //         G.bullets.push(createBullet(n.x + offset, n.y - n.h/2, n.isMirror ? 'mirror' : 'nuo', atk, G.nuoStats.vel, crit));
+  //       }
+  //       n.lastShot = G.now;
+  //     }
+  //   });
+  // }
 }
 
 // ============================================================
@@ -2044,6 +2080,9 @@ function updateBoboLasers(dt) {
     if (G.boboLaserBeams[i].isDead()) G.boboLaserBeams.splice(i, 1);
   }
 
+  // 议题 12 · 二版调整: 预体验静默期 Bobo 激光不打
+  if (G.isPreExperience && G.preExpSilentUntil) return;
+
   // 静默时不打
   const silenced = G.nuoStats.silenceUntil > G.now;
   if (silenced) return;
@@ -2362,12 +2401,15 @@ function spawnEnemies() {
 function updateEnemies(dt) {
   const now = G.now || performance.now();
   // 议题 12 · 切片 3 · 预体验关卡: 通关检测 hook 给 S4
+  // 议题 12 · 二版调整: 8 方阵 (原 5)
   if (G.isPreExperience && !G.preExpCompleted &&
-      (G.currentFormationIndex || 0) >= 5 &&
+      (G.currentFormationIndex || 0) >= PRE_EXP_COMPOSITIONS.length &&
       G.enemies.filter(e => e.hp > 0).length === 0) {
     onPreExperienceComplete();
   }
   G.enemies.forEach(e => {
+    // 议题 12 · 二版调整: 预体验静默期敌人静止
+    if (G.isPreExperience && G.preExpEnemyFrozen) return;
     // 冰冻 - 终极技能效果, 1.5s 内不动也不攻击
     if (e.frozenUntil && G.now < e.frozenUntil) return;
     // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: 敌人状态 tick =====
@@ -2978,6 +3020,35 @@ function draw() {
     ctx.lineWidth = 3;
     ctx.strokeText(`${label}  ${Math.round(activeBoss.hp)}/${activeBoss.maxHp}`, W/2, barY + barH/2);
     ctx.fillText(`${label}  ${Math.round(activeBoss.hp)}/${activeBoss.maxHp}`, W/2, barY + barH/2);
+  }
+
+  // 议题 12 · 二版调整: 预体验静默期战术警告文案 + 倒计时
+  if (G.isPreExperience && G.preExpSilentUntil) {
+    const remainMs = Math.max(0, G.preExpSilentUntil - performance.now());
+    const remainSec = Math.ceil(remainMs / 1000);
+    ctx.save();
+    // 半透明遮罩底
+    const boxW = 300, boxH = 130;
+    const boxX = (W - boxW) / 2;
+    const boxY = 60;
+    ctx.fillStyle = 'rgba(20, 5, 10, 0.85)';
+    ctx.fillRect(boxX, boxY, boxW, boxH);
+    ctx.strokeStyle = '#ff5566';
+    ctx.lineWidth = 2;
+    ctx.strokeRect(boxX, boxY, boxW, boxH);
+    ctx.fillStyle = '#ffcc44';
+    ctx.font = 'bold 15px ui-monospace,Menlo,monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('⚠ 战术警告', W/2, boxY + 22);
+    ctx.fillStyle = '#e8e8ee';
+    ctx.font = '12px ui-monospace,Menlo,monospace';
+    ctx.fillText('检测到大规模敌军集群', W/2, boxY + 48);
+    ctx.fillText('全部火力单元已激活', W/2, boxY + 68);
+    ctx.fillStyle = '#ff6666';
+    ctx.font = 'bold 20px ui-monospace,Menlo,monospace';
+    ctx.fillText(remainSec + ' 秒后开火', W/2, boxY + 100);
+    ctx.restore();
   }
 
   // 飘字 (最上层)
@@ -3630,18 +3701,24 @@ function reset() {
 const PRE_EXP_STATS = {
   atk: 60, spd: 1.5, blt: 3, crt: 0.25, critDmg: 1.5
 };
-// 5 个方阵组成 (60 只/方阵 = 6×10), 从纯小兵渐进到混编 boss
+// 议题 12 · 二版调整: 按 spec §7.5.5 重写为 8 方阵 (无大 BOSS, 最高只到 miniC)
 const PRE_EXP_COMPOSITIONS = [
-  // 方阵 0: 全 small
+  // 方阵 1: 60 小兵 (纯)
   Array(60).fill('small'),
-  // 方阵 1: 54 small + 6 elite (右下角掺入)
-  [...Array(54).fill('small'), ...Array(6).fill('elite')],
-  // 方阵 2: 42 small + 12 elite + 6 miniA
-  [...Array(42).fill('small'), ...Array(12).fill('elite'), ...Array(6).fill('miniA')],
-  // 方阵 3: 36 small + 12 elite + 6 miniA + 5 miniB + 1 miniC (小 boss 混编)
-  [...Array(36).fill('small'), ...Array(12).fill('elite'), ...Array(6).fill('miniA'), ...Array(5).fill('miniB'), 'miniC'],
-  // 方阵 4: 混编终章 (final boss 混在中间)
-  [...Array(30).fill('small'), ...Array(15).fill('elite'), ...Array(8).fill('miniA'), ...Array(4).fill('miniB'), ...Array(2).fill('miniC'), 'boss']
+  // 方阵 2: 50 小兵 + 10 精英
+  [...Array(50).fill('small'), ...Array(10).fill('elite')],
+  // 方阵 3: 40 小兵 + 20 精英
+  [...Array(40).fill('small'), ...Array(20).fill('elite')],
+  // 方阵 4: 30 小兵 + 20 精英 + 1 miniA
+  [...Array(30).fill('small'), ...Array(20).fill('elite'), 'miniA'],
+  // 方阵 5: 20 小兵 + 20 精英 + 2 miniA + 1 miniB
+  [...Array(20).fill('small'), ...Array(20).fill('elite'), 'miniA', 'miniA', 'miniB'],
+  // 方阵 6: 10 小兵 + 20 精英 + 2 miniB + 1 miniC
+  [...Array(10).fill('small'), ...Array(20).fill('elite'), 'miniB', 'miniB', 'miniC'],
+  // 方阵 7: 10 精英 + 3 miniB + 2 miniC
+  [...Array(10).fill('elite'), 'miniB', 'miniB', 'miniB', 'miniC', 'miniC'],
+  // 方阵 8: 5 精英 + 2 miniC (终章, 无大 BOSS)
+  [...Array(5).fill('elite'), 'miniC', 'miniC']
 ];
 
 function startPreExperience() {
@@ -3650,11 +3727,20 @@ function startPreExperience() {
   G.preExpCompleted = false;
   G.currentFormationIndex = 0;
   G.formationSpawnCooldown = 0;
+  // 议题 12 · 二版调整: 10 秒静默期 (玩家可移动, 不可开火, 敌人静止)
+  G.preExpSilentUntil = performance.now() + 10000;
+  G.preExpEnemyFrozen = true;
+  // 议题 12 · 二版调整: 关掉旧复活弹窗 (若上一局残留)
+  const _reviveDlg = document.getElementById('preExpReviveDialog');
+  if (_reviveDlg) _reviveDlg.style.display = 'none';
   // 备份并覆盖 BOBO base 属性 (主角+Bobo 共享 CFG.nuo.base)
   if (!G.origNuoBase) G.origNuoBase = { ...CFG.nuo.base };
   Object.assign(CFG.nuo.base, PRE_EXP_STATS);
   Storage.set('currentLevel', 0);
   startGame(0);
+  // startGame 内部会 spawn 首方阵前先设 spawnCooldown, 但静默期期间敌人已冻结, 直接预排首方阵到通道上半
+  spawnPreExperienceFormation(0);
+  G.currentFormationIndex = 1;
 }
 
 // 从 comp 数组生成 6×10 方阵, 定位到接敌通道上半部分
@@ -3679,7 +3765,7 @@ function spawnPreExperienceFormation(formationIndex) {
     const e = createEnemy(comp[i], x, y);
     if (e) G.enemies.push(e);
   }
-  floatText(W/2, H/2, `方阵 ${formationIndex + 1}/5`, '#ff8c00', true);
+  floatText(W/2, H/2, `方阵 ${formationIndex + 1}/8`, '#ff8c00', true);
 }
 
 // 每帧调度: 全灭 → 冷却 2s → 出下一方阵
@@ -3719,6 +3805,27 @@ function onPreExperienceComplete() {
 // ============================================================
 // 议题 12 · 切片 3 · 预体验关卡 END
 // ============================================================
+
+// 议题 12 · 二版调整: 预体验复活弹窗 (只在预体验触发, 正式关卡不给)
+function showPreExpReviveDialog() {
+  const dlg = document.getElementById('preExpReviveDialog');
+  if (!dlg) {
+    // 保底 fallback: 弹窗不存在则直接重开
+    startPreExperience();
+    return;
+  }
+  G.paused = true;
+  dlg.style.display = 'flex';
+  const btn = document.getElementById('preExpReviveBtn');
+  if (btn) {
+    btn.onclick = () => {
+      dlg.style.display = 'none';
+      G.paused = false;
+      startPreExperience();
+    };
+  }
+}
+
 
 // ============================================================
 // 议题 12 · 切片 4 · 通关过场 START
@@ -4457,11 +4564,18 @@ function castSkill(id, level) {
       G.explosions.push({ x: target.x, y: target.y, r, bornAt: G.now, life: 320 });
     }
   } else if (id === 'mercy') {
-    // 血最高目标一颗超级子弹 8x 真伤
+    // 血最高目标一颗超级子弹 8x 真伤 + 议题 12 · 二版调整: 红色瞄准线 0.3s
     const target = G.enemies.slice().sort((a,b) => b.hp - a.hp)[0];
     if (target) {
       const playerAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
       damageEnemy(target, Math.round(playerAtk * 8), true, true);
+      G.skillVisuals.push({
+        kind: 'mercyBeam',
+        fromX: player.x, fromY: player.y,
+        toX: target.x, toY: target.y,
+        bornAt: G.now, life: 300,
+        color: 'rgba(255, 60, 60, 0.85)'
+      });
     }
   } else if (id === 'laserpierce') {
     // 向前 3 单位宽 (90px) 贯穿激光, 沿主角 y 向上一条竖线打所有敌人
@@ -4475,26 +4589,60 @@ function castSkill(id, level) {
       }
     });
   } else if (id === 'flywheel') {
-    // 简易: 通道中心圆形持续伤害区 - 一次性 100 伤害 (TODO: 后续切片补持续)
+    // 议题 12 · 二版调整: 飞轮海 6s 持续圆形红色伤害区 (直径 = 通道宽)
     const cx = (TRACK_R_LEFT + TRACK_R_RIGHT) / 2;
     const cy = H * 0.55;
-    splashAround(cx, cy, 70, 100, null);
-    G.explosions = G.explosions || [];
-    G.explosions.push({ x: cx, y: cy, r: 70, bornAt: G.now, life: 400 });
+    const r = TRACK_R_WIDTH / 2;
+    G.skillVisuals.push({
+      kind: 'flywheelZone',
+      x: cx, y: cy, r,
+      bornAt: G.now, life: 6000,
+      color: 'rgba(255, 80, 80, 0.35)',
+      lastTickAt: G.now
+    });
   } else if (id === 'highvoltage') {
-    // 简易: 通道下半随机 3 个敌人麻痹 1s 并造 50 伤害
-    const targets = G.enemies.filter(e => e.y > H * 0.5).slice(0, 3);
-    targets.forEach(t => {
-      t.stunUntil = (G.now || performance.now()) + 1000;
-      damageEnemy(t, 50, false, true);
+    // 议题 12 · 二版调整: 高压领域 10s 蓝色矩形色块 (接敌通道下半部分)
+    const x = TRACK_R_LEFT;
+    const w = TRACK_R_WIDTH;
+    const y = H * 0.5;
+    const h = DEFENSE_Y - H * 0.5;
+    G.skillVisuals.push({
+      kind: 'highvoltageZone',
+      x, y, w, h,
+      bornAt: G.now, life: 10000,
+      color: 'rgba(80, 160, 255, 0.35)',
+      lastTickAt: G.now
     });
   }
 }
 
 function tickSkillVisuals(dt) {
   if (!G.skillVisuals) return;
+  const now = G.now || performance.now();
   for (let i = G.skillVisuals.length - 1; i >= 0; i--) {
     const v = G.skillVisuals[i];
+    // 议题 12 · 二版调整: 飞轮海/高压领域持续伤害 tick
+    if (v.kind === 'flywheelZone') {
+      if (now - (v.lastTickAt || v.bornAt) >= 1000) {
+        v.lastTickAt = now;
+        G.enemies.slice().forEach(e => {
+          if (e.hp <= 0) return;
+          const dx = e.x - v.x, dy = e.y - v.y;
+          if (dx*dx + dy*dy <= v.r * v.r) damageEnemy(e, 50, false, true);
+        });
+      }
+    } else if (v.kind === 'highvoltageZone') {
+      if (now - (v.lastTickAt || v.bornAt) >= 2000) {
+        v.lastTickAt = now;
+        G.enemies.slice().forEach(e => {
+          if (e.hp <= 0) return;
+          if (e.x >= v.x && e.x <= v.x + v.w && e.y >= v.y && e.y <= v.y + v.h) {
+            e.stunUntil = now + 500;
+            damageEnemy(e, 100, false, true);
+          }
+        });
+      }
+    }
     if (G.now - v.bornAt > v.life) G.skillVisuals.splice(i, 1);
   }
 }
@@ -4519,6 +4667,34 @@ function drawSkillVisuals() {
       ctx.shadowColor = v.color;
       ctx.shadowBlur = 16;
       ctx.fillRect(v.x - v.width/2, 0, v.width, H);
+    } else if (v.kind === 'flywheelZone') {
+      // 议题 12 · 二版调整: 飞轮海 6s 红色圆形色块
+      ctx.globalAlpha = alpha * 0.9;
+      ctx.fillStyle = v.color;
+      ctx.beginPath();
+      ctx.arc(v.x, v.y, v.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 120, 120, 0.6)';
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    } else if (v.kind === 'highvoltageZone') {
+      // 议题 12 · 二版调整: 高压领域 10s 蓝色矩形色块
+      ctx.globalAlpha = alpha * 0.9;
+      ctx.fillStyle = v.color;
+      ctx.fillRect(v.x, v.y, v.w, v.h);
+      ctx.strokeStyle = 'rgba(160, 210, 255, 0.7)';
+      ctx.lineWidth = 2;
+      ctx.strokeRect(v.x, v.y, v.w, v.h);
+    } else if (v.kind === 'mercyBeam') {
+      // 议题 12 · 二版调整: 恩赐解脱 0.3s 红色瞄准线
+      ctx.strokeStyle = v.color;
+      ctx.lineWidth = 2;
+      ctx.shadowColor = v.color;
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.moveTo(v.fromX, v.fromY);
+      ctx.lineTo(v.toX, v.toY);
+      ctx.stroke();
     }
   });
   ctx.restore();
