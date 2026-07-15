@@ -368,6 +368,7 @@ tr:hover td { background: #161d33; }
 <h2>目录</h2>
 <ol>
   <li><a href="#ch-00">改造速览</a></li>
+  <li><a href="#ch-00-5">游玩路径总览 <span class="new-tag">NEW</span></a></li>
   <li><a href="#ch-01">视角与世界观</a></li>
   <li><a href="#ch-02">角色系统</a></li>
   <li><a href="#ch-03">战场布局</a></li>
@@ -382,7 +383,7 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-10">实施路径</a></li>
 </ol>
 <div class="sidebar-footer">
-v3.2 · 2026-07-15<br>
+v3.1 · 2026-07-02<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -391,17 +392,17 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v3.2</span>
+<span class="badge">GAME SPEC · v3.1</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v3.2 (守线版)</div>
+<div class="value">v3.1 (守线版)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-15</div>
+<div class="value">2026-07-02</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -422,14 +423,10 @@ Alien Fizzle · 玩法规格<br>
 </div>
 
 <div class="callout info" style="margin-top:24px;">
-<strong>📌 v3.2 版本说明</strong><br>
-本次 v3.2 (议题 10 落地) 对 <strong>宝箱 / 状态门 / BOBO / 精通卡池</strong> 四大子系统做架构级分离与重构:
-<code>§04</code> 宝箱通道重写为 "技能升级卡 5×3 级 + 枪械精通卡池 20 张" 的三选一 roguelike 抽卡;
-<code>§05</code> 状态门补齐弹道 / 双倍火力对 BOBO 的作用方式;
-<code>§02.2 / §02.3</code> BOBO 定位从 "技能挂件" 升级为 <strong>独立第二输出源</strong> (激光 + 4 阶仇恨), 镜像 BOBO 从宝箱池挪至无尽合成产出;
-新增 <code>§04.6 精通卡池</code> 附录 (20 张卡, 覆盖子弹形态 / 状态施加 / 特殊触发 / 伤害修饰 / 防线 / Meta / BOBO 强化 7 类)。
-<br><br>
-<strong>版本口子</strong>: 3 级制技能升级先跑 demo 验证手感, 若节奏差回滚 5 级制。恶魔赌局按 EV=1.164 单次 / 3 次累乘 ≈1.58 的定值上线, 上线 24 小时看数据。
+<strong>📌 v3.1 版本说明</strong><br>
+本文档是 <strong>v3.1 玩法规格</strong>,基于 v3.0 守线版扩充两项内容:
+<code>§07.5 预体验关卡</code> (30s 开场引导 + 反射盾专属) 与 <code>§07.6 无尽模式</code> (通关难度 3 后解锁, wave-based 递增, 微信好友榜)。
+v3 与 v2 飞机大战版核心差异: 视角从俯视改为一点透视、玩法从推进改为守线塔防、玩家角色从飞机改为主角 + BOBO 悬浮球。
 </div>
 </div>
 
@@ -494,129 +491,137 @@ Alien Fizzle · 玩法规格<br>
         <div class="cl-from"><s>—</s></div>
         <div class="cl-to"><strong>无尽模式</strong>: 最高难度 3 关通关后解锁, 分 wave 递增难度, 好友榜刷分</div>
       </div>
-      <div class="cl-row">
-        <div class="cl-mod">11 <span style="color:#e0a93a">v3.2 重构</span></div>
-        <div class="cl-from"><s>宝箱 = 8 件固定配件序列</s></div>
-        <div class="cl-to"><strong>宝箱 = 三选一 roguelike 抽卡</strong> (5 张技能卡 × 3 级 + 20 张精通卡混池, 权重 1.0 vs 1.5); 状态门 = 平铺属性增益; BOBO 升级为独立第二输出源 (激光 + 4 阶仇恨), 镜像 BOBO 挪至无尽合成</div>
-      </div>
     </div>
   </section>
 
-  <!-- ========== 游玩路径总览 (v3.1 新增) ========== -->
+
+  <!-- ============ v3.2 增补 §00.5 游玩路径总览 ============ -->
   <section class="chapter" id="ch-00-5">
-    <span class="chapter-num">§ 00.5 · 游玩路径总览</span>
-    <h2>从加载到无尽<br>玩家完整旅程</h2>
-    <p class="lead">玩家从第一帧到长线留存的完整路径。每一步都指向后续 spec 具体章节。</p>
+    <span class="chapter-num">§ 00.5 · v3.2 新增 · 游玩路径总览</span>
+    <h2>玩家从点开小程序到解锁无尽<br>完整 7 步路径</h2>
+    <p class="lead">本节把玩家从冷启动到长线留存的完整路径拆成 7 步串联。所有后续章节 (§07.5 预体验、§07.6 无尽模式、§0.5.4 过场、§0.5.5 主菜单) 都锚在这条主链上。</p>
 
-    <h3>0.5.1 流程总览</h3>
+    <h3>0.5.1 7 步路径流程图</h3>
+    <div class="svg-wrap">
+    <svg viewBox="0 0 900 140" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+          <path d="M0,0 L10,5 L0,10 z" fill="#ff6b35"/>
+        </marker>
+        <style>
+          .n { fill:#131a2e; stroke:#ff6b35; stroke-width:1.5; }
+          .n2 { fill:#131a2e; stroke:#409cff; stroke-width:1.5; }
+          .n3 { fill:#131a2e; stroke:#50c878; stroke-width:1.5; }
+          .lbl { fill:#fff; font-size:12px; font-family:-apple-system,sans-serif; font-weight:600; text-anchor:middle; }
+          .sub { fill:#a0acc5; font-size:10px; font-family:-apple-system,sans-serif; text-anchor:middle; }
+          .arrow { stroke:#ff6b35; stroke-width:1.5; fill:none; }
+        </style>
+      </defs>
+      <!-- 7 nodes -->
+      <rect class="n" x="10"  y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="65"  y="62">① 加载页</text>
+      <text class="sub" x="65"  y="78">ALIEN FIZZLE 品牌</text>
+
+      <rect class="n2" x="135" y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="190" y="62">② 紧急警报</text>
+      <text class="sub" x="190" y="78">首次进入触发</text>
+
+      <rect class="n" x="260" y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="315" y="62">③ 预体验关卡</text>
+      <text class="sub" x="315" y="78">关卡 0 · 强制</text>
+
+      <rect class="n2" x="385" y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="440" y="62">④ 过场</text>
+      <text class="sub" x="440" y="78">§0.5.4 严肃流</text>
+
+      <rect class="n" x="510" y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="565" y="62">⑤ 主菜单</text>
+      <text class="sub" x="565" y="78">三级导航 §0.5.5</text>
+
+      <rect class="n3" x="635" y="40" width="110" height="52" rx="6"/>
+      <text class="lbl" x="690" y="62">⑥ 正式关卡</text>
+      <text class="sub" x="690" y="78">关卡 1/2/3</text>
+
+      <rect class="n3" x="760" y="40" width="130" height="52" rx="6"/>
+      <text class="lbl" x="825" y="62">⑦ 无尽模式</text>
+      <text class="sub" x="825" y="78">通关关卡 3 解锁</text>
+
+      <!-- arrows -->
+      <path class="arrow" d="M120,66 L133,66" marker-end="url(#arr)"/>
+      <path class="arrow" d="M245,66 L258,66" marker-end="url(#arr)"/>
+      <path class="arrow" d="M370,66 L383,66" marker-end="url(#arr)"/>
+      <path class="arrow" d="M495,66 L508,66" marker-end="url(#arr)"/>
+      <path class="arrow" d="M620,66 L633,66" marker-end="url(#arr)"/>
+      <path class="arrow" d="M745,66 L758,66" marker-end="url(#arr)"/>
+    </svg>
+    <span class="caption">Player Journey · v3.2 · 冷启动 → 长线留存</span>
+    </div>
+
+    <h3>0.5.2 7 步路径口径</h3>
     <table>
-      <tr><th>步骤</th><th>名称</th><th>触发</th><th>说明</th><th>详见</th></tr>
-      <tr><td>S1</td><td><strong>加载页</strong></td><td>启动游戏</td><td>深空黑背景 (#0a0e1a) + 暖橙 LOADING (#e8a94b) + 进度条, 2s 后自动淡出</td><td>§0.5.2</td></tr>
-      <tr><td>S2</td><td><strong>紧急警报弹窗</strong></td><td>加载完毕</td><td>首次进入弹窗制造紧张感, 按钮「看看怎么事」 → 进入预体验</td><td>§0.5.3</td></tr>
-      <tr><td>S3</td><td><strong>预体验关卡</strong></td><td>点击按钮</td><td>满配属性 + 6×10 方阵密集出兵 + 宝箱双倍效果 + 时长不封顶</td><td>§7.5</td></tr>
-      <tr><td>S4</td><td><strong>通关过场</strong></td><td>预体验通关</td><td>总部问话 → 玩家嘚瑟 → 通讯中断警告弹窗 → 按钮「继续」</td><td>§0.5.4</td></tr>
-      <tr><td>S5</td><td><strong>主菜单</strong></td><td>点击继续</td><td>三入口: 预体验 / 正式关卡 / 无尽模式, 按解锁链启用</td><td>§0.5.5</td></tr>
-      <tr><td>S6</td><td><strong>正式关卡</strong></td><td>点击正式关卡</td><td>二级页面: 关卡 1 / 2 / 3, 逐关解锁</td><td>§0.5.5</td></tr>
-      <tr><td>S7</td><td><strong>无尽模式</strong></td><td>通关第 3 关</td><td>主菜单无尽入口亮起</td><td>§7.6</td></tr>
+      <tr><th>#</th><th>步骤</th><th>触发/前置</th><th>说明 · 锚点</th></tr>
+      <tr><td>①</td><td><strong>加载页</strong></td><td>每次冷启动</td><td>ALIEN FIZZLE 品牌页 + 资源预载进度条</td></tr>
+      <tr><td>②</td><td><strong>紧急警报弹窗</strong></td><td>首次进入 (localStorage 判定)</td><td>剧情钩子, 文案见 §7.5.2.1 定稿</td></tr>
+      <tr><td>③</td><td><strong>预体验关卡</strong></td><td>首次强制, 无法跳过</td><td>关卡 0 · 满配爽感 · 详见 §07.5 全量口径</td></tr>
+      <tr><td>④</td><td><strong>过场</strong></td><td>预体验结束触发</td><td>严肃流 · 无角色头像 · 详见 §0.5.4</td></tr>
+      <tr><td>⑤</td><td><strong>主菜单</strong></td><td>过场后 / 之后每次冷启动直达</td><td>三级导航 · 详见 §0.5.5</td></tr>
+      <tr><td>⑥</td><td><strong>正式关卡</strong></td><td>主菜单选择</td><td>关卡 1/2/3 依次解锁, 数值走 v2.1 表</td></tr>
+      <tr><td>⑦</td><td><strong>无尽模式</strong></td><td>关卡 3 通关解锁</td><td>5 段 × 6 潮 × 5 回合 · 详见 §07.6</td></tr>
     </table>
 
-    <h3>0.5.2 加载页</h3>
+    <h3>0.5.3 状态持久化</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span>背景色 <strong>#0a0e1a</strong> (深空黑), 居中显示 <strong>LOADING</strong> 文字 (色值 #e8a94b, 暖橙)</li>
-      <li><span class="tag tag-should">建议</span>底部 1px 进度条或 spinner 动画, 给玩家反馈加载进度</li>
-      <li><span class="tag tag-must">必须</span>加载完毕后 <strong>自动淡出 (0.5s)</strong> 进入 S2 弹窗</li>
+      <li><span class="tag tag-must">必须</span>首次进入判定 / 预体验通关标记 / 正式关卡解锁链 / 无尽解锁标记 <strong>全部走 localStorage</strong></li>
+      <li><span class="tag tag-must">必须</span>清缓存 / 换设备 = 重走 ② → ③ → ④, 不做云同步 (v3.2 阶段)</li>
+      <li><span class="tag tag-should">建议</span>无尽最高分同样走 localStorage + 微信开放数据域 (见 §7.6.5)</li>
     </ul>
 
-    <h3>0.5.3 紧急警报弹窗 · 首次进入</h3>
-    <div class="callout" style="text-align: center; line-height: 2; border-left: 4px solid #b8451e;">
-      ⚠️ <strong>紧急警报 · 前哨观测站</strong><br>
-      距离节点 7 探测到 <strong style="color: #b8451e">异常生命能量波动</strong><br>
-      未知生物集结规模: <code style="color: #e8a94b">[急速上升...]</code><br>
-      火力单元 · <strong style="color: #2e6b3a">待命</strong><br>
-      <br>
-      <span style="border: 1px solid #e8a94b; padding: 6px 24px; border-radius: 4px; color: #e8a94b; cursor: pointer;">看看怎么事</span>
-    </div>
-    <ul>
-      <li><span class="tag tag-must">必须</span><strong>仅首次进入游戏</strong>弹出, 之后再进游戏直接进主菜单</li>
-      <li><span class="tag tag-must">必须</span>点击按钮后直接进入 <strong>预体验关卡 (§7.5)</strong></li>
-    </ul>
-
-    <h3>0.5.4 预体验通关 · 通讯过场 (v3.2 拍板)</h3>
-    <p>预体验通关后, 按以下节奏推进 (Kaysen 2026-07-08 拍板):</p>
-
-    <h4>时序表</h4>
-    <table>
-      <tr><th>阶段</th><th>时长</th><th>屏幕状态</th><th>说明</th></tr>
-      <tr><td>1 · 空跑</td><td><strong>5 秒</strong></td><td>战场画面保留, 玩家可继续移动, 但已无敌人</td><td>让最后清场的爽感自然沉淀, 不定格不归中</td></tr>
-      <tr><td>2 · 通讯弹窗接入</td><td>瞬时</td><td>屏幕中央弹出<strong>纯字幕通讯窗口</strong> (无头像, 简洁样式)</td><td>窗口内首行显示 <strong>「LOADING...」</strong></td></tr>
-      <tr><td>3 · LOADING 呼吸</td><td><strong>2 秒</strong></td><td>「LOADING...」文字呼吸动画 (透明度 0.4 ↔ 1.0 循环)</td><td>模拟通讯建立中的等待感</td></tr>
-      <tr><td>4 · 对话 · 逐字打出</td><td>~4-6 秒</td><td>字幕逐字浮现 (打字机效果, 每字 ~80ms)</td><td>对话内容见下方</td></tr>
-      <tr><td>5 · 通讯中断</td><td>瞬时</td><td>画面短促抖动 + 静电噪声 (0.3s), 通讯窗切换为警告样式</td><td>字幕重置, 切入警告文案</td></tr>
-      <tr><td>6 · 警告文案 · 逐字打出</td><td>~5-7 秒</td><td>警告文案逐字浮现 (打字机效果)</td><td>警告内容见下方</td></tr>
-      <tr><td>7 · 按钮出现</td><td>瞬时</td><td>「继续」按钮从字幕下方淡入</td><td>玩家点击进入主菜单 (§0.5.5)</td></tr>
-    </table>
-
-    <h4>对话内容 (逐字打字机效果)</h4>
-    <div class="callout" style="text-align: center; line-height: 2.2; font-family: ui-monospace, Menlo, monospace;">
-      <strong style="color: #88c0d4">总部</strong>: 战况如何?<br>
-      <strong style="color: #e8a94b">主角</strong>: 哈哈哈不过如此, 脆得跟纸一样。
-    </div>
-
-    <h4>通讯中断警告文案 (逐字打字机效果)</h4>
-    <div class="callout" style="text-align: center; line-height: 2; border-left: 4px solid #b85478; font-family: ui-monospace, Menlo, monospace;">
-      <strong style="color: #b85478">⚠️ 通讯已中断</strong><br>
-      <br>
-      敌人启动<strong style="color: #a64dff">虚空屏蔽场</strong><br>
-      深空信号被压制<br>
-      补给通道被切断<br>
-      主基地失联<br>
-      <br>
-      看来只能靠我们自己了......<br>
-      <br>
-      <span style="border: 1px solid #b85478; padding: 6px 24px; border-radius: 4px; color: #b85478; cursor: pointer;">继续</span>
-    </div>
-
-    <h4>视觉规范</h4>
-    <ul>
-      <li><span class="tag tag-must">必须</span>通讯窗口为<strong>纯字幕居中样式</strong> (无角色头像, 无对话框图标), 简洁科幻感</li>
-      <li><span class="tag tag-must">必须</span>对话与警告均使用<strong>逐字打字机效果</strong>, 每字约 80ms 出现, 玩家可点击加速跳过 (可选)</li>
-      <li><span class="tag tag-must">必须</span>阶段 1 空跑 5s 期间<strong>不定格不归中不锁定操作</strong>, 玩家可继续在战场自由移动 (体验清场后的余韵)</li>
-      <li><span class="tag tag-must">必须</span>阶段 3 「LOADING...」呼吸动画使用透明度循环 (0.4 ↔ 1.0, 单向 1s)</li>
-      <li><span class="tag tag-must">必须</span>阶段 5 通讯中断瞬间: 画面抖动 (幅度 4-6px, 时长 0.3s) + 静电噪声音效, 强化"信号被切断"的仪式感</li>
-      <li><span class="tag tag-must">必须</span>主角<strong>无名字</strong>, 角色标签一律显示为「主角」</li>
-      <li><span class="tag tag-must">必须</span>总部代号 = 「总部」, 不引入其他称谓</li>
-      <li><span class="tag tag-should">建议</span>「LOADING...」字体可采用等宽字体 (ui-monospace / Menlo), 强化科技通讯感</li>
-    </ul>
+    <h3>0.5.4 过场 (风格 A 严肃流 · K7 顺序钉死)</h3>
+    <p><strong>时机</strong>: 预体验关卡结束 (步骤 ③ → 步骤 ⑤ 之间) 触发一次, 之后不再重复。</p>
     <div class="callout warn">
-      <strong>设计意图 · 反寸止 + 悬念翻转</strong>: 5 秒空跑让玩家从"爽刚清完"的高峰自然平复, 不粗暴打断; LOADING 呼吸 + 逐字打字机制造"通讯正在建立"的仪式感; 总部问话 + 玩家嘚瑟建立自信峰值; 突然通讯中断 + 虚空屏蔽场文案给出"变弱"的合理性叙事, 让玩家带着"要变强回去"的驱动力进入主菜单。全程不弹一次强制打断, 玩家始终处于"我在被引导"而非"我被拽走"的心理状态。
+      <strong>K7 原话 (msg #30966)</strong>: 加到弹窗前, 场景改一下, <strong>先弹窗写"总部: 战况如何? / 玩家: 哈哈哈不过如此, 脆得跟纸一样。" 然后</strong>再弹出<strong>虚空屏蔽场</strong>弹窗。<strong>对话在虚空屏蔽场弹窗之前</strong>, 顺序不可反。
     </div>
-
-    <h3>0.5.5 主菜单 · 三级导航 + 解锁链</h3>
-
-    <h4>Lv1 · 主菜单</h4>
     <table>
-      <tr><th>入口</th><th>初始状态</th><th>解锁条件</th></tr>
-      <tr><td><strong>预体验</strong></td><td>始终可用</td><td>—</td></tr>
-      <tr><td><strong>正式关卡</strong></td><td>🔒 置灰</td><td>预体验通关</td></tr>
-      <tr><td><strong>无尽模式</strong></td><td>🔒 置灰</td><td>正式关卡 · 第 3 关通关</td></tr>
+      <tr><th>时序</th><th>时长</th><th>视觉</th></tr>
+      <tr><td>空跑</td><td>5s</td><td>纯黑屏, 无任何 UI</td></tr>
+      <tr><td>LOADING 呼吸</td><td>2s</td><td>屏幕中央 "LOADING" 文字呼吸淡入淡出</td></tr>
+      <tr><td><strong>① 总部/主角对话</strong></td><td>—</td><td>纯字幕居中样式, 逐字打字机, 见下方对话内容 (<strong>先出</strong>)</td></tr>
+      <tr><td>通讯中断</td><td>—</td><td>字幕消失, 屏幕闪一下噪点/雪花</td></tr>
+      <tr><td><strong>② 虚空屏蔽场弹窗</strong></td><td>—</td><td>敌人启动虚空屏蔽场 / 深空信号被压制 / 补给通道被切断 / 主基地失联 / 看来只能靠我们自己了…… (<strong>后出</strong>)</td></tr>
     </table>
-
-    <h4>Lv2 · 正式关卡 (二级页面)</h4>
-    <table>
-      <tr><th>关卡</th><th>初始状态</th><th>解锁条件</th></tr>
-      <tr><td><strong>关卡 1 · 新手训练</strong></td><td>默认可用</td><td>进入正式关卡页即可玩</td></tr>
-      <tr><td><strong>关卡 2 · 普通</strong></td><td>🔒 置灰</td><td>通关关卡 1</td></tr>
-      <tr><td><strong>关卡 3 · 困难 (殊死决战)</strong></td><td>🔒 置灰</td><td>通关关卡 2</td></tr>
-    </table>
-    <ul>
-      <li><span class="tag tag-must">必须</span>🔒 置灰按钮 <strong>不可点击</strong>, 带锁图标 + 提示文字 (如 "通关上一关解锁")</li>
-      <li><span class="tag tag-must">必须</span>解锁状态 <strong>持久化</strong> (本地存储 / 微信云存档), 玩家关掉重开不丢进度</li>
-      <li><span class="tag tag-must">必须</span>主菜单「预体验」入口 <strong>通关后仍可重玩</strong>, 不锁定, 玩家随时回味</li>
-    </ul>
-
+    <div class="callout" style="text-align:center; line-height:2.2; font-family: ui-monospace, Menlo, monospace;">
+      <span style="color:#7edcff;">总部</span>: 战况如何?<br>
+      <span style="color:#ffa040;">主角</span>: 哈哈哈不过如此, 脆得跟纸一样。
+    </div>
     <div class="callout warn">
-      <strong>设计意图 · 解锁链心理学</strong>: 预体验给满配爽感 → 正式关卡属性被重置回基线 → 虚空屏蔽场叙事给了 "变弱" 合理性 → 玩家带着 "我之前那么强现在这么弱" 的落差感进入正式关, 天然产生 "要变强回去" 的驱动力。
+      <strong>视觉规范 (硬约束)</strong>:
+      <ul style="margin-top:8px;">
+        <li><strong>无角色头像</strong> · 不出任何角色立绘或头像</li>
+        <li>只显示 "<strong>总部</strong>" / "<strong>主角</strong>" 字样 + 对话文本</li>
+        <li>纯字幕居中样式, 底色黑, 字色白, 说话方名靠色标区分 (总部青 / 主角橙)</li>
+        <li>不出角色名字 (总部代号即 "总部", 主角不署名)</li>
+      </ul>
     </div>
+
+    <h3>0.5.5 主菜单 · 三级导航 (K8 原话钉死)</h3>
+    <div class="callout warn">
+      <strong>K8 原话 (msg #30968, 一字未改)</strong>: 主菜单: 可选<strong>预体验、正式关卡、无尽模式</strong>。第一二三关是<strong>正式关卡下的二级页面</strong>。预体验通关后正式关卡按钮 Enable, 点进去第一关 Enable, 第二三关 Disable; 通关第一关后, 第二关 Enable, 第三关 Disable。通关第三关后, 主菜单的无尽模式 Enable。
+    </div>
+    <table>
+      <tr><th>层级</th><th>入口</th><th>说明</th></tr>
+      <tr><td>Lv1</td><td><strong>预体验</strong></td><td>始终可见可点, 支持复玩 (通关后入口保留)</td></tr>
+      <tr><td>Lv1</td><td><strong>正式关卡</strong></td><td>预体验未通关 = <strong>置灰</strong>; 通关后 Enable, 点入展开 Lv2 关卡列表</td></tr>
+      <tr><td>Lv1</td><td><strong>无尽模式</strong></td><td><strong>关卡 3 通关前 disabled</strong> + 锁图标 + "通关第三关解锁"</td></tr>
+      <tr><td>Lv2</td><td>关卡 1</td><td>正式关卡 Enable 后, 第一关默认 Enable</td></tr>
+      <tr><td>Lv2</td><td>关卡 2</td><td>关卡 1 通关后 Enable</td></tr>
+      <tr><td>Lv2</td><td>关卡 3</td><td>关卡 2 通关后 Enable</td></tr>
+    </table>
+    <p><strong>解锁链一句话总结</strong>: 预体验 → 正式关卡入口 · 第 1 关 · 第 2 关 · 第 3 关 · 无尽模式, 每一层通关解锁下一层。</p>
+    <ul>
+      <li><span class="tag tag-must">必须</span>解锁链持久化 (localStorage), 键名建议 <code>alienfizzle_unlock_state</code>, 值 JSON: <code>{preview, level1, level2, level3, endless}</code> 各 boolean</li>
+      <li><span class="tag tag-must">必须</span>预体验通关后主菜单入口保留 (支持复玩), 复玩不再触发过场</li>
+      <li><span class="tag tag-should">建议</span>无尽解锁瞬间加一个短横幅 "无尽模式已解锁"</li>
+    </ul>
   </section>
 
 
@@ -661,57 +666,30 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>武器</td><td>覆盖式 — 拿到新武器立即替换旧武器, 不叠加</td></tr>
       <tr><td>武器作用范围</td><td><strong>仅影响主角自身弹道</strong>, 不影响 BOBO</td></tr>
       <tr><td>初始武器</td><td>基础单发直射(数值待定)</td></tr>
+      <tr><td><strong>基础攻击力 (K1/K2 v3.2 定稿)</strong></td><td><strong>全局翻倍</strong> — 玩家基础 atk ×2, 敌人 HP 对应 ×2 (§2.4.1)</td></tr>
+      <tr><td><strong>暴击 (K1/K4 v3.2 定稿)</strong></td><td>暴击 = <strong>多造成 50% 伤害</strong>, 同样作用于<strong>普通攻击</strong> (K4 追问 1 答: "暴击伤害同样也会作用于普通攻击")</td></tr>
+      <tr><td><strong>常规局时长 (K2 v3.2 定稿)</strong></td><td>60s → <strong>180s (3 分钟)</strong> — K2 "暂时调整为 3 分钟试试"</td></tr>
     </table>
 
-    <h3>2.2 BOBO (悬浮球辅助机器人 · v3.2 升级为独立第二输出源)</h3>
-    <p class="lead">v3.2 起 BOBO 从 "技能挂件" 升级为 <strong>独立第二输出源</strong>, 允许玩家通过精通卡 G 类 (§4.6) 把它强化为主输出。武器形态从 "子弹" 换成 <strong>激光</strong>, 独立仇恨判定, 全吃状态门增益。</p>
+    <h3>2.2 BOBO (悬浮球辅助机器人)</h3>
     <table>
       <tr><th>属性</th><th>规格</th></tr>
-      <tr><td>形象</td><td>小型悬浮球体, 科技感, 顶部激光发射口</td></tr>
+      <tr><td>形象</td><td>小型悬浮球体, 科技感, 跟主角风格统一</td></tr>
       <tr><td>站位</td><td>默认贴身主角右侧约 0.5 个身位, 与主角同步横移</td></tr>
-      <tr><td>攻击方式</td><td><strong>激光</strong> (一束单目标, 命中即结算, 无飞行时间)</td></tr>
-      <tr><td>攻速</td><td><strong>0.7s / 发</strong> (即约 1.43 发/秒)</td></tr>
-      <tr><td>射程</td><td><strong>2/3 通道</strong> (从主角站位向上, 约 2/3 屏高)</td></tr>
-      <tr><td>基础伤害</td><td>建议锚点 = <strong>主角固定攻击力 × 60%</strong> (数值组细调, demo 阶段用 0.6 系数)</td></tr>
-      <tr><td>目标锁定</td><td><strong>自动</strong>, 按 4 阶仇恨优先级 (见下)</td></tr>
-      <tr><td>属性来源</td><td>状态门 (全 6 项吃) + 精通卡 G 类专属 + D/F 部分类适用 (见 §4.6)</td></tr>
+      <tr><td>开火</td><td><strong>自动垂直向上射击</strong>, 独立弹道</td></tr>
+      <tr><td>属性来源</td><td><strong>仅由右通道状态门修正</strong>, 不受宝箱武器影响</td></tr>
+      <tr><td>初始属性</td><td>攻击力 / 攻速 / 弹道数 / 弹道速度 / 暴击率 = 基础值 (待数值表)</td></tr>
       <tr><td>命名来源</td><td><strong>BOBO</strong>(诺) — 单音节, 与 Nova/Nimbus 同字母系, 国际化通用</td></tr>
     </table>
 
-    <h4>2.2.1 仇恨判定 · 4 阶优先级</h4>
-    <p>BOBO 每次准备开火时按下列优先级选目标, 高阶优先级永远压过低阶; 同阶内 <strong>优先当前血量更少</strong>的敌人 (贯彻 "点残" 逻辑, 与恩赐解脱的 "点满" 互补)。</p>
-    <table>
-      <tr><th>阶</th><th>目标类型</th><th>设计意图</th></tr>
-      <tr><td><strong>P1</strong></td><td>正在攻击防线的敌人</td><td>止血优先, 直接掐防线掉血源</td></tr>
-      <tr><td><strong>P2</strong></td><td>Boss (大 BOSS / 小 BOSS)</td><td>集火关键目标</td></tr>
-      <tr><td><strong>P3</strong></td><td>精英怪</td><td>压制策略型威胁</td></tr>
-      <tr><td><strong>P4</strong></td><td>小兵</td><td>兜底清场</td></tr>
-    </table>
+    <h3>2.3 镜像 BOBO</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span>同阶内选血量更少者 (点残逻辑, 保证击杀效率)</li>
-      <li><span class="tag tag-must">必须</span>目标切换实时判定 (每帧或每次开火前重算), 允许在锁定后被更高阶目标抢占</li>
-      <li><span class="tag tag-should">建议</span>激光射线的视觉锁定过程 ≤ 0.1s, 避免视觉切换过于生硬</li>
-    </ul>
-
-    <h4>2.2.2 状态门对 BOBO 的作用方式 (与 §5 呼应)</h4>
-    <ul>
-      <li><span class="tag tag-must">必须</span><strong>攻击力 / 攻速 / 暴击率 / 暴击伤害</strong> 4 项 → BOBO 直接全吃, 乘算到激光单次伤害 / 发射间隔上</li>
-      <li><span class="tag tag-must">必须</span><strong>弹道 +N</strong> → 转化为 <strong>激光分叉 N 次</strong>: 打完主目标后按仇恨顺序自动跳打次优先级目标, 每次分叉不衰减 (与穿透卡不同)</li>
-      <li><span class="tag tag-must">必须</span><strong>双倍火力</strong> (来自火力静默翻转) → BOBO <strong>同时发射 2 束激光锁 2 个目标</strong>, 分别按仇恨 P1 / P2 位取次优先级 (仇恨天然支持锁次优先级)</li>
-      <li><span class="tag tag-must">必须</span><strong>火力静默 (未翻转的 debuff)</strong> → BOBO 静默 N 秒不发射激光 (原规则保留)</li>
-    </ul>
-
-    <h3>2.3 镜像 BOBO (v3.2 · 从宝箱池挪至无尽合成)</h3>
-    <div class="callout warn">
-      <strong>v3.2 定位变更</strong>: 镜像 BOBO <strong>不再是宝箱产出</strong>, 从原宝箱库 6 号移除, 挪到 <strong>无尽模式合成宝箱</strong> 产出 (合成条件与获取方式待 §7.6 补细则)。同时把 "永久继承" 改为 <strong>持续 10s 临时召唤</strong> 型技能, 定位是短爆发而非全程双输出。
-    </div>
-    <ul>
-      <li><span class="tag tag-must">必须</span>获取渠道: <strong>无尽合成宝箱</strong> 产出 (线性关卡 1-3 内不出)</li>
-      <li><span class="tag tag-must">必须</span>触发效果: 立即在主角左侧 0.5U 位置生成一个 <strong>镜像 BOBO</strong>, 继承本体 BOBO 当前 <strong>80%</strong> 属性 (攻击力 / 攻速 / 暴击率 / 暴击伤害 / 弹道分叉 / 双倍火力状态)</li>
-      <li><span class="tag tag-must">必须</span>持续时间: <strong>10s</strong>, 到时自动消失, 不占永久栏位</li>
-      <li><span class="tag tag-must">必须</span>持续期间同吃状态门 (与本体 BOBO 同步刷新增益)</li>
-      <li><span class="tag tag-must">必须</span>持续期间主角横移, 镜像 BOBO 同步横移保持对称</li>
-      <li><span class="tag tag-todo">待定</span>叠加规则: 持续期内再次抽到, 候选 A 延长 10s / B 刷新为满 10s / C 生成第 3 个 → <strong>初版选 B 刷新</strong></li>
+      <li><span class="tag tag-must">必须</span>获取条件: 击破宝箱通道里的 <strong>镜像武器</strong> (特殊宝箱掉落)</li>
+      <li><span class="tag tag-must">必须</span>初始位置: <strong>主角左侧 0.5 身位</strong>, 与原 BOBO 对称</li>
+      <li><span class="tag tag-must">必须</span>属性完全继承: 当前属性 + 后续所有状态门变化 <strong>同步镜像</strong></li>
+      <li><span class="tag tag-must">必须</span>独立弹道: 镜像后总火力 = 主角 1 + BOBO 1 + 镜像 BOBO 1 = <strong>三弹道</strong></li>
+      <li><span class="tag tag-must">必须</span>主角横移时, 两个 BOBO 同步横移, 保持对称</li>
+      <li><span class="tag tag-todo">待定</span>是否允许多次镜像(2→4→8 个 BOBO)? <strong>初版限制最多 2 个</strong>, 后续视平衡性调整</li>
     </ul>
 
     <h3>2.4 外星生物 (敌人)</h3>
@@ -724,6 +702,7 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-must">必须</span>到达防线前 <strong>停下并攻击防线</strong>, 持续消耗防线持久度</li>
       <li><span class="tag tag-must">必须</span>被击杀后立即消失, 不掉落物品</li>
       <li><span class="tag tag-must">必须</span>4 档 20 只全部实装, 不允许砍档 (每档功能不可替代)</li>
+      <li><span class="tag tag-must">必须</span><strong>敌人 HP 全局 ×2 (K3 v3.2 定稿)</strong> — "敌人双倍血量是全局", 适用于所有正式关卡 + 无尽模式 (预体验关卡另有满配, 不受此影响)</li>
       <li><span class="tag tag-should">建议</span>美术风格: 卡通可识别, 独眼为主视觉锚点, 配色遵循「小兵冷色 → 精英暖色 → BOSS 混色」的渐进层次</li>
     </ul>
 
@@ -889,97 +868,36 @@ Alien Fizzle · 玩法规格<br>
 
 
   <section class="chapter" id="ch-04">
-    <span class="chapter-num">§ 04 · 宝箱通道(左) · v3.2 重写 · 三选一抽卡</span>
-    <h2>技能升级卡 + 精通卡<br>Roguelike 混池抽卡</h2>
-    <p class="lead">v3.2 起宝箱通道完全重构: 从 "8 件固定配件序列" 改为 <strong>三选一 roguelike 抽卡</strong>。卡池由 <strong>5 张技能升级卡 × 3 级 (串行解锁)</strong> + <strong>20 张枪械精通卡 (§4.6 附录)</strong> 混合而成; 状态门只管平铺属性 (攻击力 / 攻速 / 弹道 / 暴击率 / 暴击伤害 / 双倍火力), 与宝箱的 "质变技能" 架构分离。</p>
+    <span class="chapter-num">§ 04 · 宝箱通道(左)</span>
+    <h2>冻结卡位 · 主角武器仓库</h2>
 
-    <div class="callout warn">
-      <strong>架构分离 (v3.2 顶层规则)</strong>:
-      <ul style="margin:8px 0 0 0">
-        <li><strong>状态门</strong> = 平铺属性增益 (原规则保留, 补 BOBO 生效方式, 见 §5)</li>
-        <li><strong>宝箱</strong> = 技能升级卡 + 枪械精通卡 <strong>混池三选一</strong>, 单卡一次性抽到即消耗</li>
-        <li>宝箱 <strong>不影响</strong> 平铺 6 项数值 (那是状态门的领地), 只提供 <strong>质变 / 特殊触发 / 输出源强化</strong></li>
-      </ul>
-    </div>
-
-    <h3>4.1 宝箱基础机制</h3>
+    <h3>4.1 宝箱机制</h3>
     <ul>
       <li><span class="tag tag-must">必须</span>宝箱在通道内 <strong>冻结不动</strong>, 不自动下滑</li>
-      <li><span class="tag tag-must">必须</span>宝箱有血量, 被子弹击中累计伤害, 击破后 <strong>弹出三选一卡片界面</strong> (期间敌人暂停 0.5s 缓冲, 与关卡节奏无缝衔接)</li>
-      <li><span class="tag tag-must">必须</span>玩家从三张卡中选一张, 立即结算 (若已 Lv3 满级则该技能卡不再进池; 精通卡若已持有, 权重 ×0.5, 见 §4.3 抽卡权重)</li>
-      <li><span class="tag tag-must">必须</span>宝箱通道内同时混入 <strong>障碍</strong>, 障碍击破不掉落任何东西 — 是纯粹的 "挡子弹" 消耗</li>
+      <li><span class="tag tag-must">必须</span>宝箱有血量, 被子弹击中累计伤害, 击破后 <strong>掉落武器</strong> 飞向主角</li>
+      <li><span class="tag tag-must">必须</span>主角击破宝箱后 <strong>立即装备</strong>武器, 替换当前主角武器(覆盖式)</li>
+      <li><span class="tag tag-must">必须</span>宝箱通道内同时混入 <strong>障碍</strong>, 障碍击破不掉落任何东西 — 是纯粹的"挡子弹"消耗</li>
       <li><span class="tag tag-should">建议</span>宝箱与障碍的视觉差异要明显, 颜色 / 形状 / 边框三层区分</li>
     </ul>
 
-    <h3>4.2 技能升级卡池 · 5 张 × 3 级 · 隐藏串行解锁</h3>
-    <p class="lead">共 5 张技能, 每张分 <strong>Lv1 基础释放 / Lv2 质变 / Lv3 完全体</strong> 三级。<strong>3 级 = 3 张独立卡串行解锁</strong>: Lv1 卡抽到才解锁 Lv2 卡进池, Lv2 抽到才解锁 Lv3 进池 (未解锁的下一级卡对玩家 <strong>隐藏不可见</strong>)。</p>
-
-    <div class="callout">
-      <strong>UI 呈现</strong>: 卡面顶部 3 个槽位, 当前 N 级高亮 N 个 (视觉上像升级进度条), 描述文本对应该级的质变。玩家看到 "Lv1 / □ / □" 就知道后面还有两级质变等着解锁, 制造成长期待。
-    </div>
-
-    <div class="callout warn">
-      <strong>版本口子 (v3.2 demo 阶段)</strong>: 3 级制先跑 demo 验证节奏 (预期每张卡拿满约需 3 次抽到, 单局节奏够爽)。若实际手感差 (成长曲线太陡 / 太平), 回滚 5 级制 (每级增量减半, 拉长成长曲线)。回滚判据: 玩家单局平均拿满 <strong>&lt; 1</strong> 张技能到 Lv3 → 太慢, <strong>&gt; 3</strong> 张 → 太快。
-    </div>
-
+    <h3>4.2 武器分级</h3>
     <table>
-      <tr><th style="width:110px">技能</th><th>Lv1 基础释放</th><th>Lv2 质变</th><th>Lv3 完全体</th></tr>
-      <tr>
-        <td><strong>站一起</strong> <span class="tag tag-may">原"别站一起"</span></td>
-        <td>每 10s 丢出一枚手雷, 以主要目标为圆心, 半径 = 1/3 接敌通道宽 的圆形区域造成 50 点爆炸伤害</td>
-        <td>手雷 CD 缩短至 <strong>7s</strong>, 爆炸半径 +50% (半接敌通道宽)</td>
-        <td>爆炸命中区域 <strong>额外挂 2s 燃烧 DoT</strong> (每秒 25 点), 与燃烧弹卡叠加时 DoT 不刷新只延长</td>
-      </tr>
-      <tr>
-        <td><strong>飞轮海</strong></td>
-        <td>每 10s 发射一个飞轮到接敌通道, 触碰第一个敌人后展开旋转, 形成 直径 = 接敌通道宽 的圆形伤害区域, 每秒 50 点伤害, 持续 6s</td>
-        <td>飞轮 <strong>持续时间 +4s</strong> (共 10s), 期间对敌人附加 <strong>减速 20%</strong></td>
-        <td>飞轮消失时 <strong>爆炸一次</strong> (半径 1.5×, 200 点一次性伤害), 且飞轮持续期间 <strong>吸附小兵</strong> (小兵移速反向 20% 拉向飞轮中心)</td>
-      </tr>
-      <tr>
-        <td><strong>恩赐解脱</strong></td>
-        <td>每 5s 自动瞄准当前 HP 最高的敌人发射一颗超级子弹, 造成 n × 主角攻击力的 真实伤害 (穿透 armor)。命中后对目标身后 60° 锥形区域施加 恐惧 · 倒行 5s</td>
-        <td>CD 缩短至 <strong>3.5s</strong>, 锥形角度扩至 <strong>90°</strong></td>
-        <td>命中若 <strong>击杀目标</strong>, 立即在原位置 <strong>再触发一次</strong> (可链式连触发, 单帧最多结算 3 次防止无限链)</td>
-      </tr>
-      <tr>
-        <td><strong>高压领域</strong></td>
-        <td>每 20s 在接敌通道下半部分创造一片高压电区域, 持续 10s。子弹穿过区域自带电属性击中敌人麻痹 0.5s; 敌人在区域内每 2s 被麻痹 0.5s 并受 100 点伤害</td>
-        <td>区域 <strong>持续时间 +5s</strong> (共 15s), 麻痹时长 <strong>×1.5</strong></td>
-        <td>区域内敌人 <strong>额外受到 30% 主角攻击力/秒</strong> 的持续电击伤害, 且离开区域后 <strong>短路 3s</strong> (期间麻痹时长仍 ×1.5)</td>
-      </tr>
-      <tr>
-        <td><strong>激光贯穿</strong> <span class="tag tag-may">v3.2 新</span></td>
-        <td>蓄力后发射一根 <strong>3 个小兵单位宽</strong>的贯穿激光, 对一条直线上所有敌人造成一次闪光伤害 (参考 LOL 光辉女郎大招)。CD 12s</td>
-        <td>闪光 <strong>持续 3s</strong>, 期间对经过路径的敌人造成 <strong>额外 50% 余波伤害</strong></td>
-        <td>持续时间内每 <strong>0.5s</strong> 向 <strong>其他方向</strong>额外发射一根 <strong>1/3 宽度</strong>的小型贯穿激光 (方向随机偏移, 覆盖扇形)</td>
-      </tr>
+      <tr><th>等级</th><th>击破难度</th><th>武器档次</th><th>预期出现频率</th></tr>
+      <tr><td>基础</td><td>低血量(2-3 颗子弹)</td><td>普通武器(单发增强 / 散射 / 穿透...)</td><td>高 60%</td></tr>
+      <tr><td>精良</td><td>中血量(5-8 颗子弹)</td><td>精良武器(范围 / 弹反 / 追踪...)</td><td>中 30%</td></tr>
+      <tr><td>稀有</td><td>高血量(15-25 颗子弹)</td><td>稀有武器(含 <strong>镜像 BOBO</strong> 等特殊武器)</td><td>低 10%</td></tr>
     </table>
 
-    <div class="callout">
-      <strong>说明</strong>: 激光贯穿是 v3.2 新加, 用来补位镜像 BOBO 挪走后留下的宝箱池空缺 (让技能盘保持 5 张)。所有含 CD 的技能, <strong>抽到瞬间直接触发第一次</strong>, CD 从触发时刻起算; 同一 CD 池内不叠加, 每张卡是独立 CD 计时器。
-    </div>
-
-    <h3>4.3 抽卡权重与刷新规则</h3>
-
-    <h4>4.3.1 混池权重</h4>
-    <table>
-      <tr><th>卡类</th><th>基础权重</th><th>重复权重</th><th>特殊修正</th></tr>
-      <tr><td>技能升级卡 (5 张 × 3 级)</td><td>1.0</td><td>—</td><td>未解锁的下一级卡 <strong>不在池</strong> (对玩家隐藏); 已 Lv3 满级技能 <strong>不再出</strong>; <strong>已持有的下一级卡权重 ×2</strong> (加速成长)</td></tr>
-      <tr><td>精通卡 (20 张, §4.6)</td><td>1.5</td><td><strong>×0.5</strong> (实际 0.75)</td><td>每张一次性, 抽到即消耗; 恶魔赌局 3 张为例外, 允许重复出 (见 §4.6 F16)</td></tr>
-    </table>
-
-    <h4>4.3.2 单局刷新规则</h4>
+    <h3>4.3 特殊武器: 镜像 BOBO (保留 · 移入 §4.5 6 号位)</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span>三选一卡片界面允许 <strong>广告全选</strong> (看广告直接把 3 张都拿走, 单局 <strong>限 1 次</strong>)</li>
-      <li><span class="tag tag-must">必须</span>三选一卡片界面允许 <strong>免费刷新</strong> (重摇 3 张, 单局 <strong>限 1 次</strong>)</li>
-      <li><span class="tag tag-must">必须</span>免费刷新用完后, 每次开卡额外允许 <strong>广告刷新</strong>, 单局 <strong>累计上限 2 次</strong></li>
-      <li><span class="tag tag-must">必须</span>预体验关卡 (§7.5) <strong>看广告直接全拿</strong> (跳过三选一 UI, 每个宝箱给 3 张全)</li>
-      <li><span class="tag tag-must">必须</span>普通关卡 (1-3 关) <strong>最多满 1 张</strong> Lv3 技能 (关卡长度决定, 5-8 次开卡机会)</li>
-      <li><span class="tag tag-must">必须</span>无尽模式理论可 <strong>全满</strong> (5 张 Lv3 + 20 张精通全出, 拉时间即可)</li>
+      <li><span class="tag tag-must">必须</span>归类为 <strong>稀有宝箱</strong>(高血量, 低频出现)</li>
+      <li><span class="tag tag-must">必须</span>装备瞬间在主角左侧 0.5U 位置 <strong>生成镜像 BOBO</strong></li>
+      <li><span class="tag tag-must">必须</span>镜像 BOBO 的初始属性 <strong>完全继承当前原 BOBO 的所有属性</strong></li>
+      <li><span class="tag tag-must">必须</span>后续状态门变化 <strong>同步作用于两个 BOBO</strong></li>
+      <li><span class="tag tag-todo">待定</span>已有镜像 BOBO 时再拿到镜像武器, 行为为何? 候选: A 无效化 / B 镜像出第 3 个 BOBO / C 替换并退回某资源 → <strong>初版选 A 无效化</strong></li>
     </ul>
 
-    <h3>4.4 通道无防御警告 (原 §4.4 保留)</h3>
+    <h3>4.4 通道无防御警告</h3>
     <p>主角离开接敌通道(完全进入宝箱通道)时, 接敌通道的防线段进入 <strong>警告状态</strong>:</p>
     <ul>
       <li><span class="tag tag-must">必须</span>接敌通道下方的防线段 <strong>红色闪烁</strong>(频率约 2Hz)</li>
@@ -989,109 +907,24 @@ Alien Fizzle · 玩法规格<br>
     </ul>
 
     <div class="callout warn">
-      <strong>设计张力</strong>: 主角去左通道贪宝箱时, 右通道弹道空缺, 敌人推进无人拦截。警告反馈 = 心理压迫源, 让 "贪 vs 守" 成为玩家每秒都要重新计算的决策。
+      <strong>设计张力</strong>: 主角去左通道贪宝箱时, 右通道弹道空缺, 敌人推进无人拦截。警告反馈 = 心理压迫源, 让"贪 vs 守"成为玩家每秒都要重新计算的决策。
     </div>
 
-    <h3>4.5 下架清单 (v3.1 → v3.2)</h3>
+    <h3>4.5 宝箱库全表 (v3.2 定稿 · 8 件 · 激光/终极下架)</h3>
+    <p class="lead">v3.2 相对 v3.1 <strong>全部推倒重排</strong>: 激光 / 终极技能太超模, 一手下架 (K3 原话)。以下 8 件按 K3/K4 原话逐条落, 一字未改。<strong>通用规则</strong>: 所有存在 cd 的技能, 在装备的瞬间就直接触发第一次 (K2 末段)。</p>
+    <table>
+      <tr><th>#</th><th>名称</th><th>规格 (K4 原话 · 一字未改)</th></tr>
+      <tr><td><strong>1</strong></td><td><strong>枪械精通</strong></td><td>为主角提供<strong>成长属性</strong>: 成长攻击力 + 成长攻速 + 成长弹道 (<code>+1/30s</code>, cap <code>+3</code>)</td></tr>
+      <tr><td><strong>2</strong></td><td><strong>别站一起</strong></td><td>每隔 <strong>10s</strong> 主角丢一枚<strong>手雷</strong>, 以主要目标为圆心、直径 <strong>1/3 通道宽度</strong>的圆形爆炸区域, 造成 <strong>50 点</strong>爆炸伤害</td></tr>
+      <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong></td><td>(K3/K4 只提名字, 无新细节) — 引用 v3 旧规格: 子弹命中点触发小范围爆炸</td></tr>
+      <tr><td><strong>4</strong></td><td><strong>弹射弹</strong></td><td>弹射 <strong>3 次</strong> (从击中第 1 敌人开始算能打到第 4 敌人), <strong>弹射后的子弹也能触发爆炸弹效果</strong></td></tr>
+      <tr><td><strong>5</strong></td><td><strong>飞轮海</strong></td><td>每隔 <strong>10s</strong> 发射一个飞轮到接敌通道, 触碰第 1 敌人后展开旋转, 形成直径 = 接敌通道宽度的圆形伤害区域, <strong>每秒 50 点</strong>伤害, <strong>持续 6s</strong></td></tr>
+      <tr><td><strong>6</strong></td><td><strong>镜像 BOBO</strong></td><td>(引用 §4.3 旧规格, 保留) 装备瞬间在主角左侧 0.5U 生成镜像 BOBO, 属性完全继承原 BOBO, 后续状态门同步作用于两个 BOBO</td></tr>
+      <tr><td><strong>7</strong></td><td><strong>恩赐解脱</strong></td><td>每隔 <strong>5s</strong> 自动瞄准生命值最高的敌人, 发射一颗<strong>超级子弹</strong>造成 <strong>n 倍攻击力真实伤害</strong> (n 待评估, 目标 = 中期一发秒精英怪); 对目标身后<strong>锥形区域</strong>敌人造成<strong>恐惧</strong>效果, 倒行 <strong>5s</strong></td></tr>
+      <tr><td><strong>8</strong></td><td><strong>高压领域</strong></td><td>每隔 <strong>20s</strong> 在接敌通道<strong>下半部分</strong>创造一片高压电区域, <strong>持续 10s</strong>; 穿区子弹自带电属性 (击中敌人麻痹 <strong>0.5s</strong>); 进区敌人每 <strong>2s</strong> 被麻痹 <strong>0.5s</strong> 并造成 <strong>100 点</strong>伤害</td></tr>
+    </table>
     <div class="callout">
-      <ul style="margin:8px 0 0 0">
-        <li>❌ <strong>宝箱库 8 件固定配件序列</strong> (原 §4.5 表) — 已被三选一抽卡替代</li>
-        <li>❌ <strong>枪械精通</strong> (原 1 号成长属性) — 拆解为状态门的平铺属性 (成长/固定攻击力 · 攻速 · 弹道 · 暴击率 · 暴击伤害) + 精通卡池</li>
-        <li>❌ <strong>爆炸弹 (原 3 号)</strong> · <strong>弹射弹 (原 4 号)</strong> — 挪到精通卡 A 类 (子弹形态), 见 §4.6</li>
-        <li>❌ <strong>镜像 BOBO (原 6 号)</strong> — 挪到无尽合成宝箱, 见 §2.3</li>
-        <li>❌ <strong>multiShot / fireRate / atkUp / laser / ultimate</strong> — 保持 v3.1 下架不变</li>
-      </ul>
-    </div>
-
-    <h3>4.6 附录 · 枪械精通卡池 · 20 张</h3>
-    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 20 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F16) 为特例, 池里放 3 张可重复抽。</p>
-
-    <h4>4.6.A 子弹形态 · 3 张</h4>
-    <table>
-      <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>1</strong></td><td><strong>穿透+2</strong></td><td>主角子弹贯穿 <strong>2 个敌人</strong> 后消失 (原本 1 个)</td><td>与弹射叠加时先贯穿完再弹射</td></tr>
-      <tr><td><strong>2</strong></td><td><strong>弹射</strong></td><td>子弹命中敌人后 <strong>弹射到最近敌人 +1 次</strong>, 弹射后子弹继续触发爆炸弹效果</td><td>与穿透叠加时先贯穿完再弹射</td></tr>
-      <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong></td><td>子弹命中产生 <strong>小范围爆炸</strong>, 爆炸伤害 = <strong>30% 主伤害</strong> (弹射弹弹射后的子弹也能触发)</td><td>与激光贯穿技能不叠加</td></tr>
-    </table>
-
-    <h4>4.6.B 状态施加 · 3 张 · 全必触发无概率</h4>
-    <table>
-      <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>4</strong></td><td><strong>燃烧弹</strong></td><td>子弹命中 <strong>点燃</strong>: 2 秒内造成 <strong>50% 主伤害 DoT</strong> (分 4 tick 结算)</td><td>必触发, 与激光燃烧独立</td></tr>
-      <tr><td><strong>5</strong></td><td><strong>减速弹</strong></td><td>子弹命中 <strong>减速 30%, 持续 2 秒</strong></td><td>必触发</td></tr>
-      <tr><td><strong>6</strong></td><td><strong>麻痹弹</strong></td><td>子弹命中 <strong>麻痹 1.5 秒</strong> (无法行动)</td><td>必触发, 对 boss 减半 (0.75s)</td></tr>
-    </table>
-
-    <h4>4.6.C 特殊触发 · 2 张</h4>
-    <table>
-      <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>7</strong></td><td><strong>食髓</strong></td><td>击杀 <strong>精英以上</strong> 敌人后, 5s 内 <strong>攻速 +50%</strong></td><td>可刷新覆盖, 不叠加</td></tr>
-      <tr><td><strong>8</strong></td><td><strong>熔核</strong></td><td>自动循环 <strong>11 秒</strong>: 爬升期 3s (攻速 1× 线性升至 3×) · 满状态 5s (攻速 3× + 暴击率 +20% + 暴击伤害 +50%) · 静默期 3s (完全无法射击)</td><td>与状态门火力静默独立结算, 静默期 UI 明确标示</td></tr>
-    </table>
-
-    <h4>4.6.D 伤害修饰 · 2 张</h4>
-    <table>
-      <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>9</strong></td><td><strong>精英以上猎手</strong></td><td>对 <strong>精英 + boss</strong> 单位伤害 <strong>+30%</strong></td><td>对 BOBO 激光生效</td></tr>
-      <tr><td><strong>10</strong></td><td><strong>弱者克星</strong></td><td>对被施加减益 (减速 / 冰冻 / 麻痹 / 燃烧 / 毒等) 的单位伤害 <strong>+40%</strong></td><td>对 BOBO 激光生效</td></tr>
-    </table>
-
-    <h4>4.6.E 防线相关 · 3 张</h4>
-    <table>
-      <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>11</strong></td><td><strong>防线加固</strong></td><td>防线 HP <strong>+30%</strong> (基础值百分比, 抽到时按当前满 HP 结算, 当前 HP 同步补足)</td><td>—</td></tr>
-      <tr><td><strong>12</strong></td><td><strong>回响</strong></td><td>每击杀 <strong>20 个敌人</strong>, 防线回 <strong>1% HP</strong></td><td>持续生效, 无上限</td></tr>
-      <tr><td><strong>13</strong></td><td><strong>绝境反击</strong></td><td>防线 HP 每下降 <strong>2%</strong>, 攻击力 <strong>+1%</strong> (线性, 满血 0 加成, 空血 +50%)</td><td>对 BOBO 全生效 (伤害修饰全局)</td></tr>
-    </table>
-
-    <h4>4.6.F Meta · 3 张</h4>
-    <table>
-      <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>14</strong></td><td><strong>贪婪</strong></td><td>击杀敌人 <strong>2% 概率</strong> 立即召唤一道状态门 (与 10s 定时刷新独立)</td><td>额外门也遵循 §5 规则</td></tr>
-      <tr><td><strong>15</strong></td><td><strong>共鸣</strong></td><td>每持有 1 张精通卡, 攻击力 <strong>+2%</strong> (基础值算 1 张自身, 即抽到即刻 +2%)</td><td>对 BOBO 生效</td></tr>
-      <tr><td><strong>16</strong></td><td><strong>恶魔赌局</strong> <span class="tag tag-may">3 张 · 可重复抽</span></td><td>精通卡池里放 <strong>3 张</strong> (可重复抽, 每张独立高 EV 结算一次)。抽到即摇一个系数 σ, 一次性重构 <strong>主角 + BOBO 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。见 §4.6.F16 概率分布表</td><td>Bobo 属性一起赌; 精通卡自身效果不吃赌局但基于新面板算数值; 后续获得的属性以新基线累加</td></tr>
-    </table>
-
-    <div class="callout warn">
-      <strong>§4.6.F16 · 恶魔赌局系数分布表</strong> (Kaysen 拍板 · EV=1.164 · 单次亏损率 30% · 3 次累乘期望 ≈1.58)
-      <table style="margin-top:10px;">
-        <tr><th>系数 σ</th><th>概率</th><th>手感</th></tr>
-        <tr><td>0.5×</td><td>5%</td><td>暴亏 (斩半)</td></tr>
-        <tr><td>0.7×</td><td>12%</td><td>亏</td></tr>
-        <tr><td>0.85×</td><td>13%</td><td>小亏</td></tr>
-        <tr><td>1.0×</td><td>10%</td><td>不赚不亏</td></tr>
-        <tr><td>1.15×</td><td>20%</td><td>小赚 (常态)</td></tr>
-        <tr><td>1.3×</td><td>20%</td><td>赚 (常态)</td></tr>
-        <tr><td>1.5×</td><td>12%</td><td>大赚</td></tr>
-        <tr><td>1.8×</td><td>5%</td><td>暴击</td></tr>
-        <tr><td>2.0×</td><td>3%</td><td>神抽 (两倍)</td></tr>
-      </table>
-      <div style="margin-top:8px">
-      验算 EV = 0.5×0.05 + 0.7×0.12 + 0.85×0.13 + 1.0×0.10 + 1.15×0.20 + 1.3×0.20 + 1.5×0.12 + 1.8×0.05 + 2.0×0.03
-      = 0.025 + 0.084 + 0.1105 + 0.1 + 0.23 + 0.26 + 0.18 + 0.09 + 0.06 = <strong>1.1395</strong> (口径 EV=1.164, 数值组用最终版本前小幅微调)。<br>
-      亏损率 (σ&lt;1.0) = 5+12+13 = <strong>30%</strong>, 保本率 10%, 增益率 60%。3 张独立结算的累乘期望 ≈ 1.164³ ≈ <strong>1.58</strong>。
-      </div>
-    </div>
-
-    <h4>4.6.G BOBO 强化 · 4 张 · 专属</h4>
-    <table>
-      <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>17</strong></td><td><strong>激光聚焦</strong></td><td>BOBO 激光伤害 <strong>+50%</strong></td><td>—</td></tr>
-      <tr><td><strong>18</strong></td><td><strong>激光过载</strong></td><td>BOBO 攻速 <strong>+30%</strong> (0.7s / 发 → 0.54s / 发)</td><td>与状态门攻速独立乘算</td></tr>
-      <tr><td><strong>19</strong></td><td><strong>激光燃烧</strong></td><td>BOBO 激光 <strong>必触发点燃</strong>: 2 秒内 50% 激光伤害 DoT (无概率)</td><td>与主角燃烧弹独立</td></tr>
-      <tr><td><strong>20</strong></td><td><strong>激光制导</strong></td><td>BOBO 每次攻击攒 1 点能量, 攻击 <strong>20 次</strong>后发射一道持续 <strong>5s</strong> 的制导激光, 锁定单个目标持续灼烧 <strong>50 伤/0.2s</strong>, 击杀目标后自动跳转至附近敌人。若持有 <strong>穿透卡 (A1)</strong>, 制导激光会折射到附近单位造成 <strong>80% 伤害</strong>; 若持有 <strong>爆炸弹卡 (A3)</strong>, 制导激光额外产生爆炸伤害</td><td>能量条 UI 挂在 BOBO 侧, 满 20 次自动触发</td></tr>
-    </table>
-
-    <div class="callout">
-      <strong>精通卡对 BOBO 生效对照表</strong> (与 §2.2 呼应):
-      <ul style="margin:8px 0 0 0">
-        <li><strong>A/B 类 (子弹形态 / 状态施加)</strong>: <span style="color:#b8451e">仅主角子弹, 不作用于 BOBO 激光</span> (BOBO 有专属 G19 燃烧 / G20 制导等)</li>
-        <li><strong>C 类 (食髓 / 熔核)</strong>: <span style="color:#b8451e">仅主角</span> (熔核是主角攻速循环)</li>
-        <li><strong>D 类 (精英猎手 / 弱者克星)</strong>: <span style="color:#2e6b3a">全部对 BOBO 生效</span> (伤害修饰跟输出源无关)</li>
-        <li><strong>E 类 (防线相关)</strong>: <span style="color:#2e6b3a">全局效果</span>, 绝境反击的攻击力加成对 BOBO 也生效</li>
-        <li><strong>F 类 (Meta)</strong>: <span style="color:#2e6b3a">共鸣 / 贪婪对 BOBO 生效; 恶魔赌局对 BOBO 一起赌</span></li>
-        <li><strong>G 类 (BOBO 强化)</strong>: <span style="color:#2e6b3a">BOBO 专属</span></li>
-      </ul>
+      <strong>下架名单 (K3 一手下架 · v3.2 不再实装)</strong>: 散射激光 · 终极技能 (全屏爆炸) — 太超模, 教它做人。demo 里的 <code>perks.laser</code> / <code>perks.ultimate</code> 从 spawn 池删除。
     </div>
   </section>
 
@@ -1108,21 +941,19 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>移动方向</td><td>从顶部向下匀速移动</td></tr>
       <tr><td>移动速度</td><td><strong>显著快于小兵推进速度</strong>(约 1.5x - 2x), 保证门会穿过敌人到达主角</td></tr>
       <tr><td>同时存在数</td><td><strong>始终只 1 个</strong>, 上一个消失才生成下一个</td></tr>
+      <tr><td>出现频率 (K4 v3.2 定稿)</td><td><strong>固定 10 秒钟出现一次</strong></td></tr>
       <tr><td>初始数值</td><td>随机 buff 或 debuff, 数值范围按数值表(待数值策划)</td></tr>
-      <tr><td>属性维度</td><td>攻击力 / 攻击速度 / 弹道数量(取整, 1.9→1, 2.1→2) / 弹道速度 / 暴击率 / <strong>暴击伤害</strong> / <strong>火力静默</strong> (v3.1 新增最后两维)</td></tr>
-      <tr><td>出现频率</td><td><strong>固定 10s 出一次</strong>, 到时间必生成 (v3.1 定稿)</td></tr>
+      <tr><td>属性维度 (K4 v3.2 定稿)</td><td>攻击力 / 攻击速度 / 弹道 (<strong>只取整数</strong>: 1.9=1, 2.1=2) / 暴击率 / 暴击伤害 / 火力静默</td></tr>
     </table>
 
+    <h3>5.1.1 火力静默 · 独立小节 (K3/K4 定稿)</h3>
     <div class="callout warn">
-      <strong>v3.2 补丁 · 状态门原有属性规则不变</strong>: 出现频率 (10s / 次)、属性维度 (6 项 + 火力静默)、宽度 (1.5U)、消失条件 (撞主角) 全部保留。v3.2 只在下方 §5.9 补 BOBO 生效方式 (弹道 → 激光分叉; 双倍火力 → 双激光锁双目标) 和刷新概率控制。
+      <strong>K3 原话</strong>: 火力静默<strong>减益为正数</strong>, 默认为 <strong>+4s</strong> 就是火力静默 4 秒, 状态色为<strong style="color:#ff5050">红</strong>。通过射击将数值变为 <strong>-1</strong>, 为增益, <strong>双倍火力 1 秒</strong>, 状态色为<strong style="color:#44dd66">绿色</strong>。<strong>因为火力静默这个词本身就是减益描述</strong>。
     </div>
-
-    <h4>5.1.1 属性刷新规则 (原有保留 + v3.2 明确)</h4>
     <ul>
-      <li><span class="tag tag-must">必须</span><strong>弹道后期几乎不出</strong>, 总增益压 <strong>+4 封顶</strong> (即弹道类门单局最多贡献 +4, 累计到就不再刷弹道类)</li>
-      <li><span class="tag tag-must">必须</span>双倍火力 (火力静默翻转) 前中后期 <strong>概率平均</strong></li>
-      <li><span class="tag tag-must">必须</span>固定攻击力 <strong>前期概率高</strong>, 百分比攻击力 <strong>后期概率高</strong> (线性交叉)</li>
-      <li><span class="tag tag-must">必须</span>无尽模式 <strong>第 3 次攻击潮开始停刷</strong> (给玩家一个成长上限), 前 2 潮不封顶</li>
+      <li><span class="tag tag-must">必须</span>火力静默门<strong>数值符号反向</strong>: 正数 = 减益 (射击才能扣到 0 再翻转负数), 负数 = 增益 (双倍火力持续 -N 秒)</li>
+      <li><span class="tag tag-must">必须</span>状态色: 正数 → 红 · 0 → 灰 · 负数 → 绿</li>
+      <li><span class="tag tag-must">必须</span>其他 5 个维度 (攻击力 / 攻速 / 弹道 / 暴击率 / 暴击伤害) 保持<strong>正数 = 增益 · 负数 = 减益</strong>的常规约定</li>
     </ul>
 
     <h3>5.2 受击与数值变化</h3>
@@ -1212,33 +1043,22 @@ Alien Fizzle · 玩法规格<br>
       <span class="caption">图 5-1 · 状态门 5 态状态机 · 实线 = 射击触发 · 虚线 = 撞主角触发</span>
     </div>
 
-    <h3>5.6 火力静默特殊维度 · 定义与规则 (v3.1 新增)</h3>
-    <div class="callout warn">
-      <strong>命名逻辑</strong>: "火力静默" 是 <strong>减益维度描述词</strong> — 名字本身指代 debuff 效果. 通用规则 "减益为正数, 增益为负数" 在此维度成立.
-    </div>
-    <ul>
-      <li><span class="tag tag-must">必须</span>火力静默门 <strong>初始数值 = +4s</strong> (减益, 状态色 <span style="color:#b8451e;font-weight:600;">红</span>), 表示 BOBO 吃到后会静默 4 秒</li>
-      <li><span class="tag tag-must">必须</span>玩家射击门, 数值 <strong>递减</strong>: +4s → +3s → +2s → +1s → 0s → <strong>-1s</strong> (增益翻转点)</li>
-      <li><span class="tag tag-must">必须</span>数值到 <strong>-1s</strong> 时门变增益, 状态色 <span style="color:#2e6b3a;font-weight:600;">绿</span>, 效果为 <strong>双倍火力 1s</strong> (含义: BOBO 吃到后火力翻倍, 持续 1 秒)</li>
-      <li><span class="tag tag-must">必须</span>状态色变化 <strong>作用于门体本身</strong>, 不作用于 BOBO / 主角 (BOBO 只在门被吃时才生效果)</li>
-      <li><span class="tag tag-should">建议</span>因为火力静默是 <strong>唯一数值方向与其他维度相反</strong>的门 (其他维度 debuff 是负数, buff 是正数), UI 上可用小图标标注避免玩家混淆</li>
-    </ul>
-
-    <h3>5.7 示例 · 火力静默门完整生命周期</h3>
-    <p>以火力静默 <strong>+4s</strong> (默认减益值)走完整流程:</p>
+    <h3>5.6 示例 · 火力静默门完整生命周期</h3>
+    <p>以你给的例子(火力静默 -4s)走完整流程:</p>
     <table>
       <tr><th>阶段</th><th>子弹击中次数</th><th>当前数值</th><th>状态</th><th>视觉</th></tr>
-      <tr><td>出生</td><td>0</td><td>+4s</td><td>S1 DEBUFF</td><td>红, 阻挡</td></tr>
-      <tr><td>射击中</td><td>2</td><td>+3s</td><td>S1 DEBUFF</td><td>红, 阻挡</td></tr>
-      <tr><td>射击中</td><td>4</td><td>+2s</td><td>S1 DEBUFF</td><td>红, 阻挡</td></tr>
-      <tr><td>射击中</td><td>6</td><td>+1s</td><td>S1 DEBUFF</td><td>红, 阻挡</td></tr>
-      <tr><td>过零</td><td>8</td><td>0s</td><td>S2 中性(瞬态)</td><td>灰闪一下</td></tr>
-      <tr><td>翻转</td><td>10</td><td>-1s 双倍火力</td><td>S4 上限释放 (增益到顶)</td><td>亮绿虚边, 子弹穿透</td></tr>
-      <tr><td>继续射</td><td>16</td><td>-1s (不变)</td><td>S4 上限释放</td><td>子弹穿透打敌人</td></tr>
-      <tr><td>撞主角</td><td>-</td><td>-1s</td><td>S5 消失</td><td>爆开效果, BOBO 吃 <strong>双倍火力 1s</strong></td></tr>
+      <tr><td>出生</td><td>0</td><td>-4s</td><td>S1 DEBUFF</td><td>红, 阻挡</td></tr>
+      <tr><td>射击中</td><td>2</td><td>-3s</td><td>S1 DEBUFF</td><td>红, 阻挡</td></tr>
+      <tr><td>射击中</td><td>4</td><td>-2s</td><td>S1 DEBUFF</td><td>红, 阻挡</td></tr>
+      <tr><td>射击中</td><td>6</td><td>-1s</td><td>S1 DEBUFF</td><td>红, 阻挡</td></tr>
+      <tr><td>翻转</td><td>8</td><td>0s</td><td>S2 中性(瞬态)</td><td>灰闪一下</td></tr>
+      <tr><td>充能</td><td>10</td><td>+1s 双倍火力</td><td>S3 BUFF</td><td>绿, 阻挡</td></tr>
+      <tr><td>充满</td><td>12</td><td>+2s 双倍火力</td><td>S4 上限释放</td><td>亮绿虚边, 透明</td></tr>
+      <tr><td>继续射</td><td>16</td><td>+2s (不变)</td><td>S4 上限释放</td><td>子弹穿透打敌人</td></tr>
+      <tr><td>撞主角</td><td>-</td><td>+2s</td><td>S5 消失</td><td>爆开效果, BOBO 吃 +2s 双倍火力</td></tr>
     </table>
 
-    <h3>5.8 示例 · 弹道+1 门(初始即 buff)</h3>
+    <h3>5.7 示例 · 弹道+1 门(初始即 buff)</h3>
     <table>
       <tr><th>阶段</th><th>子弹击中次数</th><th>当前数值</th><th>状态</th><th>视觉</th></tr>
       <tr><td>出生</td><td>0</td><td>+1 弹道</td><td>S3 BUFF</td><td>绿, 阻挡</td></tr>
@@ -1248,25 +1068,6 @@ Alien Fizzle · 玩法规格<br>
 
     <div class="callout">
       <strong>玩家决策点</strong>: 看到状态门生成时, 玩家在 1-3 秒内要算 4 个变量 — (1) 当前 buff 累积进度, (2) 还需多少子弹打满, (3) 距离防线还有多远, (4) 现在该躲到哪。这是核心爽感来源。
-    </div>
-
-    <h3>5.9 状态门对 BOBO 的作用方式 (v3.2 新增)</h3>
-    <p class="lead">v3.2 起 BOBO 升级为独立第二输出源 (§2.2), 状态门对 BOBO 的作用要 <strong>逐维度显式定义</strong>, 避免出现 "弹道 +N 对激光是什么意思" 之类的语义盲区。</p>
-
-    <table>
-      <tr><th style="width:130px">状态门维度</th><th style="width:130px">对主角</th><th>对 BOBO (激光)</th></tr>
-      <tr><td><strong>攻击力</strong></td><td>子弹伤害 × 系数</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光伤害 × 系数</td></tr>
-      <tr><td><strong>攻速</strong></td><td>射击间隔 / 系数</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光发射间隔 / 系数 (基础 0.7s)</td></tr>
-      <tr><td><strong>暴击率</strong></td><td>+N% 概率暴击</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光暴击独立结算</td></tr>
-      <tr><td><strong>暴击伤害</strong></td><td>暴击倍率 +N%</td><td><span style="color:#2e6b3a">✓ 全吃</span></td></tr>
-      <tr><td><strong>弹道 +N</strong></td><td>子弹发射数 +N</td><td><span style="color:#2e6b3a">✓ 转化为激光分叉 N 次</span> · 打完主目标后按仇恨顺序自动跳打次优先级目标, 每次分叉不衰减</td></tr>
-      <tr><td><strong>弹道速度</strong></td><td>子弹飞行速度 × 系数</td><td><span style="color:#888">— 无意义</span> (激光零飞行时间), 该维度不作用于 BOBO</td></tr>
-      <tr><td><strong>双倍火力</strong> (火力静默翻转)</td><td>N 秒内子弹伤害 ×2</td><td><span style="color:#2e6b3a">✓ 同时发射 2 束激光锁 2 个目标</span> · 分别取仇恨 P1 / P2 位次优先级 (仇恨天然支持锁次优先级); 若与弹道 +N 同存, 每束激光独立分叉</td></tr>
-      <tr><td><strong>火力静默</strong> (未翻转 debuff)</td><td>N 秒内不发射子弹</td><td><span style="color:#b8451e">✗ N 秒内不发射激光</span></td></tr>
-    </table>
-
-    <div class="callout warn">
-      <strong>为什么弹道 → 激光分叉而不是多束激光?</strong> 多束激光会视觉过载 (5+ 激光同屏时不好识别锁定目标), 分叉的语义更贴合激光 "折射 / 跳跃" 的物理直觉, 且和精通卡 G20 激光制导的折射机制天然复用。<strong>双倍火力例外</strong>: 只 +1 束 (共 2 束) 是可读的, 且和 "双倍" 语义直接对应, 保留双束设计。
     </div>
   </section>
 
@@ -1409,128 +1210,114 @@ Alien Fizzle · 玩法规格<br>
 
   <!-- ============ v3.1 增补 §07.5 预体验关卡 ============ -->
   <section class="chapter" id="ch-07-5">
-    <span class="chapter-num">§ 07.5 · v3.1 新增 · 预体验关卡</span>
-    <h2>预体验关卡<br>满配轰炸 · 让玩家一帧入坑</h2>
-    <p class="lead">首次进游戏的第一场仗。满配属性 + 密集方阵 + 宝箱双倍效果。时长不封顶, 方阵一个个夸夸出, 直到强度曲线自然收尾。设计目标 = 让玩家爽到嘴角上扬, 然后虚空屏蔽场一巴掌把他扇清醒。</p>
+    <span class="chapter-num">§ 07.5 · v3.2 全量重写 · 预体验关卡</span>
+    <h2>关卡 0 · 满配爽感<br>不封顶时长 · 反寸止 · 允许死亡</h2>
+    <p class="lead">新玩家首次进游戏强制体验的一个短关。目标 = 直接展现游戏最爽的战斗峰值, 建立第一印象。<strong>v3.2 相对 v3.1 重写</strong>: 废弃 60s 收尾寸止逻辑, 改为不封顶时长 + 8 方阵递增强度 + 死亡复活闭环。</p>
 
     <h3>7.5.1 定位与触发规则</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span><strong>首次进游戏强制体验</strong> (由 §0.5.3 紧急警报弹窗 → 点击「看看怎么事」触发)</li>
-      <li><span class="tag tag-must">必须</span>通关后主菜单「预体验」入口 <strong>始终可用</strong>, 玩家可随时重玩</li>
-      <li><span class="tag tag-must">必须</span>预体验不解锁任何长期道具/成就, 纯爽感体验</li>
-      <li><span class="tag tag-must">必须</span>通关后进入 <strong>两段式过场</strong> (§0.5.4) → 主菜单 (§0.5.5)</li>
+      <li><span class="tag tag-must">必须</span><strong>首次进游戏强制体验</strong>, 无法跳过 (紧急警报弹窗 → 关卡 0 直入)</li>
+      <li><span class="tag tag-must">必须</span>通关后主菜单 "预体验" 入口<strong>永久保留</strong>, 玩家可随时复玩</li>
+      <li><span class="tag tag-must">必须</span>关卡 0 不解锁任何长期道具/成就, 单纯体验用途</li>
+      <li><span class="tag tag-must">必须</span>关卡 0 通关触发过场 (§0.5.4), 过场结束进主菜单; 复玩通关<strong>不再触发过场</strong>, 直回主菜单</li>
     </ul>
 
-    <h3>7.5.2 结构 · 静默期 + 战斗期 (不封顶)</h3>
-    <table>
-      <tr><th>阶段</th><th>时长</th><th>玩家可操作</th><th>说明</th></tr>
-      <tr><td>静默期</td><td>10 秒</td><td>可移动, 不可开火</td><td>顶部展示战术警告文案, 接敌通道上半部分已密密麻麻列队, 敌人静止</td></tr>
-      <tr><td>战斗期</td><td><strong>不封顶</strong></td><td>全操作</td><td>方阵逐个推进, 按强度曲线出完所有方阵后自然结束 · <strong>不寸止玩家</strong></td></tr>
-    </table>
+    <h3>7.5.2 反寸止守则 (v3.2 钉死 · K7 原话)</h3>
     <div class="callout warn">
-      <strong>时长逻辑 (v3.1 Kaysen 拍板 · v3.2 再次确认)</strong>: 不设固定时限。方阵一个个夸夸出, 按正常节奏推完就是预体验时长。评估 ~240s (4 分钟) 可走完全部 8 个方阵, 但以实际方阵推进速度为准, 不硬卡。<strong>玩家正爽着的时候不许强制弹走</strong>。
-    </div>
-    <div class="callout warn" style="border-left: 4px solid #b85478;">
-      <strong>⚠️ 反寸止守则 (v3.2 Kaysen 立)</strong>: 预体验的核心目标是<strong>让玩家爽</strong>, 时间是配合方阵推进的自然产物, 不是需要压制的约束。任何 "60s 是不是不够 / 180s 会不会太长 / 要不要设个上限" 类的讨论都是<strong>假议题</strong> — 60s 出不完就 120s, 120s 出不完就 240s, 方阵按强度曲线出完, 玩家清完最后一只自然收尾。<br><br>
-      <strong>写 spec 的人 / 做 demo 的人</strong>: 若你想在这里加"最大时长上限"或"到点强制结算", 请先重读本段。
-    </div>
-
-    <h3>7.5.2.1 死亡处理 · 复活弹窗 (v3.2 新增)</h3>
-    <p>预体验关卡<strong>允许死亡</strong>, 但与正式关卡/无尽模式的"死一次即结算"不同, 预体验死亡后<strong>直接弹出复活弹窗</strong>让玩家重开一次。</p>
-    <table>
-      <tr><th>项</th><th>规格</th></tr>
-      <tr><td>触发时机</td><td>防线 HP 归零瞬间 (§7.5.7 反弹护盾 + 防线双层保护均耗尽)</td></tr>
-      <tr><td>弹窗形态</td><td>屏幕中央独立弹窗, 半透明黑色遮罩底层, 战场画面暂停</td></tr>
-      <tr><td>弹窗内容</td><td>标题「阵亡」+ 简短鼓励文案 (示例: "外星人比想象的硬。再来一次?") + 「再来一次」按钮</td></tr>
-      <tr><td>按钮行为</td><td>玩家点击「再来一次」→ <strong>预体验关卡从头重开</strong> (清空当前进度, 回到静默期 10 秒开始)</td></tr>
-      <tr><td>次数限制</td><td><strong>无限制</strong> · 玩家可反复死反复复活直到通关</td></tr>
-      <tr><td>与正式关卡区别</td><td>正式 1/2/3 关和无尽模式死一次即 Game Over 结算, <strong>不给复活按钮</strong>. 预体验是唯一有"再来一次"机制的关卡</td></tr>
-    </table>
-    <div class="callout">
-      <strong>设计意图</strong>: 预体验是玩家的第一场仗, 若首次死亡就 Game Over 会严重打击信心并劝退。给"再来一次"按钮 = 保持"爽游"心理契约, 让玩家反复尝试直到成功通关, 建立"我打过第一关"的正反馈。<strong>其他所有关卡都不给这个按钮, 这就是预体验的独占爽感之一</strong>。
+      <strong>K7 原话 (msg #30966, 一字未改)</strong>: 60 秒出不完就 120 秒, 120 秒出不完就 240 秒。<strong>时间长短并不重要, 重要的是要让玩家爽</strong>。玩家正爽着呢, 你直接给人家强制弹走了, 搁这儿搞寸止呢?
     </div>
     <div class="callout warn">
-      <strong>无嘲讽接口 (v3.2 立)</strong>: 预体验死亡<strong>不触发 §7.3 嘲讽 Boss 弹窗</strong> (那是 Game Over 的接口, 预体验没有 Game Over). 首次挫败感留给正式关卡, 预体验只有"再来"没有"输了"的叙事。
+      <strong>时长哲学</strong>: 预体验时长<strong>保持不封顶</strong>, 60s / 120s / 240s 都不是问题。时间是配合方阵推进的自然产物, <strong>不要用时长做为强度约束</strong>。
     </div>
+    <ul>
+      <li><strong>设计判据</strong>: 玩家节奏顺 → 快清 → 时长自然短; 玩家节奏乱 → 慢清 → 时长自然长</li>
+      <li><strong>禁反面</strong>: 之前 v3.1 spec 的 "60s 收尾" 逻辑属于寸止思维, <span style="color:#ff5050;font-weight:700;">已废弃</span></li>
+      <li><strong>推论</strong>: 敌人方阵不封顶, 强度递增到玩家死 (走 §7.5.2.1 复活) 或过关 (打完设定的最后一波小 Boss)</li>
+    </ul>
 
-    <h3>7.5.3 静默期文案</h3>
-    <div class="callout" style="font-family: ui-monospace, Menlo, monospace; text-align: center; line-height: 2;">
-      ⚠️ <strong>战术警告</strong><br>
-      检测到大规模敌军集群<br>
-      全部火力单元已激活<br>
-      <span style="color: #b85478">10 秒后开火</span>
-    </div>
-
-    <h3>7.5.4 初始属性 (预体验独有 · 满配)</h3>
+    <h3>7.5.2.1 死亡复活 (v3.2 新增)</h3>
     <table>
-      <tr><th>属性</th><th>正式关卡 (基线)</th><th>预体验</th><th>倍率</th></tr>
-      <tr><td>攻击力</td><td>20</td><td><strong>60</strong></td><td>3×</td></tr>
-      <tr><td>攻速</td><td>1.0</td><td><strong>1.5</strong></td><td>1.5×</td></tr>
-      <tr><td>弹道数</td><td>1</td><td><strong>3</strong></td><td>3×</td></tr>
-      <tr><td>暴击率</td><td>0%</td><td><strong>25%</strong></td><td>—</td></tr>
-      <tr><td>暴击伤害</td><td>+0%</td><td><strong>+50%</strong> (1.5× 伤害)</td><td>—</td></tr>
+      <tr><th>项</th><th>处理</th></tr>
+      <tr><td>死亡处理</td><td><strong>允许死亡</strong> — 预体验不做无敌保护</td></tr>
+      <tr><td>复活弹窗</td><td>死亡即弹, 单按钮 <strong>「再来一次」</strong></td></tr>
+      <tr><td>复活方式</td><td><strong>从头重开</strong> (方阵进度归零, 属性重置)</td></tr>
+      <tr><td>复活次数</td><td><strong>无次数限制</strong>, 想死几次死几次</td></tr>
+      <tr><td>嘲讽 BOSS</td><td><strong>不触发</strong> · 预体验不做嘲讽机制</td></tr>
     </table>
-    <ul>
-      <li><span class="tag tag-must">必须</span>主角 + BOBO 属性 <strong>完全相同</strong> (上表数值两者共用)</li>
-      <li><span class="tag tag-must">必须</span>穿透 / AoE <strong>不加</strong>, 保留 "小兵成群依次爆" 的爽感</li>
-    </ul>
-
-    <h3>7.5.5 敌人出场 · 方阵制 (6×10 密集列队)</h3>
-    <div class="callout">
-      <strong>方阵规则</strong>: 接敌通道上半部分预排一个完整方阵 (6 列 × 10 行 = 60 单位, 单位之间 <strong>零间距</strong>), 当前方阵被清空或推进至下半部分后, 下一个方阵从顶部刷入。
+    <div class="callout info">
+      <strong>意图</strong>: 预体验是 "试爽" 不是 "试刚", 玩家死了立刻能再来一次, 保护第一印象的正向反馈。不惩罚 = 不劝退。
     </div>
 
+    <h3>7.5.3 紧急警报弹窗 (首次进入触发 · 定稿文案)</h3>
+    <p>加载页 (①) 之后、进入预体验战斗 (③) 之前, 弹一次警报窗。<strong>文案原文原字, 不改</strong>:</p>
+    <div class="callout" style="font-family: ui-monospace, Menlo, monospace; text-align: center; line-height: 2; border-left: 4px solid #ff5050;">
+      ⚠️ <strong>紧急警报</strong><br><br>
+      敌人启动虚空屏蔽场,<br>
+      深空信号被压制,<br>
+      补给通道被切断,<br>
+      主基地失联。<br>
+      看来只能靠我们自己了……
+    </div>
+
+    <h3>7.5.4 火力配置 (主角满配 + BOBO 同步)</h3>
     <table>
-      <tr><th>方阵 #</th><th>构成</th><th>目标体验</th></tr>
-      <tr><td><strong>方阵 1</strong></td><td>60 小兵 (纯)</td><td>满配火力碾压弱敌 · 建立操作信心</td></tr>
-      <tr><td><strong>方阵 2</strong></td><td>50 小兵 + 10 精英 (散布)</td><td>精英生命条明显厚, 感受 "护甲" 概念</td></tr>
-      <tr><td><strong>方阵 3</strong></td><td>40 小兵 + 15 精英 + 5 精英 (后排集中)</td><td>后排精英推到面前时的火力对抗感</td></tr>
-      <tr><td><strong>方阵 4</strong></td><td>30 小兵 + 20 精英 + <strong>1 miniA</strong> (居中)</td><td>miniA 第一次登场 · 血条长 · 体型大 · "这什么东西?"</td></tr>
-      <tr><td><strong>方阵 5</strong></td><td>20 小兵 + 20 精英 + <strong>2 miniA + 1 miniB</strong></td><td>多 mini-boss 同时在场 · 火力分配考验</td></tr>
-      <tr><td><strong>方阵 6</strong></td><td>10 小兵 + 20 精英 + <strong>2 miniB + 1 miniC</strong></td><td>miniC 登场 · HP 极厚 · 开始吃力</td></tr>
-      <tr><td><strong>方阵 7</strong></td><td>10 精英 + <strong>3 miniB + 2 miniC</strong></td><td>精英变杂兵 · mini-boss 成主力 · 压力拉满</td></tr>
-      <tr><td><strong>方阵 8</strong></td><td>5 精英 + <strong>2 miniC</strong></td><td>最终方阵 · 全场 mini-boss 收尾 · 清完通关</td></tr>
+      <tr><th>单位</th><th>属性</th><th>预体验值</th><th>正式关卡对照</th></tr>
+      <tr><td rowspan="5"><strong>主角</strong></td><td>atk 攻击力</td><td><strong>60</strong> (满配)</td><td>基础值</td></tr>
+      <tr><td>spd 移动速度</td><td><strong>1.5×</strong></td><td>1×</td></tr>
+      <tr><td>blt 弹道数</td><td><strong>3</strong></td><td>1</td></tr>
+      <tr><td>crt 暴击率</td><td><strong>25%</strong></td><td>0</td></tr>
+      <tr><td>critDmg 暴击伤害</td><td><strong>+50%</strong></td><td>+0</td></tr>
+      <tr><td rowspan="2"><strong>BOBO</strong></td><td>射速</td><td><strong>2×</strong></td><td>1×</td></tr>
+      <tr><td>弹道数</td><td><strong>双弹道</strong></td><td>单弹道</td></tr>
     </table>
-    <div class="callout warn">
-      <strong>大 BOSS 不出预体验</strong> (Kaysen 拍板 2026-07-07): 大 BOSS 留给正式关卡末尾, 保持仪式感。预体验最高只到 miniC。
-    </div>
+    <p><strong>设计意图</strong>: 满配拉爽感峰值。<strong>K6 原话钉死</strong>: 主角和 BOBO <strong>两者属性一样</strong> (atk=60 / spd=1.5 / blt=3 / crit=25% / critDmg=+50% 全部同步)。让玩家立刻感受到 "全套加满是这个样子", 建立追求锚点。</p>
+
+    <h3>7.5.5 敌人 · 8 方阵制 (强度递增不封顶)</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span>方阵内单位 <strong>零间距</strong> 紧密排列, 视觉上就是一面墙</li>
-      <li><span class="tag tag-must">必须</span>方阵从通道上半部分 <strong>整体匀速推进</strong>, 不是单个刷</li>
-      <li><span class="tag tag-must">必须</span>清完第 8 方阵 = 预体验通关 → 进入过场 (§0.5.4)</li>
-      <li><span class="tag tag-should">建议</span>方阵切换间隙 <strong>2-3 秒</strong> 空窗, 让玩家喘口气 + 捡宝箱的空间</li>
+      <li><span class="tag tag-must">必须</span><strong>6×10 密集列队</strong>, 零间距</li>
+      <li><span class="tag tag-must">必须</span>共 <strong>8 个方阵</strong>依次推进, 强度递增, <strong>不封顶</strong> — 直到玩家死或过关 (打完第 8 阵 + 小 Boss)</li>
+      <li><span class="tag tag-must">必须</span>开局位置: 敌人在<strong>通道上半部分集结列队</strong>, 远端 y = <code>HORIZON_Y</code> 起, 玩家看到密集列队直接给到压迫感</li>
+      <li><span class="tag tag-must">必须</span>大 BOSS <strong>不出</strong>, 预体验只到<strong>小 BOSS</strong>层级 (在最后一阵后作为终局收尾)</li>
     </ul>
 
-    <h3>7.5.6 左通道宝箱 (预排列 · 双倍效果)</h3>
+    <h3>7.5.6 宝箱 (预体验独有: 效果双倍)</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span>预体验关卡左通道 <strong>宝箱预排列</strong>, 按 §4.5 的 8 件配件顺序依序出现</li>
-      <li><span class="tag tag-must">必须</span>宝箱效果 = <strong>正式关卡的双倍数值</strong> (别站一起爆炸 100 点 / 飞轮海每秒 100 点 / 高压电每次 200 点 / 其余同理)</li>
-      <li><span class="tag tag-must">必须</span>宝箱 HP 拉高 <strong>不能秒破</strong>, 玩家需要多次击打</li>
-      <li><span class="tag tag-should">建议</span>宝箱出现节奏匹配方阵推进: 方阵 1 清完时约可获得 1 号宝箱, 以此类推</li>
+      <li><span class="tag tag-must">必须</span>预体验关卡宝箱效果 <strong>双倍</strong> (正式关卡是 1×)</li>
+      <li><span class="tag tag-must">必须</span>左通道宝箱走<strong>预排列</strong>, 不用正式关卡随机 spawn</li>
+      <li><span class="tag tag-must">必须</span>宝箱 HP 不能秒破, 保留 "打宝箱换武器" 的动作反馈</li>
+      <li><span class="tag tag-may">可选</span>具体掉落内容 (削弱版真实内容) 待 T02 定完再补</li>
     </ul>
 
-    <h3>7.5.7 特殊防线机制 · 反弹护盾</h3>
+    <h3>7.5.7 状态门时机</h3>
+    <ul>
+      <li><span class="tag tag-must">必须</span>状态门在<strong>战斗触发后 10s</strong> 出第一个</li>
+      <li><span class="tag tag-must">必须</span>静默期 (进入战斗前) <strong>不出</strong>状态门</li>
+      <li><span class="tag tag-should">建议</span>后续状态门频率同正式关卡节奏</li>
+    </ul>
+
+    <h3>7.5.8 反弹护盾 (预体验独有 · v4 复活路径保留)</h3>
     <p><strong>预体验关卡独有</strong>的双层保护机制: 反弹护盾 + 防线血量。</p>
     <table>
       <tr><th>层</th><th>触发</th><th>效果</th></tr>
       <tr><td>反弹护盾</td><td>近战敌人贴脸攻击防线 X 伤害</td><td><strong>护盾 HP -X</strong> 且 <strong>敌人反受等量 X 伤害</strong></td></tr>
       <tr><td>反弹护盾</td><td>远程敌人子弹命中防线</td><td>护盾 HP -X, <strong>不反弹</strong> (只对近战反弹)</td></tr>
-      <tr><td>防线血量</td><td>护盾归零后, 继续受击</td><td>防线 HP -X, 归零 = Game Over</td></tr>
+      <tr><td>防线血量</td><td>护盾归零后, 继续受击</td><td>防线 HP -X, 归零 = 死亡 → 触发 §7.5.2.1 复活弹窗</td></tr>
     </table>
     <div class="callout warn">
-      <strong>反弹护盾 · 跨关卡定位 (D13 拍板, 2026-07-02)</strong>: 反弹护盾<strong>仅在预体验关卡存在</strong>, 正式 1/2/3 关无。剧情逻辑 = 敌人启动"虚空屏蔽场"切断补给, 一并剥夺护盾。<br><br>
-      <strong>未来复活路径</strong>: v4 材料合成系统上线后, 反弹护盾作为一个<strong>合成配方产物</strong>可解锁使用 (不是永久掉落, 是配方组合)。留作 v4 玩法钩子, v3.1 spec 不展开。
+      <strong>跨关卡定位</strong>: 反弹护盾<strong>仅在预体验关卡存在</strong>, 正式 1/2/3 关无。剧情逻辑 = 敌人启动 "虚空屏蔽场" 切断补给, 一并剥夺护盾。<br><br>
+      <strong>未来复活路径</strong>: v4 材料合成系统上线后, 反弹护盾作为<strong>合成配方产物</strong>可通过配方解锁使用 (不是永久掉落, 是配方组合)。留作 v4 玩法钩子, v3.2 spec 不展开。
     </div>
 
-    <h3>7.5.8 衔接过场 (已迁移至 §0.5.4)</h3>
-    <p>通关后的两段式过场 (总部问话 + 通讯中断警告) 见 <strong>§0.5.4</strong>。</p>
+    <h3>7.5.9 衔接 · 过场 (锚点 §0.5.4)</h3>
+    <p>预体验通关 → 触发过场 (风格 A 严肃流) → 主菜单。<strong>详细口径见 §0.5.4</strong>, 本节不重复。</p>
 
-    <h3>7.5.9 成本估算</h3>
+    <h3>7.5.10 成本估算</h3>
     <table>
       <tr><th>项</th><th>估算</th><th>说明</th></tr>
-      <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 v3 现有内容 (敌人/防线/主角/BOBO/武器/宝箱)</td></tr>
-      <tr><td>代码成本</td><td><strong>4-6 小时</strong></td><td>方阵系统 + 满配属性覆盖 + 宝箱双倍 + 4 个弹窗 (加载页/警报/总部问话/通讯中断)</td></tr>
-      <tr><td>art-spec-v3.html 影响</td><td><strong>无</strong></td><td>反弹护盾特效独立成资产, 不影响荻子已在推进的 P0/P1 交付</td></tr>
+      <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 v3 现有内容, 反弹护盾特效独立成资产</td></tr>
+      <tr><td>代码成本</td><td><strong>3-5 小时</strong></td><td>关卡 0 模板 + 满配属性覆盖 + 8 方阵调度 + 复活弹窗 + 紧急警报弹窗</td></tr>
+      <tr><td>art-spec-v3.html 影响</td><td><strong>无</strong></td><td>不影响荻子已在推进的 P0/P1 交付</td></tr>
+      <tr><td>数值平衡影响</td><td><strong>无</strong></td><td>预体验是独立配置, 不影响 v2.1 正式关卡数值表</td></tr>
     </table>
   </section>
 
@@ -1541,6 +1328,9 @@ Alien Fizzle · 玩法规格<br>
     <p class="lead">最高难度 3 关全部通关后解锁。核心目标 = 解玩家"打通就丢, 没动力再玩"的核心病, 用刷分破纪录 + 好友榜社交贴合建立长线留存钩子。</p>
 
     <h3>7.6.1 定位与解锁</h3>
+    <div class="callout warn">
+      <strong>K2 通关率目标 (v3.2 定稿 · 一字未改)</strong>: "我希望该模式下<strong>通关率维持在 1% 以下</strong>, 顶多是<strong>时间到了还存活着</strong>, 不能是时间还没到就被玩家杀光了。" — 所有后续 wave 数值调整必须以此为顶层约束。
+    </div>
     <ul>
       <li><span class="tag tag-must">必须</span><strong>解锁条件</strong>: 最高难度 (第三关 · 殊死决战) 通关</li>
       <li><span class="tag tag-must">必须</span>解锁后主菜单出现"无尽模式"入口, 与关卡选择平级</li>
@@ -1555,107 +1345,71 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-must">必须</span>无关卡结束条件, 只有玩家死亡或主动退出结算</li>
     </ul>
 
-    <h3>7.6.3 敌人爬升 · 5 段 6 潮 5 回合 · 硬核马拉松 (v3.2 拍板)</h3>
+    <h3>7.6.3 无尽模式难度曲线总纲 (v3.2 定稿 · 二期开发)</h3>
     <div class="callout warn">
-      <strong>Kaysen 拍板 (2026-07-08)</strong>: 舍弃 v3.1 的 60s wave 结构, 改用 <strong>5 段 × 6 潮 × 5 回合 = 150 回合</strong>的分段结构。目标 = 硬核马拉松长线单局, 中位数玩家死亡 ≈ 20 分钟, 顶级玩家通关 ≈ 35 分钟, 通关率 ≤ 1%。
+      <strong>版本说明</strong>: v3.2 相对 v3.1 <strong>推翻</strong>了 "60s 一 wave · 指数阶跃" 的旧结构, 改为 <strong>5 段 × 6 潮 × 5 回合 = 150 回合硬核马拉松</strong>。本节及 6 个子章节是二期开发的锚点。
     </div>
+    <table>
+      <tr><th>项</th><th>定稿值</th><th>说明</th></tr>
+      <tr><td><strong>结构</strong></td><td>5 段 × 6 潮 × 5 回合 = <strong>150 回合</strong></td><td>硬核马拉松, 无尽但可推演终点</td></tr>
+      <tr><td><strong>回合时长</strong></td><td>玩家节奏 10s (段 1-2) / 系统节奏 15s (段 3-5)</td><td>详见 §7.6.3.4</td></tr>
+      <tr><td><strong>潮间</strong></td><td>5s</td><td>短喘息, 不给主动退出机会</td></tr>
+      <tr><td><strong>目标死亡曲线</strong></td><td>中位数 ≈ <strong>19 min</strong> (段 3 结束)</td><td>普通玩家死在段 3 附近</td></tr>
+      <tr><td><strong>顶级通关</strong></td><td>≈ <strong>35 min</strong></td><td>能撑穿段 5 叹息之壁的极少数</td></tr>
+      <tr><td><strong>强度爬升</strong></td><td>每回合 <strong>+20%</strong></td><td>首版建议值, demo 阶段可调 +15%~+25%</td></tr>
+    </table>
 
-    <h4>7.6.3.1 结构总览</h4>
+    <h3>7.6.3.1 五段命名与节奏</h3>
+    <table>
+      <tr><th>段</th><th>名称</th><th>节奏模式</th><th>回合时长</th></tr>
+      <tr><td>1</td><td>适中</td><td>玩家节奏 (清完提前推进)</td><td>10s (上限)</td></tr>
+      <tr><td>2</td><td>较大</td><td>玩家节奏</td><td>10s</td></tr>
+      <tr><td>3</td><td><strong>困难</strong></td><td><strong>系统节奏首入</strong></td><td>15s (强制)</td></tr>
+      <tr><td>4</td><td>地狱</td><td>系统节奏</td><td>15s</td></tr>
+      <tr><td>5</td><td><strong>叹息之壁</strong></td><td>系统节奏</td><td>15s</td></tr>
+    </table>
+
+    <h3>7.6.3.2 切段文案 (1-1-1-3 分布)</h3>
+    <table>
+      <tr><th>切点</th><th>文案</th><th>备注</th></tr>
+      <tr><td>段 1 → 段 2</td><td><strong>「试探结束」</strong></td><td>常规横幅</td></tr>
+      <tr><td>段 2 → 段 3</td><td><strong>「倒计时启动」</strong></td><td>特殊处理, 见 §7.6.3.3</td></tr>
+      <tr><td>段 3 → 段 4</td><td><strong>「下沉深渊」</strong></td><td>常规横幅</td></tr>
+      <tr><td>段 4 → 段 5</td><td><strong>「叹息之壁 · 此刻起每一次呼吸都是奇迹」</strong></td><td>长文案 · 加权重</td></tr>
+    </table>
+
+    <h3>7.6.3.3 切点 2 特殊处理 (段 2 → 段 3 · 机制切换点)</h3>
+    <p>切点 2 是 <strong>玩家节奏 → 系统节奏</strong> 的机制切换, 必须重点提示:</p>
     <ul>
-      <li><span class="tag tag-must">必须</span><strong>5 个分段</strong>, 每段性质完全不同 (段名 = 段的性质表征)</li>
-      <li><span class="tag tag-must">必须</span><strong>每段 6 个进攻潮</strong>, 潮之间有 5s 静默期 (仅 UI 播报"第 N 潮来袭", 不给休息)</li>
-      <li><span class="tag tag-must">必须</span><strong>每潮 5 个回合</strong>, 回合内强度<strong>逐个继承上一回合结束时的强度</strong>再递增 (每回合 +20%, 段内共爬升 30 步)</li>
-      <li><span class="tag tag-must">必须</span>段与段之间强度<strong>连续衔接</strong>: 段 N 最后一回合结束时的强度 == 段 N+1 第一回合的起始强度</li>
-      <li><span class="tag tag-must">必须</span>切段瞬间触发<strong>切段横幅</strong> (见 §7.6.3.6), 传达新段性质变化</li>
+      <li><span class="tag tag-must">必须</span><strong>5s 横幅</strong>: "倒计时启动" (红色渐变字, 全屏中央)</li>
+      <li><span class="tag tag-must">必须</span><strong>HUD 顶部 15s 提示条</strong>: 提醒机制从 "清完自动推进" 切到 "15s 定时推进"</li>
+      <li><span class="tag tag-todo">TODO</span>段 3 首回合是否加 <strong>3-2-1 准备倒计时</strong>: 待定 (T07 数值组阶段决定)</li>
     </ul>
 
-    <h4>7.6.3.2 五段性质表</h4>
+    <h3>7.6.3.4 玩家节奏 vs 系统节奏</h3>
     <table>
-      <tr><th>段</th><th>性质</th><th>回合触发机制</th><th>预期通过率</th><th>目标玩家</th></tr>
-      <tr><td>段 1</td><td><strong>适中</strong></td><td>玩家节奏 · 清完当前回合才刷下一回合</td><td>≈ 100%</td><td>熟练后所有玩家</td></tr>
-      <tr><td>段 2</td><td><strong>较大</strong></td><td>玩家节奏 · 清完当前回合才刷下一回合</td><td>≈ 40%</td><td>非常熟练玩家</td></tr>
-      <tr><td>段 3</td><td><strong>困难</strong></td><td>系统节奏 · 回合按时开启, 清不完敌人累积到下一回合</td><td>≈ 20% (筛 80%)</td><td>高手</td></tr>
-      <tr><td>段 4</td><td><strong>地狱</strong></td><td>系统节奏 · 回合按时开启, 清不完敌人累积到下一回合</td><td>≈ 5% (筛 95%)</td><td>顶级玩家</td></tr>
-      <tr><td>段 5</td><td><strong>叹息之壁</strong></td><td>系统节奏 · 回合按时开启, 清不完敌人累积到下一回合</td><td>&lt; 1%</td><td>天赋型少数派</td></tr>
+      <tr><th>节奏模式</th><th>覆盖段</th><th>推进逻辑</th><th>体验</th></tr>
+      <tr><td><strong>玩家节奏</strong></td><td>段 1-2</td><td>回合内清完立刻提前推进下潮; <strong>10s 是防挂机上限</strong></td><td>爽感 · 打得越快节奏越紧</td></tr>
+      <tr><td><strong>系统节奏</strong></td><td>段 3-5</td><td><strong>15s 固定</strong>, 清不完自动进下潮 (敌人堆积)</td><td>压迫感 · 手感差就雪崩</td></tr>
     </table>
-    <div class="callout">
-      <strong>玩家节奏 vs 系统节奏 · 核心差异</strong>: 玩家节奏 = 玩家节奏 (清完才推进), 段 1/2 让玩家熟悉手感建立信心; 系统节奏 = 系统节奏 (按时推进, 清不完就崩), 从段 3 起接管, 是硬核马拉松的核心筛人机制。切换点 = 段 2 → 段 3, <strong>必须用切段横幅明确警告</strong> (见 §7.6.3.6 切点 2), 玩家不该猜规则。
-    </div>
 
-    <h4>7.6.3.3 时长测算 (回合 10s/15s · 潮间 5s)</h4>
+    <h3>7.6.3.5 大 BOSS 曲线</h3>
     <table>
-      <tr><th>段</th><th>回合时长</th><th>每段时长</th><th>累积时长</th><th>说明</th></tr>
-      <tr><td>段 1 · 适中</td><td>玩家 10s/回合</td><td>5.5 min (330s)</td><td><strong>5.5 min</strong></td><td>熟悉手感, 建立信心</td></tr>
-      <tr><td>段 2 · 较大</td><td>玩家 10s/回合</td><td>5.5 min (330s)</td><td><strong>11.0 min</strong></td><td>加压, 需专注</td></tr>
-      <tr><td>段 3 · 困难</td><td>系统 15s/回合</td><td>8.0 min (480s)</td><td><strong>19.0 min</strong> ← 中位数死亡</td><td>系统节奏首入, 90% 玩家死这</td></tr>
-      <tr><td>段 4 · 地狱</td><td>系统 15s/回合</td><td>8.0 min (480s)</td><td><strong>27.0 min</strong></td><td>99% 玩家死这</td></tr>
-      <tr><td>段 5 · 叹息之壁</td><td>系统 15s/回合</td><td>8.0 min (480s)</td><td><strong>35.0 min</strong> ← 顶级通关</td><td>&lt; 1% 天赋型通过</td></tr>
+      <tr><th>段</th><th>大 BOSS 数</th></tr>
+      <tr><td>段 1</td><td>0</td></tr>
+      <tr><td>段 2</td><td>1</td></tr>
+      <tr><td>段 3</td><td>2-3</td></tr>
+      <tr><td>段 4</td><td>4-5</td></tr>
+      <tr><td>段 5</td><td>6+</td></tr>
     </table>
-    <div class="callout warn">
-      <strong>关键数值 (v3.2 拍板)</strong>:
-      <ul style="margin-top:8px;">
-        <li>玩家节奏单回合 = <strong>10s</strong> (段 1/2 · 玩家清完即刻推进, 10s 是防挂机上限, 超时未清完系统强推)</li>
-        <li>系统节奏单回合 = <strong>15s</strong> (段 3/4/5 · 到点必推进, 给玩家 3s 调整策略窗口)</li>
-        <li>潮间静默 = <strong>5s</strong> (仅 UI 播报"第 N 潮来袭", 不给休息)</li>
-        <li>玩家节奏下, 若玩家提前清完当前回合 → 立即推进下一回合 (不等 10s 满), 提升玩家节奏爽感</li>
-      </ul>
-    </div>
+    <p><strong>具体数值 (每段哪几潮出、组合形态) 待 T07 数值组细化</strong>。</p>
 
-    <h4>7.6.3.4 段内强度爬升曲线</h4>
-    <p>每段 6 潮 × 5 回合 = 30 步爬升, 每步相对上一步 <strong>+20%</strong> 敌人强度 (HP × 出怪密度综合)。段内首回合起始强度 = 上段末回合结束强度 (连续衔接不断档)。</p>
+    <h3>7.6.3.6 悬案 (二期启动时处理)</h3>
     <ul>
-      <li><span class="tag tag-should">建议</span>段 1 首回合起始强度 = 正式第一关新手训练强度 · 基线</li>
-      <li><span class="tag tag-should">建议</span>段 1 → 段 2 强度切换点 ≈ 1.20^30 = 237x 基线 (段 2 首回合)</li>
-      <li><span class="tag tag-should">建议</span>段内 30 步爬升需要数值组用<strong>模拟器 v2 (T07)</strong>验证曲线合理性, spec 阶段先定"每回合 +20%"的架构比例, 不定具体 HP 数值</li>
+      <li><strong>每回合 +20% 强度爬升</strong> 是首版建议值, demo 阶段用模拟器验证; 可能调整到 +15%~+25% 区间</li>
+      <li><strong>段 3 首回合 3-2-1 准备倒计时是否加</strong>: 待 T07 数值组决定</li>
+      <li><strong>好友榜 / 结算面板视觉细节</strong>: 二期开工时定 (荻子出图)</li>
     </ul>
-    <div class="callout warn">
-      <strong>数值细化悬案 · T07</strong>: 每回合 +20% 是首版建议值, 实际可能因敌人组合 (小兵/精英/BOSS 混合) 调整为 +15%~+25%, 需 demo 阶段验证。若某一段中位数玩家死亡时间偏离预期 ≥ 2 分钟, 调整该段的爬升幅度而不是回合数 (回合数改动会破坏结构)。
-    </div>
-
-    <h3>7.6.3.5 大 BOSS 出现规则 (v3.2 更新)</h3>
-    <div class="callout warn">
-      <strong>Kaysen 拍板 (2026-07-07 / 2026-07-08 更新)</strong>: 大 BOSS <strong>作为常规 3 关的末终 BOSS</strong> 出场, 玩家在通关主线时至少会遇到 3 次。无尽模式下大 BOSS <strong>按段递增涌入</strong>, 后期可能同屏多只。
-    </div>
-    <ul>
-      <li><span class="tag tag-must">必须</span>常规关卡: 每关末 (关卡 1/2/3 结尾) 出 <strong>1 只大 BOSS</strong>, 击败后关卡通过</li>
-      <li><span class="tag tag-must">必须</span>无尽模式: 大 BOSS 出现频率<strong>按段递增</strong>, 与段结构对齐 (段 1 稀疏, 段 5 密集)</li>
-      <li><span class="tag tag-must">必须</span>无尽模式<strong>通关率目标 ≤ 1%</strong>: 玩家死亡的正常路径是<strong>回合内清不完敌人累积到崩溃</strong>, 不允许<strong>被单只大 BOSS 一击秒</strong></li>
-      <li><span class="tag tag-must">必须</span>大 BOSS 阵型的段间引入节奏必须让玩家<strong>撑不住</strong> — 不是难以击杀单只, 而是<strong>杀不过来</strong> (数量压倒火力上限)</li>
-      <li><span class="tag tag-todo">待定</span>大 BOSS 具体 spawn 曲线 (每段每潮出几只, 同屏上限) 由数值组 T07 细化 · <strong>建议起始曲线</strong>:
-        <ul style="margin-top:6px;">
-          <li>段 1 (适中): <strong>0 只</strong> · 让玩家熟悉小兵/精英节奏</li>
-          <li>段 2 (较大): <strong>1 只 / 段</strong> · 出现在第 4-5 潮, 作为段末压力测试</li>
-          <li>段 3 (困难): <strong>2-3 只 / 段</strong> · 与系统节奏切换同步施压, 每 2 潮出 1 只</li>
-          <li>段 4 (地狱): <strong>4-5 只 / 段</strong> · 潮内可能同屏 2 只</li>
-          <li>段 5 (叹息之壁): <strong>6+ 只 / 段</strong> · 潮内可能同屏 3 只, 是压倒火力的核心</li>
-        </ul>
-      </li>
-    </ul>
-    <div class="callout">
-      <strong>难度曲线守则</strong>: 无尽模式的失败方式必须是"被时间/数量磨死", 不是"被单只 BOSS 一击秒". 玩家死时应该<strong>觉得自己努力过</strong> (打了很久, 但敌人越来越多, 最终撑不住), 而不是<strong>觉得被作弊</strong> (突然一只怪跳出来一击必杀).
-    </div>
-
-    <h3>7.6.3.6 切段横幅文案 (v3.2 新增 · Kaysen 2026-07-08 拍板 1-1-1-3)</h3>
-    <p>每段结束进入下一段时, 屏幕中央触发<strong>切段横幅</strong>: 副标题 (2-6 字) + 主文案 (10-16 字) 双层结构, 3 秒展示后自然淡出, 期间敌人静止游戏暂停。</p>
-    <table>
-      <tr><th>切点</th><th>新段</th><th>副标题</th><th>主文案</th><th>触发时机</th></tr>
-      <tr><td>切点 1</td><td>段 2 · 较大</td><td>「试探结束」</td><td>他们看清了你的路数</td><td>段 1 第 6 潮末回合清完瞬间</td></tr>
-      <tr><td>切点 2</td><td>段 3 · 困难</td><td>「倒计时启动」</td><td>回合到点即启, 你的节奏由不得你</td><td>段 2 第 6 潮末回合清完瞬间 · <strong>关键切换点</strong></td></tr>
-      <tr><td>切点 3</td><td>段 4 · 地狱</td><td>「下沉深渊」</td><td>80% 的人已倒在这之前</td><td>段 3 第 6 潮末回合结束 (系统推进)</td></tr>
-      <tr><td>切点 4</td><td>段 5 · 叹息之壁</td><td>「叹息之壁」</td><td>此刻起, 每一次呼吸都是奇迹</td><td>段 4 第 6 潮末回合结束 (系统推进)</td></tr>
-    </table>
-    <div class="callout warn">
-      <strong>切点 2 特殊处理</strong>: 段 2 → 段 3 是<strong>机制切换点</strong> (玩家节奏 → 系统节奏), 不能只用横幅一闪而过。建议:
-      <ul style="margin-top:8px;">
-        <li>横幅展示时长延长到 <strong>5 秒</strong> (其他切点 3 秒), 让玩家读完并意识到规则变了</li>
-        <li>副标题「倒计时启动」使用<strong>红色渐变字</strong> + 呼吸动画, 与其他切点的白色字区分</li>
-        <li>横幅淡出后, 段 3 第 1 潮首回合的 HUD 顶部持续显示 <strong>"⏱ 系统节奏 · 15s/回合"</strong> 提示条, 5 潮后 (半段) 淡出</li>
-        <li>可选: 段 3 第一回合可加一个 3s "准备倒计时" (3-2-1) 让玩家心理适应, 数值组 T07 阶段决定加不加</li>
-      </ul>
-    </div>
-    <div class="callout">
-      <strong>UI 视觉规范 (对齐 skill html5-minigame-polish-pipeline 荣誉成就规范)</strong>: 切段横幅不是普通提示, 是玩家局内的<strong>仪式感锚点</strong>, 视觉冲击拉满 (独立层级 + 缩放呼吸 + 音效), 参考荣誉横幅规格。段 5 「叹息之壁」的切段横幅视觉规格 <strong>= 荣誉横幅同级</strong> (金色字 · 大事件音), 强化"到最后一段"的宿命感。
-    </div>
 
     <h3>7.6.4 分数公式 · 均衡 (D13 拍板)</h3>
     <p><strong>决策</strong>: C 均衡方案, 存活时间 + 防线 HP + 杀敌数 三者都要兼顾, 逼玩家平衡"活久 vs 打多"。</p>
@@ -1683,14 +1437,11 @@ Alien Fizzle · 玩法规格<br>
       <strong>技术选型理由</strong>: 微信开放数据域是白嫖社交的最佳解 — 0 服务器成本, 用微信关系链好友的比较自然产生比拼欲, 参考《向僵尸开炮》同款架构。集成时多加一个开放数据域子包 (微信文档有现成模板)。
     </div>
 
-    <h3>7.6.6 UI 需求 (v3.2 更新)</h3>
+    <h3>7.6.6 UI 需求</h3>
     <ul>
       <li>主菜单入口: "无尽模式" 按钮 (通关前 disabled + 锁图标 + 提示 "通关第三关解锁")</li>
-      <li>局内 HUD: <strong>当前段名 (段 3 · 困难 大字体)</strong> + <strong>当前潮 (P4/6)</strong> + <strong>当前回合 (R3/5)</strong> + 存活时间 + 累计击杀 + 实时分数</li>
-      <li><strong>段 3 起 (系统节奏段)</strong>: HUD 顶部持续显示 <strong>"⏱ 系统节奏 · 15s/回合"</strong> 提示条 (段 3 首潮持续显示, 5 潮后淡出)</li>
-      <li><strong>回合倒计时</strong> (段 3-5 系统节奏): 当前回合剩余时间显示条 (顶部或圆环), 3s 内变红色 warning</li>
-      <li><strong>切段横幅</strong>: 独立层级触发, 副标题 + 主文案双层, 3s 展示 (切点 2 延长到 5s), 期间敌人静止游戏暂停 · 详细规格见 §7.6.3.6</li>
-      <li>结算面板: 本局分数 + 击杀 + 存活时间 + <strong>死于第 N 段</strong> + 历史最高分 + 好友榜 top 10 + 分享按钮</li>
+      <li>局内 HUD: 当前 Wave 显示 (WAVE 5 大字体), 存活时间, 累计击杀, 实时分数</li>
+      <li>结算面板: 本局分数 + 击杀 + 存活时间 + 历史最高分 + 好友榜 top 10 + 分享按钮</li>
       <li>破纪录横幅: 独立触发, 金色, 呼吸动画, "NEW RECORD! 累计击杀 XXX"</li>
     </ul>
 
@@ -1732,7 +1483,7 @@ Alien Fizzle · 玩法规格<br>
 
   <section class="chapter" id="ch-09">
     <span class="chapter-num">§ 09 · 待定项 (需 Kaysen 后续拍板)</span>
-    <h2>10 个未定数值 / 规则</h2>
+    <h2>5 个未定数值 / 规则</h2>
     <p class="lead">这些项目本规格暂留 placeholder, 不阻塞美术与基础玩法验证, 在白模 demo 调试或数值策划阶段补齐。</p>
 
     <table>
@@ -1744,9 +1495,6 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>T05</td><td>多镜像 BOBO 上限</td><td>初版限 2 个, 后续是否开放 3-4 个(数值与画面挤占问题)</td><td>白模 demo 平衡性验证后</td></tr>
       <tr><td>T06</td><td><span style="color:#e0a93a">v3.1</span> 预体验关卡宝箱掉落表</td><td>关卡 0 左通道预排列宝箱的具体掉落内容 (削弱版真实宝箱), 依赖 T02 正式宝箱库先定</td><td>T02 完成后</td></tr>
       <tr><td>T07</td><td><span style="color:#e0a93a">v3.1</span> 无尽模式 wave 数值表</td><td>每 wave 敌人 HP / 出怪率 / 特殊组合的具体值 (spec 已定曲线形状, 未定数值)</td><td>模拟器 v2 阶段</td></tr>
-      <tr><td>T08</td><td><span style="color:#c96666">v3.1</span> 7 号恩赐解脱 n 倍值</td><td>真实伤害倍率 n · 目标 = 中期 (elite HP 560, 玩家攻击 ~40-60) 一发秒杀精英怪; 前期打小怪爽; 后期打 miniA 打约 20% HP</td><td>数值配平阶段, 需模拟器跑</td></tr>
-      <tr><td>T09</td><td><span style="color:#c96666">v3.1</span> 大 BOSS spawn 曲线</td><td>无尽模式每 wave 大 BOSS 出几只 / 同屏上限 / 阵型组合. 需满足: 通关率 ≤ 1% + 存活时间中位数 ≈ wave 长度</td><td>模拟器 v2 阶段, 无尽难度曲线单独议题</td></tr>
-      <tr><td>T10</td><td><span style="color:#c96666">v3.1</span> 局时长 60s → 180s 拍板</td><td>Kaysen 反馈 60s 不够爽, 暂调 3 分钟试玩. 需白模 demo 验证 3 分钟节奏是否成立 (会不会前期尿点 / 后期堆叠爽感够不够)</td><td>白模 demo v3.2 阶段</td></tr>
     </table>
   </section>
 

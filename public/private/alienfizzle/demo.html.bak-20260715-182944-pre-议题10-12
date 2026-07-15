@@ -291,106 +291,6 @@ html,body{
 </head>
 <body>
 
-<!-- 议题 12 · 切片 1 · 加载页 START -->
-<div id="loadingOverlay" style="position:fixed; inset:0; z-index:9999; background:#0a0e1a; display:flex; align-items:center; justify-content:center; transition: opacity 0.6s ease;">
-  <div style="text-align:center; color:#5fb0ff;">
-    <div style="font: bold 42px sans-serif; letter-spacing:8px;">LOADING</div>
-    <div style="margin-top:20px; display:flex; gap:8px; justify-content:center;">
-      <span class="ld-dot"></span><span class="ld-dot"></span><span class="ld-dot"></span>
-    </div>
-  </div>
-</div>
-<style>
-  .ld-dot {
-    display:inline-block;
-    width:10px; height:10px; border-radius:50%;
-    background:#5fb0ff;
-    animation: ld-pulse 1.2s ease-in-out infinite;
-  }
-  .ld-dot:nth-child(2) { animation-delay: 0.2s; }
-  .ld-dot:nth-child(3) { animation-delay: 0.4s; }
-  @keyframes ld-pulse {
-    0%,80%,100% { opacity: 0.3; transform: scale(0.8); }
-    40% { opacity: 1; transform: scale(1.2); }
-  }
-</style>
-<!-- 议题 12 · 切片 1 · 加载页 END -->
-
-<!-- 议题 12 · 切片 2 · 开局弹窗 START -->
-<div id="introDialog" style="
-  position:fixed; inset:0; z-index:9998;
-  background: rgba(5, 8, 20, 0.92);
-  display:none;
-  align-items:center; justify-content:center;
-  transition: opacity 0.5s ease;
-">
-  <div style="
-    max-width: 480px; margin: 0 20px;
-    background: linear-gradient(135deg, #1a1f35 0%, #0f1424 100%);
-    border: 2px solid #ff4444;
-    border-radius: 8px;
-    padding: 32px 28px;
-    text-align: center;
-    box-shadow: 0 0 40px rgba(255, 68, 68, 0.4);
-  ">
-    <div style="font: bold 22px sans-serif; color: #ff6666; margin-bottom: 20px; letter-spacing: 4px;">
-      ⚠ 紧急预警
-    </div>
-    <div id="introTextLines" style="color: #d8dce8; font-size: 15px; line-height: 1.9; margin-bottom: 28px; min-height: 90px;">
-    </div>
-    <button id="introConfirmBtn" style="
-      background: linear-gradient(135deg, #ff4444, #cc2222);
-      color: white; border: none; padding: 12px 32px;
-      font: bold 16px sans-serif; letter-spacing: 2px;
-      border-radius: 4px; cursor: pointer;
-      opacity: 0; transition: opacity 0.5s ease;
-      box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
-    ">看看怎么回事 →</button>
-  </div>
-</div>
-<!-- 议题 12 · 切片 2 · 开局弹窗 END -->
-
-<!-- 议题 12 · 切片 4 · 通关过场 START -->
-<style>
-@keyframes shake {
-  0%, 100% { transform: translateX(0); }
-  25% { transform: translateX(-6px); }
-  75% { transform: translateX(6px); }
-}
-</style>
-<div id="preExpTransition" style="
-  position:fixed; inset:0; z-index:9997;
-  background: rgba(5, 8, 20, 0.94);
-  display:none;
-  align-items:center; justify-content:center;
-  transition: opacity 0.5s ease;
-">
-  <div id="transitionContent" style="
-    max-width: 520px; margin: 0 20px;
-    text-align: center;
-    border-radius: 8px;
-  ">
-    <!-- JS 动态填内容 -->
-  </div>
-</div>
-<!-- 议题 12 · 切片 4 · 通关过场 END -->
-
-<!-- 议题 12 · 切片 5 · 关卡选择页 START -->
-<div id="levelSelectPage" style="
-  position:fixed; inset:0; z-index:9996;
-  background: linear-gradient(180deg, #0a0e1a 0%, #050810 100%);
-  display:none;
-  align-items:center; justify-content:center;
-  transition: opacity 0.5s ease;
-">
-  <div style="max-width: 640px; padding: 40px 32px; text-align: center;">
-    <div style="color: #5fb0ff; font: bold 20px sans-serif; letter-spacing: 6px; margin-bottom: 12px;">◉ 前线部署</div>
-    <div style="color: #8a99b8; font-size: 13px; margin-bottom: 40px;">选择你的战场</div>
-    <div id="levelBtnsContainer" style="display: flex; flex-direction: column; gap: 16px;"></div>
-  </div>
-</div>
-<!-- 议题 12 · 切片 5 · 关卡选择页 END -->
-
 <aside class="hint-desktop">
   <h4>《舰舰别炸》v3 白模 DEMO</h4>
   <div>桌面版 · 414×736 模拟手机</div>
@@ -592,199 +492,6 @@ const PLAYER_Y = H - 72;         // 主角 Y - 不跟随防线, 保留在屏幕�
 // 状态门固定宽度 = 接敌通道一半
 const GATE_WIDTH = TRACK_R_WIDTH * 0.45;  // 从 0.5 减到 0.45, 留更多 margin 防止视觉越界
 const GATE_HEIGHT = 28;
-
-// ============================================================
-// 议题 10 · 切片 1 · 数据层 (卡池 / 恶魔赌局 / Bobo 激光)
-// 只是"添加代码", 后续切片会使用, 本切片不触发也不 new
-// ============================================================
-
-// --- 1. SKILL_CARDS (5 张技能, 每张 3 级) ---
-const SKILL_CARDS = [
-  {
-    id: 'together',
-    name: '站一起',
-    levels: [
-      { lv:1, desc:'每 10s 主角丢一枚手雷, 对以主要目标为圆心、直径 1/3 通道宽的圆形区域造成 50 点爆炸伤害' },
-      { lv:2, desc:'[质变待数值组填, 先占位: 手雷追加燃烧 2 秒 25 主伤害 DoT]' },
-      { lv:3, desc:'[完全体待数值组填, 先占位: 每次投掷改为双弹, 爆炸范围 x1.5]' }
-    ]
-  },
-  {
-    id: 'flywheel',
-    name: '飞轮海',
-    levels: [
-      { lv:1, desc:'每 10s 发射一个飞轮到接敌通道, 触敌后展开旋转形成通道宽的圆形伤害区域, 50 伤/秒 持续 6s' },
-      { lv:2, desc:'[质变占位: 飞轮持续 9s, 伤害区半径 +30%]' },
-      { lv:3, desc:'[完全体占位: 同时存在 2 个飞轮]' }
-    ]
-  },
-  {
-    id: 'mercy',
-    name: '恩赐解脱',
-    levels: [
-      { lv:1, desc:'每 5s 自动瞄准血最高的敌人发一颗超级子弹, 造成 8x 攻击力真伤 + 身后锥形恐惧倒行 5 秒' },
-      { lv:2, desc:'[质变占位: 恐惧区扩大, 击中 boss 也生效]' },
-      { lv:3, desc:'[完全体占位: 一次连发 2 发, 每 5s]' }
-    ]
-  },
-  {
-    id: 'highvoltage',
-    name: '高压领域',
-    levels: [
-      { lv:1, desc:'每 20s 在接敌通道下半部分创造高压电区域, 穿过的子弹带电击中麻痹 0.5s, 进入区域的敌人每 2s 麻痹 0.5s + 100 伤, 持续 10s' },
-      { lv:2, desc:'[质变占位: 高压区扩大到 2/3 通道 + 持续 15s]' },
-      { lv:3, desc:'[完全体占位: 高压区扩大到整个通道 + 麻痹 1s]' }
-    ]
-  },
-  {
-    id: 'laserpierce',
-    name: '激光贯穿',
-    levels: [
-      { lv:1, desc:'蓄力 2s 后发射一根 3 个小兵单位宽的贯穿激光, 对一条直线上所有敌人造成 1 次闪光伤害 (800 伤)' },
-      { lv:2, desc:'闪光持续 3s, 造成额外 50% 余波伤害 (400/秒 x 3s)' },
-      { lv:3, desc:'持续时间内每 0.5s 向其他方向额外发射一根 1/3 宽度的小型贯穿激光' }
-    ]
-  }
-];
-
-// --- 2. MASTERY_CARDS (20 张精通卡, 可重复获得) ---
-const MASTERY_CARDS = [
-  // A 子弹形态 (3)
-  { id:'a_pierce', category:'A', name:'穿透+2', desc:'子弹贯穿 2 个敌人' },
-  { id:'a_bounce', category:'A', name:'弹射', desc:'子弹命中后弹射到最近敌人 +1 次' },
-  { id:'a_explode', category:'A', name:'爆炸弹', desc:'子弹命中产生小范围爆炸, 30% 主伤害' },
-  // B 状态施加 (3) 全必触发
-  { id:'b_burn', category:'B', name:'燃烧弹', desc:'必触发点燃, 2 秒内 50% 主伤害 DoT' },
-  { id:'b_slow', category:'B', name:'减速弹', desc:'必触发减速 30% 持续 2 秒' },
-  { id:'b_stun', category:'B', name:'麻痹弹', desc:'必触发麻痹 1.5 秒无法行动' },
-  // C 特殊触发 (2)
-  { id:'c_feast', category:'C', name:'食髓', desc:'击杀精英以上敌人后 5s 内攻速+50%' },
-  { id:'c_meltdown', category:'C', name:'熔核', desc:'自动循环 11 秒: 3s 爬升 (1x→3x攻速) + 5s 满态 (3x攻速+20暴率+50暴伤) + 3s 静默' },
-  // D 伤害修饰 (2)
-  { id:'d_hunter', category:'D', name:'精英以上猎手', desc:'对精英+boss 单位 +30% 伤害' },
-  { id:'d_weak', category:'D', name:'弱者克星', desc:'对被施加减益 (减速/麻痹/燃烧等) 的单位 +40% 伤害' },
-  // E 防线相关 (3)
-  { id:'e_reinforce', category:'E', name:'防线加固', desc:'防线 HP +30%' },
-  { id:'e_echo', category:'E', name:'回响', desc:'每击杀 20 个敌人, 防线回 1% HP' },
-  { id:'e_desperate', category:'E', name:'绝境反击', desc:'防线 HP 每下降 2%, 攻击力+1%' },
-  // F Meta (3)
-  { id:'f_greed', category:'F', name:'贪婪', desc:'击杀敌人 2% 概率立即召唤一道状态门' },
-  { id:'f_resonance', category:'F', name:'共鸣', desc:'每持有 1 张精通卡, 攻击力+2%' },
-  { id:'f_gamble', category:'F', name:'恶魔赌局', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 详见分布表)' },
-  // G Bobo 强化 (4)
-  { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 激光伤害+50%' },
-  { id:'g_overload', category:'G', name:'激光过载', desc:'Bobo 攻速+30% (0.7→0.54 秒/发)' },
-  { id:'g_burn', category:'G', name:'激光燃烧', desc:'Bobo 激光必触发点燃 (2 秒 50% 激光伤害 DoT)' },
-  { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 每次攻击攒 1 能量, 20 次后发一道 5s 持续制导激光, 50 伤/0.2s, 击杀跳目标, 联动穿透/爆炸卡' }
-];
-
-// --- 3. DEMON_GAMBLE_DISTRIBUTION (恶魔赌局系数概率分布, EV≈1.14) ---
-const DEMON_GAMBLE_DISTRIBUTION = [
-  { coeff: 0.5,  probability: 0.05 },
-  { coeff: 0.7,  probability: 0.12 },
-  { coeff: 0.85, probability: 0.13 },
-  { coeff: 1.0,  probability: 0.10 },
-  { coeff: 1.15, probability: 0.20 },
-  { coeff: 1.3,  probability: 0.20 },
-  { coeff: 1.5,  probability: 0.12 },
-  { coeff: 1.8,  probability: 0.05 },
-  { coeff: 2.0,  probability: 0.03 }
-];
-function rollDemonGamble() {
-  const r = Math.random();
-  let acc = 0;
-  for (const bucket of DEMON_GAMBLE_DISTRIBUTION) {
-    acc += bucket.probability;
-    if (r < acc) return bucket.coeff;
-  }
-  return 1.0; // fallback
-}
-
-// --- 4. BOBO_LASER_CONFIG (Bobo 激光基础参数) ---
-const BOBO_LASER_CONFIG = {
-  attackSpeed: 0.7, // 秒/发
-  rangeRatio: 999,  // 射程无限 (屏幕内任意位置均可锁定)
-  damageRatio: 0.6, // 相对主角固定攻击力的比例
-  hatredPriority: ['attacking_defense', 'boss', 'elite', 'minion'],  // 高到低
-  // 同仇恨值优先血量少的敌人
-};
-
-// --- CardPool 管理类 (抽卡/持有状态) ---
-class CardPool {
-  constructor() {
-    // 技能卡状态: 每张技能的当前等级 (0 = 未获得, 1/2/3 = 已获得等级)
-    this.skillLevels = {
-      together: 0, flywheel: 0, mercy: 0, highvoltage: 0, laserpierce: 0
-    };
-    // 精通卡已获得张数 (可重复)
-    this.masteryCounts = {};  // id -> count
-    for (const c of MASTERY_CARDS) this.masteryCounts[c.id] = 0;
-  }
-
-  // 抽取三选一 (从池中根据权重抽 3 张)
-  drawThree() {
-    const pool = [];
-    // 1. 加入可见的技能卡 (当前等级 +1 那张)
-    for (const skill of SKILL_CARDS) {
-      const curLv = this.skillLevels[skill.id];
-      if (curLv >= 3) continue; // 已满级
-      const nextLv = curLv + 1;
-      const weight = curLv > 0 ? 2.0 : 1.0;  // 已持有的下一级权重x2
-      pool.push({ type:'skill', id:skill.id, lv:nextLv, weight });
-    }
-    // 2. 加入所有精通卡 (可重复)
-    for (const m of MASTERY_CARDS) {
-      const count = this.masteryCounts[m.id];
-      const weight = 1.5 * Math.pow(0.5, count);  // 基础 1.5, 每次重复权重 x0.5
-      pool.push({ type:'mastery', id:m.id, weight });
-    }
-    // 3. 按权重不放回抽 3 张
-    return this._weightedSampleWithoutReplacement(pool, 3);
-  }
-
-  _weightedSampleWithoutReplacement(pool, n) {
-    const result = [];
-    const p = [...pool];
-    for (let i = 0; i < n && p.length > 0; i++) {
-      const totalW = p.reduce((s, x) => s + x.weight, 0);
-      let r = Math.random() * totalW;
-      let idx = 0;
-      for (; idx < p.length; idx++) {
-        r -= p[idx].weight;
-        if (r <= 0) break;
-      }
-      if (idx >= p.length) idx = p.length - 1;
-      result.push(p[idx]);
-      p.splice(idx, 1);
-    }
-    return result;
-  }
-
-  acquireSkill(skillId) {
-    if (this.skillLevels[skillId] === undefined) return;
-    this.skillLevels[skillId] = Math.min(3, this.skillLevels[skillId] + 1);
-  }
-
-  acquireMastery(masteryId) {
-    if (this.masteryCounts[masteryId] === undefined) return;
-    this.masteryCounts[masteryId]++;
-  }
-
-  hasMastery(masteryId) {
-    return this.masteryCounts[masteryId] > 0;
-  }
-
-  getMasteryCount(masteryId) {
-    return this.masteryCounts[masteryId];
-  }
-
-  getTotalMasteryCards() {
-    return Object.values(this.masteryCounts).reduce((s, c) => s + c, 0);
-  }
-}
-// ============================================================
-// 议题 10 · 切片 1 · 数据层 END
-// ============================================================
 
 // ============================================================
 // SFX · WebAudio 音效系统 (T08 v2 - AudioBuffer 预解码版)
@@ -1243,10 +950,6 @@ function createEnemy(type, customX, customY) {
     type,
     atDefense: false,
     flashUntil: 0,
-    // 议题 10 · 切片 4 · 精通卡+赌局+技能: 状态字段
-    burnUntil: 0, burnDmg: 0, lastBurnTick: 0,
-    slowUntil: 0, slowMult: 1,
-    stunUntil: 0,
   };
 }
 
@@ -1400,15 +1103,6 @@ function update(dt) {
   tickUltimate();
   updateLaserVisuals(dt);
 
-  // 议题 10 · 切片 2 · Bobo 激光: 独立输出源 tick
-  updateBoboLasers(dt);
-
-  // 议题 10 · 切片 4 · 精通卡+赌局+技能: 技能 tick + 制导激光 + gamble flash
-  tickSkills(dt);
-  tickBoboGuideLasers(dt);
-  tickSkillVisuals(dt);
-  if (G.gambleFlash) G.gambleFlash.ttl -= dt;
-
   // 子弹更新
   updateBullets(dt);
 
@@ -1459,43 +1153,16 @@ function update(dt) {
 // 射击
 // ============================================================
 function shootLoop() {
-  // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: 主角攻速修饰 =====
-  // 计算综合攻速倍率 (c_feast + c_meltdown)
-  let playerSpdMult = 1;
-  let playerCritExtra = 0;
-  let playerCritDmgExtra = 0;
-  let meltdownBlock = false;
-  const _now = G.now || performance.now();
-  if (G.cardPool) {
-    if (G.cardPool.hasMastery('c_feast') && G.perks.feastUntil && _now < G.perks.feastUntil) {
-      playerSpdMult *= 1.5;
-    }
-    if (G.cardPool.hasMastery('c_meltdown')) {
-      if (!G.perks.meltdownStart) G.perks.meltdownStart = _now;
-      const cyc = (_now - G.perks.meltdownStart) % 11000;
-      if (cyc < 3000) {
-        playerSpdMult *= 1 + 2 * (cyc / 3000);
-      } else if (cyc < 8000) {
-        playerSpdMult *= 3;
-        playerCritExtra += 0.2;
-        playerCritDmgExtra += 0.5;
-      } else {
-        meltdownBlock = true;
-      }
-    }
-  }
-  const effInterval = meltdownBlock ? Infinity : (CFG.player.bulletInterval / playerSpdMult);
-  // ===== END =====
   // 主角射击 - 多弹道 + 暴击 + atkMult + atkBonus
-  if (G.now - G.player.lastShot >= effInterval) {
+  if (G.now - G.player.lastShot >= CFG.player.bulletInterval) {
     const baseAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
     const bltCount = Math.max(1, Math.round(G.multiShot || 1));
     const spread = 10;
     // 暴击率 = BOBO 状态门给的暴击率 (G.nuoStats.crt 含上限 15%) + buff 的 critBonus
     // 注意: 老板要求主角暴击和 BOBO 暴击解耦, 但目前 stats 还共享, 先按 stats.crt + bonus 算
-    const critRate = Math.min(1, (G.playerCritRate !== undefined ? G.playerCritRate : G.nuoStats.crt) + (G.playerCritBonus || 0) + playerCritExtra);
+    const critRate = Math.min(1, (G.playerCritRate !== undefined ? G.playerCritRate : G.nuoStats.crt) + (G.playerCritBonus || 0));
     // 暴击伤害 = 基础 ×2 + critDmg 加成 (来自状态门 critDmg 维度)
-    const critMult = 2 + (G.nuoStats.critDmg || 0) + playerCritDmgExtra;
+    const critMult = 2 + (G.nuoStats.critDmg || 0);
     for (let i = 0; i < bltCount; i++) {
       const offset = (i - (bltCount-1)/2) * spread;
       const crit = Math.random() < critRate;
@@ -1624,59 +1291,22 @@ function updateBullets(dt) {
             const dmg = Math.max(1, Math.round(rawDmg * (1 - e.armor)));
             damageEnemy(e, dmg, b.crit, b.owner === 'player');
             hit = true;
-            // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: B 状态施加 =====
-            if (G.cardPool) {
-              const now = G.now || performance.now();
-              if (G.cardPool.hasMastery('b_burn')) {
-                e.burnUntil = now + 2000;
-                e.burnDmg = rawDmg * 0.125;   // 每 0.5s tick, 2s 累积 = 50% 主伤害
-                e.lastBurnTick = now;
-              }
-              if (G.cardPool.hasMastery('b_slow')) {
-                const stacks = G.cardPool.getMasteryCount('b_slow');
-                e.slowUntil = now + 2000;
-                e.slowMult = Math.max(0.2, Math.pow(0.7, stacks));
-              }
-              if (G.cardPool.hasMastery('b_stun')) {
-                e.stunUntil = now + 1500;
-              }
-            }
-            // ===== 议题 10 · 切片 4 END (B 状态) =====
             // 爆炸弹 - 主角子弹在命中位置爆炸 (不穿透, splice 已经处理)
-            // 兼容 legacy G.perks.explosive 与新卡 a_explode
-            const explosiveOn = (G.perks && G.perks.explosive) || (G.cardPool && G.cardPool.hasMastery('a_explode'));
-            if (b.owner === 'player' && explosiveOn) {
-              const isMastery = G.cardPool && G.cardPool.hasMastery('a_explode');
-              const splashR = isMastery ? 40 : 30;
-              const splashRatio = isMastery ? 0.3 : 0.4;
-              const splashDmg = Math.max(1, Math.round(rawDmg * splashRatio));
+            if (b.owner === 'player' && G.perks && G.perks.explosive) {
+              const splashR = 30;
+              const splashDmg = Math.max(1, Math.round(rawDmg * 0.4));
               splashAround(e.x, e.y, splashR, splashDmg, e);
+              // 视觉: 圆形爆炸圈
               G.explosions = G.explosions || [];
               G.explosions.push({ x: e.x, y: e.y, r: splashR, bornAt: G.now, life: 280 });
             }
-            // 弹射弹 - 主角子弹弹射到下一个目标 (legacy + a_bounce)
-            const bounceOn = (G.perks && G.perks.ricochet) || (G.cardPool && G.cardPool.hasMastery('a_bounce'));
-            if (b.owner === 'player' && bounceOn && !b._ricocheted) {
-              const bounceCount = (G.cardPool ? G.cardPool.getMasteryCount('a_bounce') : 0) + (G.perks && G.perks.ricochet ? 1 : 0);
-              let cur = e;
-              let remaining = Math.max(1, bounceCount);
-              while (remaining-- > 0) {
-                const next = findNextRicochetTarget(cur);
-                if (!next) break;
+            // 弹射弹 - 主角子弹弹射到下一个目标
+            if (b.owner === 'player' && G.perks && G.perks.ricochet && !b._ricocheted) {
+              const next = findNextRicochetTarget(e);
+              if (next) {
                 const ricDmg = Math.max(1, Math.round(rawDmg * 0.6 * (1 - next.armor)));
                 damageEnemy(next, ricDmg, false, true);
                 floatText(next.x, next.y - 4, '弹射', '#4dffea', false);
-                cur = next;
-              }
-            }
-            // 穿透 (a_pierce): 每张卡 +2 穿透次数
-            if (b.owner === 'player' && G.cardPool && G.cardPool.hasMastery('a_pierce')) {
-              if (b._pierceLeft === undefined) {
-                b._pierceLeft = G.cardPool.getMasteryCount('a_pierce') * 2;
-              }
-              if (b._pierceLeft > 0) {
-                b._pierceLeft--;
-                hit = false; // 不消耗子弹, 继续飞
               }
             }
             break;
@@ -1697,42 +1327,6 @@ function updateBullets(dt) {
 
 // 给一个敌人扣血 + 处理飘字 + 死亡 (从 enemies 数组里 splice)
 function damageEnemy(e, dmg, isCrit, fromPlayer) {
-  // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: 伤害修饰 hook =====
-  if (G.cardPool) {
-    let mult = 1;
-    const now = G.now || performance.now();
-    // D 精英以上猎手
-    if (G.cardPool.hasMastery('d_hunter') && (e.type === 'elite' || e.isMiniBoss || e.isFinalBoss)) {
-      const hc = G.cardPool.getMasteryCount('d_hunter');
-      mult *= Math.pow(1.3, hc);
-    }
-    // D 弱者克星
-    if (G.cardPool.hasMastery('d_weak')) {
-      const hasDebuff = (e.burnUntil||0) > now || (e.slowUntil||0) > now || (e.stunUntil||0) > now;
-      if (hasDebuff) {
-        const wc = G.cardPool.getMasteryCount('d_weak');
-        mult *= Math.pow(1.4, wc);
-      }
-    }
-    // F 共鸣
-    if (G.cardPool.hasMastery('f_resonance')) {
-      const total = G.cardPool.getTotalMasteryCards();
-      mult *= (1 + total * 0.02);
-    }
-    // E 绝境反击
-    if (G.cardPool.hasMastery('e_desperate') && G.defenseMax > 0) {
-      const pctLost = Math.max(0, 1 - (G.defenseHP / G.defenseMax));
-      const steps = Math.floor(pctLost / 0.02);
-      const dc = G.cardPool.getMasteryCount('e_desperate');
-      mult *= (1 + steps * 0.01 * dc);
-    }
-    // C 食髓
-    if (G.perks && G.perks.feastUntil && now < G.perks.feastUntil) {
-      // 食髓给攻速, 不影响伤害 (攻速在 shootLoop 里处理)
-    }
-    if (mult !== 1) dmg = Math.max(1, Math.round(dmg * mult));
-  }
-  // ===== 议题 10 · 切片 4 END =====
   e.hp -= dmg;
   e.flashUntil = G.now + 80;
   SFX.play('hit');
@@ -1763,9 +1357,6 @@ function damageEnemy(e, dmg, isCrit, fromPlayer) {
     G.kills += (e.score >= 200 ? 5 : e.score >= 60 ? 2 : 1);
     const killsEl = document.getElementById('hud-kills');
     if (killsEl) killsEl.textContent = G.kills;
-    // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: onKill hook =====
-    onEnemyKilled(e);
-    // ===== 议题 10 · 切片 4 END =====
   }
 }
 
@@ -1874,232 +1465,6 @@ function findNearestEnemy(cx, cy, exclude) {
   });
   return best;
 }
-
-// ============================================================
-// 议题 10 · 切片 2 · Bobo 激光 START
-// 独立输出源: 4阶仇恨 + 60%主角攻击力基线 + 状态门增益全吃 + 弹道分叉 + 双激光锁双目标
-// ============================================================
-class BoboLaserBeam {
-  constructor(from, to, color) {
-    this.from = { x: from.x, y: from.y };
-    this.to   = { x: to.x,   y: to.y   };
-    this.color = color || 'rgba(80, 220, 255, 0.9)';
-    this.ttl = 0.12;
-    this.maxTtl = 0.12;
-  }
-  update(dt) { this.ttl -= dt; }
-  isDead()   { return this.ttl <= 0; }
-  render(ctx) {
-    if (this.ttl <= 0) return;
-    const a = Math.max(0, this.ttl / this.maxTtl);
-    ctx.save();
-    // 投影到屏幕 X (与敌人/主角渲染一致)
-    const fx = perspectiveX(this.from.x, this.from.y);
-    const tx = perspectiveX(this.to.x,   this.to.y);
-    // 外光晕
-    ctx.globalAlpha = a * 0.55;
-    ctx.strokeStyle = this.color;
-    ctx.lineWidth = 6;
-    ctx.shadowColor = this.color;
-    ctx.shadowBlur = 10;
-    ctx.beginPath();
-    ctx.moveTo(fx, this.from.y);
-    ctx.lineTo(tx, this.to.y);
-    ctx.stroke();
-    // 内核
-    ctx.globalAlpha = a;
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 2;
-    ctx.shadowBlur = 0;
-    ctx.beginPath();
-    ctx.moveTo(fx, this.from.y);
-    ctx.lineTo(tx, this.to.y);
-    ctx.stroke();
-    ctx.restore();
-  }
-}
-
-// Bobo 激光射程 (通道高度的 rangeRatio)
-function boboLaserRange() {
-  return (DEFENSE_Y - HORIZON_Y) * (BOBO_LASER_CONFIG.rangeRatio || 2/3);
-}
-
-// 距离 (逻辑坐标, 用于选目标; 不做透视失真)
-function distanceToBobo(bobo, e) {
-  const dx = e.x - bobo.x;
-  const dy = e.y - bobo.y;
-  return Math.sqrt(dx*dx + dy*dy);
-}
-
-// 4 阶仇恨排序 + 血量最少优先
-// tier 分类: attacking(atDefense) > boss(final/miniBoss) > elite > minion
-function classifyEnemyTier(e) {
-  if (e.atDefense) return 0;
-  if (e.isFinalBoss || e.isMiniBoss) return 1;
-  if (e.type === 'elite') return 2;
-  return 3;
-}
-
-function rankedBoboTargets(bobo, enemies) {
-  if (!enemies || enemies.length === 0) return [];
-  const range = boboLaserRange();
-  const inRange = [];
-  for (const e of enemies) {
-    if (!e || e.hp <= 0) continue;
-    if (distanceToBobo(bobo, e) <= range) inRange.push(e);
-  }
-  if (inRange.length === 0) return [];
-  inRange.sort((a, b) => {
-    const ta = classifyEnemyTier(a), tb = classifyEnemyTier(b);
-    if (ta !== tb) return ta - tb;
-    // 同档: 优先血量最少 (点残); 血量相等再按离防线近优先 (y 越大越近)
-    if (a.hp !== b.hp) return a.hp - b.hp;
-    return b.y - a.y;
-  });
-  return inRange;
-}
-
-function selectBoboTarget(bobo, enemies) {
-  const list = rankedBoboTargets(bobo, enemies);
-  return list.length ? list[0] : null;
-}
-
-// Bobo 激光单发伤害 (吃状态门 + 主角 buff 全套)
-function boboLaserDamage() {
-  // 主角固定攻击力 (与 shootLoop 里 baseAtk 一致的口径)
-  const playerAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
-  const base = playerAtk * BOBO_LASER_CONFIG.damageRatio;
-  // 状态门增益全吃: G.nuoStats.atk 作为加成系数 (相对基础 CFG.nuo.base.atk 的比例)
-  const nuoAtkMult = Math.max(0.1, (G.nuoStats.atk || CFG.nuo.base.atk) / CFG.nuo.base.atk);
-  let dmg = base * nuoAtkMult;
-  // ===== 议题 10 · 切片 4: g_focus (Bobo 激光伤害 +50%) =====
-  if (G.cardPool) {
-    const focusN = G.cardPool.getMasteryCount('g_focus') || 0;
-    if (focusN > 0) dmg *= (1 + 0.5 * focusN);
-  }
-  // ===== END =====
-  // 暴击 (吃 BOBO 暴击 + 主角额外暴击加成)
-  const critRate = Math.min(1, (G.nuoStats.crt || 0) + (G.playerCritBonus || 0));
-  const crit = Math.random() < critRate;
-  if (crit) {
-    const critMult = 2 + (G.nuoStats.critDmg || 0);
-    dmg *= critMult;
-  }
-  return { dmg: Math.max(1, Math.round(dmg)), crit };
-}
-
-// 应用 Bobo 激光单次锁定 (含分叉链)
-function fireBoboLaserChain(bobo, primaryTarget, rankedList, forkCount, beamColor) {
-  if (!primaryTarget) return;
-  // 主目标
-  const { dmg: d0, crit: c0 } = boboLaserDamage();
-  const eff0 = Math.max(1, Math.round(d0 * (1 - (primaryTarget.armor || 0))));
-  damageEnemy(primaryTarget, eff0, c0, false);
-  // ===== 议题 10 · 切片 4: g_burn (Bobo 激光燃烧) =====
-  if (G.cardPool && G.cardPool.hasMastery('g_burn')) {
-    const _now = G.now || performance.now();
-    primaryTarget.burnUntil = _now + 2000;
-    primaryTarget.burnDmg = d0 * 0.125;
-    primaryTarget.lastBurnTick = _now;
-  }
-  // ===== END =====
-  G.boboLaserBeams.push(new BoboLaserBeam({ x: bobo.x, y: bobo.y }, { x: primaryTarget.x, y: primaryTarget.y }, beamColor));
-
-  // 分叉: 每 +1 弹道 → 分叉到次优先级目标 (顺次从 rankedList 取)
-  // forkCount = 额外分叉数 (主角 multiShot - 1, 上限 4)
-  let lastNode = primaryTarget;
-  let picked = 1;
-  for (let i = 0; i < forkCount; i++) {
-    if (picked >= rankedList.length) break;
-    const next = rankedList[picked++];
-    if (!next || next.hp <= 0) { i--; continue; }
-    const { dmg: dn, crit: cn } = boboLaserDamage();
-    const effn = Math.max(1, Math.round(dn * 0.75 * (1 - (next.armor || 0))));  // 分叉衰减 25%
-    damageEnemy(next, effn, cn, false);
-    if (G.cardPool && G.cardPool.hasMastery('g_burn')) {
-      const _now = G.now || performance.now();
-      next.burnUntil = _now + 2000;
-      next.burnDmg = dn * 0.125;
-      next.lastBurnTick = _now;
-    }
-    G.boboLaserBeams.push(new BoboLaserBeam({ x: lastNode.x, y: lastNode.y }, { x: next.x, y: next.y }, beamColor));
-    lastNode = next;
-  }
-  // ===== 议题 10 · 切片 4: g_guide (每次攻击攒能量, 20 次触发制导激光) =====
-  if (G.cardPool && G.cardPool.hasMastery('g_guide')) {
-    G.perks.boboAttackCount = (G.perks.boboAttackCount || 0) + 1;
-    if (G.perks.boboAttackCount >= 20) {
-      G.perks.boboAttackCount = 0;
-      triggerBoboGuideLaser(bobo);
-    }
-  }
-  // ===== END =====
-}
-
-function updateBoboLasers(dt) {
-  if (!G.boboLaserBeams) G.boboLaserBeams = [];
-  // 光束生命衰减
-  for (let i = G.boboLaserBeams.length - 1; i >= 0; i--) {
-    G.boboLaserBeams[i].update(dt);
-    if (G.boboLaserBeams[i].isDead()) G.boboLaserBeams.splice(i, 1);
-  }
-
-  // 静默时不打
-  const silenced = G.nuoStats.silenceUntil > G.now;
-  if (silenced) return;
-  if (!G.nuos || G.nuos.length === 0) return;
-
-  // 攻速: 基础 attackSpeed (秒) / spd 倍率
-  const baseCd = BOBO_LASER_CONFIG.attackSpeed;
-  const spdMul = Math.max(0.2, G.nuoStats.spd || 1);
-  // ===== 议题 10 · 切片 4: g_overload (Bobo 攻速 +30%/张) =====
-  let overloadMul = 1;
-  if (G.cardPool) {
-    const ovN = G.cardPool.getMasteryCount('g_overload') || 0;
-    overloadMul = 1 + 0.3 * ovN;
-  }
-  const cooldown = baseCd / spdMul / overloadMul;
-  // ===== END =====
-
-  // 双激光: 有镜像 BOBO 时 → 已经是每个 BOBO 各发一束; 另: 状态门"双倍火力"生效 (spd>基础) 已被攻速吃掉
-  // 弹道分叉数 = (G.multiShot - 1) clamp 到 0..4
-  const forkCount = Math.max(0, Math.min(4, Math.round((G.multiShot || 1) - 1)));
-
-  G.nuos.forEach(n => {
-    if (!n._boboLaserTimer) n._boboLaserTimer = 0;
-    n._boboLaserTimer -= dt;
-    if (n._boboLaserTimer > 0) return;
-    const ranked = rankedBoboTargets(n, G.enemies);
-    if (ranked.length === 0) {
-      // 无目标: 短暂重试
-      n._boboLaserTimer = 0.15;
-      return;
-    }
-    const beamColor = n.isMirror ? 'rgba(255, 136, 221, 0.9)' : 'rgba(80, 220, 255, 0.9)';
-    // 主链
-    fireBoboLaserChain(n, ranked[0], ranked, forkCount, beamColor);
-    // 双激光锁双目标: G.nuoStats.blt >= 2 → 再打一束到次优目标 (独立链, 无分叉)
-    const bltDim = Math.round(G.nuoStats.blt || 1);
-    if (bltDim >= 2 && ranked.length >= 2) {
-      const secondary = ranked[1];
-      if (secondary && secondary.hp > 0) {
-        const { dmg, crit } = boboLaserDamage();
-        const eff = Math.max(1, Math.round(dmg * (1 - (secondary.armor || 0))));
-        damageEnemy(secondary, eff, crit, false);
-        G.boboLaserBeams.push(new BoboLaserBeam({ x: n.x, y: n.y }, { x: secondary.x, y: secondary.y }, beamColor));
-      }
-    }
-    n._boboLaserTimer = cooldown;
-  });
-}
-
-function drawBoboLasers() {
-  if (!G.boboLaserBeams || G.boboLaserBeams.length === 0) return;
-  G.boboLaserBeams.forEach(b => b.render(ctx));
-}
-// ============================================================
-// 议题 10 · 切片 2 · Bobo 激光 END
-// ============================================================
 
 function updateLaserVisuals(dt) {
   if (G.laserVisuals) {
@@ -2309,11 +1674,6 @@ function spawnFormation(name) {
 function spawnEnemies() {
   // 复活反推期: 不刷新新敌人
   if (G.spawnFreezeUntil && G.now < G.spawnFreezeUntil) return;
-  // 议题 12 · 切片 3 · 预体验关卡: 走独立方阵调度, 屏蔽 PHASES/wave/boss 全部
-  if (G.isPreExperience) {
-    tickPreExperienceFormations();
-    return;
-  }
   const elapsed = (G.now - G.startTime) / 1000;
   const phase = currentPhase(elapsed);
 
@@ -2360,40 +1720,9 @@ function spawnEnemies() {
 }
 
 function updateEnemies(dt) {
-  const now = G.now || performance.now();
-  // 议题 12 · 切片 3 · 预体验关卡: 通关检测 hook 给 S4
-  if (G.isPreExperience && !G.preExpCompleted &&
-      (G.currentFormationIndex || 0) >= 5 &&
-      G.enemies.filter(e => e.hp > 0).length === 0) {
-    onPreExperienceComplete();
-  }
   G.enemies.forEach(e => {
     // 冰冻 - 终极技能效果, 1.5s 内不动也不攻击
     if (e.frozenUntil && G.now < e.frozenUntil) return;
-    // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: 敌人状态 tick =====
-    // 燃烧 DoT
-    if (e.burnUntil && now < e.burnUntil) {
-      if (!e.lastBurnTick || now - e.lastBurnTick > 500) {
-        const dot = Math.max(1, Math.round((e.burnDmg || 5) * (1 - e.armor)));
-        e.hp -= dot;
-        e.lastBurnTick = now;
-        e.flashUntil = G.now + 40;
-        floatText(e.x + (Math.random()-0.5)*14, e.y - 6, '🔥' + dot, '#ff8c00', false);
-        if (e.hp <= 0) {
-          SFX.play('explode');
-          const idx = G.enemies.indexOf(e);
-          if (idx >= 0) G.enemies.splice(idx, 1);
-          G.kills += (e.score >= 200 ? 5 : e.score >= 60 ? 2 : 1);
-          const killsEl = document.getElementById('hud-kills');
-          if (killsEl) killsEl.textContent = G.kills;
-          onEnemyKilled(e);
-          return;
-        }
-      }
-    }
-    // 麻痹: 跳过一切
-    if (e.stunUntil && now < e.stunUntil) return;
-    // ===== 议题 10 · 切片 4 END (敌人状态) =====
     // 复活反推期: 敌人按各自 speed 倒退, 期间不攻击防线 (脱离攻击范围)
     // 不 clamp 到屏顶 — 让 e.y 一直减 (可为负, 即跑到屏幕外), 这样退满 5 秒 + 推回 5 秒 = 严格 10 秒
     // 绘制时 viewport 裁切会自动处理屏外不画
@@ -2401,11 +1730,8 @@ function updateEnemies(dt) {
       e.y -= e.speed * dt;
       return;
     }
-    // 减速
-    let spdMult = 1;
-    if (e.slowUntil && now < e.slowUntil) spdMult = (e.slowMult || 0.7);
     if (!e.atDefense) {
-      e.y += e.speed * spdMult * dt;
+      e.y += e.speed * dt;
       if (e.y + e.h >= DEFENSE_Y) {
         e.y = DEFENSE_Y - e.h;
         e.atDefense = true;
@@ -2488,314 +1814,72 @@ function updateTreasures(dt) {
 
 // spawnObstacles 已删除 (obstacle 整合进 treasure decoy)
 
-// 击破宝箱 - 触发三选一抽卡 (议题 10 · 切片 3 起替换原顺序 8 宝箱逻辑)
+// 击破宝箱 - 装备武器
 function applyTreasure(t) {
   // 1. decoy: 无效, 不给 buff
   if (t.kind === 'decoy') {
     showBuffToast('无效', false);
     return;
   }
-  // 2/3. 真实宝箱 (原 perk / buff 序列均归并) → 三选一抽卡
-  //   原顺序 8 宝箱 (fireRate/multiShot/atkUp/explosive/ricochet/laser/mirror/ultimate)
-  //   与循环 buff (atk++/spd++/crit++) 已下线, 效果由切片 4 通过卡池挂载
-  triggerCardSelection();
-}
 
-// ============================================================
-// 议题 10 · 切片 3 · 三选一 UI  BEGIN
-// ============================================================
-// 触发抽卡 (预体验关卡 = level 0)
-function isPreExperienceLevel() {
-  return (G.currentLevel || 2) === 0 || G.isPreExperience === true;
-}
-
-function triggerCardSelection() {
-  if (!G.cardPool) G.cardPool = new CardPool();
-
-  G.pendingCards = G.cardPool.drawThree();
-  G.cardSelectionUI = {
-    active: true,
-    cards: G.pendingCards,
-    freeRefreshUsed: G.freeRefreshUsedThisRun || false,
-    adWatchAllUsed: G.adWatchAllUsedThisRun || false,
-    extraAdRefreshRemaining: 2,
-    // 记录点击热区 (由 draw 阶段填充, click 阶段消费)
-    hitAreas: null,
-  };
-  pauseForCardUI();
-}
-
-function pauseForCardUI() {
-  // 复用 pauseAccum 语义: UI 期间不推进 G.now
-  G.cardUIPausedAt = performance.now();
-}
-function resumeFromCardUI() {
-  if (G.cardUIPausedAt) {
-    G.pauseAccum += performance.now() - G.cardUIPausedAt;
-    G.cardUIPausedAt = 0;
-  }
-}
-
-function closeCardSelectionUI() {
-  if (G.cardSelectionUI) G.cardSelectionUI.active = false;
-  G.cardSelectionUI = null;
-  resumeFromCardUI();
-}
-
-function selectCard(index) {
-  if (!G.cardSelectionUI || !G.cardSelectionUI.active) return;
-  const card = G.cardSelectionUI.cards[index];
-  if (!card) return;
-  applyCardEffect(card);
-  closeCardSelectionUI();
-}
-
-function freeRefresh() {
-  if (!G.cardSelectionUI || G.cardSelectionUI.freeRefreshUsed) return;
-  G.freeRefreshUsedThisRun = true;
-  G.cardSelectionUI.freeRefreshUsed = true;
-  G.cardSelectionUI.cards = G.cardPool.drawThree();
-}
-
-function adRefresh() {
-  if (!G.cardSelectionUI || G.cardSelectionUI.extraAdRefreshRemaining <= 0) return;
-  G.cardSelectionUI.extraAdRefreshRemaining--;
-  // stub: 假装播完广告, 直接刷新
-  G.cardSelectionUI.cards = G.cardPool.drawThree();
-}
-
-function adWatchAll() {
-  if (!G.cardSelectionUI || G.cardSelectionUI.adWatchAllUsed) return;
-  G.adWatchAllUsedThisRun = true;
-  const cards = G.cardSelectionUI.cards.slice();
-  closeCardSelectionUI();
-  for (const c of cards) applyCardEffect(c);
-}
-
-// 应用卡片效果 - 议题 10 · 切片 4 · 精通卡+赌局+技能
-function applyCardEffect(card) {
-  if (!G.cardPool) G.cardPool = new CardPool();
-  if (card.type === 'skill') {
-    G.cardPool.acquireSkill(card.id);
-    const s = SKILL_CARDS.find(x => x.id === card.id);
-    let lv = G.cardPool.skillLevels[card.id] || card.lv;
-    // 议题 12 · 切片 3 · 预体验关卡: 卡片效果 ×2 (技能再升一级, 不超过 3)
-    if (G.isPreExperience && lv < 3) {
-      G.cardPool.acquireSkill(card.id);
-      lv = G.cardPool.skillLevels[card.id];
+  // 2. perk: 累积式配件解锁 (8 件序列)
+  if (t.kind === 'perk') {
+    G.perks = G.perks || {};
+    if (G.perks[t.perkId]) {
+      showBuffToast(t.label + ' (已有)', false);
+      return;
     }
-    showBuffToast((s ? s.name : card.id) + ' Lv' + lv, true);
-    applySkillEffect(card.id, lv);
-  } else if (card.type === 'mastery') {
-    G.cardPool.acquireMastery(card.id);
-    applyMasteryEffect(card.id);
-    // 议题 12 · 切片 3 · 预体验关卡: 精通卡效果 ×2 (再拿一次并再应用一次)
-    if (G.isPreExperience) {
-      G.cardPool.acquireMastery(card.id);
-      applyMasteryEffect(card.id);
+    G.perks[t.perkId] = true;
+    G.perkUnlockedIdx = (G.perkUnlockedIdx || 0) + 1;
+
+    // 即时效果 + 启动周期 tick
+    if (t.perkId === 'fireRate') {
+      // 射速 +1%/s 持续: 启动 tick, 每秒把 bulletInterval 乘以 0.99
+      G.fireRateTickAt = G.now + 1000;
+      G.fireRateBaseInterval = CFG.player.bulletInterval;
     }
-    const m = MASTERY_CARDS.find(x => x.id === card.id);
-    showBuffToast((m ? m.name : card.id) + ' ×' + G.cardPool.getMasteryCount(card.id), true);
-  }
-}
-
-// --- 渲染 ---
-function drawCardSelectionUI() {
-  if (!G.cardSelectionUI || !G.cardSelectionUI.active) return;
-  const cards = G.cardSelectionUI.cards;
-  // 半透明遮罩
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.78)';
-  ctx.fillRect(0, 0, W, H);
-
-  // 标题
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 18px ui-monospace,Menlo,monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('三选一 · 强化卡', W/2, 40);
-
-  // 卡片尺寸 (canvas 414x736 内布局)
-  const cardW = Math.min(115, (W - 40) / 3 - 8);
-  const cardH = Math.min(280, H * 0.5);
-  const gap = 10;
-  const totalW = cardW * 3 + gap * 2;
-  const startX = (W - totalW) / 2;
-  const y = (H - cardH) / 2 - 20;
-
-  const hitAreas = { cards: [], buttons: {} };
-
-  cards.forEach((c, i) => {
-    const x = startX + i * (cardW + gap);
-    drawCard(c, x, y, cardW, cardH);
-    hitAreas.cards.push({ x, y, w: cardW, h: cardH, index: i });
-  });
-
-  // 底部三个按钮
-  const btnY = y + cardH + 16;
-  const btnW = 100, btnH = 36;
-  const btn1X = W/2 - btnW * 1.5 - 12;
-  const btn2X = W/2 - btnW/2;
-  const btn3X = W/2 + btnW/2 + 12;
-
-  const freeUsed = G.cardSelectionUI.freeRefreshUsed;
-  const adRefreshLeft = G.cardSelectionUI.extraAdRefreshRemaining;
-  const allUsed = G.cardSelectionUI.adWatchAllUsed;
-
-  drawUIButton(freeUsed ? '免费刷新 (已用)' : '免费刷新',
-    btn1X, btnY, btnW, btnH,
-    freeUsed ? 'rgba(80,80,80,0.5)' : 'rgba(60,120,255,0.9)');
-  drawUIButton('广告刷新 (' + adRefreshLeft + ')',
-    btn2X, btnY, btnW, btnH,
-    adRefreshLeft > 0 ? 'rgba(80,180,80,0.9)' : 'rgba(80,80,80,0.5)');
-  drawUIButton(allUsed ? '广告全选 (已用)' : '广告全选',
-    btn3X, btnY, btnW, btnH,
-    allUsed ? 'rgba(80,80,80,0.5)' : 'rgba(200,80,80,0.9)');
-
-  hitAreas.buttons.free   = { x: btn1X, y: btnY, w: btnW, h: btnH, enabled: !freeUsed };
-  hitAreas.buttons.ad     = { x: btn2X, y: btnY, w: btnW, h: btnH, enabled: adRefreshLeft > 0 };
-  hitAreas.buttons.all    = { x: btn3X, y: btnY, w: btnW, h: btnH, enabled: !allUsed };
-
-  G.cardSelectionUI.hitAreas = hitAreas;
-}
-
-function drawCard(card, x, y, w, h) {
-  const isSkill = card.type === 'skill';
-  // 背景
-  ctx.fillStyle = isSkill ? 'rgba(30, 50, 100, 0.95)' : 'rgba(60, 40, 80, 0.95)';
-  ctx.fillRect(x, y, w, h);
-  ctx.strokeStyle = isSkill ? 'rgba(120, 180, 255, 1)' : 'rgba(200, 140, 240, 1)';
-  ctx.lineWidth = 2;
-  ctx.strokeRect(x, y, w, h);
-
-  // 顶部类型标签 (skill / mastery)
-  ctx.fillStyle = isSkill ? 'rgba(120,180,255,0.35)' : 'rgba(200,140,240,0.35)';
-  ctx.fillRect(x, y, w, 18);
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 10px ui-monospace,Menlo,monospace';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(isSkill ? 'SKILL' : 'MASTERY', x + w/2, y + 9);
-
-  // 标题
-  let title = '?';
-  if (isSkill) {
-    const skill = SKILL_CARDS.find(s => s.id === card.id);
-    title = skill ? skill.name : card.id;
-  } else {
-    const m = MASTERY_CARDS.find(mc => mc.id === card.id);
-    title = m ? m.name : card.id;
-  }
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 13px ui-monospace,Menlo,monospace';
-  ctx.textBaseline = 'alphabetic';
-  ctx.fillText(title, x + w/2, y + 36);
-
-  let descTop = y + 50;
-  // 技能卡: 3 槽位 (亮 card.lv 格)
-  if (isSkill) {
-    const slotSize = 10;
-    const totalSlotW = 3 * slotSize + 2 * 4;
-    const slotY = y + 44;
-    const slotX0 = x + (w - totalSlotW) / 2;
-    for (let s = 0; s < 3; s++) {
-      const sx = slotX0 + s * (slotSize + 4);
-      ctx.strokeStyle = 'rgba(200,200,200,0.6)';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(sx, slotY, slotSize, slotSize);
-      if (s < card.lv) {
-        ctx.fillStyle = 'rgba(120, 220, 255, 0.9)';
-        ctx.fillRect(sx + 1, slotY + 1, slotSize - 2, slotSize - 2);
+    if (t.perkId === 'multiShot') {
+      // 弹道 +1 初始, 之后每 30s +1, 上限 5
+      G.multiShot = 2;   // 1 → 2
+      G.multiShotNextAt = G.now + 30000;
+    }
+    if (t.perkId === 'atkUp') {
+      // 攻击每 5s +1
+      G.atkUpTickAt = G.now + 5000;
+    }
+    if (t.perkId === 'mirror') {
+      if (!G.hasMirror) {
+        G.nuos.push(createNuo(-18, true));
+        G.hasMirror = true;
+        const tag = document.getElementById('nuo-mirror-tag');
+        if (tag) tag.style.display = 'inline';
       }
     }
-    descTop = slotY + slotSize + 10;
-  }
-
-  // 描述
-  let desc = '';
-  if (isSkill) {
-    const skill = SKILL_CARDS.find(s => s.id === card.id);
-    if (skill && skill.levels[card.lv - 1]) desc = skill.levels[card.lv - 1].desc;
-  } else {
-    const m = MASTERY_CARDS.find(mc => mc.id === card.id);
-    if (m) desc = m.desc;
-  }
-  ctx.fillStyle = '#ddd';
-  ctx.font = '10px ui-monospace,Menlo,monospace';
-  ctx.textAlign = 'left';
-  wrapText(desc, x + 6, descTop, w - 12, 13);
-
-  // 精通卡: 类别标签
-  if (!isSkill) {
-    const m = MASTERY_CARDS.find(mc => mc.id === card.id);
-    const cat = m ? m.category : '?';
-    ctx.fillStyle = 'rgba(200, 140, 240, 0.55)';
-    ctx.fillRect(x + 4, y + h - 22, 22, 18);
-    ctx.fillStyle = '#fff';
-    ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
-    ctx.textAlign = 'center';
-    ctx.textBaseline = 'middle';
-    ctx.fillText(cat, x + 15, y + h - 13);
-    // 已有张数
-    const cnt = G.cardPool ? G.cardPool.getMasteryCount(card.id) : 0;
-    if (cnt > 0) {
-      ctx.fillStyle = '#ffd441';
-      ctx.font = 'bold 10px ui-monospace,Menlo,monospace';
-      ctx.textAlign = 'right';
-      ctx.fillText('已 ×' + cnt, x + w - 6, y + h - 13);
+    if (t.perkId === 'laser') {
+      G.laserNextAt = G.now + 3000;
     }
-  }
-}
-
-function drawUIButton(text, x, y, w, h, bgColor) {
-  ctx.fillStyle = bgColor;
-  ctx.fillRect(x, y, w, h);
-  ctx.strokeStyle = '#fff';
-  ctx.lineWidth = 1;
-  ctx.strokeRect(x, y, w, h);
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  ctx.fillText(text, x + w/2, y + h/2);
-}
-
-function wrapText(text, x, y, maxWidth, lineHeight) {
-  if (!text) return;
-  let line = '';
-  let ny = y;
-  for (const ch of text) {
-    const test = line + ch;
-    if (ctx.measureText(test).width > maxWidth && line) {
-      ctx.fillText(line, x, ny);
-      line = ch;
-      ny += lineHeight;
-      if (ny > y + lineHeight * 14) { ctx.fillText(line + '…', x, ny); return; }
-    } else {
-      line = test;
+    if (t.perkId === 'ultimate') {
+      G.ultNextAt = G.now + 10000;
     }
+    showBuffToast(t.label + ' 解锁!', true);
+    return;
   }
-  if (line) ctx.fillText(line, x, ny);
-}
 
-// 点击处理: 由 canvas mousedown / touchstart 前置拦截调用
-function handleCardUIPointer(px, py) {
-  if (!G.cardSelectionUI || !G.cardSelectionUI.active) return false;
-  const ha = G.cardSelectionUI.hitAreas;
-  if (!ha) return true; // UI 存在但还没画过一帧, 拦截但不处理
-
-  const inRect = (r) => px >= r.x && px <= r.x + r.w && py >= r.y && py <= r.y + r.h;
-
-  // 卡片优先
-  for (const r of ha.cards) {
-    if (inRect(r)) { selectCard(r.index); return true; }
+  // 3. buff: 循环 buff (主角强化)
+  if (t.kind === 'buff') {
+    if (t.buffId === 'atk++') {
+      G.playerAtkMult = (G.playerAtkMult || 1) * 1.25;
+      showBuffToast('攻击 +25%', true);
+    } else if (t.buffId === 'spd++') {
+      CFG.player.bulletInterval = Math.max(40, CFG.player.bulletInterval * 0.83);
+      showBuffToast('射速 +20%', true);
+    } else if (t.buffId === 'crit++') {
+      G.playerCritBonus = (G.playerCritBonus || 0) + 0.03;
+      showBuffToast('暴击率 +3%', true);
+    }
+    return;
   }
-  if (ha.buttons.free && ha.buttons.free.enabled && inRect(ha.buttons.free)) { freeRefresh(); return true; }
-  if (ha.buttons.ad && ha.buttons.ad.enabled && inRect(ha.buttons.ad))       { adRefresh(); return true; }
-  if (ha.buttons.all && ha.buttons.all.enabled && inRect(ha.buttons.all))    { adWatchAll(); return true; }
-  return true; // UI 激活时始终吞掉事件, 不透传给游戏
 }
-// ============================================================
-// 议题 10 · 切片 3 · 三选一 UI  END
-// ============================================================
 
 // ============================================================
 // 状态门更新
@@ -2937,9 +2021,6 @@ function draw() {
   // 主角散射激光视觉
   drawLaserVisuals();
 
-  // 议题 10 · 切片 2 · Bobo 激光光束 (在角色之下, 敌人之上)
-  drawBoboLasers();
-
   // 主角 + BOBO
   drawPlayer();
   G.nuos.forEach(drawNuo);
@@ -2982,14 +2063,6 @@ function draw() {
 
   // 飘字 (最上层)
   drawFloatTexts();
-
-  // 议题 10 · 切片 4 · 精通卡+赌局+技能: 视觉层
-  drawSkillVisuals();
-  drawBoboGuideLasers();
-  drawGambleFlash();
-
-  // 议题 10 · 切片 3 · 三选一 UI (在飘字/HUD 之上, 完全遮挡)
-  drawCardSelectionUI();
 
   // 调试: 通道分界线
   ctx.strokeStyle = 'rgba(255,255,255,0.07)';
@@ -3385,13 +2458,6 @@ function loop(ts) {
     requestAnimationFrame(loop);
     return;
   }
-  // 议题 10 · 切片 3 · 三选一 UI: UI 激活时跳过 update, 但仍 draw + 处理 pause 累积
-  if (G.cardSelectionUI && G.cardSelectionUI.active) {
-    G.lastFrame = ts;  // 避免恢复时 dt 突增
-    draw();
-    requestAnimationFrame(loop);
-    return;
-  }
   if (!G.lastFrame) G.lastFrame = ts;
   const dt = Math.min(0.05, (ts - G.lastFrame) / 1000);
   G.lastFrame = ts;
@@ -3433,23 +2499,13 @@ function setupInput() {
     const scaleX = cv.width / r.width;
     return (clientX - r.left) * scaleX;
   }
-  function localY(clientY) {
-    const r = cv.getBoundingClientRect();
-    const scaleY = cv.height / r.height;
-    return (clientY - r.top) * scaleY;
-  }
 
   // mouse
   cv.addEventListener('mousedown', e => {
-    const px = localX(e.clientX);
-    const py = localY(e.clientY);
-    // 议题 10 · 切片 3: 三选一 UI 激活时优先吞掉点击
-    if (handleCardUIPointer(px, py)) return;
     G.pointerDown = true;
-    G.pointerX = px;
+    G.pointerX = localX(e.clientX);
   });
   window.addEventListener('mousemove', e => {
-    if (G.cardSelectionUI && G.cardSelectionUI.active) return;
     if (G.pointerDown) G.pointerX = localX(e.clientX);
   });
   window.addEventListener('mouseup', () => {
@@ -3460,16 +2516,11 @@ function setupInput() {
   // touch
   cv.addEventListener('touchstart', e => {
     e.preventDefault();
-    const t0 = e.touches[0];
-    const px = localX(t0.clientX);
-    const py = localY(t0.clientY);
-    if (handleCardUIPointer(px, py)) return;
     G.pointerDown = true;
-    G.pointerX = px;
+    G.pointerX = localX(e.touches[0].clientX);
   }, {passive: false});
   cv.addEventListener('touchmove', e => {
     e.preventDefault();
-    if (G.cardSelectionUI && G.cardSelectionUI.active) return;
     G.pointerX = localX(e.touches[0].clientX);
   }, {passive: false});
   cv.addEventListener('touchend', () => {
@@ -3554,7 +2605,6 @@ function reset() {
   G.atkUpTickAt = 0;
   G.laserNextAt = 0;
   G.laserVisuals = [];
-  G.boboLaserBeams = [];  // 议题 10 · 切片 2 · Bobo 激光光束队列
   G.explosions = [];
   G.ultNextAt = 0;
   G.ultFlashUntil = 0;
@@ -3585,23 +2635,6 @@ function reset() {
   G.revivesUsed = 0;
   G.paused = false;
   CFG.player.bulletInterval = 280; // 重置主角武器
-
-  // 议题 10 · 切片 3 · 三选一 UI: 每局重置卡池 + 刷新次数
-  G.cardPool = new CardPool();
-  G.pendingCards = null;
-  G.cardSelectionUI = null;
-  G.cardUIPausedAt = 0;
-  G.freeRefreshUsedThisRun = false;
-  G.adWatchAllUsedThisRun = false;
-  // 议题 10 · 切片 4 · 精通卡+赌局+技能: 重置所有挂载状态
-  G.skillState = { together:null, flywheel:null, mercy:null, highvoltage:null, laserpierce:null };
-  G.perks.feastUntil = 0;
-  G.perks.meltdownStart = 0;
-  G.perks.echoKillCount = 0;
-  G.perks.boboAttackCount = 0;
-  G.perks.boboGuideLasers = [];
-  G.gambleFlash = null;
-  G.skillVisuals = [];
   document.getElementById('hud-kills').textContent = '0';
   document.getElementById('hud-time').textContent = '00:00';
   document.getElementById('nuo-mirror-tag').style.display = 'none';
@@ -3623,265 +2656,12 @@ function reset() {
   updateDefenseBar();
 }
 
-// ============================================================
-// 议题 12 · 切片 3 · 预体验关卡 START
-// currentLevel = 0: 5 个 6×10 方阵串行 + 属性覆盖 + 宝箱效果 ×2 + 通关 hook
-// ============================================================
-const PRE_EXP_STATS = {
-  atk: 60, spd: 1.5, blt: 3, crt: 0.25, critDmg: 1.5
-};
-// 5 个方阵组成 (60 只/方阵 = 6×10), 从纯小兵渐进到混编 boss
-const PRE_EXP_COMPOSITIONS = [
-  // 方阵 0: 全 small
-  Array(60).fill('small'),
-  // 方阵 1: 54 small + 6 elite (右下角掺入)
-  [...Array(54).fill('small'), ...Array(6).fill('elite')],
-  // 方阵 2: 42 small + 12 elite + 6 miniA
-  [...Array(42).fill('small'), ...Array(12).fill('elite'), ...Array(6).fill('miniA')],
-  // 方阵 3: 36 small + 12 elite + 6 miniA + 5 miniB + 1 miniC (小 boss 混编)
-  [...Array(36).fill('small'), ...Array(12).fill('elite'), ...Array(6).fill('miniA'), ...Array(5).fill('miniB'), 'miniC'],
-  // 方阵 4: 混编终章 (final boss 混在中间)
-  [...Array(30).fill('small'), ...Array(15).fill('elite'), ...Array(8).fill('miniA'), ...Array(4).fill('miniB'), ...Array(2).fill('miniC'), 'boss']
-];
-
-function startPreExperience() {
-  G.currentLevel = 0;
-  G.isPreExperience = true;
-  G.preExpCompleted = false;
-  G.currentFormationIndex = 0;
-  G.formationSpawnCooldown = 0;
-  // 备份并覆盖 BOBO base 属性 (主角+Bobo 共享 CFG.nuo.base)
-  if (!G.origNuoBase) G.origNuoBase = { ...CFG.nuo.base };
-  Object.assign(CFG.nuo.base, PRE_EXP_STATS);
-  Storage.set('currentLevel', 0);
-  startGame(0);
-}
-
-// 从 comp 数组生成 6×10 方阵, 定位到接敌通道上半部分
-function spawnPreExperienceFormation(formationIndex) {
-  const rows = 6, cols = 10;
-  const comp = PRE_EXP_COMPOSITIONS[Math.min(formationIndex, PRE_EXP_COMPOSITIONS.length - 1)].slice();
-  // 随机打乱 (boss 位置随机, 增加张力)
-  for (let i = comp.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [comp[i], comp[j]] = [comp[j], comp[i]];
-  }
-  // small 直径 31, 用 32 spacing 近似"没有间距"
-  const spacing = 32;
-  const cx = TRACK_R_LEFT + TRACK_R_WIDTH / 2;
-  const startX = cx - (cols - 1) * spacing / 2;
-  const startY = HORIZON_Y + 8;  // 通道上半部分起点
-  for (let i = 0; i < comp.length; i++) {
-    const row = Math.floor(i / cols);
-    const col = i % cols;
-    const x = clamp(startX + col * spacing, TRACK_R_LEFT + 20, TRACK_R_RIGHT - 20);
-    const y = startY - row * spacing;  // 后排在屏外, 从屏顶滑入
-    const e = createEnemy(comp[i], x, y);
-    if (e) G.enemies.push(e);
-  }
-  floatText(W/2, H/2, `方阵 ${formationIndex + 1}/5`, '#ff8c00', true);
-}
-
-// 每帧调度: 全灭 → 冷却 2s → 出下一方阵
-function tickPreExperienceFormations() {
-  if (G.currentFormationIndex === undefined) G.currentFormationIndex = 0;
-  if (G.currentFormationIndex >= PRE_EXP_COMPOSITIONS.length) return;
-  const alive = G.enemies.filter(e => e.hp > 0).length;
-  if (alive === 0) {
-    if (!G.formationSpawnCooldown) {
-      // 首次空场或上一方阵刚清完, 设定 2 秒冷却
-      G.formationSpawnCooldown = G.now + (G.currentFormationIndex === 0 ? 500 : 2000);
-    } else if (G.now >= G.formationSpawnCooldown) {
-      spawnPreExperienceFormation(G.currentFormationIndex);
-      G.currentFormationIndex++;
-      G.formationSpawnCooldown = 0;
-    }
-  }
-}
-
-function onPreExperienceComplete() {
-  if (G.preExpCompleted) return;
-  G.preExpCompleted = true;
-  // 恢复原属性 (防污染后续正式关卡)
-  if (G.origNuoBase) {
-    Object.assign(CFG.nuo.base, G.origNuoBase);
-    G.origNuoBase = null;
-  }
-  G.isPreExperience = false;
-  floatText(W/2, H/2, '预体验完成', '#ffd700', true);
-  // Hook 给 S4 (过场), 未定义则退化到标准关
-  if (typeof showPreExperienceTransition === 'function') {
-    showPreExperienceTransition();
-  } else {
-    setTimeout(() => startGame(2), 1500);
-  }
-}
-// ============================================================
-// 议题 12 · 切片 3 · 预体验关卡 END
-// ============================================================
-
-// ============================================================
-// 议题 12 · 切片 4 · 通关过场 START
-// ============================================================
-function showPreExperienceTransition() {
-  const dlg = document.getElementById('preExpTransition');
-  const content = document.getElementById('transitionContent');
-  if (!dlg || !content) { setTimeout(() => startGame(1), 1000); return; }
-
-  dlg.style.display = 'flex';
-  dlg.style.opacity = '0';
-  setTimeout(() => { dlg.style.opacity = '1'; }, 50);
-
-  // 幕 1: 总部通讯
-  content.innerHTML = `
-    <div style="border: 2px solid #5fb0ff; padding: 24px; background: linear-gradient(135deg, #1a2540, #0f1a2e); box-shadow: 0 0 30px rgba(95,176,255,0.3); border-radius: 6px;">
-      <div style="color: #5fb0ff; font: bold 14px sans-serif; letter-spacing: 3px; margin-bottom: 12px;">◉ 总部通讯</div>
-      <div style="color: #d8dce8; font-size: 17px; line-height: 1.8;">战况如何?</div>
-    </div>
-  `;
-  setTimeout(() => showTransitionAct2(), 2500);
-}
-
-function showTransitionAct2() {
-  const content = document.getElementById('transitionContent');
-  if (!content) return;
-  content.innerHTML = `
-    <div style="border: 2px solid #6bcc80; padding: 24px; background: linear-gradient(135deg, #1a2f22, #0f2018); box-shadow: 0 0 30px rgba(107,204,128,0.3); border-radius: 6px;">
-      <div style="color: #6bcc80; font: bold 14px sans-serif; letter-spacing: 3px; margin-bottom: 12px;">◉ 前线回复</div>
-      <div style="color: #d8dce8; font-size: 17px; line-height: 1.8;">哈哈哈不过如此, 脆得跟纸一样 🙄</div>
-    </div>
-  `;
-  setTimeout(() => showTransitionAct3(), 2500);
-}
-
-function showTransitionAct3() {
-  const content = document.getElementById('transitionContent');
-  if (!content) return;
-  content.innerHTML = `
-    <div style="border: 2px solid #ff4444; padding: 28px; background: linear-gradient(135deg, #2a1520, #1a0a12); box-shadow: 0 0 40px rgba(255,68,68,0.4); animation: shake 0.5s; border-radius: 6px;">
-      <div style="color: #ff6666; font: bold 16px sans-serif; letter-spacing: 4px; margin-bottom: 16px;">⚠ 通讯中断警告</div>
-      <div style="color: #d8dce8; font-size: 15px; line-height: 1.9;">
-        敌方启动 <b style="color:#ff8888;">虚空屏蔽场</b><br>
-        侦测到大规模能量脉冲, 兵种规模远超预期<br>
-        <br>
-        <span style="color:#ffaa44; font-weight:bold;">现在才是真正的战场</span>
-      </div>
-      <button id="transitionContinueBtn" style="
-        margin-top: 24px;
-        background: linear-gradient(135deg, #ff4444, #cc2222);
-        color: white; border: none; padding: 12px 40px;
-        font: bold 16px sans-serif; letter-spacing: 3px;
-        border-radius: 4px; cursor: pointer;
-        box-shadow: 0 4px 12px rgba(255, 68, 68, 0.3);
-      ">继 续 →</button>
-    </div>
-  `;
-
-  const btn = document.getElementById('transitionContinueBtn');
-  btn.onclick = () => {
-    const dlg = document.getElementById('preExpTransition');
-    dlg.style.opacity = '0';
-    setTimeout(() => {
-      dlg.style.display = 'none';
-      // Hook 给 S5 (关卡选择页): 若定义 showLevelSelect 就调, 否则退化到 startGame(1)
-      if (typeof showLevelSelect === 'function') {
-        showLevelSelect();
-      } else if (typeof startGame === 'function') {
-        startGame(1);
-      }
-    }, 500);
-  };
-}
-// ============================================================
-// 议题 12 · 切片 4 · 通关过场 END
-
-// 议题 12 · 切片 5 · 关卡选择页 START
-const PROGRESS_KEYS = {
-  preExpCompleted: 'nova_alienfizzle_preExpCompleted',
-  level1Completed: 'nova_alienfizzle_level1Completed',
-  level2Completed: 'nova_alienfizzle_level2Completed',
-  level3Completed: 'nova_alienfizzle_level3Completed'
-};
-function getProgress(key) {
-  try { return localStorage.getItem(PROGRESS_KEYS[key]) === '1'; } catch(e) { return false; }
-}
-function setProgress(key) {
-  try { localStorage.setItem(PROGRESS_KEYS[key], '1'); } catch(e) {}
-}
-function markLevelCompleted(level) {
-  if (level === 1) setProgress('level1Completed');
-  else if (level === 2) setProgress('level2Completed');
-  else if (level === 3) setProgress('level3Completed');
-}
-function showLevelSelect() {
-  const page = document.getElementById('levelSelectPage');
-  const container = document.getElementById('levelBtnsContainer');
-  if (!page || !container) return;
-  // 若从预体验通关来的, 记录预体验通关
-  setProgress('preExpCompleted');
-  const levels = [
-    { id: 1, key: 'level1Completed', name: '第 1 关 · 新手训练', desc: '低强度侦察 · 熟悉战场机制', unlockKey: 'preExpCompleted', color: '#5fb0ff' },
-    { id: 2, key: 'level2Completed', name: '第 2 关 · 标准部署', desc: '常规兵种混编 · 中等挑战', unlockKey: 'level1Completed', color: '#88cc88' },
-    { id: 3, key: 'level3Completed', name: '第 3 关 · 殊死防御', desc: '高强度进攻 · 最终考验', unlockKey: 'level2Completed', color: '#ff6644' },
-    { id: 'endless', key: null, name: '★ 无尽模式', desc: '通关第 3 关后解锁 · 追逐最高纪录', unlockKey: 'level3Completed', color: '#ffaa44' }
-  ];
-  container.innerHTML = '';
-  levels.forEach(lv => {
-    const unlocked = getProgress(lv.unlockKey);
-    const completed = lv.key ? getProgress(lv.key) : false;
-    const btn = document.createElement('button');
-    btn.style.cssText = `
-      background: ${unlocked ? `linear-gradient(135deg, ${lv.color}22, ${lv.color}11)` : 'rgba(40,45,60,0.4)'};
-      border: 2px solid ${unlocked ? lv.color : 'rgba(80,90,110,0.4)'};
-      color: ${unlocked ? '#e0e6f0' : '#5a6478'};
-      padding: 20px 28px;
-      text-align: left;
-      cursor: ${unlocked ? 'pointer' : 'not-allowed'};
-      border-radius: 6px;
-      transition: transform 0.15s ease, box-shadow 0.2s ease;
-      opacity: ${unlocked ? '1' : '0.55'};
-    `;
-    btn.innerHTML = `
-      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <div>
-          <div style="font: bold 18px sans-serif; margin-bottom: 4px;">${lv.name}</div>
-          <div style="font-size: 12px; opacity: 0.75;">${lv.desc}</div>
-        </div>
-        <div style="font-size: 20px;">${completed ? '✔' : unlocked ? '→' : '🔒'}</div>
-      </div>
-    `;
-    if (unlocked) {
-      btn.onmouseenter = () => { btn.style.transform = 'translateY(-2px)'; btn.style.boxShadow = `0 4px 20px ${lv.color}66`; };
-      btn.onmouseleave = () => { btn.style.transform = 'translateY(0)'; btn.style.boxShadow = 'none'; };
-      btn.onclick = () => {
-        if (lv.id === 'endless') {
-          if (typeof showBuffToast === 'function') showBuffToast('无尽模式 · 即将开放');
-          else alert('无尽模式 · 即将开放');
-          return;
-        }
-        page.style.opacity = '0';
-        setTimeout(() => {
-          page.style.display = 'none';
-          startGame(lv.id);
-        }, 400);
-      };
-    }
-    container.appendChild(btn);
-  });
-  page.style.display = 'flex';
-  page.style.opacity = '0';
-  setTimeout(() => { page.style.opacity = '1'; }, 50);
-}
-// 议题 12 · 切片 5 · 关卡选择页 END
-// ============================================================
-
 function startGame(levelNum) {
-  if (levelNum == null) levelNum = 2;
+  levelNum = levelNum || 2;
   G.currentLevel = levelNum;
   // T07: 持久化当前关卡, 下次启动默认进入
   Storage.set('currentLevel', levelNum);
   const LEVEL_CONFIG = {
-    0: { diffMult: 1.0,  enemyMult: 1.0,  name: '预体验 · 无双时刻' },
     1: { diffMult: 0.5,  enemyMult: 0.6,  name: '第一关 · 新手训练' },
     2: { diffMult: 1.0,  enemyMult: 1.0,  name: '第二关 · 标准战役' },
     3: { diffMult: 1.5,  enemyMult: 1.4,  name: '第三关 · 殊死决战' }
@@ -3982,11 +2762,6 @@ function triggerGameOver(isVictory) {
     document.getElementById('retryBtn').textContent = lvl < 3 ? '下一关' : '再来一遍';
     document.getElementById('retryBtn').onclick = () => {
       document.getElementById('gameOverPanel').style.display = 'none';
-      // 议题 12 · 切片 5: 正式关卡通关 → 记录进度 + 跳关卡选择页 (不再自动跳下一关)
-      if (lvl >= 1 && lvl <= 3) {
-        markLevelCompleted(lvl);
-        if (typeof showLevelSelect === 'function') { showLevelSelect(); return; }
-      }
       if (lvl < 3) { startGame(lvl + 1); } else { startGame(1); }
     };
   } else {
@@ -4064,75 +2839,6 @@ window.addEventListener('load', () => {
   setupOnboard();
 });
 
-// 议题 12 · 切片 1 · 加载页 START
-function hideLoadingOverlay() {
-  const el = document.getElementById('loadingOverlay');
-  if (!el) return;
-  el.style.opacity = '0';
-  setTimeout(() => {
-    el.style.display = 'none';
-    // Hook 给议题 12 · 切片 2 (开局弹窗): 若已定义 showIntroDialog 就调
-    if (typeof showIntroDialog === 'function') {
-      showIntroDialog();
-    }
-  }, 600);
-}
-window.addEventListener('load', () => {
-  setTimeout(hideLoadingOverlay, 1200);  // 1.2s 展示时间
-});
-// 议题 12 · 切片 1 · 加载页 END
-
-// 议题 12 · 切片 2 · 开局弹窗 START
-function showIntroDialog() {
-  const dlg = document.getElementById('introDialog');
-  const txt = document.getElementById('introTextLines');
-  const btn = document.getElementById('introConfirmBtn');
-  if (!dlg || !txt || !btn) return;
-
-  const lines = [
-    '检测到大规模异常生物能力波动',
-    '大量未知生物正在集结, 逼近防线',
-    '情况危急 · 请立即前往前线评估'
-  ];
-
-  dlg.style.display = 'flex';
-  dlg.style.opacity = '0';
-  txt.innerHTML = '';
-  btn.style.opacity = '0';
-  btn.disabled = true;
-
-  setTimeout(() => { dlg.style.opacity = '1'; }, 50);
-
-  lines.forEach((line, i) => {
-    setTimeout(() => {
-      const span = document.createElement('div');
-      span.textContent = line;
-      span.style.opacity = '0';
-      span.style.transition = 'opacity 0.5s ease';
-      txt.appendChild(span);
-      setTimeout(() => { span.style.opacity = '1'; }, 30);
-    }, 600 + i * 700);
-  });
-
-  setTimeout(() => {
-    btn.style.opacity = '1';
-    btn.disabled = false;
-  }, 600 + lines.length * 700 + 200);
-
-  btn.onclick = () => {
-    dlg.style.opacity = '0';
-    setTimeout(() => {
-      dlg.style.display = 'none';
-      if (typeof startPreExperience === 'function') {
-        startPreExperience();
-      } else if (typeof startGame === 'function') {
-        startGame(1);
-      }
-    }, 500);
-  };
-}
-// 议题 12 · 切片 2 · 开局弹窗 END
-
 // ==== Mobile 响应式: 保持 414x736 比例, 铺满可视区居中 ====
 // 触发条件: viewport <= 500px (跟 CSS @media 断点一致)
 function isMobileMode(){
@@ -4157,376 +2863,6 @@ function fitMobileCanvas(){
 window.addEventListener('load', fitMobileCanvas);
 window.addEventListener('resize', fitMobileCanvas);
 window.addEventListener('orientationchange', fitMobileCanvas);
-
-// ============================================================
-// 议题 10 · 切片 4 · 精通卡+赌局+技能 START
-// applyMasteryEffect / applySkillEffect / applyDemonGamble
-// onEnemyKilled / tickSkills / 制导激光 / 状态门重生成
-// ============================================================
-
-// ----- 精通卡分派 (立即结算类) -----
-function applyMasteryEffect(id) {
-  if (!G.perks) G.perks = {};
-  switch (id) {
-    // A 子弹形态 - 靠 hasMastery 挂钩, 不需要 apply 时做事
-    case 'a_pierce':
-    case 'a_bounce':
-    case 'a_explode':
-    // B 状态施加 - 挂钩, 无需 apply 处理
-    case 'b_burn':
-    case 'b_slow':
-    case 'b_stun':
-    // D 伤害修饰 - 挂钩
-    case 'd_hunter':
-    case 'd_weak':
-    // F 共鸣 - 挂钩
-    case 'f_resonance':
-    // G Bobo - 挂钩
-    case 'g_focus':
-    case 'g_overload':
-    case 'g_burn':
-      break;
-    // C 食髓 - 挂钩, 但需要初始化 feastUntil (kill 时才 set)
-    case 'c_feast':
-      G.perks.feastUntil = G.perks.feastUntil || 0;
-      break;
-    // C 熔核 - 立即启动周期
-    case 'c_meltdown':
-      G.perks.meltdownStart = G.now || performance.now();
-      floatText(W/2, H/2, '熔核 · 循环启动', '#ff8c00', true);
-      break;
-    // E 防线加固 - 立即结算
-    case 'e_reinforce': {
-      const newMax = Math.round(G.defenseMax * 1.3);
-      const delta = newMax - G.defenseMax;
-      G.defenseMax = newMax;
-      G.defenseHP = Math.min(newMax, G.defenseHP + delta);
-      updateDefenseBar();
-      floatText(W/2, DEFENSE_Y - 20, '防线加固!', '#4dff9d', true);
-      break;
-    }
-    // E 回响 - 挂钩 (在 onEnemyKilled 里判)
-    case 'e_echo':
-      G.perks.echoKillCount = G.perks.echoKillCount || 0;
-      break;
-    // E 绝境反击 - 挂钩
-    case 'e_desperate':
-      break;
-    // F 贪婪 - 挂钩 (在 onEnemyKilled 里判)
-    case 'f_greed':
-      break;
-    // F 恶魔赌局 - 立即摇一次
-    case 'f_gamble':
-      applyDemonGamble();
-      break;
-    // G 制导激光 - 初始化计数
-    case 'g_guide':
-      G.perks.boboAttackCount = G.perks.boboAttackCount || 0;
-      G.perks.boboGuideLasers = G.perks.boboGuideLasers || [];
-      break;
-    default:
-      console.warn('[Slice4] Unknown mastery id:', id);
-  }
-}
-
-// ----- 恶魔赌局 -----
-function applyDemonGamble() {
-  const coeff = rollDemonGamble();
-  // 采用现有字段: G.playerAtkBonus (加区) / G.playerAtkMult (乘区) / G.playerCritBonus
-  // + G.nuoStats.spd / blt / crt / critDmg (Bobo 全吃)
-  G.playerAtkBonus = (G.playerAtkBonus || 0) * coeff;
-  G.playerAtkMult = 1 + ((G.playerAtkMult || 1) - 1) * coeff;
-  G.playerCritBonus = (G.playerCritBonus || 0) * coeff;
-  if (G.nuoStats) {
-    // atk / spd / blt / crt / critDmg 都按赌局系数重构 (增量部分)
-    // 基线不动, 只对 "偏离基线" 的加成部分乘系数
-    const b = CFG.nuo.base;
-    G.nuoStats.atk = b.atk + (G.nuoStats.atk - b.atk) * coeff;
-    G.nuoStats.spd = b.spd + (G.nuoStats.spd - b.spd) * coeff;
-    G.nuoStats.blt = b.blt + (G.nuoStats.blt - b.blt) * coeff;
-    G.nuoStats.crt = Math.max(0, b.crt + (G.nuoStats.crt - b.crt) * coeff);
-    G.nuoStats.critDmg = Math.max(0, b.critDmg + (G.nuoStats.critDmg - b.critDmg) * coeff);
-    // spd/blt 保底
-    G.nuoStats.spd = Math.max(0.2, G.nuoStats.spd);
-    G.nuoStats.blt = Math.max(1, G.nuoStats.blt);
-    if (typeof updateNuoUI === 'function') updateNuoUI();
-  }
-  G.gambleFlash = {
-    coeff,
-    ttl: 1.5, maxTtl: 1.5,
-    color: coeff >= 1.3 ? '#ffcc44' : coeff <= 0.85 ? '#ff4444' : '#ffffff'
-  };
-  console.log('[恶魔赌局] 系数 =', coeff.toFixed(2), '×');
-}
-
-function drawGambleFlash() {
-  if (!G.gambleFlash || G.gambleFlash.ttl <= 0) return;
-  const alpha = Math.min(1, G.gambleFlash.ttl / 0.5);
-  ctx.save();
-  ctx.globalAlpha = alpha;
-  ctx.fillStyle = G.gambleFlash.color;
-  ctx.strokeStyle = 'rgba(0,0,0,0.85)';
-  ctx.lineWidth = 4;
-  ctx.font = 'bold 40px ui-monospace,Menlo,monospace';
-  ctx.textAlign = 'center';
-  ctx.textBaseline = 'middle';
-  const text = '恶魔赌局: ' + G.gambleFlash.coeff.toFixed(2) + '×';
-  ctx.strokeText(text, W/2, H/2 - 40);
-  ctx.fillText(text, W/2, H/2 - 40);
-  ctx.restore();
-}
-
-// ----- 击杀 hook -----
-function onEnemyKilled(e) {
-  if (!G.cardPool) return;
-  const now = G.now || performance.now();
-  // C 食髓
-  if (G.cardPool.hasMastery('c_feast') && (e.type === 'elite' || e.isMiniBoss || e.isFinalBoss)) {
-    G.perks.feastUntil = now + 5000;
-    floatText(G.player.x, G.player.y - 20, '食髓!', '#ffd441', true);
-  }
-  // E 回响 (每 20 击杀 回 1% 防线)
-  if (G.cardPool.hasMastery('e_echo')) {
-    G.perks.echoKillCount = (G.perks.echoKillCount || 0) + 1;
-    if (G.perks.echoKillCount % 20 === 0) {
-      const heal = Math.max(1, Math.round(G.defenseMax * 0.01));
-      G.defenseHP = Math.min(G.defenseMax, G.defenseHP + heal);
-      updateDefenseBar();
-      floatText(W/2, DEFENSE_Y - 8, '回响 +' + heal, '#4dff9d', false);
-    }
-  }
-  // F 贪婪 (2% * 张数 立即召唤状态门)
-  if (G.cardPool.hasMastery('f_greed')) {
-    const p = 0.02 * G.cardPool.getMasteryCount('f_greed');
-    if (Math.random() < p) {
-      spawnBonusStateGate();
-      floatText(e.x, e.y - 30, '贪婪!', '#ff88dd', true);
-    }
-  }
-}
-
-function spawnBonusStateGate() {
-  G.stateGates = G.stateGates || [];
-  G.stateGates.push(createStateGate());
-}
-
-// ----- 制导激光 (g_guide) -----
-function triggerBoboGuideLaser(bobo) {
-  const target = selectBoboTarget(bobo, G.enemies);
-  if (!target) return;
-  G.perks.boboGuideLasers = G.perks.boboGuideLasers || [];
-  G.perks.boboGuideLasers.push({
-    from: bobo,
-    target,
-    endAt: (G.now || performance.now()) + 5000,
-    lastTickAt: 0,
-  });
-  floatText(bobo.x, bobo.y - 20, '制导激光!', '#88ffff', true);
-}
-
-function tickBoboGuideLasers(dt) {
-  if (!G.perks || !G.perks.boboGuideLasers || G.perks.boboGuideLasers.length === 0) return;
-  const now = G.now || performance.now();
-  for (let i = G.perks.boboGuideLasers.length - 1; i >= 0; i--) {
-    const gl = G.perks.boboGuideLasers[i];
-    if (now >= gl.endAt) { G.perks.boboGuideLasers.splice(i, 1); continue; }
-    // 目标丢失 → 跳最近
-    if (!gl.target || gl.target.hp <= 0 || G.enemies.indexOf(gl.target) < 0) {
-      gl.target = selectBoboTarget(gl.from, G.enemies);
-      if (!gl.target) continue;
-      // 击杀时若持有 a_explode → 小爆炸
-      if (G.cardPool && G.cardPool.hasMastery('a_explode') && gl.lastKilledPos) {
-        G.explosions = G.explosions || [];
-        G.explosions.push({ x: gl.lastKilledPos.x, y: gl.lastKilledPos.y, r: 30, bornAt: G.now, life: 280 });
-      }
-    }
-    // 每 200ms tick 50 伤害 (吃 g_focus)
-    if (now - gl.lastTickAt >= 200) {
-      gl.lastTickAt = now;
-      let dmg = 50;
-      const focusN = G.cardPool ? (G.cardPool.getMasteryCount('g_focus') || 0) : 0;
-      if (focusN > 0) dmg *= (1 + 0.5 * focusN);
-      const eff = Math.max(1, Math.round(dmg * (1 - (gl.target.armor || 0))));
-      const killedPos = { x: gl.target.x, y: gl.target.y };
-      damageEnemy(gl.target, eff, false, false);
-      // a_pierce 联动: 折射到附近 3 个敌人 80% 伤害
-      if (G.cardPool && G.cardPool.hasMastery('a_pierce')) {
-        const others = G.enemies.filter(e => e !== gl.target).slice().sort((a,b) => {
-          const da = (a.x-gl.target.x)**2 + (a.y-gl.target.y)**2;
-          const db = (b.x-gl.target.x)**2 + (b.y-gl.target.y)**2;
-          return da - db;
-        }).slice(0, 3);
-        others.forEach(o => {
-          const d2 = Math.max(1, Math.round(dmg * 0.8 * (1 - (o.armor||0))));
-          damageEnemy(o, d2, false, false);
-        });
-      }
-      if (!gl.target || gl.target.hp <= 0) gl.lastKilledPos = killedPos;
-    }
-  }
-}
-
-function drawBoboGuideLasers() {
-  if (!G.perks || !G.perks.boboGuideLasers || G.perks.boboGuideLasers.length === 0) return;
-  ctx.save();
-  G.perks.boboGuideLasers.forEach(gl => {
-    if (!gl.target) return;
-    const fx = perspectiveX(gl.from.x, gl.from.y);
-    const tx = perspectiveX(gl.target.x, gl.target.y);
-    ctx.globalAlpha = 0.6;
-    ctx.strokeStyle = 'rgba(120, 255, 255, 0.9)';
-    ctx.lineWidth = 8;
-    ctx.shadowColor = '#88ffff';
-    ctx.shadowBlur = 14;
-    ctx.beginPath();
-    ctx.moveTo(fx, gl.from.y);
-    ctx.lineTo(tx, gl.target.y);
-    ctx.stroke();
-    ctx.globalAlpha = 1;
-    ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 3;
-    ctx.shadowBlur = 0;
-    ctx.stroke();
-  });
-  ctx.restore();
-}
-
-// ----- 技能启用框架 -----
-function applySkillEffect(skillId, level) {
-  if (!G.skillState) G.skillState = {};
-  const now = G.now || performance.now();
-  const cooldownMap = {
-    together: 10000,
-    flywheel: 10000,
-    mercy: 5000,
-    highvoltage: 20000,
-    laserpierce: 15000
-  };
-  const cd = cooldownMap[skillId] || 10000;
-  G.skillState[skillId] = { active: true, level, cooldown: cd, lastCast: now };
-  console.log('[技能启用]', skillId, 'Lv' + level, 'cd=' + cd + 'ms');
-}
-
-function tickSkills(dt) {
-  if (!G.skillState) return;
-  const now = G.now || performance.now();
-  for (const id of ['together','flywheel','mercy','highvoltage','laserpierce']) {
-    const st = G.skillState[id];
-    if (!st || !st.active) continue;
-    if (now - st.lastCast >= st.cooldown) {
-      st.lastCast = now;
-      castSkill(id, st.level);
-    }
-  }
-}
-
-function castSkill(id, level) {
-  console.log('[技能触发]', id, 'Lv' + level);
-  // 极简可视化: 主角周围一圈 + 飘字
-  if (!G.skillVisuals) G.skillVisuals = [];
-  const player = G.player;
-  if (!player) return;
-  const colorMap = {
-    together: '#ffdd66',
-    flywheel: '#66ddff',
-    mercy: '#ff88dd',
-    highvoltage: '#aaffff',
-    laserpierce: '#8888ff'
-  };
-  const labelMap = {
-    together: '站一起',
-    flywheel: '飞轮海',
-    mercy: '恩赐解脱',
-    highvoltage: '高压领域',
-    laserpierce: '激光贯穿'
-  };
-  G.skillVisuals.push({
-    kind: 'ring', x: player.x, y: player.y, r: 100,
-    color: colorMap[id] || '#fff', bornAt: G.now, life: 500
-  });
-  floatText(player.x, player.y - 40, labelMap[id] + '!', colorMap[id], true);
-
-  // 简易伤害: 复用现有实现的思路 (打磨阶段完善)
-  if (id === 'together') {
-    // 找主要目标 (血量最多), 圆心通道宽 1/3 半径爆炸
-    const target = G.enemies.slice().sort((a,b) => b.hp - a.hp)[0];
-    if (target) {
-      const r = (W - SPLIT_X) / 6;  // 通道宽 1/3 = 半径 1/6
-      splashAround(target.x, target.y, r, 50, null);
-      G.explosions = G.explosions || [];
-      G.explosions.push({ x: target.x, y: target.y, r, bornAt: G.now, life: 320 });
-    }
-  } else if (id === 'mercy') {
-    // 血最高目标一颗超级子弹 8x 真伤
-    const target = G.enemies.slice().sort((a,b) => b.hp - a.hp)[0];
-    if (target) {
-      const playerAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
-      damageEnemy(target, Math.round(playerAtk * 8), true, true);
-    }
-  } else if (id === 'laserpierce') {
-    // 向前 3 单位宽 (90px) 贯穿激光, 沿主角 y 向上一条竖线打所有敌人
-    G.skillVisuals.push({
-      kind: 'vbeam', x: player.x, width: 90,
-      bornAt: G.now, life: 300, color: '#aaddff'
-    });
-    G.enemies.slice().forEach(e => {
-      if (Math.abs(e.x - player.x) < 45 + e.w/2) {
-        damageEnemy(e, 800, false, true);
-      }
-    });
-  } else if (id === 'flywheel') {
-    // 简易: 通道中心圆形持续伤害区 - 一次性 100 伤害 (TODO: 后续切片补持续)
-    const cx = (TRACK_R_LEFT + TRACK_R_RIGHT) / 2;
-    const cy = H * 0.55;
-    splashAround(cx, cy, 70, 100, null);
-    G.explosions = G.explosions || [];
-    G.explosions.push({ x: cx, y: cy, r: 70, bornAt: G.now, life: 400 });
-  } else if (id === 'highvoltage') {
-    // 简易: 通道下半随机 3 个敌人麻痹 1s 并造 50 伤害
-    const targets = G.enemies.filter(e => e.y > H * 0.5).slice(0, 3);
-    targets.forEach(t => {
-      t.stunUntil = (G.now || performance.now()) + 1000;
-      damageEnemy(t, 50, false, true);
-    });
-  }
-}
-
-function tickSkillVisuals(dt) {
-  if (!G.skillVisuals) return;
-  for (let i = G.skillVisuals.length - 1; i >= 0; i--) {
-    const v = G.skillVisuals[i];
-    if (G.now - v.bornAt > v.life) G.skillVisuals.splice(i, 1);
-  }
-}
-
-function drawSkillVisuals() {
-  if (!G.skillVisuals || G.skillVisuals.length === 0) return;
-  ctx.save();
-  G.skillVisuals.forEach(v => {
-    const t = (G.now - v.bornAt) / v.life;
-    const alpha = Math.max(0, 1 - t);
-    ctx.globalAlpha = alpha;
-    if (v.kind === 'ring') {
-      ctx.strokeStyle = v.color;
-      ctx.lineWidth = 3;
-      ctx.shadowColor = v.color;
-      ctx.shadowBlur = 12;
-      ctx.beginPath();
-      ctx.arc(v.x, v.y, v.r * (0.4 + t * 0.9), 0, Math.PI * 2);
-      ctx.stroke();
-    } else if (v.kind === 'vbeam') {
-      ctx.fillStyle = v.color;
-      ctx.shadowColor = v.color;
-      ctx.shadowBlur = 16;
-      ctx.fillRect(v.x - v.width/2, 0, v.width, H);
-    }
-  });
-  ctx.restore();
-}
-
-// ============================================================
-// 议题 10 · 切片 4 · 精通卡+赌局+技能 END
-// ============================================================
 
 </script>
 </body>
