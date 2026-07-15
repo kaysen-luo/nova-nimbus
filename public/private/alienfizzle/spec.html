@@ -1768,5 +1768,186 @@ Alien Fizzle · 玩法规格<br>
 
 </main>
 </div>
+
+<!-- Spec 编辑功能 v1 START -->
+<div id="spec-editor-toolbar" role="toolbar" aria-label="Spec 编辑工具条">
+  <button type="button" id="btn-toggle-edit" class="spec-ed-btn">✏️ 编辑</button>
+  <button type="button" id="btn-save-edit" class="spec-ed-btn" disabled>💾 保存</button>
+  <button type="button" id="btn-export-edit" class="spec-ed-btn">⬇ 导出</button>
+</div>
+<style>
+  #spec-editor-toolbar {
+    position: fixed; top: 12px; right: 12px; z-index: 99999;
+    display: flex; gap: 8px;
+    background: rgba(20, 30, 45, 0.92);
+    padding: 8px; border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.35);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .spec-ed-btn {
+    min-width: 44px; min-height: 44px;
+    padding: 0 12px;
+    background: #2a3a55; color: #e8ecf3;
+    border: 1px solid #3d5075; border-radius: 6px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .spec-ed-btn:hover:not(:disabled) { background: #35486a; }
+  .spec-ed-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .spec-ed-btn.active { background: #d97706; border-color: #f59e0b; color: #fff; }
+  body.spec-editing main, body.spec-editing main * {
+    background-color: rgba(255,220,100,0.05);
+  }
+  body.spec-editing [contenteditable="true"]:focus {
+    outline: 2px dashed #f59e0b; outline-offset: 2px;
+  }
+  #spec-export-modal {
+    position: fixed; inset: 0; z-index: 100000;
+    background: rgba(0,0,0,0.75);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  #spec-export-modal.show { display: flex; }
+  #spec-export-modal .modal-box {
+    background: #1a2333; color: #e8ecf3;
+    max-width: 720px; width: 100%; max-height: 80vh;
+    display: flex; flex-direction: column;
+    border-radius: 8px; padding: 16px;
+  }
+  #spec-export-modal textarea {
+    flex: 1; width: 100%; min-height: 300px;
+    background: #0d1420; color: #cbd5e1;
+    border: 1px solid #334155; border-radius: 4px;
+    padding: 8px; font-family: monospace; font-size: 12px;
+    resize: vertical;
+  }
+  #spec-export-modal .modal-actions {
+    display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end;
+  }
+  @media print { #spec-editor-toolbar { display: none !important; } }
+</style>
+<div id="spec-export-modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <h3 style="margin:0 0 8px 0;">导出编辑后的 Spec</h3>
+    <p style="margin:0 0 8px 0; font-size:13px; color:#94a3b8;">
+      已触发下载完整 HTML 文件。也可从下方复制 body innerHTML 粘贴回传:
+    </p>
+    <textarea id="spec-export-textarea" readonly></textarea>
+    <div class="modal-actions">
+      <button type="button" class="spec-ed-btn" id="btn-copy-export">复制</button>
+      <button type="button" class="spec-ed-btn" id="btn-close-export">关闭</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  const LS_KEY = 'nova_alienfizzle_spec_edit';
+  const btnEdit = document.getElementById('btn-toggle-edit');
+  const btnSave = document.getElementById('btn-save-edit');
+  const btnExport = document.getElementById('btn-export-edit');
+  const modal = document.getElementById('spec-export-modal');
+  const modalTA = document.getElementById('spec-export-textarea');
+  const btnCopy = document.getElementById('btn-copy-export');
+  const btnCloseExport = document.getElementById('btn-close-export');
+  let editing = false;
+  let dirty = false;
+
+  // 加载时检查本地存档
+  try {
+    const saved = localStorage.getItem(LS_KEY);
+    if (saved) {
+      const meta = localStorage.getItem(LS_KEY + '_meta') || '';
+      if (confirm('检测到本地保存的编辑版本' + (meta ? ' (' + meta + ')' : '') + ', 是否加载?')) {
+        // 只替换 main 内容, 保留工具条
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(saved, 'text/html');
+        const savedMain = doc.querySelector('main') || doc.body.querySelector('main');
+        const currentMain = document.querySelector('main');
+        if (savedMain && currentMain) {
+          currentMain.innerHTML = savedMain.innerHTML;
+        } else {
+          // 回退: 整个 body 替换 (会丢工具条, 但用户接受了)
+          document.body.innerHTML = saved;
+        }
+      }
+    }
+  } catch(e) { console.warn('load saved edit failed', e); }
+
+  function setEditing(on) {
+    editing = on;
+    document.body.classList.toggle('spec-editing', on);
+    const main = document.querySelector('main');
+    if (main) {
+      if (on) main.setAttribute('contenteditable', 'true');
+      else main.removeAttribute('contenteditable');
+    }
+    btnEdit.textContent = on ? '🚪 退出编辑' : '✏️ 编辑';
+    btnEdit.classList.toggle('active', on);
+    btnSave.disabled = !on;
+  }
+
+  btnEdit.addEventListener('click', function(){
+    setEditing(!editing);
+  });
+
+  document.addEventListener('input', function(e){
+    if (editing) { dirty = true; btnSave.disabled = false; }
+  }, true);
+
+  btnSave.addEventListener('click', function(){
+    try {
+      const main = document.querySelector('main');
+      const html = main ? main.outerHTML : document.body.innerHTML;
+      localStorage.setItem(LS_KEY, html);
+      localStorage.setItem(LS_KEY + '_meta', new Date().toISOString().slice(0,16).replace('T',' '));
+      dirty = false;
+      btnSave.textContent = '✅ 已保存';
+      setTimeout(function(){ btnSave.textContent = '💾 保存'; }, 1500);
+    } catch(e) {
+      alert('保存失败: ' + e.message);
+    }
+  });
+
+  function exportEditedSpec() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    try {
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const ts = new Date().toISOString().slice(0,10);
+      a.download = 'spec-edited-' + ts + '.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    } catch(e) { console.warn('download failed', e); }
+    // 同时打开 modal 显示 body innerHTML, 便于复制
+    const main = document.querySelector('main');
+    modalTA.value = main ? main.innerHTML : document.body.innerHTML;
+    modal.classList.add('show');
+  }
+
+  btnExport.addEventListener('click', exportEditedSpec);
+  btnCloseExport.addEventListener('click', function(){ modal.classList.remove('show'); });
+  modal.addEventListener('click', function(e){ if (e.target === modal) modal.classList.remove('show'); });
+  btnCopy.addEventListener('click', function(){
+    modalTA.select();
+    try {
+      navigator.clipboard.writeText(modalTA.value).then(function(){
+        btnCopy.textContent = '✅ 已复制';
+        setTimeout(function(){ btnCopy.textContent = '复制'; }, 1500);
+      }).catch(function(){ document.execCommand('copy'); });
+    } catch(e) { document.execCommand('copy'); }
+  });
+
+  // 离开前提示未保存
+  window.addEventListener('beforeunload', function(e){
+    if (editing && dirty) { e.preventDefault(); e.returnValue = ''; return ''; }
+  });
+})();
+</script>
+<!-- Spec 编辑功能 v1 END -->
+
 </body>
 </html>

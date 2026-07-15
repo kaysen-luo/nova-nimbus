@@ -726,7 +726,7 @@ function rollDemonGamble() {
 // --- 4. BOBO_LASER_CONFIG (Bobo 激光基础参数) ---
 const BOBO_LASER_CONFIG = {
   attackSpeed: 0.7, // 秒/发
-  rangeRatio: 0.5,  // 议题 12 · 二版调整: 射程改回通道高度 1/2
+  rangeRatio: 2/3,  // 议题 12 · 三版调整: 射程回 2/3
   damageRatio: 0.6, // 相对主角固定攻击力的比例
   hatredPriority: ['attacking_defense', 'boss', 'elite', 'minion'],  // 高到低
   // 同仇恨值优先血量少的敌人
@@ -1066,14 +1066,14 @@ const CFG = {
     spawnInterval: 4500,
     // 议题 12 · 二版调整: label 改编号 "1"..."8", HP × 4 拔高不能秒破
     perks: [
-      { id: 'fireRate',   hp: 320,   color: '#ffcc44', label: '1', desc: '主角射速 +1%/s 持续' },
-      { id: 'multiShot',  hp: 800,   color: '#44dd99', label: '2', desc: '弹道 +1, 每 30s +1' },
-      { id: 'atkUp',      hp: 1600,  color: '#ff5544', label: '3', desc: '主角攻击每 5s +1' },
-      { id: 'explosive',  hp: 2600,  color: '#ff8c00', label: '4', desc: '命中点小范围爆炸' },
-      { id: 'ricochet',   hp: 3800,  color: '#4dffea', label: '5', desc: '子弹弹射下一个敌人' },
-      { id: 'laser',      hp: 5600,  color: '#a64dff', label: '6', desc: '每 3s 折射激光' },
-      { id: 'mirror',     hp: 8000,  color: '#ff88dd', label: '7', desc: '复制副手 NUO' },
-      { id: 'ultimate',   hp: 11200, color: '#ffd700', label: '8', desc: '每 10s 全屏爆炸' },
+      { id: 'fireRate',   hp: 80,   color: '#ffcc44', label: '1', desc: '主角射速 +1%/s 持续' },
+      { id: 'multiShot',  hp: 200,  color: '#44dd99', label: '2', desc: '弹道 +1, 每 30s +1' },
+      { id: 'atkUp',      hp: 400,  color: '#ff5544', label: '3', desc: '主角攻击每 5s +1' },
+      { id: 'explosive',  hp: 650,  color: '#ff8c00', label: '4', desc: '命中点小范围爆炸' },
+      { id: 'ricochet',   hp: 950,  color: '#4dffea', label: '5', desc: '子弹弹射下一个敌人' },
+      { id: 'laser',      hp: 1400, color: '#a64dff', label: '6', desc: '每 3s 折射激光' },
+      { id: 'mirror',     hp: 2000, color: '#ff88dd', label: '7', desc: '复制副手 NUO' },
+      { id: 'ultimate',   hp: 2800, color: '#ffd700', label: '8', desc: '每 10s 全屏爆炸' },
     ],
     repeatBuffs: [
       { id: 'atk++',  color: '#ff5544', label: '攻击++', desc: '主角伤害 +25%' },
@@ -1402,6 +1402,10 @@ function update(dt) {
   if (G.isPreExperience && G.preExpSilentUntil && performance.now() >= G.preExpSilentUntil) {
     G.preExpSilentUntil = null;
     G.preExpEnemyFrozen = false;
+    // 议题 12 · 三版调整: 记录进攻开始时间, 状态门 10s 后才出第一个
+    G.preExpBattleStart = performance.now();
+    // 清除列队 target, 让敌人恢复正常向下移动进攻
+    G.enemies.forEach(e => { if (e.preExpQueueTargetY !== undefined) delete e.preExpQueueTargetY; });
     // 开火解禁飘字
     floatText(W/2, H*0.35, '开 火 !', '#ff6666', true);
   }
@@ -2100,9 +2104,9 @@ function updateBoboLasers(dt) {
   const cooldown = baseCd / spdMul / overloadMul;
   // ===== END =====
 
-  // 双激光: 有镜像 BOBO 时 → 已经是每个 BOBO 各发一束; 另: 状态门"双倍火力"生效 (spd>基础) 已被攻速吃掉
-  // 弹道分叉数 = (G.multiShot - 1) clamp 到 0..4
-  const forkCount = Math.max(0, Math.min(4, Math.round((G.multiShot || 1) - 1)));
+  // 议题 12 · 三版调整: Bobo 常态只发一束激光锁一个目标
+  // 撤销所有分叉/双激光/双倍火力多目标逻辑, 只保留单目标单束
+  const forkCount = 0;
 
   G.nuos.forEach(n => {
     if (!n._boboLaserTimer) n._boboLaserTimer = 0;
@@ -2115,19 +2119,8 @@ function updateBoboLasers(dt) {
       return;
     }
     const beamColor = n.isMirror ? 'rgba(255, 136, 221, 0.9)' : 'rgba(80, 220, 255, 0.9)';
-    // 主链
+    // 单束单目标
     fireBoboLaserChain(n, ranked[0], ranked, forkCount, beamColor);
-    // 双激光锁双目标: G.nuoStats.blt >= 2 → 再打一束到次优目标 (独立链, 无分叉)
-    const bltDim = Math.round(G.nuoStats.blt || 1);
-    if (bltDim >= 2 && ranked.length >= 2) {
-      const secondary = ranked[1];
-      if (secondary && secondary.hp > 0) {
-        const { dmg, crit } = boboLaserDamage();
-        const eff = Math.max(1, Math.round(dmg * (1 - (secondary.armor || 0))));
-        damageEnemy(secondary, eff, crit, false);
-        G.boboLaserBeams.push(new BoboLaserBeam({ x: n.x, y: n.y }, { x: secondary.x, y: secondary.y }, beamColor));
-      }
-    }
     n._boboLaserTimer = cooldown;
   });
 }
@@ -2408,8 +2401,17 @@ function updateEnemies(dt) {
     onPreExperienceComplete();
   }
   G.enemies.forEach(e => {
-    // 议题 12 · 二版调整: 预体验静默期敌人静止
-    if (G.isPreExperience && G.preExpEnemyFrozen) return;
+    // 议题 12 · 三版调整: 预体验静默期敌人从顶端刷入并列队 (不冻结, 自主移动到 targetY 停下)
+    if (G.isPreExperience && G.preExpSilentUntil && e.preExpQueueTargetY !== undefined) {
+      // 错峰刷入延迟: y 起点在屏顶外, spawnDelay 之前先不动
+      if (e.preExpSpawnAt && G.now < e.preExpSpawnAt) return;
+      if (e.y < e.preExpQueueTargetY) {
+        // 用配置速度慢速下滑到 target
+        e.y += (e.speed || 40) * dt;
+        if (e.y >= e.preExpQueueTargetY) e.y = e.preExpQueueTargetY;
+      }
+      return; // 列队期敌人不攻击/不减速/不燃烧结算
+    }
     // 冰冻 - 终极技能效果, 1.5s 内不动也不攻击
     if (e.frozenUntil && G.now < e.frozenUntil) return;
     // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: 敌人状态 tick =====
@@ -2862,7 +2864,16 @@ function updateStateGate(dt) {
   // 6/29 K 反馈: 状态门密集. 去掉 progressOk 提前生成分支, 严格按 maxConcurrent + 时间间隔
   const underCap = G.stateGates.length < CFG.gate.maxConcurrent;
   const timeOk = G.now >= G.nextGateAt;
-  if (underCap && timeOk) {
+  // 议题 12 · 三版调整: 预体验静默期 + 进攻开始后 10s 内不出状态门
+  let preExpBlock = false;
+  if (G.isPreExperience && !G.preExpCompleted) {
+    if (G.preExpSilentUntil) {
+      preExpBlock = true;  // 静默期内不出
+    } else if (G.preExpBattleStart && performance.now() < G.preExpBattleStart + 10000) {
+      preExpBlock = true;  // 进攻开始 10s 内不出
+    }
+  }
+  if (underCap && timeOk && !preExpBlock) {
     G.stateGates.push(createStateGate());
     G.nextGateAt = G.now + G.gateInterval * 1000;
   }
@@ -3743,7 +3754,8 @@ function startPreExperience() {
   G.currentFormationIndex = 1;
 }
 
-// 从 comp 数组生成 6×10 方阵, 定位到接敌通道上半部分
+// 从 comp 数组生成 6×10 方阵
+// 议题 12 · 三版调整: 静默期首方阵从通道顶端错峰刷入, 自动列队到通道 1/2 处及以上
 function spawnPreExperienceFormation(formationIndex) {
   const rows = 6, cols = 10;
   const comp = PRE_EXP_COMPOSITIONS[Math.min(formationIndex, PRE_EXP_COMPOSITIONS.length - 1)].slice();
@@ -3752,18 +3764,38 @@ function spawnPreExperienceFormation(formationIndex) {
     const j = Math.floor(Math.random() * (i + 1));
     [comp[i], comp[j]] = [comp[j], comp[i]];
   }
-  // small 直径 31, 用 32 spacing 近似"没有间距"
   const spacing = 32;
   const cx = TRACK_R_LEFT + TRACK_R_WIDTH / 2;
   const startX = cx - (cols - 1) * spacing / 2;
-  const startY = HORIZON_Y + 8;  // 通道上半部分起点
+
+  // 首方阵在静默期启动: 从顶端刷入并列队
+  const isFirstQueue = (formationIndex === 0 && G.isPreExperience && G.preExpSilentUntil);
+  // 列队第一排 (row 0) 停在通道 1/2 处, 后排 (row 1..5) 往上依次叠 (更小的 y)
+  const midY = HORIZON_Y + (DEFENSE_Y - HORIZON_Y) / 2;
+  // 错峰刷入: row 0 先出, 每行间隔 ~500ms, 单行内 10 个再抖动 0..200ms
+  const rowSpawnGap = 500;
+  const now = G.now || performance.now();
+
   for (let i = 0; i < comp.length; i++) {
     const row = Math.floor(i / cols);
     const col = i % cols;
     const x = clamp(startX + col * spacing, TRACK_R_LEFT + 20, TRACK_R_RIGHT - 20);
-    const y = startY - row * spacing;  // 后排在屏外, 从屏顶滑入
+    let y;
+    if (isFirstQueue) {
+      // 从屏顶稍上方刷入 (视觉是敌军集结)
+      y = HORIZON_Y - 20 - row * 6 + (Math.random() * 6);
+    } else {
+      y = HORIZON_Y + 8 - row * spacing;  // 保留原逻辑 (后续方阵)
+    }
     const e = createEnemy(comp[i], x, y);
-    if (e) G.enemies.push(e);
+    if (!e) continue;
+    if (isFirstQueue) {
+      // 目标 y: row 0 → midY, row 越大 (后出) 越靠上
+      e.preExpQueueTargetY = midY - row * spacing;
+      // 错峰刷入时间戳
+      e.preExpSpawnAt = now + row * rowSpawnGap + Math.random() * 200;
+    }
+    G.enemies.push(e);
   }
   floatText(W/2, H/2, `方阵 ${formationIndex + 1}/8`, '#ff8c00', true);
 }
