@@ -3710,7 +3710,7 @@ function reset() {
 // currentLevel = 0: 5 个 6×10 方阵串行 + 属性覆盖 + 宝箱效果 ×2 + 通关 hook
 // ============================================================
 const PRE_EXP_STATS = {
-  atk: 20, spd: 2.0, blt: 3, crt: 0, critDmg: 0  // 主角+Bobo 共用: 弹道3 / 攻击力双倍(基线10→20) / 攻速双倍(基线1.0→2.0) · 暴击维持基线
+  atk: 30, spd: 2.0, blt: 3, crt: 0, critDmg: 0  // 主角+Bobo 共用: 弹道3 / 攻击力3倍(基线10→30) / 攻速双倍(基线1.0→2.0) · 暴击维持基线
 };
 // 议题 12 · 二版调整: 按 spec §7.5.5 重写为 8 方阵 (无大 BOSS, 最高只到 miniC)
 const PRE_EXP_COMPOSITIONS = [
@@ -3747,11 +3747,15 @@ function startPreExperience() {
   // 备份并覆盖 BOBO base 属性 (主角+Bobo 共享 CFG.nuo.base)
   if (!G.origNuoBase) G.origNuoBase = { ...CFG.nuo.base };
   Object.assign(CFG.nuo.base, PRE_EXP_STATS);
+  // 议题 12 · 四版: 主角射击弹道数走 G.multiShot 而非 CFG.nuo.base.blt, 必须显式覆盖
+  G.multiShot = PRE_EXP_STATS.blt;
   Storage.set('currentLevel', 0);
   startGame(0);
   // startGame 内部会 spawn 首方阵前先设 spawnCooldown, 但静默期期间敌人已冻结, 直接预排首方阵到通道上半
   spawnPreExperienceFormation(0);
   G.currentFormationIndex = 1;
+  // 议题 12 · 四版: startGame 内部 reset() 会把 G.multiShot 拉回 1, 必须在 startGame 之后再次覆盖
+  G.multiShot = PRE_EXP_STATS.blt;
 }
 
 // 从 comp 数组生成 6×10 方阵
