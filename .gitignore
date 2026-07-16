@@ -22,3 +22,7 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+# Alien Fizzle 备份文件
+public/private/alienfizzle/*.bak-*
+public/private/alienfizzle/*.bak
