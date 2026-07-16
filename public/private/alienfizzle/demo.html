@@ -2369,6 +2369,9 @@ function spawnFormation(name) {
 function spawnEnemies() {
   // 复活反推期: 不刷新新敌人
   if (G.spawnFreezeUntil && G.now < G.spawnFreezeUntil) return;
+  // [7/16 fix P2] 预体验通关后 onPreExperienceComplete 会把 isPreExperience 置 false, 但过场动画期间 loop 仍在跑,
+  // 之前会落入下方 PHASES 主循环继续刷敌. 补一道守门: 预体验完成 → 关卡切换前, 完全禁 spawn.
+  if (G.preExpCompleted && (G.currentLevel || 0) === 0) return;
   // 议题 12 · 切片 3 · 预体验关卡: 走独立方阵调度, 屏蔽 PHASES/wave/boss 全部
   if (G.isPreExperience) {
     tickPreExperienceFormations();
@@ -2587,13 +2590,8 @@ function isPreExperienceLevel() {
 function triggerCardSelection() {
   if (!G.cardPool) G.cardPool = new CardPool();
 
-  // [7/16 C1-6] 预体验模式: 直接抽 3 张全给, 不弹 UI (spec §4.3.2 "预体验直接全拿")
-  if (G.isPreExperience) {
-    const three = G.cardPool.drawThree();
-    for (const c of three) applyCardEffect(c);
-    return;
-  }
-
+  // [7/16 fix P1] 回滚 C1-6: 预体验也走标准三选一 UI, 玩家自选 1 张
+  // (效果 ×2 逻辑仍保留在 applyCardEffect 里, 不冲突)
   G.pendingCards = G.cardPool.drawThree();
   G.cardSelectionUI = {
     active: true,
