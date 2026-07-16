@@ -692,6 +692,7 @@ const MASTERY_CARDS = [
   { id:'a_pierce', category:'A', name:'集束枪管', desc:'普攻+20%, 穿透 2 (伤害递减 20%), 命中分裂 4 弹, BOBO 主目标激光分叉 2' }, // [7/16 fix cluster-barrel] + [7/16 fix pierce-inherit-split]
   { id:'a_bounce', category:'A', name:'裂头弹', desc:'击中主目标后 ±45° 分裂 4 颗小子弹, 50% 伤害, 不再穿透/分裂, 继承攻击特效' }, // [7/16 fix skull-splitter]
   { id:'a_explode', category:'A', name:'爆炸弹', desc:'子弹命中产生小范围爆炸, 30% 主伤害' },
+  { id:'a_burst', category:'A', name:'连发快射', desc:'攻速+30%, 弹道+2, 5% 爆头造成额外 50% 伤害' }, // [7/16 fix burst-fire]
   // B 状态施加 (3) 全必触发
   { id:'b_burn', category:'B', name:'燃烧弹', desc:'必触发点燃, 2 秒内 50% 主伤害 DoT' },
   { id:'b_slow', category:'B', name:'减速弹', desc:'必触发减速 30% 持续 2 秒' },
@@ -1115,7 +1116,7 @@ const CFG = {
     slotHeight: 56,
     topY: 90,
     fallSpeed: 80,
-    initCount: 5,
+    initCount: 3,
   },
   // obstacle 已整合进 treasure decoy, 不再独立存在
   // 状态门
@@ -1578,8 +1579,10 @@ function shootLoop() {
       }
     }
   }
-  const effInterval = meltdownBlock ? Infinity : (CFG.player.bulletInterval / playerSpdMult);
   // ===== END =====
+  // [7/16 fix burst-fire] a_burst 精通: 攻速 +30% (在综合攻速上再叠)
+  playerSpdMult *= (G.playerSpdMult || 1);
+  const effInterval = meltdownBlock ? Infinity : (CFG.player.bulletInterval / playerSpdMult);
   // 主角射击 - 多弹道 + 暴击 + atkMult + atkBonus
   if (G.now - G.player.lastShot >= effInterval) {
     const baseAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
@@ -1590,11 +1593,18 @@ function shootLoop() {
     const critRate = Math.min(1, (G.playerCritRate !== undefined ? G.playerCritRate : G.nuoStats.crt) + (G.playerCritBonus || 0) + playerCritExtra);
     // 暴击伤害 = 基础 ×2 + critDmg 加成 (来自状态门 critDmg 维度)
     const critMult = 2 + (G.nuoStats.critDmg || 0) + playerCritDmgExtra;
+    // [7/16 fix burst-fire] 爆头率 (与暴击独立, 与暴击可叠加)
+    const headshotRate = G.playerHeadshotChance || 0;
     for (let i = 0; i < bltCount; i++) {
       const offset = (i - (bltCount-1)/2) * spread;
+      const headshot = Math.random() < headshotRate;
       const crit = Math.random() < critRate;
-      const atk = baseAtk * (crit ? critMult : 1);
-      G.bullets.push(createBullet(G.player.x + offset, G.player.y - G.player.h/2, 'player', atk, 1, crit));
+      let atk = baseAtk;
+      if (headshot) atk *= 1.5; // [7/16 fix burst-fire] 爆头 +50%
+      if (crit) atk *= critMult;
+      const b = createBullet(G.player.x + offset, G.player.y - G.player.h/2, 'player', atk, 1, crit);
+      b.headshot = headshot; // [7/16 fix burst-fire] 标记爆头以便飘字用黄色
+      G.bullets.push(b);
     }
     G.player.lastShot = G.now;
     SFX.play('fire');
@@ -1716,7 +1726,7 @@ function updateBullets(dt) {
             // 主弹道伤害
             const rawDmg = b.atk;
             const dmg = Math.max(1, Math.round(rawDmg * (1 - e.armor)));
-            damageEnemy(e, dmg, b.crit, b.owner === 'player');
+            damageEnemy(e, dmg, b.crit, b.owner === 'player', b.headshot);
             hit = true;
             // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: B 状态施加 =====
             if (G.cardPool) {
@@ -1833,7 +1843,7 @@ function updateBullets(dt) {
 // ============================================================
 
 // 给一个敌人扣血 + 处理飘字 + 死亡 (从 enemies 数组里 splice)
-function damageEnemy(e, dmg, isCrit, fromPlayer) {
+function damageEnemy(e, dmg, isCrit, fromPlayer, isHeadshot) {
   // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: 伤害修饰 hook =====
   if (G.cardPool) {
     let mult = 1;
@@ -1874,7 +1884,10 @@ function damageEnemy(e, dmg, isCrit, fromPlayer) {
   e.flashUntil = G.now + 80;
   SFX.play('hit');
   // 飘字
-  if (isCrit) {
+  if (isHeadshot) {
+    // [7/16 fix burst-fire] 爆头用黄色, 与暴击 (橙) / 普通 (白/金) 区分
+    floatText(e.x, e.y - 10, '爆头 ' + dmg + '!', '#ffff33', true);
+  } else if (isCrit) {
     floatText(e.x, e.y - 10, '暴击 ' + dmg + '!', '#ffd441', true);
   } else if (e.armor >= 0.4) {
     floatText(e.x + (Math.random()-0.5)*20, e.y - 10, '-' + dmg + ' 硬', '#aaccff', false);
@@ -1946,9 +1959,23 @@ function findNextRicochetTarget(from) {
 // 主角持续 buff tick (fireRate / multiShot / atkUp)
 // ============================================================
 
+// [7/16 fix chest-exp] 击杀经验表 (小兵/精英/miniA/B/C/boss)
+const CHEST_EXP_TABLE = {
+  small: 2,
+  elite: 4,
+  miniA: 10,
+  miniB: 20,
+  miniC: 40,
+  boss:  100
+};
+
 // [7/16 fix mult-cap] 全局统一 setter, 保证 G.multiShot ∈ [1, 5]
 function setMultiShot(v) {
   G.multiShot = Math.max(1, Math.min(5, Math.round(v)));
+}
+// [7/16 fix burst-fire] 精通卡专用: 绕过 5 上限 (连发快射精通允许超封顶)
+function setMultiShotUncapped(v) {
+  G.multiShot = Math.max(1, Math.round(v));
 }
 
 // 射速强化: 每秒把当前 bulletInterval 乘以 0.99 (= +1%)
@@ -2613,6 +2640,8 @@ function updateDefenseBar() {
 // 宝箱与障碍
 // ============================================================
 function spawnTreasures() {
+  // [7/16 fix chest-refresh] 关闭自动定时刷新, 后续宝箱只由经验值系统 (spawnNewChest) 触发
+  return;
   if (G.now < G.nextTreasureAt) return;
   // 找最少占用的列
   const colCount = CFG.treasure.colCount;
@@ -2638,6 +2667,28 @@ function spawnTreasures() {
   G.treasures.push(t);
   reflowTreasures();
   G.nextTreasureAt = G.now + CFG.treasure.spawnInterval / G.diffMult;
+}
+
+// [7/16 fix chest-exp] 经验值满触发生成新宝箱 (被 onEnemyKilled 引用)
+// 与 spawnTreasures 区别: 不受 G.nextTreasureAt 定时约束, 直接强制 spawn 一个真宝箱
+function spawnNewChest() {
+  const colCount = CFG.treasure.colCount;
+  // 找当前占用最少的列
+  const colCounts = new Array(colCount).fill(0);
+  for (const t of G.treasures) {
+    if (t.col >= 0 && t.col < colCount) colCounts[t.col]++;
+  }
+  const minColCount = Math.min(...colCounts);
+  const candidates = [];
+  for (let i = 0; i < colCount; i++) {
+    if (colCounts[i] === minColCount) candidates.push(i);
+  }
+  const col = pick(candidates);
+  const t = createTreasure();
+  t.col = col;
+  t.x = treasureColX(col);
+  G.treasures.push(t);
+  reflowTreasures();
 }
 
 // 重新计算每列宝箱的 targetY (从上到下叠)
@@ -3639,6 +3690,8 @@ function roundRect(ctx, x, y, w, h, r, fill, stroke) {
 // ============================================================
 function loop(ts) {
   if (!G.running) return;
+  // [7/16 fix endlvl-freeze] loop 主体 try-catch: 防止任何一处 throw 导致 rAF 链断裂 → 卡死
+  try {
   if (G.paused || G.gameOver) {
     requestAnimationFrame(loop);
     return;
@@ -3678,6 +3731,11 @@ function loop(ts) {
   update(dt);
   draw();
   requestAnimationFrame(loop);
+  } catch (err) {
+    // [7/16 fix endlvl-freeze] catch 任何 tick 内异常, 尽量继续跑 (避免卡死)
+    console.error('[loop] exception, continuing:', err);
+    try { requestAnimationFrame(loop); } catch(_) {}
+  }
 }
 
 // ============================================================
@@ -3813,6 +3871,12 @@ function reset() {
   G.playerAtkBonus = 0;
   G.playerCritBonus = 0;
   G.multiShot = 1;
+  // [7/16 fix chest-exp / burst-fire] 初始化经验值+精通卡累积字段
+  G.chestExp = 0;
+  G.chestExpThreshold = 100;
+  G.chestExpTier = 0;
+  G.playerSpdMult = 1;
+  G.playerHeadshotChance = 0;
   G.multiShotNextAt = 0;
   G.fireRateTickAt = 0;
   G.fireRateBaseInterval = CFG.player.bulletInterval;
@@ -4561,6 +4625,15 @@ function applyMasteryEffect(id) {
     case 'g_focus':
     case 'g_burn':
       break;
+    // [7/16 fix burst-fire] 连发快射: 攻速+30%, 弹道+2, 5% 爆头 (只挂 1 次)
+    case 'a_burst':
+      if (!G.perks._aBurstApplied) {
+        G.playerSpdMult = (G.playerSpdMult || 1) * 1.3;
+        setMultiShotUncapped((G.multiShot || 1) + 2);
+        G.playerHeadshotChance = (G.playerHeadshotChance || 0) + 0.05;
+        G.perks._aBurstApplied = true;
+      }
+      break;
     // C 食髓 - 挂钩, 但需要初始化 feastUntil (kill 时才 set)
     case 'c_feast':
       G.perks.feastUntil = G.perks.feastUntil || 0;
@@ -4656,6 +4729,20 @@ function drawGambleFlash() {
 
 // ----- 击杀 hook -----
 function onEnemyKilled(e) {
+  // [7/16 fix chest-exp] 击杀敌人获取经验值 → 累积到阈值刷新新宝箱
+  //   小兵 2 / 精英 4 / miniA 10 / miniB 20 / miniC 40 / boss 100
+  //   阈值 100 → 每次触发后 × 1.5 (chestExpTier 计数)
+  const expKey = e.isFinalBoss ? 'boss' : e.type;
+  const gain = CHEST_EXP_TABLE[expKey] || 2;
+  G.chestExp = (G.chestExp || 0) + gain;
+  if (G.chestExpThreshold === undefined) G.chestExpThreshold = 100;
+  if (G.chestExpTier === undefined) G.chestExpTier = 0;
+  if (G.chestExp >= G.chestExpThreshold) {
+    spawnNewChest();
+    G.chestExpTier++;
+    G.chestExpThreshold = Math.round(100 * Math.pow(1.5, G.chestExpTier));
+    G.chestExp = 0;
+  }
   if (!G.cardPool) return;
   const now = G.now || performance.now();
   // C 食髓
