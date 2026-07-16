@@ -3756,6 +3756,18 @@ function startPreExperience() {
   G.currentFormationIndex = 1;
   // 议题 12 · 四版: startGame 内部 reset() 会把 G.multiShot 拉回 1, 必须在 startGame 之后再次覆盖
   G.multiShot = PRE_EXP_STATS.blt;
+  // 议题 12 · 五版修复: startGame → reset() 里 G.nuoStats = createNuoStats() 用的是当时的 CFG.nuo.base
+  // 上面 3749 已覆盖 CFG.nuo.base, 理论上 nuoStats.blt=3; 但为杜绝任何异步 reflow / DOM 状态 race,
+  // 显式再把 nuoStats 全字段对齐 PRE_EXP_STATS, 并强制刷 HUD (双保险: 即时 + rAF 后各一次)
+  if (G.nuoStats) {
+    G.nuoStats.atk = PRE_EXP_STATS.atk;
+    G.nuoStats.spd = PRE_EXP_STATS.spd;
+    G.nuoStats.blt = PRE_EXP_STATS.blt;
+    G.nuoStats.crt = PRE_EXP_STATS.crt;
+    G.nuoStats.critDmg = PRE_EXP_STATS.critDmg;
+  }
+  if (typeof updateNuoUI === 'function') updateNuoUI();
+  requestAnimationFrame(() => { if (typeof updateNuoUI === 'function') updateNuoUI(); });
 }
 
 // 从 comp 数组生成 6×10 方阵
