@@ -689,8 +689,8 @@ const SKILL_CARDS = [
 // --- 2. MASTERY_CARDS (20 张精通卡, 可重复获得) ---
 const MASTERY_CARDS = [
   // A 子弹形态 (3)
-  { id:'a_pierce', category:'A', name:'穿透+2', desc:'子弹贯穿 2 个敌人' },
-  { id:'a_bounce', category:'A', name:'弹射', desc:'子弹命中后弹射到最近敌人 +1 次' },
+  { id:'a_pierce', category:'A', name:'集束枪管', desc:'普攻+20%, 穿透 2 目标 (伤害递减 20%), BOBO 主目标激光分叉 2 目标' }, // [7/16 fix cluster-barrel]
+  { id:'a_bounce', category:'A', name:'裂头弹', desc:'击中主目标后 ±45° 分裂 4 颗小子弹, 50% 伤害, 不再穿透/分裂, 继承攻击特效' }, // [7/16 fix skull-splitter]
   { id:'a_explode', category:'A', name:'爆炸弹', desc:'子弹命中产生小范围爆炸, 30% 主伤害' },
   // B 状态施加 (3) 全必触发
   { id:'b_burn', category:'B', name:'燃烧弹', desc:'必触发点燃, 2 秒内 50% 主伤害 DoT' },
@@ -715,7 +715,7 @@ const MASTERY_CARDS = [
   { id:'f_gamble_3', category:'F', name:'恶魔赌局 #3', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 详见分布表)' },
   // G Bobo 强化 (4)
   { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 激光伤害+50%' },
-  { id:'g_overload', category:'G', name:'激光过载', desc:'Bobo 攻速+30% (0.7→0.54 秒/发)' },
+  // [7/16 fix remove-overload] g_overload 已移除
   { id:'g_burn', category:'G', name:'激光燃烧', desc:'Bobo 激光必触发点燃 (2 秒 50% 激光伤害 DoT)' },
   { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 每次攻击攒 1 能量, 20 次后发一道 5s 持续制导激光, 50 伤/0.2s, 击杀跳目标, 联动穿透/爆炸卡' }
 ];
@@ -1629,7 +1629,8 @@ function updateBullets(dt) {
   for (let i = G.bullets.length - 1; i >= 0; i--) {
     const b = G.bullets[i];
     b.y += b.vy * dt;
-    if (b.y < -20) {
+    if (b.vx) b.x += b.vx * dt; // [7/16 fix skull-splitter] 支持分裂子弹的水平速度
+    if (b.y < -20 || b.x < -20 || b.x > W + 20) {
       G.bullets.splice(i, 1);
       continue;
     }
@@ -1763,12 +1764,11 @@ function updateBullets(dt) {
               G.explosions = G.explosions || [];
               G.explosions.push({ x: e.x, y: e.y, r: splashR, bornAt: G.now, life: 280 });
             }
-            // 弹射弹 - 主角子弹弹射到下一个目标 (legacy + a_bounce)
-            const bounceOn = (G.perks && G.perks.ricochet) || (G.cardPool && G.cardPool.hasMastery('a_bounce'));
-            if (b.owner === 'player' && bounceOn && !b._ricocheted) {
-              const bounceCount = (G.cardPool ? G.cardPool.getMasteryCount('a_bounce') : 0) + (G.perks && G.perks.ricochet ? 1 : 0);
+            // 裂头弹 (a_bounce): [7/16 fix skull-splitter] 击中主目标后 ±45° 分裂 4 颗小子弹
+            // legacy G.perks.ricochet 仍走原弹射
+            if (b.owner === 'player' && G.perks && G.perks.ricochet && !b._ricocheted) {
               let cur = e;
-              let remaining = Math.max(1, bounceCount);
+              let remaining = 1;
               while (remaining-- > 0) {
                 const next = findNextRicochetTarget(cur);
                 if (!next) break;
@@ -1778,13 +1778,38 @@ function updateBullets(dt) {
                 cur = next;
               }
             }
-            // 穿透 (a_pierce): 每张卡 +2 穿透次数
-            if (b.owner === 'player' && G.cardPool && G.cardPool.hasMastery('a_pierce')) {
+            if (b.owner === 'player' && G.cardPool && G.cardPool.hasMastery('a_bounce') && !b._noSplit) {
+              // [7/16 fix skull-splitter] spawn 4 颗子弹, ±22.5° 和 ±67.5°, 50% 伤害
+              const baseVy = b.vy || (-CFG.bullet.speed);
+              const baseVx = b.vx || 0;
+              const speed = Math.sqrt(baseVx * baseVx + baseVy * baseVy);
+              const theta = Math.atan2(baseVy, baseVx); // 主子弹方向
+              const offsets = [-Math.PI/8*3, -Math.PI/8, Math.PI/8, Math.PI/8*3]; // ±22.5°, ±67.5°
+              const splitDmg = Math.max(1, Math.round(b.atk * 0.5));
+              offsets.forEach(off => {
+                const ang = theta + off;
+                const nb = createBullet(e.x, e.y, 'player', splitDmg, 1, b.crit);
+                nb.vx = Math.cos(ang) * speed;
+                nb.vy = Math.sin(ang) * speed;
+                nb._noSplit = true;
+                nb._noPierce = true;
+                // 继承主子弹的攻击特效标记
+                if (b._burn) nb._burn = b._burn;
+                if (b._slow) nb._slow = b._slow;
+                if (b._stun) nb._stun = b._stun;
+                if (b._poison) nb._poison = b._poison;
+                if (b._explode) nb._explode = b._explode;
+                G.bullets.push(nb);
+              });
+            }
+            // 穿透 (a_pierce): [7/16 fix cluster-barrel] 穿透 2 目标, 每穿一次伤害递减 20%
+            if (b.owner === 'player' && G.cardPool && G.cardPool.hasMastery('a_pierce') && !b._noPierce) {
               if (b._pierceLeft === undefined) {
-                b._pierceLeft = G.cardPool.getMasteryCount('a_pierce') * 2;
+                b._pierceLeft = 2;
               }
               if (b._pierceLeft > 0) {
                 b._pierceLeft--;
+                b.atk *= 0.8; // [7/16 fix cluster-barrel] 每穿一次伤害衰减 20%
                 hit = false; // 不消耗子弹, 继续飞
               }
             }
@@ -2133,7 +2158,9 @@ function fireBoboLaserChain(bobo, primaryTarget, rankedList, forkCount, beamColo
     const next = rankedList[picked++];
     if (!next || next.hp <= 0) { i--; continue; }
     const { dmg: dn, crit: cn } = boboLaserDamage();
-    const effn = Math.max(1, Math.round(dn * 0.75 * (1 - (next.armor || 0))));  // 分叉衰减 25%
+    // [7/16 fix cluster-barrel] a_pierce 时分叉不衰减
+    const forkMul = (G.cardPool && G.cardPool.hasMastery('a_pierce')) ? 1.0 : 0.75;
+    const effn = Math.max(1, Math.round(dn * forkMul * (1 - (next.armor || 0))));  // 分叉衰减 25% (集束枪管时不衰减)
     damageEnemy(next, effn, cn, false);
     if (G.cardPool && G.cardPool.hasMastery('g_burn')) {
       const _now = G.now || performance.now();
@@ -2174,17 +2201,17 @@ function updateBoboLasers(dt) {
   // 攻速: 基础 attackSpeed (秒) / spd 倍率
   const baseCd = BOBO_LASER_CONFIG.attackSpeed;
   const spdMul = Math.max(0.2, G.nuoStats.spd || 1);
-  // ===== 议题 10 · 切片 4: g_overload (Bobo 攻速 +30%/张) =====
-  let overloadMul = 1;
-  if (G.cardPool) {
-    const ovN = G.cardPool.getMasteryCount('g_overload') || 0;
-    overloadMul = 1 + 0.3 * ovN;
-  }
+  // ===== 议题 10 · 切片 4: g_overload [7/16 fix remove-overload] deprecated =====
+  const overloadMul = 1;
   const cooldown = baseCd / spdMul / overloadMul;
   // ===== END =====
 
   // [7/16 C1-1] BOBO 激光分叉恢复: 弹道 N → 分叉 N-1 次 (spec §5.9 / §2.2.2)
-  const forkCount = Math.max(0, Math.round((G.nuoStats.blt || 1) - 1));
+  let forkCount = Math.max(0, Math.round((G.nuoStats.blt || 1) - 1));
+  // [7/16 fix cluster-barrel] a_pierce: BOBO 主目标激光分叉 2 目标
+  if (G.cardPool && G.cardPool.hasMastery('a_pierce')) {
+    forkCount = Math.max(forkCount, 2);
+  }
 
   G.nuos.forEach(n => {
     if (!n._boboLaserTimer) n._boboLaserTimer = 0;
@@ -4510,6 +4537,12 @@ function applyMasteryEffect(id) {
   switch (id) {
     // A 子弹形态 - 靠 hasMastery 挂钩, 不需要 apply 时做事
     case 'a_pierce':
+      // [7/16 fix cluster-barrel] 普攻 +20% (只挂 mastery 时执行一次不叠加)
+      if (!G.perks._aPierceApplied) {
+        G.playerAtkMult = 1.2 * (G.playerAtkMult || 1);
+        G.perks._aPierceApplied = true;
+      }
+      break;
     case 'a_bounce':
     case 'a_explode':
     // B 状态施加 - 挂钩, 无需 apply 处理
@@ -4523,7 +4556,6 @@ function applyMasteryEffect(id) {
     case 'f_resonance':
     // G Bobo - 挂钩
     case 'g_focus':
-    case 'g_overload':
     case 'g_burn':
       break;
     // C 食髓 - 挂钩, 但需要初始化 feastUntil (kill 时才 set)
