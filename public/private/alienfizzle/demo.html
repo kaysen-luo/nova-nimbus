@@ -1843,6 +1843,8 @@ function splashAround(cx, cy, radius, splashDmg, except) {
   const cxp = perspectiveX(cx, cy);
   G.enemies.forEach(e => {
     if (e === except) return;
+    // [7/16 fix P3] 宝箱只吃直接命中: 排除任何 treasure-kind (decoy/perk/buff) 实体, 防止 AOE 溅射到宝箱
+    if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
     const exp = e._cachedPX !== undefined ? e._cachedPX : perspectiveX(e.x, e.y); // [7/16 fix 1]
     const dx = exp - cxp;
     const dy = e.y - cy;
@@ -1858,6 +1860,8 @@ function findNextRicochetTarget(from) {
   let bestDist = Infinity;
   G.enemies.forEach(e => {
     if (e === from) return;
+    // [7/16 fix P3] 宝箱只吃直接命中: 弹射候选排除 treasure-kind
+    if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
     const dx = e.x - from.x;
     const dy = e.y - from.y;
     const d = Math.sqrt(dx*dx + dy*dy);
@@ -4601,7 +4605,7 @@ function tickBoboGuideLasers(dt) {
       damageEnemy(gl.target, eff, false, false);
       // a_pierce 联动: 折射到附近 3 个敌人 80% 伤害
       if (G.cardPool && G.cardPool.hasMastery('a_pierce')) {
-        const others = G.enemies.filter(e => e !== gl.target).slice().sort((a,b) => {
+        const others = G.enemies.filter(e => e !== gl.target && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff').slice().sort((a,b) => { // [7/16 fix P3] 制导激光贯穿排除宝箱
           const da = (a.x-gl.target.x)**2 + (a.y-gl.target.y)**2;
           const db = (b.x-gl.target.x)**2 + (b.y-gl.target.y)**2;
           return da - db;
@@ -4727,6 +4731,8 @@ function castSkill(id, level) {
       bornAt: G.now, life: 300, color: '#aaddff'
     });
     G.enemies.slice().forEach(e => {
+      // [7/16 fix P3] 宝箱只吃直接命中: 激光贯穿技能不打宝箱
+      if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
       if (Math.abs(e.x - player.x) < 45 + e.w/2) {
         damageEnemy(e, 800, false, true);
       }
@@ -4770,6 +4776,8 @@ function tickSkillVisuals(dt) {
         v.lastTickAt = now;
         G.enemies.slice().forEach(e => {
           if (e.hp <= 0) return;
+          // [7/16 fix P3] 宝箱只吃直接命中: 飞轮海 AOE 不打宝箱
+          if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
           const dx = e.x - v.x, dy = e.y - v.y;
           if (dx*dx + dy*dy <= v.r * v.r) damageEnemy(e, 50, false, true);
         });
@@ -4779,6 +4787,8 @@ function tickSkillVisuals(dt) {
         v.lastTickAt = now;
         G.enemies.slice().forEach(e => {
           if (e.hp <= 0) return;
+          // [7/16 fix P3] 宝箱只吃直接命中: 高压领域 AOE 不打宝箱
+          if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
           if (e.x >= v.x && e.x <= v.x + v.w && e.y >= v.y && e.y <= v.y + v.h) {
             e.stunUntil = now + 500;
             damageEnemy(e, 100, false, true);
