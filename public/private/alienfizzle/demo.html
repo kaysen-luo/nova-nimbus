@@ -692,7 +692,7 @@ const MASTERY_CARDS = [
   { id:'a_pierce', category:'A', name:'集束枪管', desc:'普攻+20%, 穿透 2 (伤害递减 20%), 命中分裂 4 弹, BOBO 主目标激光分叉 2' }, // [7/16 fix cluster-barrel] + [7/16 fix pierce-inherit-split]
   { id:'a_bounce', category:'A', name:'裂头弹', desc:'击中主目标后 ±45° 分裂 4 颗小子弹, 50% 伤害, 不再穿透/分裂, 继承攻击特效' }, // [7/16 fix skull-splitter]
   { id:'a_explode', category:'A', name:'爆炸弹', desc:'子弹命中产生小范围爆炸, 30% 主伤害' },
-  { id:'a_burst', category:'A', name:'连发快射', desc:'攻速+30%, 弹道+2, 5% 爆头造成额外 50% 伤害' }, // [7/16 fix burst-fire]
+  { id:'a_burst', category:'A', name:'连发快射', desc:'攻速+30%, 弹道+3, 5% 爆头造成额外 50% 伤害 (不可重复获取)' }, // [7/16 fix burst-fire] [7/16 fix burst-no-repeat]
   // B 状态施加 (3) 全必触发
   { id:'b_burn', category:'B', name:'燃烧弹', desc:'必触发点燃, 2 秒内 50% 主伤害 DoT' },
   { id:'b_slow', category:'B', name:'减速弹', desc:'必触发减速 30% 持续 2 秒' },
@@ -777,6 +777,8 @@ class CardPool {
     // 2. 加入所有精通卡 (可重复)
     for (const m of MASTERY_CARDS) {
       const count = this.masteryCounts[m.id];
+      // [7/16 fix burst-no-repeat] a_burst 连发快射不可重复获取, 拿过就从池里剔除
+      if (m.id === 'a_burst' && count > 0) continue;
       // [7/16 fix gamble-merge] 恶魔赌局权重不腰斩, 保持每次抽卡都可能出现 (它本来就是可重复摇色子的卡)
       const weight = m.id === 'f_gamble'
         ? 1.5
@@ -4626,11 +4628,11 @@ function applyMasteryEffect(id) {
     case 'g_focus':
     case 'g_burn':
       break;
-    // [7/16 fix burst-fire] 连发快射: 攻速+30%, 弹道+2, 5% 爆头 (只挂 1 次)
+    // [7/16 fix burst-fire] 连发快射: 攻速+30%, 弹道+3, 5% 爆头 (只挂 1 次)
     case 'a_burst':
       if (!G.perks._aBurstApplied) {
         G.playerSpdMult = (G.playerSpdMult || 1) * 1.3;
-        setMultiShotUncapped((G.multiShot || 1) + 2);
+        setMultiShotUncapped((G.multiShot || 1) + 3);  // [7/16 fix burst-fire-v2] +2 → +3
         G.playerHeadshotChance = (G.playerHeadshotChance || 0) + 0.05;
         G.perks._aBurstApplied = true;
       }
@@ -4986,23 +4988,27 @@ function castSkill(id, level) {
       }, 600);
     }
   } else if (id === 'mercy') {
-    // [7/16 fix absolution-v3.1] 恩赐解脱 v3.1: 三级统一目标筛选
-    //   Lv1/2/3 都: 先取 rankedList (BOBO 射程内 4阶仇恨), 空则退到全场 alive 非宝箱敌人 (按血多→少)
-    //   全场无敌人才静默不释放 (K 铁律)
+    // [7/16 fix absolution-v3.2] 恩赐解脱 v3.2: 修"无目标也施放"
+    //   目标筛选: 画面可见 + alive + 非宝箱/道具 (不再复用 BOBO 射程, 也不 fallback 到全场)
     //   Lv1 取 1, Lv2 取 2, Lv3 取 5
+    //   目标池空 → 静默不释放不消耗 CD (K 铁律)
     const rankedList = rankedBoboTargets({ x: player.x, y: player.y }, G.enemies);
-    // 全场 fallback: 排除宝箱/道具, 血多的先 (更"值得"锁头)
-    const fallbackAll = (G.enemies || [])
-      .filter(e => e && e.hp > 0 && e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff')
+    // 画面可见的候选 (HORIZON_Y 以下, DEFENSE_Y 以上, 排除宝箱/道具)
+    const visibleAll = (G.enemies || [])
+      .filter(e =>
+        e && e.hp > 0 &&
+        e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff' &&
+        e.y > HORIZON_Y && e.y < DEFENSE_Y
+      )
       .sort((a, b) => b.hp - a.hp);
-    // 合并去重: rankedList 优先, 不够再从 fallbackAll 补
+    // 合并去重: rankedList (BOBO 射程内 4阶) 优先, 不够再从可见池补
     const pool = [...rankedList];
-    for (const e of fallbackAll) {
+    for (const e of visibleAll) {
       if (!pool.includes(e)) pool.push(e);
     }
     const need = (level >= 3) ? 5 : (level >= 2 ? 2 : 1);
     const targets = pool.slice(0, need);
-    // 无有效目标: 静默, 不消耗 CD
+    // 无有效目标: 静默, 不消耗 CD (500ms 后重试)
     if (targets.length === 0) {
       const st = G.skillState && G.skillState.mercy;
       if (st) st.lastCast = now - st.cooldown + 500;
