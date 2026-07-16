@@ -1650,9 +1650,9 @@ function updateBullets(dt) {
           const e = G.enemies[j];
           // 碰撞用投影后的 X (与视觉一致), 用各自 y 的投影 X 算距离
           const bxp = perspectiveX(b.x, b.y);
-          const exp = e._cachedPX; // [7/16 fix 1]
+          const exp = perspectiveX(e.x, e.y);
           const bScale = perspectiveScale(b.y);
-          const eScale = e._cachedPS; // [7/16 fix 1]
+          const eScale = perspectiveScale(e.y);
           const bw = b.w * bScale;
           const bh = b.h * bScale;
           const ew = e.w * eScale;
@@ -1687,7 +1687,7 @@ function updateBullets(dt) {
             const explosiveOn = (G.perks && G.perks.explosive) || (G.cardPool && G.cardPool.hasMastery('a_explode'));
             if (b.owner === 'player' && explosiveOn) {
               const isMastery = G.cardPool && G.cardPool.hasMastery('a_explode');
-              const splashR = isMastery ? 28 : 20; // [7/16 fix 2] 爆炸半径缩至 ~65%
+              const splashR = isMastery ? 40 : 30;
               const splashRatio = isMastery ? 0.3 : 0.4;
               const splashDmg = Math.max(1, Math.round(rawDmg * splashRatio));
               splashAround(e.x, e.y, splashR, splashDmg, e);
@@ -1815,7 +1815,7 @@ function splashAround(cx, cy, radius, splashDmg, except) {
   const cxp = perspectiveX(cx, cy);
   G.enemies.forEach(e => {
     if (e === except) return;
-    const exp = e._cachedPX !== undefined ? e._cachedPX : perspectiveX(e.x, e.y); // [7/16 fix 1]
+    const exp = perspectiveX(e.x, e.y);
     const dx = exp - cxp;
     const dy = e.y - cy;
     if (Math.sqrt(dx*dx + dy*dy) > radius) return;
@@ -2401,9 +2401,6 @@ function updateEnemies(dt) {
     onPreExperienceComplete();
   }
   G.enemies.forEach(e => {
-    // [7/16 fix 1] 缓存 perspective, 避免每帧多次重算
-    e._cachedPX = perspectiveX(e.x, e.y);
-    e._cachedPS = perspectiveScale(e.y);
     // 议题 12 · 三版调整: 预体验静默期敌人从顶端刷入并列队 (不冻结, 自主移动到 targetY 停下)
     if (G.isPreExperience && G.preExpSilentUntil && e.preExpQueueTargetY !== undefined) {
       // 错峰刷入延迟: y 起点在屏顶外, spawnDelay 之前先不动
@@ -3618,12 +3615,6 @@ function togglePause() {
 }
 
 function reset() {
-  // [7/16 fix 3] 还原 CFG.nuo.base, 防止预体验后 base 被污染
-  if (window.__ORIGINAL_NUO_BASE) {
-    Object.assign(CFG.nuo.base, window.__ORIGINAL_NUO_BASE);
-  } else {
-    window.__ORIGINAL_NUO_BASE = JSON.parse(JSON.stringify(CFG.nuo.base));
-  }
   G.player = createPlayer();
   G.nuoStats = createNuoStats();
   G.nuos = [createNuo(18, false)];
@@ -3903,7 +3894,7 @@ function showPreExperienceTransition() {
       <div style="color: #d8dce8; font-size: 17px; line-height: 1.8;">战况如何?</div>
     </div>
   `;
-  setTimeout(() => showTransitionAct2(), 800); // [7/16 fix 4] 过场节奏缩至 800ms
+  setTimeout(() => showTransitionAct2(), 2500);
 }
 
 function showTransitionAct2() {
@@ -3915,7 +3906,7 @@ function showTransitionAct2() {
       <div style="color: #d8dce8; font-size: 17px; line-height: 1.8;">哈哈哈不过如此, 脆得跟纸一样 🙄</div>
     </div>
   `;
-  setTimeout(() => showTransitionAct3(), 800); // [7/16 fix 4] 过场节奏缩至 800ms
+  setTimeout(() => showTransitionAct3(), 2500);
 }
 
 function showTransitionAct3() {
@@ -4501,7 +4492,7 @@ function tickBoboGuideLasers(dt) {
       // 击杀时若持有 a_explode → 小爆炸
       if (G.cardPool && G.cardPool.hasMastery('a_explode') && gl.lastKilledPos) {
         G.explosions = G.explosions || [];
-        G.explosions.push({ x: gl.lastKilledPos.x, y: gl.lastKilledPos.y, r: 20, bornAt: G.now, life: 280 }); // [7/16 fix 2] 爆炸半径缩至 ~65%
+        G.explosions.push({ x: gl.lastKilledPos.x, y: gl.lastKilledPos.y, r: 30, bornAt: G.now, life: 280 });
       }
     }
     // 每 200ms tick 50 伤害 (吃 g_focus)
