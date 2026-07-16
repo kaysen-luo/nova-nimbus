@@ -4866,8 +4866,10 @@ function applySkillEffect(skillId, level) {
     laserpierce: 15000
   };
   const cd = cooldownMap[skillId] || 10000;
+  // [7/16 fix skill-instant-cast] 获得/升级技能卡时立即施放一次 (spec §5), 再进入 CD
   G.skillState[skillId] = { active: true, level, cooldown: cd, lastCast: now };
-  console.log('[技能启用]', skillId, 'Lv' + level, 'cd=' + cd + 'ms');
+  castSkill(skillId, level);
+  console.log('[技能启用]', skillId, 'Lv' + level, 'cd=' + cd + 'ms (立即施放一次)');
 }
 
 function tickSkills(dt) {
