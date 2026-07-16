@@ -380,6 +380,7 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-08">边缘情况清单</a></li>
   <li><a href="#ch-09">待定项 (需 Kaysen 后续拍板)</a></li>
   <li><a href="#ch-10">实施路径</a></li>
+  <li><a href="#ch-v33">V3.3 · 7月16-17日调优增量 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
 v3.2 · 2026-07-15<br>
@@ -1702,6 +1703,190 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>数值成本</td><td><strong>3-5 天</strong></td><td>模拟器 v2 跑每 wave 数值 + 手工微调</td></tr>
       <tr><td>art-spec-v3.html 影响</td><td><strong>轻微</strong></td><td>需补 UI 资产列表 (wave 计数器 / 分数字体 / 破纪录横幅), 但不影响荻子 P0/P1 主线</td></tr>
     </table>
+  </section>
+
+  <section class="chapter" id="ch-v33">
+    <span class="chapter-num">§ V3.3 · 7月16-17日调优增量</span>
+    <h2>V3.3 调优增量<br>2026-07-16/17 权威</h2>
+    <p class="lead">本章节记录 2026-07-16 至 07-17 期间基于白模 demo 玩测反馈做出的一批调优 / bug 修复。<strong>凡本章节涉及的数值和规则, 以本章为准, 前序章节保留历史快照仅供参考</strong>。</p>
+
+    <div class="callout">
+      <strong>本章说明</strong>: 前序 §2.1 (主角) / §4.1 (宝箱) / §4.2 (技能卡 - mercy) / §4.6 (卡池附录) / §5.1 (状态门) / §5.2 (受击) 相关小节的部分数值已由本章覆盖。外包实施时请以本章为最终权威。
+    </div>
+
+    <h3>V3.3.1 · 主角基础攻速</h3>
+    <ul>
+      <li><strong>变更前</strong>: <code>bulletInterval = 280ms</code> (3.57 发/秒)</li>
+      <li><strong>变更后 (权威)</strong>: <code>bulletInterval = 200ms</code> (5 发/秒, 提速 +40%)</li>
+      <li><strong>原因</strong>: 玩家反馈守线来不及, 打宝箱又太慢, 整体节奏"便秘"</li>
+    </ul>
+
+    <h3>V3.3.2 · 状态门 · 防线三维强制减益起步</h3>
+    <p>状态门 <code>defenseArmor</code> / <code>defenseMaxHP</code> / <code>defenseHeal</code> 三个"防线维度"生成时的初始值分布调整:</p>
+    <ul>
+      <li><strong>变更前</strong>: defenseHeal 只出正值 (瞬时回血包); defenseArmor / defenseMaxHP 走通用 60% 减益 / 40% 增益</li>
+      <li><strong>变更后 (权威)</strong>: <strong>三维 100% 减益起步</strong> (强制负值), 玩家必须平A打爆到 vmax 触发 released 才变为正 buff 增益</li>
+      <li><strong>defenseHeal 特别说明</strong>: 原本 vmin=0 无负值域, 现改为 <code>-step</code> 起步 (若 rand 抽到 &gt;=0 则回落到 <code>-step</code>)。语义 = "防线漏血 debuff", 打爆后 released 触发正回血</li>
+      <li><strong>原因</strong>: 让"防线维度"逻辑对齐 — 玩家不主动干预 = 损防线; 主动打爆 = 收益</li>
+    </ul>
+
+    <h3>V3.3.3 · 状态门命中判定框放大</h3>
+    <ul>
+      <li><strong>变更前</strong>: 子弹命中判定框 = 视觉框 (约 90×28 px)</li>
+      <li><strong>变更后 (权威)</strong>: <strong>命中框左右各扩 40% (hitW = gate.w × 1.4 ≈ 126 px)</strong>, 视觉尺寸保持 gate.w 不变</li>
+      <li><strong>代码位置</strong>: <code>demo.html</code> 子弹碰撞循环中, 判定 <code>gate.released</code> 后构造 <code>gateBox</code> 那一段</li>
+      <li><strong>原因</strong>: 玩家反馈子弹经常从两侧擦过打不到状态门, 是判定精度问题, 视觉不动只加大 hitbox</li>
+    </ul>
+
+    <h3>V3.3.4 · 恩赐解脱 v3.2 (完全重写)</h3>
+    <p><strong>这是 §4.2 里"恩赐解脱"的最新权威规格, 覆盖 §4.2 原三级描述。</strong></p>
+
+    <div class="callout">
+      <strong>通用规则</strong> (三级共用):
+      <ul style="margin-top:6px">
+        <li>CD: <strong>5000ms (5s)</strong></li>
+        <li>伤害倍率: 主角面板攻击力 <code>(20 + G.playerAtkBonus) × G.playerAtkMult</code> × <strong>72x</strong> (原 60x, +20%)</li>
+        <li>独立判暴 (<code>rollSkillCrit</code>), 走主角暴击面板</li>
+        <li>锁定视觉: 红色激光束, 锁定 0.5s (<code>lockMs = 500</code>), 存活 0.9s</li>
+        <li><strong>获得 / 升级时立即施放一次</strong> (见 V3.3.7)</li>
+      </ul>
+    </div>
+
+    <div class="callout" style="border-color:#5588ff">
+      <strong>目标筛选顺序</strong> (三级统一):
+      <ol style="margin-top:6px">
+        <li>优先取 <strong>BOBO 射程内 4阶仇恨排序</strong> (<code>rankedBoboTargets</code>)</li>
+        <li>不足则从 <strong>画面内可见 + alive + 非宝箱/道具</strong> 敌人按 <strong>血量高→低</strong> 补足<br>
+          可见判定: <code>y &gt; HORIZON_Y &amp;&amp; y &lt; DEFENSE_Y</code></li>
+        <li><strong>必过滤</strong>: <code>kind === 'chest' | 'decoy' | 'perk' | 'buff'</code> 不视为可选目标</li>
+        <li><strong>目标池空 → 静默不释放不消耗 CD</strong> (500ms 后重试), 铁律</li>
+      </ol>
+    </div>
+
+    <table>
+      <tr><th>等级</th><th>目标数</th><th>破甲</th><th>额外机制</th></tr>
+      <tr>
+        <td><strong>Lv1</strong></td>
+        <td>1</td>
+        <td>无 (伤害 = 真伤, 不吃 armor 减免)</td>
+        <td>单束红色激光锁定</td>
+      </tr>
+      <tr>
+        <td><strong>Lv2</strong></td>
+        <td>2</td>
+        <td>armor ×0.5, 3s 精准还原</td>
+        <td>先降护甲再打伤害, 本次伤害吃到破甲加成; 飘字 "护甲-50%"</td>
+      </tr>
+      <tr>
+        <td><strong>Lv3</strong></td>
+        <td>5</td>
+        <td>armor ×0.3, 3s 精准还原</td>
+        <td>
+          先降护甲再打; 飘字 "护甲-70%"; <br>
+          <strong>圆形恐惧</strong>: 每个锁定目标周围 r=90 圆内所有其他敌人 stun 2s (排除宝箱/道具); <br>
+          <strong>击杀刷 CD</strong>: 5 个目标中任意一个被本次技能击杀 → <code>st.lastCast = 0</code>, 下帧立即再释放, 全组仅刷一次 (group.refreshed 标记去重)
+        </td>
+      </tr>
+    </table>
+
+    <p><strong>幂等赋值</strong>: 拿到 mercy 卡时用 <code>card.lv</code> 快照直接赋值, 不再 <code>skillLevels[id] += 1</code> 递增。见 V3.3.7。</p>
+
+    <h3>V3.3.5 · 宝箱经验值系统 + 初始 3 真宝箱</h3>
+    <ul>
+      <li><strong>初始 3 个宝箱全部为真宝箱</strong>, 无空宝箱强制穿插 (原 <code>_createTreasureInner()</code> 的"真-空-真"逻辑已删)</li>
+      <li>空宝箱由独立 idle 触发器在长时间未破宝箱时插入 (最多 2 个, 挤出通道自动消失) — <strong>标记为 P1 待补</strong>, 当前 demo 版本尚未实现</li>
+      <li>首个新宝箱阈值: <strong>50 exp</strong> (原 100, 降 50%)</li>
+      <li>阈值递增: 基数 50, 倍率 ×1.5, 序列 = <strong>50 / 75 / 112 / 168 / 253 / 379 / 569 / ...</strong></li>
+    </ul>
+
+    <table>
+      <tr><th>敌人类型</th><th>击杀 exp</th></tr>
+      <tr><td>小兵 (small)</td><td>2</td></tr>
+      <tr><td>精英 (elite)</td><td>4</td></tr>
+      <tr><td>mini boss A</td><td>10</td></tr>
+      <tr><td>mini boss B</td><td>20</td></tr>
+      <tr><td>mini boss C</td><td>40</td></tr>
+      <tr><td>final boss</td><td>100</td></tr>
+    </table>
+
+    <h3>V3.3.6 · 双倍火力 buff 生效范围</h3>
+    <ul>
+      <li><strong>变更前</strong>: <code>G.nuoStats.spd += v/1000</code> — 仅 BOBO 侧, 加法, 数值玄学, 主角完全不吃</li>
+      <li><strong>变更后 (权威)</strong>:
+        <ul>
+          <li>主角: <code>G.playerSpdMult *= 2</code></li>
+          <li>BOBO: <code>G.nuoStats.spd *= 2</code></li>
+          <li>持续 <code>v</code> ms 后 <strong>精准 restore</strong> 到 base 值 (存前值, 不做渐进衰减)</li>
+        </ul>
+      </li>
+      <li><strong>原因</strong>: 原实现主角完全不吃双倍火力 buff, 字面意思和实际行为脱节</li>
+    </ul>
+
+    <h3>V3.3.7 · 连发快射 (a_burst) 弹道 +3 且不可重复</h3>
+    <ul>
+      <li><strong>变更前</strong>: <code>a_burst</code> 精通"弹道 +2, 攻速 +30%, 5% 爆头", 可重复获取 (权重腰斩)</li>
+      <li><strong>变更后 (权威)</strong>:
+        <ul>
+          <li>弹道 <strong>+3</strong> (原 +2)</li>
+          <li><strong>不可重复获取</strong>: 拿过一次后从三选一池永久剔除 (drawThree 特判 <code>count &gt; 0 → continue</code>)</li>
+          <li>攻速 +30% 和 5% 爆头保持不变</li>
+        </ul>
+      </li>
+      <li><strong>原因</strong>: 单次获取效果诚意到位, 不希望玩家靠堆叠 a_burst 打乱数值曲线</li>
+    </ul>
+
+    <h3>V3.3.8 · 恶魔赌局合并为单张可重复卡</h3>
+    <ul>
+      <li><strong>变更前</strong>: 3 张独立 id 卡 <code>f_gamble_1 / _2 / _3</code>, 每张抽后自身权重 ×0.5 → 观感变成"必须按 1→2→3 串行解锁"</li>
+      <li><strong>变更后 (权威)</strong>: 合并为 <strong>单张 <code>f_gamble</code></strong> (name "恶魔赌局")
+        <ul>
+          <li>drawThree 对 <code>id === 'f_gamble'</code> 特判: 权重 <strong>固定 1.5, 不随重复次数腰斩</strong></li>
+          <li>每次三选一都可能出现, 甚至一次三选一里出现多张 (概率虽低但允许)</li>
+          <li>效果结算不变: 0.5x~2.0x 系数分布 EV=1.14, 详见 §4.6 附录</li>
+        </ul>
+      </li>
+      <li><strong>原因</strong>: 赌局本质是可重复摇色子的 meta 卡, 3 张分身反而误导玩家理解为"版本更新"</li>
+    </ul>
+
+    <h3>V3.3.9 · 技能卡获取即时施放 + 幂等赋值</h3>
+    <p><strong>即时施放</strong>:</p>
+    <ul>
+      <li><strong>变更前</strong>: <code>applySkillEffect</code> 设 <code>lastCast = now</code>, 玩家拿卡后要等一整个 CD (5-20s) 才第一次触发 → 感觉不到技能获取的即时反馈</li>
+      <li><strong>变更后 (权威)</strong>: <code>applySkillEffect</code> 在设完 <code>skillState</code> 后 <strong>立即调 <code>castSkill(skillId, level)</code> 一次</strong>, 然后进 CD 循环
+        <ul>
+          <li>技能卡升级 Lv1 → Lv2 → Lv3 每次也各触发一次</li>
+          <li>若目标池空 (见 V3.3.4 铁律), 立即施放这一次也会静默跳过, 不消耗"首次施放权"</li>
+        </ul>
+      </li>
+    </ul>
+
+    <p><strong>幂等赋值</strong> (修 Lv2 → Lv3 越级 bug):</p>
+    <ul>
+      <li><strong>症状</strong>: 玩家看到三选一里的 Lv2 恩赐卡, 点击后 toast 弹的是 "Lv3"; 卡片本身"无法选择"到 Lv2</li>
+      <li><strong>根因</strong>: <code>applyCardEffect(card)</code> 老代码 <code>acquireSkill(card.id)</code> 是 <strong>递增</strong> <code>skillLevels[id] += 1</code>。若 UI 未及时关闭 / 触摸事件补发一次 mousedown (iOS Safari touchstart 后可能补 mousedown), 同一张 Lv2 卡被双点 → 从 1 递增到 3</li>
+      <li><strong>变更后 (权威)</strong>: 用 <code>card.lv</code> 快照 <strong>直接赋值 + guard</strong>:
+        <pre style="background:#0f1420;color:#c8d0e0;padding:12px;border-radius:6px;overflow-x:auto"><code>const targetLv = card.lv;   // drawThree 抽卡时快照的目标等级
+if (targetLv &gt; skillLevels[id]) {
+  skillLevels[id] = Math.min(3, targetLv);
+}</code></pre>
+      </li>
+      <li><strong>效果</strong>:
+        <ul>
+          <li>同一张卡重复应用幂等, 不会越级</li>
+          <li>老卡 (低 lv 快照) 也不能覆盖已有更高级</li>
+          <li>解决触摸事件补发 / 双点问题的同时, 保留了 <code>closeCardSelectionUI</code> 的守卫作为第二道防线</li>
+        </ul>
+      </li>
+    </ul>
+
+    <div class="callout" style="border-color:#dda840;margin-top:20px">
+      <strong>P1 待补清单 (v3.3 尚未完成)</strong>
+      <ul style="margin-top:6px">
+        <li><strong>空宝箱 idle 触发器</strong>: 长时间未破真宝箱时插入 2 个空宝箱, 挤出通道自动消失 (见 V3.3.5)</li>
+        <li><strong>普通关卡末尾偶发卡死</strong>: 已加 try-catch 兜底, 但根因未定位; 需要 F12 控制台捕获实际 Error</li>
+        <li><strong>spec ↔ demo 反向对齐</strong>: v3.3 大改后前序 §2 / §4 / §5 部分小节文字与实际 demo 数值有出入 (以本章节权威)</li>
+      </ul>
+    </div>
   </section>
 
   <section class="chapter" id="ch-08">
