@@ -695,7 +695,7 @@ const MASTERY_CARDS = [
   // B 状态施加 (3) 全必触发
   { id:'b_burn', category:'B', name:'燃烧弹', desc:'必触发点燃, 2 秒内 50% 主伤害 DoT' },
   { id:'b_slow', category:'B', name:'减速弹', desc:'必触发减速 30% 持续 2 秒' },
-  { id:'b_stun', category:'B', name:'麻痹弹', desc:'20% 概率麻痹 1s' }, // [7/16 fix stun-dur]
+  { id:'b_poison', category:'B', name:'毒液弹', desc:'命中挂毒, 每 0.5s 扣 20 真伤, 持续 4s, 可叠 3 层 (每层×1.5)' }, // [7/16 fix poison]
   // C 特殊触发 (2)
   { id:'c_feast', category:'C', name:'食髓', desc:'击杀精英以上敌人后 5s 内攻速+50%' },
   { id:'c_meltdown', category:'C', name:'熔核', desc:'自动循环 11 秒: 3s 爬升 (1x→3x攻速) + 5s 满态 (3x攻速+20暴率+50暴伤) + 3s 静默' },
@@ -1122,16 +1122,21 @@ const CFG = {
   gate: {
     speed: 130,    // 6/29 K 反馈: 原 95 太慢, 加速 +37% 试一下
     maxConcurrent: 1,     // 同屏最多 1 个 (从 2 改回 1, 太频繁了)
+    // [7/16 fix gate-refactor] blt/vel 移除, 新增防线三维, crt/critDmg vmax 收窄
     dimensions: [
-      {key: 'atk',     label: '攻击力',   vmin: -10,    vmax: 8,    step: 0.4, unit: ''},
-      {key: 'spd',     label: '攻速',     vmin: -0.6,   vmax: 0.5,  step: 0.04, unit: 'x'},
-      {key: 'blt',     label: '弹道',     vmin: -1,     vmax: 2,    step: 0.1, unit: ''},
-      {key: 'vel',     label: '弹速',     vmin: -0.4,   vmax: 0.4,  step: 0.03, unit: 'x'},
-      // 暴击率: 上限从 +40% 砍到 +15%
-      {key: 'crt',     label: '暴击率',   vmin: -0.1,   vmax: 0.15, step: 0.015, unit: '%'},
-      // 新增: 暴击伤害, 单门上限 +10%
-      {key: 'critDmg', label: '暴击伤害', vmin: -0.05,  vmax: 0.10, step: 0.01, unit: '%'},
-      {key: 'silence', label: '火力静默', vmin: -4000,  vmax: 2000, step: 200, unit: 'ms'},
+      {key: 'atk',          label: '攻击力',     vmin: -10,   vmax: 8,    step: 0.4,  unit: ''},
+      {key: 'spd',          label: '攻速',       vmin: -0.6,  vmax: 0.5,  step: 0.04, unit: 'x'},
+      // 暴击率单门上限收窄到 +5% (原 15%)
+      {key: 'crt',          label: '暴击率',     vmin: -0.1,  vmax: 0.05, step: 0.015, unit: '%'},
+      // 暴击伤害单门上限收窄到 +8% (原 10%)
+      {key: 'critDmg',      label: '暴击伤害',   vmin: -0.05, vmax: 0.08, step: 0.01, unit: '%'},
+      {key: 'silence',      label: '火力静默',   vmin: -4000, vmax: 2000, step: 200,  unit: 'ms'},
+      // 防线护甲 (0-30%, 每门 +5% 上限)
+      {key: 'defenseArmor', label: '防线护甲',   vmin: -0.05, vmax: 0.10, step: 0.01, unit: '%'},
+      // 防线血量上限 (每门 +50)
+      {key: 'defenseMaxHP', label: '防线上限',   vmin: -100,  vmax: 150,  step: 50,   unit: ''},
+      // 防线回血包 (瞬时 +50 HP)
+      {key: 'defenseHeal',  label: '防线回血',   vmin: 0,     vmax: 100,  step: 50,   unit: ''},
     ],
   },
   // 防线
@@ -1384,37 +1389,27 @@ function treasureColX(col) {
 // createObstacle 已删除 (obstacle 整合进 treasure decoy)
 
 // 状态门
-// [7/16 fix gate-blt-limit] createStateGate 支持 opts:
-//   - restrictBlt: 贪婪路径专用, 弹道门概率大幅降低, 且弹道值 cap 到 +1
-// 弹道维度整体使用离散池 (大量负值 + 少量 +1 + 稀有 +2), 前期很难达到 +2, 与 spec §5.1.1 弹道 +4 封顶呼应
+// [7/16 fix gate-refactor] 弹道 (blt) 和弹速 (vel) 从状态门池移除, blt 只从宝箱技能卡获取
+// [7/16 fix gate-blt-3times] 全局 gateBltEmitted 计数器 (安全兜底, 达到 3 后从池永久移除 blt)
+// [7/16 fix gate-refactor] 新增 defenseArmor / defenseMaxHP / defenseHeal 三维
 function createStateGate(opts) {
   opts = opts || {};
-  // [7/16 fix gate-blt-limit] 维度 pick: 贪婪路径把弹道抽中概率 ×0.3
-  const dims = CFG.gate.dimensions;
-  let dim;
-  if (opts.restrictBlt) {
-    // 贪婪: 30% 概率允许抽弹道, 否则从非弹道池抽
-    if (Math.random() < 0.3) {
-      dim = dims.find(d => d.key === 'blt') || pick(dims);
-    } else {
-      const nonBlt = dims.filter(d => d.key !== 'blt');
-      dim = pick(nonBlt);
-    }
-  } else {
-    dim = pick(dims);
+  // [7/16 fix gate-blt-3times] 安全兜底: 若 blt 出现过 3 次 (理论上不会, blt 已从 dims 移除) 从池删掉
+  let dims = CFG.gate.dimensions;
+  if ((G.gateBltEmitted || 0) >= 3) {
+    dims = dims.filter(d => d.key !== 'blt');
   }
+  const dim = pick(dims);
 
-  // [7/16 fix gate-blt-limit] 弹道维度走离散池, 其它维度维持原 (buff/debuff 随机) 逻辑
+  // [7/16 fix gate-refactor] 各维度值分布:
+  //   defenseHeal 只有正值 (瞬时回血包)
+  //   其它: 60% 减益 (vmin~0), 40% 增益 (step~vmax*0.5)
   let initValue;
-  if (dim.key === 'blt') {
-    // 常规池: 大量负值 (5/8=62.5%) + +1 (2/8=25%) + 稀有 +2 (1/8=12.5%)
-    // 贪婪池: 无 +2, 大量负值 + 少量 +1
-    const bltPool = opts.restrictBlt
-      ? [-1, -1, -1, -1, -1, +1]
-      : [-1, -1, -1, -1, -1, +1, +1, +2];
-    initValue = pick(bltPool);
+  if (dim.key === 'defenseHeal') {
+    // 一定是正值 (0 也可以但没意义, 从 step 起步)
+    initValue = rand(dim.step, dim.vmax * 0.5);
+    initValue = Math.round(initValue / dim.step) * dim.step;
   } else {
-    // 原逻辑: 60% 概率减益 (vmin~0), 40% 概率增益 (step~vmax*0.5)
     const isDebuffStart = Math.random() < 0.6;
     if (isDebuffStart) {
       initValue = rand(dim.vmin, 0);
@@ -1423,6 +1418,10 @@ function createStateGate(opts) {
       initValue = rand(dim.step, dim.vmax * 0.5);
       initValue = Math.round(initValue / dim.step) * dim.step;
     }
+  }
+
+  if (dim.key === 'blt') {
+    G.gateBltEmitted = (G.gateBltEmitted || 0) + 1;
   }
 
   // x 随机 - 保证整个门 (含边沿) 都在右通道内部, 左右各留 8px 安全 margin
@@ -1731,11 +1730,11 @@ function updateBullets(dt) {
                 e.slowUntil = now + 2000;
                 e.slowMult = Math.max(0.2, Math.pow(0.7, stacks));
               }
-              if (G.cardPool.hasMastery('b_stun')) {
-                // [7/16 fix stun-dur] 20% 概率触发, 麻痹 1s
-                if (Math.random() < 0.20) {
-                  e.stunUntil = Math.max(e.stunUntil||0, now + 1000);
-                }
+              if (G.cardPool.hasMastery('b_poison')) {
+                // [7/16 fix poison] 100% 挂毒, 叠 3 层, 每层 ×1.5 伤害
+                e.poisonStacks = Math.min(3, (e.poisonStacks || 0) + 1);
+                e.poisonUntil = now + 4000;
+                e.poisonNextTickAt = e.poisonNextTickAt || (now + 500);
               }
             }
             // ===== 议题 10 · 切片 4 END (B 状态) =====
@@ -1743,11 +1742,24 @@ function updateBullets(dt) {
             // 兼容 legacy G.perks.explosive 与新卡 a_explode
             const explosiveOn = (G.perks && G.perks.explosive) || (G.cardPool && G.cardPool.hasMastery('a_explode'));
             if (b.owner === 'player' && explosiveOn) {
+              // [7/16 fix explode-radius-v2] 爆炸半径改用敌人自身尺寸
+              const splashR = e.w ? e.w * 0.5 : 20;
               const isMastery = G.cardPool && G.cardPool.hasMastery('a_explode');
-              const splashR = isMastery ? 28 : 20; // [7/16 fix 2] 爆炸半径缩至 ~65%
               const splashRatio = isMastery ? 0.3 : 0.4;
               const splashDmg = Math.max(1, Math.round(rawDmg * splashRatio));
-              splashAround(e.x, e.y, splashR, splashDmg, e);
+              // [7/16 fix skill-crit] 爆炸弹每目标独立判暴击 + [7/16 fix fire-synergy]
+              const cxp = perspectiveX(e.x, e.y);
+              G.enemies.forEach(en => {
+                if (en === e) return;
+                if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
+                const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
+                const dx = exp - cxp, dy = en.y - e.y;
+                if (Math.sqrt(dx*dx + dy*dy) > splashR) return;
+                const { dmg: sd, crit: sc } = rollSkillCrit(splashDmg);
+                const fireDmg = applyFireSynergy(en, sd);
+                const eff = Math.max(1, Math.round(fireDmg * (1 - en.armor)));
+                damageEnemy(en, eff, sc, true);
+              });
               G.explosions = G.explosions || [];
               G.explosions.push({ x: e.x, y: e.y, r: splashR, bornAt: G.now, life: 280 });
             }
@@ -1805,7 +1817,7 @@ function damageEnemy(e, dmg, isCrit, fromPlayer) {
     }
     // D 弱者克星
     if (G.cardPool.hasMastery('d_weak')) {
-      const hasDebuff = (e.burnUntil||0) > now || (e.slowUntil||0) > now || (e.stunUntil||0) > now;
+      const hasDebuff = (e.burnUntil||0) > now || (e.slowUntil||0) > now || (e.stunUntil||0) > now || (e.poisonUntil||0) > now; // [7/16 fix poison]
       if (hasDebuff) {
         const wc = G.cardPool.getMasteryCount('d_weak');
         mult *= Math.pow(1.4, wc);
@@ -2509,6 +2521,27 @@ function updateEnemies(dt) {
     }
     // 麻痹: 跳过一切
     if (e.stunUntil && now < e.stunUntil) return;
+    // [7/16 fix poison] 毒液 DoT: 真伤, 不吃护甲, 每 0.5s tick, 每层 ×1.5
+    if (e.poisonUntil && now < e.poisonUntil) {
+      if (!e.poisonNextTickAt || now >= e.poisonNextTickAt) {
+        const stacks = Math.max(1, e.poisonStacks || 1);
+        const dot = Math.round(20 * Math.pow(1.5, stacks - 1));
+        e.hp -= dot;
+        e.poisonNextTickAt = now + 500;
+        e.flashUntil = G.now + 40;
+        floatText(e.x + (Math.random()-0.5)*14, e.y - 6, '☠' + dot, '#a4ff4d', false);
+        if (e.hp <= 0) {
+          SFX.play('explode');
+          const idx = G.enemies.indexOf(e);
+          if (idx >= 0) G.enemies.splice(idx, 1);
+          G.kills += (e.score >= 200 ? 5 : e.score >= 60 ? 2 : 1);
+          const killsEl = document.getElementById('hud-kills');
+          if (killsEl) killsEl.textContent = G.kills;
+          onEnemyKilled(e);
+          return;
+        }
+      }
+    }
     // ===== 议题 10 · 切片 4 END (敌人状态) =====
     // 复活反推期: 敌人按各自 speed 倒退, 期间不攻击防线 (脱离攻击范围)
     // 不 clamp 到屏顶 — 让 e.y 一直减 (可为负, 即跑到屏幕外), 这样退满 5 秒 + 推回 5 秒 = 严格 10 秒
@@ -2528,7 +2561,9 @@ function updateEnemies(dt) {
       }
     } else {
       // 攻击防线
-      G.defenseHP -= e.dps * dt;
+      // [7/16 fix gate-refactor] 应用防线护甲减伤
+      const dmg = e.dps * dt * (1 - (G.defenseArmor || 0));
+      G.defenseHP -= dmg;
       if (G.defenseHP < 0) G.defenseHP = 0;
     }
   });
@@ -2986,8 +3021,20 @@ function updateStateGate(dt) {
 function applyGateToNuo(gate) {
   const v = gate.value;
   const dim = gate.dim;
-  // 应用到 BOBO stats (主 BOBO + 镜像 同步)
-  if (dim.key === 'silence') {
+  // [7/16 fix gate-refactor] 防线三维单独处理, 不写 nuoStats
+  if (dim.key === 'defenseArmor') {
+    G.defenseArmor = clamp((G.defenseArmor || 0) + v, 0, 0.30);   // 0-30% 上限
+    updateDefenseBar && updateDefenseBar();
+  } else if (dim.key === 'defenseMaxHP') {
+    G.defenseMax = Math.max(50, (G.defenseMax || CFG.defense.maxHP) + v);
+    // 上限提升时同步给 HP (提升量), 下降时 clamp
+    if (v > 0) G.defenseHP = Math.min(G.defenseMax, (G.defenseHP || 0) + v);
+    else G.defenseHP = Math.min(G.defenseHP || 0, G.defenseMax);
+    updateDefenseBar && updateDefenseBar();
+  } else if (dim.key === 'defenseHeal') {
+    G.defenseHP = Math.min(G.defenseMax || CFG.defense.maxHP, (G.defenseHP || 0) + v);
+    updateDefenseBar && updateDefenseBar();
+  } else if (dim.key === 'silence') {
     if (v < 0) {
       // 减益: 静默, ms
       G.nuoStats.silenceUntil = G.now + Math.abs(v);
@@ -3007,6 +3054,13 @@ function applyGateToNuo(gate) {
     if (dim.key === 'spd') G.nuoStats.spd = Math.max(0.2, G.nuoStats.spd);
     if (dim.key === 'blt') G.nuoStats.blt = Math.max(1, G.nuoStats.blt);
     if (dim.key === 'vel') G.nuoStats.vel = Math.max(0.3, G.nuoStats.vel);
+    // [7/16 fix gate-refactor] crt / critDmg 同步写主角字段 (FIX-4 主角吃暴击)
+    if (dim.key === 'crt') {
+      G.playerCritRate = Math.max(0, (G.playerCritRate || 0) + v);
+    }
+    if (dim.key === 'critDmg') {
+      G.playerCritDmg = Math.max(0, (G.playerCritDmg || 0) + v);
+    }
     // [7/16 C1-1] 弹道增益同步写主角 multiShot (spec §5.9 弹道 +N → 子弹发射数 +N)
     // spec §5.1.1: 弹道总增益 +4 封顶 (base 1 + 4 = 5)
     if (dim.key === 'blt') {
@@ -3748,6 +3802,10 @@ function reset() {
   G.stateGates = [];        // 新: array, 同屏多门
   G.defenseHP = CFG.defense.maxHP;
   G.defenseMax = CFG.defense.maxHP;
+  // [7/16 fix gate-refactor] 防线新属性初始化
+  G.defenseArmor = 0;
+  // [7/16 fix gate-blt-3times] 弹道门累计计数
+  G.gateBltEmitted = 0;
   G.kills = 0;
   G.eliteKilled = 0;
   G.miniBossKilled = 0;
@@ -4457,7 +4515,7 @@ function applyMasteryEffect(id) {
     // B 状态施加 - 挂钩, 无需 apply 处理
     case 'b_burn':
     case 'b_slow':
-    case 'b_stun':
+    case 'b_poison': // [7/16 fix poison]
     // D 伤害修饰 - 挂钩
     case 'd_hunter':
     case 'd_weak':
@@ -4706,6 +4764,22 @@ function tickSkills(dt) {
   }
 }
 
+// [7/16 fix skill-crit] 主角技能吃暴击的公共 helper
+// 返回 { dmg, crit }, 暴击时飘橙色数字 (调用方决定要不要飘)
+function rollSkillCrit(baseDmg) {
+  const rate = Math.min(1, (G.playerCritRate !== undefined ? G.playerCritRate : (G.nuoStats && G.nuoStats.crt) || 0) + (G.playerCritBonus || 0));
+  const mult = 2 + (G.playerCritDmg || G.nuoStats && G.nuoStats.critDmg || 0);
+  const crit = Math.random() < rate;
+  return { dmg: Math.round(baseDmg * (crit ? mult : 1)), crit };
+}
+// [7/16 fix fire-synergy] 若目标在燃烧, 伤害 ×1.5
+function applyFireSynergy(target, dmg) {
+  if (target && target.burnUntil && G.now < target.burnUntil) {
+    return Math.round(dmg * 1.5);
+  }
+  return dmg;
+}
+
 function castSkill(id, level) {
   console.log('[技能触发]', id, 'Lv' + level);
   // 极简可视化: 主角周围一圈 + 飘字
@@ -4752,14 +4826,35 @@ function castSkill(id, level) {
         lockMs: 600
       });
       setTimeout(() => {
-        splashAround(lockX, lockY, r, baseDmg, null);
+        // [7/16 fix skill-crit] 站一起: 每目标独立判暴击 + [7/16 fix fire-synergy] 火焰联动
+        const cxp = perspectiveX(lockX, lockY);
+        G.enemies.slice().forEach(en => {
+          if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
+          const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
+          const dx = exp - cxp, dy = en.y - lockY;
+          if (Math.sqrt(dx*dx + dy*dy) > r) return;
+          const { dmg, crit } = rollSkillCrit(baseDmg);
+          const fireDmg = applyFireSynergy(en, dmg);
+          const eff = Math.max(1, Math.round(fireDmg * (1 - en.armor)));
+          damageEnemy(en, eff, crit, true);
+        });
         G.explosions = G.explosions || [];
         G.explosions.push({ x: lockX, y: lockY, r, bornAt: G.now, life: 320 });
         // [7/16 fix together-buff] Lv3: 二段爆炸, 0.6s 后再来一次 (伤害 60%)
         if (level >= 3) {
           setTimeout(() => {
             if (!G.enemies) return;
-            splashAround(lockX, lockY, r, Math.round(baseDmg * 0.6), null);
+            const base2 = Math.round(baseDmg * 0.6);
+            G.enemies.slice().forEach(en => {
+              if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
+              const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
+              const dx = exp - perspectiveX(lockX, lockY), dy = en.y - lockY;
+              if (Math.sqrt(dx*dx + dy*dy) > r) return;
+              const { dmg: d2, crit: c2 } = rollSkillCrit(base2);
+              const fireDmg2 = applyFireSynergy(en, d2);
+              const eff2 = Math.max(1, Math.round(fireDmg2 * (1 - en.armor)));
+              damageEnemy(en, eff2, c2, true);
+            });
             G.explosions.push({ x: lockX, y: lockY, r, bornAt: G.now, life: 320 });
           }, 600);
         }
@@ -4787,7 +4882,7 @@ function castSkill(id, level) {
       return;
     }
     const playerAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
-    const dmg = Math.round(playerAtk * 60);   // [7/16 fix absolution-v2] 40x → 60x
+    const baseDmg = Math.round(playerAtk * 60);   // [7/16 fix absolution-v2] 40x → 60x
     const lockMs = 500;                        // [7/16 fix absolution-v2] 1s → 0.5s
     const lifeMs = 900;                        // 0.5s lock + 0.4s fade
     for (const target of targets) {
@@ -4806,7 +4901,9 @@ function castSkill(id, level) {
       setTimeout(() => {
         if (!capturedTarget || capturedTarget.hp <= 0) return;
         const before = capturedTarget.hp;
-        damageEnemy(capturedTarget, dmg, true, true);
+        // [7/16 fix skill-crit] 恩赐解脱独立判暴击
+        const { dmg, crit } = rollSkillCrit(baseDmg);
+        damageEnemy(capturedTarget, dmg, crit, true);
         // [7/16 fix absolution-v2] Lv2/Lv3: 命中后降护甲 3s (×0.5, 存原值, 到期还原)
         if (level >= 2 && capturedTarget.hp > 0) {
           const orig = capturedTarget._mercyArmorOrig != null ? capturedTarget._mercyArmorOrig : capturedTarget.armor;
@@ -4931,7 +5028,11 @@ function tickSkillVisuals(dt) {
           // [7/16 fix P3] 宝箱只吃直接命中: 飞轮海 AOE 不打宝箱
           if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
           const dx = e.x - v.x, dy = e.y - v.y;
-          if (dx*dx + dy*dy <= v.r * v.r) damageEnemy(e, 50, false, true);
+          if (dx*dx + dy*dy <= v.r * v.r) {
+            // [7/16 fix skill-crit] 飞轮海 tick 独立判暴击
+            const { dmg, crit } = rollSkillCrit(50);
+            damageEnemy(e, dmg, crit, true);
+          }
         });
       }
     } else if (v.kind === 'highvoltageZone') {
@@ -4943,7 +5044,9 @@ function tickSkillVisuals(dt) {
           if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
           if (e.x >= v.x && e.x <= v.x + v.w && e.y >= v.y && e.y <= v.y + v.h) {
             e.stunUntil = now + 500;
-            damageEnemy(e, 100, false, true);
+            // [7/16 fix skill-crit] 高压领域独立判暴击
+            const { dmg, crit } = rollSkillCrit(100);
+            damageEnemy(e, dmg, crit, true);
           }
         });
       }
