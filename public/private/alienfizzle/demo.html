@@ -598,6 +598,22 @@ const ctx = cv.getContext('2d');
 const W = cv.width;   // 414
 const H = cv.height;  // 736
 
+// [7/16 fix 1] HiDPI 后备缓冲: 卡片文字模糊的根因是 canvas 414x736 被 CSS 放大 (mobile & desktop 的 1.5-2x scale) 造成栅格化模糊.
+// 把 backing store 放大到 devicePixelRatio × CSS scale, 再 ctx.setTransform 缩回逻辑坐标, 就能保留全部游戏坐标计算不变.
+(function applyHiDPI() {
+  const dpr = window.devicePixelRatio || 1;
+  // 目标 backing 像素: 至少 2x, mobile 高 DPR 屏走 dpr; 3x 封顶避免超大
+  const scale = Math.min(3, Math.max(2, dpr));
+  cv.width = Math.round(W * scale);
+  cv.height = Math.round(H * scale);
+  // CSS 尺寸保持 414x736 (mobile 里的 fitMobileCanvas 会再覆盖 CSS width/height)
+  cv.style.width = W + 'px';
+  cv.style.height = H + 'px';
+  ctx.setTransform(scale, 0, 0, scale, 0, 0);
+  // 全局字体平滑友好
+  if ('imageSmoothingQuality' in ctx) ctx.imageSmoothingQuality = 'high';
+})();
+
 // 通道分界
 const SPLIT_X = W * 0.4;        // 165.6 - 左通道右边
 const TRACK_L_LEFT = 0;
@@ -2651,19 +2667,26 @@ function drawCardSelectionUI() {
   if (!G.cardSelectionUI || !G.cardSelectionUI.active) return;
   const cards = G.cardSelectionUI.cards;
   // 半透明遮罩
-  ctx.fillStyle = 'rgba(0, 0, 0, 0.78)';
+  ctx.fillStyle = 'rgba(0, 0, 0, 0.82)';
   ctx.fillRect(0, 0, W, H);
 
-  // 标题
-  ctx.fillStyle = '#fff';
-  ctx.font = 'bold 18px ui-monospace,Menlo,monospace';
-  ctx.textAlign = 'center';
-  ctx.fillText('三选一 · 强化卡', W/2, 40);
+  // [7/16 fix 1] 抗锯齿关闭图像平滑但保留文本 (Canvas 文本 anti-alias 由字号+字体+DPR 决定)
+  ctx.imageSmoothingEnabled = false;
 
-  // 卡片尺寸 (canvas 414x736 内布局)
-  const cardW = Math.min(115, (W - 40) / 3 - 8);
-  const cardH = Math.min(280, H * 0.5);
-  const gap = 10;
+  // 标题 - [7/16 fix 1] 字号 18→22, 加深阴影提升对比
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.9)';
+  ctx.shadowBlur = 4;
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 22px -apple-system,"PingFang SC",BlinkMacSystemFont,"Helvetica Neue",sans-serif';
+  ctx.textAlign = 'center';
+  ctx.fillText('三选一 · 强化卡', W/2, 44);
+  ctx.restore();
+
+  // [7/16 fix 1] 卡片尺寸 (canvas 414x736 内布局) — 加宽加高容纳更大字号
+  const cardW = Math.min(122, (W - 24) / 3 - 6);
+  const cardH = Math.min(310, H * 0.55);
+  const gap = 8;
   const totalW = cardW * 3 + gap * 2;
   const startX = (W - totalW) / 2;
   const y = (H - cardH) / 2 - 20;
@@ -2707,22 +2730,22 @@ function drawCardSelectionUI() {
 function drawCard(card, x, y, w, h) {
   const isSkill = card.type === 'skill';
   // 背景
-  ctx.fillStyle = isSkill ? 'rgba(30, 50, 100, 0.95)' : 'rgba(60, 40, 80, 0.95)';
+  ctx.fillStyle = isSkill ? 'rgba(30, 50, 100, 0.98)' : 'rgba(60, 40, 80, 0.98)';
   ctx.fillRect(x, y, w, h);
-  ctx.strokeStyle = isSkill ? 'rgba(120, 180, 255, 1)' : 'rgba(200, 140, 240, 1)';
+  ctx.strokeStyle = isSkill ? 'rgba(160, 210, 255, 1)' : 'rgba(220, 170, 250, 1)';
   ctx.lineWidth = 2;
   ctx.strokeRect(x, y, w, h);
 
-  // 顶部类型标签 (skill / mastery)
-  ctx.fillStyle = isSkill ? 'rgba(120,180,255,0.35)' : 'rgba(200,140,240,0.35)';
-  ctx.fillRect(x, y, w, 18);
+  // [7/16 fix 1] 顶部类型标签: 高度 18→24, 字号 10→13, sans-serif 替代等宽提升可读性
+  ctx.fillStyle = isSkill ? 'rgba(120,180,255,0.5)' : 'rgba(200,140,240,0.5)';
+  ctx.fillRect(x, y, w, 24);
   ctx.fillStyle = '#fff';
-  ctx.font = 'bold 10px ui-monospace,Menlo,monospace';
+  ctx.font = 'bold 13px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(isSkill ? 'SKILL' : 'MASTERY', x + w/2, y + 9);
+  ctx.fillText(isSkill ? 'SKILL' : 'MASTERY', x + w/2, y + 12);
 
-  // 标题
+  // [7/16 fix 1] 标题字号 13→18, 加阴影
   let title = '?';
   if (isSkill) {
     const skill = SKILL_CARDS.find(s => s.id === card.id);
@@ -2731,32 +2754,36 @@ function drawCard(card, x, y, w, h) {
     const m = MASTERY_CARDS.find(mc => mc.id === card.id);
     title = m ? m.name : card.id;
   }
+  ctx.save();
+  ctx.shadowColor = 'rgba(0,0,0,0.85)';
+  ctx.shadowBlur = 3;
   ctx.fillStyle = '#fff';
-  ctx.font = 'bold 13px ui-monospace,Menlo,monospace';
+  ctx.font = 'bold 18px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
   ctx.textBaseline = 'alphabetic';
-  ctx.fillText(title, x + w/2, y + 36);
+  ctx.fillText(title, x + w/2, y + 50);
+  ctx.restore();
 
-  let descTop = y + 50;
-  // 技能卡: 3 槽位 (亮 card.lv 格)
+  let descTop = y + 66;
+  // 技能卡: 3 槽位 (亮 card.lv 格) — [7/16 fix 1] 槽位放大
   if (isSkill) {
-    const slotSize = 10;
-    const totalSlotW = 3 * slotSize + 2 * 4;
-    const slotY = y + 44;
+    const slotSize = 14;
+    const totalSlotW = 3 * slotSize + 2 * 5;
+    const slotY = y + 58;
     const slotX0 = x + (w - totalSlotW) / 2;
     for (let s = 0; s < 3; s++) {
-      const sx = slotX0 + s * (slotSize + 4);
-      ctx.strokeStyle = 'rgba(200,200,200,0.6)';
+      const sx = slotX0 + s * (slotSize + 5);
+      ctx.strokeStyle = 'rgba(220,220,220,0.7)';
       ctx.lineWidth = 1;
       ctx.strokeRect(sx, slotY, slotSize, slotSize);
       if (s < card.lv) {
-        ctx.fillStyle = 'rgba(120, 220, 255, 0.9)';
+        ctx.fillStyle = 'rgba(140, 230, 255, 0.95)';
         ctx.fillRect(sx + 1, slotY + 1, slotSize - 2, slotSize - 2);
       }
     }
-    descTop = slotY + slotSize + 10;
+    descTop = slotY + slotSize + 12;
   }
 
-  // 描述
+  // [7/16 fix 1] 描述字号 10→13, sans-serif; 行高 13→17; 颜色更亮
   let desc = '';
   if (isSkill) {
     const skill = SKILL_CARDS.find(s => s.id === card.id);
@@ -2765,29 +2792,30 @@ function drawCard(card, x, y, w, h) {
     const m = MASTERY_CARDS.find(mc => mc.id === card.id);
     if (m) desc = m.desc;
   }
-  ctx.fillStyle = '#ddd';
-  ctx.font = '10px ui-monospace,Menlo,monospace';
+  ctx.fillStyle = '#f0f0f0';
+  ctx.font = '13px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
   ctx.textAlign = 'left';
-  wrapText(desc, x + 6, descTop, w - 12, 13);
+  ctx.textBaseline = 'alphabetic';
+  wrapText(desc, x + 8, descTop, w - 16, 17);
 
-  // 精通卡: 类别标签
+  // 精通卡: 类别标签 - [7/16 fix 1] 放大
   if (!isSkill) {
     const m = MASTERY_CARDS.find(mc => mc.id === card.id);
     const cat = m ? m.category : '?';
-    ctx.fillStyle = 'rgba(200, 140, 240, 0.55)';
-    ctx.fillRect(x + 4, y + h - 22, 22, 18);
+    ctx.fillStyle = 'rgba(200, 140, 240, 0.75)';
+    ctx.fillRect(x + 5, y + h - 26, 26, 22);
     ctx.fillStyle = '#fff';
-    ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
+    ctx.font = 'bold 14px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'middle';
-    ctx.fillText(cat, x + 15, y + h - 13);
+    ctx.fillText(cat, x + 18, y + h - 15);
     // 已有张数
     const cnt = G.cardPool ? G.cardPool.getMasteryCount(card.id) : 0;
     if (cnt > 0) {
       ctx.fillStyle = '#ffd441';
-      ctx.font = 'bold 10px ui-monospace,Menlo,monospace';
+      ctx.font = 'bold 13px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
       ctx.textAlign = 'right';
-      ctx.fillText('已 ×' + cnt, x + w - 6, y + h - 13);
+      ctx.fillText('已 ×' + cnt, x + w - 8, y + h - 15);
     }
   }
 }
@@ -2798,8 +2826,9 @@ function drawUIButton(text, x, y, w, h, bgColor) {
   ctx.strokeStyle = '#fff';
   ctx.lineWidth = 1;
   ctx.strokeRect(x, y, w, h);
+  // [7/16 fix 1] 按钮字号 11→14, sans-serif
   ctx.fillStyle = '#fff';
-  ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
+  ctx.font = 'bold 14px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
   ctx.fillText(text, x + w/2, y + h/2);
@@ -3515,12 +3544,13 @@ function setupInput() {
 
   function localX(clientX) {
     const r = cv.getBoundingClientRect();
-    const scaleX = cv.width / r.width;
+    // [7/16 fix 1] 用逻辑 W 而非 cv.width (后者已被 HiDPI 放大)
+    const scaleX = W / r.width;
     return (clientX - r.left) * scaleX;
   }
   function localY(clientY) {
     const r = cv.getBoundingClientRect();
-    const scaleY = cv.height / r.height;
+    const scaleY = H / r.height;
     return (clientY - r.top) * scaleY;
   }
 
@@ -3716,10 +3746,20 @@ function reset() {
 
 // ============================================================
 // 议题 12 · 切片 3 · 预体验关卡 START
-// currentLevel = 0: 5 个 6×10 方阵串行 + 属性覆盖 + 宝箱效果 ×2 + 通关 hook
+// [7/16 fix 3] 移植 v3.2 老 demo/index.html L3067-3131 的预体验数值方案:
+//   - 主角 3× 射速 (bulletInterval / 3) + 3 弹道
+//   - BOBO 1.5× 射速 + 3 弹道
+//   - 双方共用 暴击 25% / 暴伤 +50%
+//   - 主角 atkBonus=5 (基础 10 → 60 = ×6, 与 BOBO atk=60 齐平)
+// [7/16 fix 2] 主角面板锁死根因: shootLoop 只读 CFG.player.bulletInterval / G.multiShot / G.playerAtkBonus /
+//   G.playerAtkMult, 老 startPreExperience 只写 nuoStats + G.multiShot, 主角侧弹道虽然对但攻速攻击没同步.
+//   现改为"双写": 主角侧字段 (CFG.player.bulletInterval / G.playerAtkBonus / G.playerCritBonus / G.playerCritDmg /
+//   G.playerCritRate) 和 BOBO 侧 nuoStats 同时改, 保证 HUD 显示与实际生效一致.
 // ============================================================
 const PRE_EXP_STATS = {
-  atk: 30, spd: 2.0, blt: 3, crt: 0, critDmg: 0  // 主角+Bobo 共用: 弹道3 / 攻击力3倍(基线10→30) / 攻速双倍(基线1.0→2.0) · 暴击维持基线
+  // [7/16 fix 3] 数值向老 demo 对齐: BOBO 满配 atk=60 (base 10, 由 origNuoBase 备份还原)
+  //   spd=1.5 (老版舒服口径), blt=3, crt=0.25, critDmg=0.50
+  atk: 60, spd: 1.5, blt: 3, crt: 0.25, critDmg: 0.50
 };
 // 议题 12 · 二版调整: 按 spec §7.5.5 重写为 8 方阵 (无大 BOSS, 最高只到 miniC)
 const PRE_EXP_COMPOSITIONS = [
@@ -3753,21 +3793,15 @@ function startPreExperience() {
   // 议题 12 · 二版调整: 关掉旧复活弹窗 (若上一局残留)
   const _reviveDlg = document.getElementById('preExpReviveDialog');
   if (_reviveDlg) _reviveDlg.style.display = 'none';
-  // 备份并覆盖 BOBO base 属性 (主角+Bobo 共享 CFG.nuo.base)
+
+  // ---------- [7/16 fix 3] BOBO 侧: 覆盖 base + 强制刷 nuoStats ----------
+  // 保存 base 快照 (reset() 里通过 __ORIGINAL_NUO_BASE 也会兜底还原)
   if (!G.origNuoBase) G.origNuoBase = { ...CFG.nuo.base };
   Object.assign(CFG.nuo.base, PRE_EXP_STATS);
-  // 议题 12 · 四版: 主角射击弹道数走 G.multiShot 而非 CFG.nuo.base.blt, 必须显式覆盖
-  G.multiShot = PRE_EXP_STATS.blt;
+  // startGame 里会跑 reset() → G.nuoStats = createNuoStats() 读的正是 CFG.nuo.base
   Storage.set('currentLevel', 0);
   startGame(0);
-  // startGame 内部会 spawn 首方阵前先设 spawnCooldown, 但静默期期间敌人已冻结, 直接预排首方阵到通道上半
-  spawnPreExperienceFormation(0);
-  G.currentFormationIndex = 1;
-  // 议题 12 · 四版: startGame 内部 reset() 会把 G.multiShot 拉回 1, 必须在 startGame 之后再次覆盖
-  G.multiShot = PRE_EXP_STATS.blt;
-  // 议题 12 · 五版修复: startGame → reset() 里 G.nuoStats = createNuoStats() 用的是当时的 CFG.nuo.base
-  // 上面 3749 已覆盖 CFG.nuo.base, 理论上 nuoStats.blt=3; 但为杜绝任何异步 reflow / DOM 状态 race,
-  // 显式再把 nuoStats 全字段对齐 PRE_EXP_STATS, 并强制刷 HUD (双保险: 即时 + rAF 后各一次)
+  // 到这里 reset() 已把 nuoStats 初始化好, 但为杜绝 race 显式再对齐一次
   if (G.nuoStats) {
     G.nuoStats.atk = PRE_EXP_STATS.atk;
     G.nuoStats.spd = PRE_EXP_STATS.spd;
@@ -3775,6 +3809,30 @@ function startPreExperience() {
     G.nuoStats.crt = PRE_EXP_STATS.crt;
     G.nuoStats.critDmg = PRE_EXP_STATS.critDmg;
   }
+
+  // ---------- [7/16 fix 2+3] 主角侧: 双写, 直接改 shootLoop 读的字段 ----------
+  // 保存原始 bulletInterval, 避免反复除法污染 (fireRate 卡也在这上面递减)
+  if (window.__ORIGINAL_PLAYER_INTERVAL === undefined) {
+    window.__ORIGINAL_PLAYER_INTERVAL = CFG.player.bulletInterval;
+  }
+  CFG.player.bulletInterval = Math.floor(window.__ORIGINAL_PLAYER_INTERVAL / 3); // 主角 3× 射速
+  G.multiShot = 3;                              // 主角 3 弹道
+  G.playerAtkBonus = 5;                         // 基础 20 + 5*(1) = 25 —— 兼容 baseAtk = 20 + bonus 公式
+  G.playerAtkMult = 1;
+  G.playerCritBonus = 0.25;                     // 暴击率 +25%
+  G.playerCritRate = 0.25;                      // shootLoop 里的 playerCritRate 覆盖优先
+  // shootLoop 里 critMult = 2 + G.nuoStats.critDmg + playerCritDmgExtra
+  //   BOBO critDmg 已 0.5, 主角自然吃到 2.5x. 老 demo 里的 G.playerCritDmg 只用于对齐 spec, 不驱动伤害.
+  G.playerCrit = 0.25;
+  G.playerCritDmg = 0.50;
+  G.perks = {};                                 // 清 perk (无穿透/无 AoE, 保留小兵成群依次爆的爽感)
+  // fireRate 卡的持续 tick 用 G.fireRateBaseInterval, 也同步一下防止后续被 ×0.99 反乘
+  G.fireRateBaseInterval = CFG.player.bulletInterval;
+  // ------------------------------------------------------------------
+
+  spawnPreExperienceFormation(0);
+  G.currentFormationIndex = 1;
+
   if (typeof updateNuoUI === 'function') updateNuoUI();
   requestAnimationFrame(() => { if (typeof updateNuoUI === 'function') updateNuoUI(); });
 }
