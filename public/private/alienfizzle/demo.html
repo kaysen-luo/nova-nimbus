@@ -695,7 +695,7 @@ const MASTERY_CARDS = [
   // B 状态施加 (3) 全必触发
   { id:'b_burn', category:'B', name:'燃烧弹', desc:'必触发点燃, 2 秒内 50% 主伤害 DoT' },
   { id:'b_slow', category:'B', name:'减速弹', desc:'必触发减速 30% 持续 2 秒' },
-  { id:'b_stun', category:'B', name:'麻痹弹', desc:'必触发麻痹 1.5 秒无法行动' },
+  { id:'b_stun', category:'B', name:'麻痹弹', desc:'20% 概率麻痹 0.75s' }, // [7/16 fix stun]
   // C 特殊触发 (2)
   { id:'c_feast', category:'C', name:'食髓', desc:'击杀精英以上敌人后 5s 内攻速+50%' },
   { id:'c_meltdown', category:'C', name:'熔核', desc:'自动循环 11 秒: 3s 爬升 (1x→3x攻速) + 5s 满态 (3x攻速+20暴率+50暴伤) + 3s 静默' },
@@ -1706,7 +1706,10 @@ function updateBullets(dt) {
                 e.slowMult = Math.max(0.2, Math.pow(0.7, stacks));
               }
               if (G.cardPool.hasMastery('b_stun')) {
-                e.stunUntil = now + 1500;
+                // [7/16 fix stun] 20% 概率触发, 麻痹 0.75s
+                if (Math.random() < 0.20) {
+                  e.stunUntil = Math.max(e.stunUntil||0, now + 750);
+                }
               }
             }
             // ===== 议题 10 · 切片 4 END (B 状态) =====
@@ -1877,6 +1880,11 @@ function findNextRicochetTarget(from) {
 // 主角持续 buff tick (fireRate / multiShot / atkUp)
 // ============================================================
 
+// [7/16 fix mult-cap] 全局统一 setter, 保证 G.multiShot ∈ [1, 5]
+function setMultiShot(v) {
+  G.multiShot = Math.max(1, Math.min(5, Math.round(v)));
+}
+
 // 射速强化: 每秒把当前 bulletInterval 乘以 0.99 (= +1%)
 function tickFireRate() {
   if (!G.perks || !G.perks.fireRate) return;
@@ -1891,7 +1899,7 @@ function tickMultiShot() {
   if (!G.multiShotNextAt || G.now < G.multiShotNextAt) return;
   G.multiShotNextAt = G.now + 30000;
   if ((G.multiShot || 1) < 5) {
-    G.multiShot = (G.multiShot || 1) + 1;
+    setMultiShot((G.multiShot || 1) + 1); // [7/16 fix mult-cap]
     showBuffToast('弹道 +1 → ' + G.multiShot, true);
   }
 }
@@ -2663,11 +2671,8 @@ function applyCardEffect(card) {
     G.cardPool.acquireSkill(card.id);
     const s = SKILL_CARDS.find(x => x.id === card.id);
     let lv = G.cardPool.skillLevels[card.id] || card.lv;
-    // 议题 12 · 切片 3 · 预体验关卡: 卡片效果 ×2 (技能再升一级, 不超过 3)
-    if (G.isPreExperience && lv < 3) {
-      G.cardPool.acquireSkill(card.id);
-      lv = G.cardPool.skillLevels[card.id];
-    }
+    // [7/16 fix lv2] 去掉预体验对技能卡的双升级 (导致 0→2 跳过 Lv2 槽位视觉), 保证 0→1→2→3 单步递增
+    // (精通卡的 ×2 仍在下面保留)
     showBuffToast((s ? s.name : card.id) + ' Lv' + lv, true);
     applySkillEffect(card.id, lv);
   } else if (card.type === 'mastery') {
@@ -2981,7 +2986,7 @@ function applyGateToNuo(gate) {
     if (dim.key === 'blt') {
       const delta = Math.round(v);
       if (delta !== 0) {
-        G.multiShot = clamp((G.multiShot || 1) + delta, 1, 5);
+        setMultiShot((G.multiShot || 1) + delta); // [7/16 fix mult-cap]
       }
     }
   }
@@ -3845,7 +3850,7 @@ function startPreExperience() {
     window.__ORIGINAL_PLAYER_INTERVAL = CFG.player.bulletInterval;
   }
   CFG.player.bulletInterval = Math.floor(window.__ORIGINAL_PLAYER_INTERVAL / 3); // 主角 3× 射速
-  G.multiShot = 3;                              // 主角 3 弹道
+  setMultiShot(3);                              // 主角 3 弹道 [7/16 fix mult-cap]
   G.playerAtkBonus = 5;                         // 基础 20 + 5*(1) = 25 —— 兼容 baseAtk = 20 + bonus 公式
   G.playerAtkMult = 1;
   G.playerCritBonus = 0.25;                     // 暴击率 +25%
@@ -4706,23 +4711,41 @@ function castSkill(id, level) {
     const target = G.enemies.slice().sort((a,b) => b.hp - a.hp)[0];
     if (target) {
       const r = (W - SPLIT_X) / 6;  // 通道宽 1/3 = 半径 1/6
-      splashAround(target.x, target.y, r, 50, null);
-      G.explosions = G.explosions || [];
-      G.explosions.push({ x: target.x, y: target.y, r, bornAt: G.now, life: 320 });
+      // [7/16 fix together-preview] 先 spawn 橙色呼吸圈提示 0.6s, 之后再结算伤害并淡出
+      const lockX = target.x, lockY = target.y;
+      G.skillVisuals.push({
+        kind: 'togetherPreview',
+        x: lockX, y: lockY, r,
+        bornAt: G.now, life: 900,   // 0.6s 呼吸 + 0.3s 淡出
+        lockMs: 600
+      });
+      setTimeout(() => {
+        splashAround(lockX, lockY, r, 50, null);
+        G.explosions = G.explosions || [];
+        G.explosions.push({ x: lockX, y: lockY, r, bornAt: G.now, life: 320 });
+      }, 600);
     }
   } else if (id === 'mercy') {
-    // 血最高目标一颗超级子弹 8x 真伤 + 议题 12 · 二版调整: 红色瞄准线 0.3s
+    // 血最高目标一颗超级子弹 [7/16 fix absolution] 8x→40x 真伤 (主角 baseAtk 20 * 40 ≥ 精英 560 HP), 且延迟 1s 结算, 红线更粗/持续更久
     const target = G.enemies.slice().sort((a,b) => b.hp - a.hp)[0];
     if (target) {
       const playerAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
-      damageEnemy(target, Math.round(playerAtk * 8), true, true);
+      const dmg = Math.round(playerAtk * 40); // [7/16 fix absolution]
+      // [7/16 fix absolution] 立即画红线 (锁定目标位置), 1s 后结算, 之后红线渐隐 0.4s
+      const lockX = target.x, lockY = target.y;
       G.skillVisuals.push({
         kind: 'mercyBeam',
         fromX: player.x, fromY: player.y,
-        toX: target.x, toY: target.y,
-        bornAt: G.now, life: 300,
-        color: 'rgba(255, 60, 60, 0.85)'
+        toX: lockX, toY: lockY,
+        bornAt: G.now, life: 1400,          // 1s 锁定 + 0.4s 淡出
+        lockMs: 1000,
+        color: 'rgba(255, 50, 50, 0.95)',
+        lineWidth: 4
       });
+      // 1s 后真伤结算 (若目标仍存活)
+      setTimeout(() => {
+        if (target && target.hp > 0) damageEnemy(target, dmg, true, true);
+      }, 1000);
     }
   } else if (id === 'laserpierce') {
     // 向前 3 单位宽 (90px) 贯穿激光, 沿主角 y 向上一条竖线打所有敌人
@@ -4739,8 +4762,23 @@ function castSkill(id, level) {
     });
   } else if (id === 'flywheel') {
     // 议题 12 · 二版调整: 飞轮海 6s 持续圆形红色伤害区 (直径 = 通道宽)
-    const cx = (TRACK_R_LEFT + TRACK_R_RIGHT) / 2;
-    const cy = H * 0.55;
+    // [7/16 fix flywheel-center] 圆心改为距主角最近的敌人 (排除宝箱/道具), 无敌人时退化为通道中心
+    let cx, cy;
+    const enemyCandidates = (G.enemies || []).filter(e =>
+      e.hp > 0 && e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff'
+    );
+    if (enemyCandidates.length > 0) {
+      let best = null, bestD = Infinity;
+      for (const e of enemyCandidates) {
+        const dx = e.x - player.x, dy = e.y - player.y;
+        const d = dx*dx + dy*dy;
+        if (d < bestD) { bestD = d; best = e; }
+      }
+      cx = best.x; cy = best.y;
+    } else {
+      cx = (TRACK_R_LEFT + TRACK_R_RIGHT) / 2;
+      cy = H * 0.55;
+    }
     const r = TRACK_R_WIDTH / 2;
     G.skillVisuals.push({
       kind: 'flywheelZone',
@@ -4838,12 +4876,38 @@ function drawSkillVisuals() {
       ctx.strokeStyle = 'rgba(160, 210, 255, 0.7)';
       ctx.lineWidth = 2;
       ctx.strokeRect(v.x, v.y, v.w, v.h);
-    } else if (v.kind === 'mercyBeam') {
-      // 议题 12 · 二版调整: 恩赐解脱 0.3s 红色瞄准线
-      ctx.strokeStyle = v.color;
+    } else if (v.kind === 'togetherPreview') {
+      // [7/16 fix together-preview] 橙色呼吸圈: 前 lockMs 内 alpha 呼吸 (0.2~0.5), 之后淡出
+      const elapsed = G.now - v.bornAt;
+      const lockMs = v.lockMs || 0;
+      let base;
+      if (elapsed < lockMs) {
+        base = 0.35 + 0.15 * Math.sin(G.now / 200);
+      } else {
+        const fade = 1 - (elapsed - lockMs) / Math.max(1, v.life - lockMs);
+        base = Math.max(0, 0.35 * fade);
+      }
+      ctx.globalAlpha = base;
+      ctx.fillStyle = 'rgba(255, 140, 40, 1)';
+      ctx.beginPath();
+      ctx.arc(v.x, v.y, v.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = Math.min(1, base * 2.4);
+      ctx.strokeStyle = 'rgba(255, 165, 60, 1)';
       ctx.lineWidth = 2;
+      ctx.stroke();
+    } else if (v.kind === 'mercyBeam') {
+      // [7/16 fix absolution] 红线: 前 lockMs 内保持满 alpha (锁定演示), 之后 (life - lockMs) 时间内线性淡出
+      const elapsed = G.now - v.bornAt;
+      const lockMs = v.lockMs || 0;
+      let a;
+      if (elapsed < lockMs) a = 1;
+      else a = Math.max(0, 1 - (elapsed - lockMs) / Math.max(1, v.life - lockMs));
+      ctx.globalAlpha = a;
+      ctx.strokeStyle = v.color;
+      ctx.lineWidth = v.lineWidth || 3;
       ctx.shadowColor = v.color;
-      ctx.shadowBlur = 8;
+      ctx.shadowBlur = 10;
       ctx.beginPath();
       ctx.moveTo(v.fromX, v.fromY);
       ctx.lineTo(v.toX, v.toY);
