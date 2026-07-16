@@ -710,10 +710,9 @@ const MASTERY_CARDS = [
   // F Meta (3)
   { id:'f_greed', category:'F', name:'贪婪', desc:'击杀敌人 2% 概率立即召唤一道状态门' },
   { id:'f_resonance', category:'F', name:'共鸣', desc:'每持有 1 张精通卡, 攻击力+2%' },
-  // [7/16 C1-5] 恶魔赌局按 spec §4.6 放 3 张可重复抽 (F16 三张独立 id, 效果都触发 gamble)
-  { id:'f_gamble_1', category:'F', name:'恶魔赌局 #1', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 详见分布表)' },
-  { id:'f_gamble_2', category:'F', name:'恶魔赌局 #2', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 详见分布表)' },
-  { id:'f_gamble_3', category:'F', name:'恶魔赌局 #3', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 详见分布表)' },
+  // [7/16 fix gamble-merge] 恶魔赌局合并为单张可重复卡 (原 3 张独立 id 造成串行观感)
+  //   drawThree 里对 f_gamble 特判权重不腰斩, 每次抽三选一都可能出现
+  { id:'f_gamble', category:'F', name:'恶魔赌局', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 可重复获取)' },
   // G Bobo 强化 (4)
   { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 激光伤害+50%' },
   // [7/16 fix remove-overload] g_overload 已移除
@@ -778,7 +777,10 @@ class CardPool {
     // 2. 加入所有精通卡 (可重复)
     for (const m of MASTERY_CARDS) {
       const count = this.masteryCounts[m.id];
-      const weight = 1.5 * Math.pow(0.5, count);  // 基础 1.5, 每次重复权重 x0.5
+      // [7/16 fix gamble-merge] 恶魔赌局权重不腰斩, 保持每次抽卡都可能出现 (它本来就是可重复摇色子的卡)
+      const weight = m.id === 'f_gamble'
+        ? 1.5
+        : 1.5 * Math.pow(0.5, count);
       pool.push({ type:'mastery', id:m.id, weight });
     }
     // 3. 按权重不放回抽 3 张
@@ -2106,6 +2108,8 @@ function rankedBoboTargets(bobo, enemies) {
   const inRange = [];
   for (const e of enemies) {
     if (!e || e.hp <= 0) continue;
+    // [7/16 fix mercy-target-filter] 排除宝箱/诱饵/道具, 防止恩赐锁到非敌人
+    if (e.kind === 'chest' || e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') continue;
     if (distanceToBobo(bobo, e) <= range) inRange.push(e);
   }
   if (inRange.length === 0) return [];
@@ -5017,10 +5021,9 @@ function castSkill(id, level) {
       setTimeout(() => {
         if (!capturedTarget || capturedTarget.hp <= 0) return;
         const before = capturedTarget.hp;
-        const { dmg, crit } = rollSkillCrit(baseDmg);
-        damageEnemy(capturedTarget, dmg, crit, true);
-        // [7/16 fix absolution-v3] Lv2: 护甲×0.5, Lv3: 护甲×0.3 (增强)
-        if (level >= 2 && capturedTarget.hp > 0) {
+        // [7/16 fix absolution-v3-order] Lv2/Lv3 先降护甲再打伤害, 本次伤害就吃到破甲加成
+        let dmgAfterArmor = baseDmg;
+        if (level >= 2) {
           const armorMult = (level >= 3) ? 0.3 : 0.5;
           const orig = capturedTarget._mercyArmorOrig != null ? capturedTarget._mercyArmorOrig : capturedTarget.armor;
           capturedTarget._mercyArmorOrig = orig;
@@ -5034,7 +5037,14 @@ function castSkill(id, level) {
           }, 3000);
           const pctLabel = (level >= 3) ? '护甲-70%' : '护甲-50%';
           floatText(capturedTarget.x, capturedTarget.y - 20, pctLabel, '#ff88dd', false);
+          // 恩赐本次伤害也吃 armor 减免 (先降后打)
+          dmgAfterArmor = Math.max(1, Math.round(baseDmg * (1 - (capturedTarget.armor || 0))));
+        } else {
+          // Lv1 保持真伤口径
+          dmgAfterArmor = baseDmg;
         }
+        const { dmg, crit } = rollSkillCrit(dmgAfterArmor);
+        damageEnemy(capturedTarget, dmg, crit, true);
         // Lv3: 圆形恐惧 r=90
         if (level >= 3) {
           const fr = 90;
