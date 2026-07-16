@@ -689,7 +689,7 @@ const SKILL_CARDS = [
 // --- 2. MASTERY_CARDS (20 张精通卡, 可重复获得) ---
 const MASTERY_CARDS = [
   // A 子弹形态 (3)
-  { id:'a_pierce', category:'A', name:'集束枪管', desc:'普攻+20%, 穿透 2 目标 (伤害递减 20%), BOBO 主目标激光分叉 2 目标' }, // [7/16 fix cluster-barrel]
+  { id:'a_pierce', category:'A', name:'集束枪管', desc:'普攻+20%, 穿透 2 (伤害递减 20%), 命中分裂 4 弹, BOBO 主目标激光分叉 2' }, // [7/16 fix cluster-barrel] + [7/16 fix pierce-inherit-split]
   { id:'a_bounce', category:'A', name:'裂头弹', desc:'击中主目标后 ±45° 分裂 4 颗小子弹, 50% 伤害, 不再穿透/分裂, 继承攻击特效' }, // [7/16 fix skull-splitter]
   { id:'a_explode', category:'A', name:'爆炸弹', desc:'子弹命中产生小范围爆炸, 30% 主伤害' },
   // B 状态施加 (3) 全必触发
@@ -1778,8 +1778,10 @@ function updateBullets(dt) {
                 cur = next;
               }
             }
-            if (b.owner === 'player' && G.cardPool && G.cardPool.hasMastery('a_bounce') && !b._noSplit) {
+            if (b.owner === 'player' && G.cardPool && !b._noSplit &&
+                (G.cardPool.hasMastery('a_bounce') || G.cardPool.hasMastery('a_pierce'))) {
               // [7/16 fix skull-splitter] spawn 4 颗子弹, ±22.5° 和 ±67.5°, 50% 伤害
+              // [7/16 fix pierce-inherit-split] 集束枪管命中主目标也触发分裂 (小子弹不穿透/不再分裂)
               const baseVy = b.vy || (-CFG.bullet.speed);
               const baseVx = b.vx || 0;
               const speed = Math.sqrt(baseVx * baseVx + baseVy * baseVy);
@@ -1801,6 +1803,7 @@ function updateBullets(dt) {
                 if (b._explode) nb._explode = b._explode;
                 G.bullets.push(nb);
               });
+              b._noSplit = true; // [7/16 fix pierce-inherit-split] 主子弹已在主目标分裂过, 穿透后不再分裂
             }
             // 穿透 (a_pierce): [7/16 fix cluster-barrel] 穿透 2 目标, 每穿一次伤害递减 20%
             if (b.owner === 'player' && G.cardPool && G.cardPool.hasMastery('a_pierce') && !b._noPierce) {
