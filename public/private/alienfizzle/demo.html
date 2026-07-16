@@ -1309,11 +1309,9 @@ function createTreasure() {
   return t;
 }
 function _createTreasureInner() {
-  // 全局 slot idx 递增, 每个宝箱出场 idx +1, hp ×= slotGrowth^idx
-  // 强制穿插: 上一个是真实宝箱 (perk/buff), 下一个强制 decoy
-  // decoy HP = 最近一次真宝箱 HP × decoyRatio (跟随真宝箱涨, 不脱节)
+  // [7/16 fix decoy-idle-only] 关闭"真宝箱后强制空宝箱穿插"老逻辑, 初始+经验值触发都出真宝箱
+  // 空宝箱只由 idle 检查器 (待做, FIX-E) 在长时间无消耗时插入
   const cfgT = CFG.treasure;
-  const lastKind = G.lastTreasureKind;
   const pendingIdx = G.pendingPerkIdx || 0;
 
   // 出场计数 - 每个宝箱 +1
@@ -1321,24 +1319,7 @@ function _createTreasureInner() {
   G.treasureSlotIdx = slotIdx + 1;
   const slotMult = Math.pow(cfgT.slotGrowth, slotIdx);
 
-  // 上一个是真实宝箱 (perk 或 buff) → 这次强制 decoy
-  if (lastKind === 'perk' || lastKind === 'buff') {
-    G.lastTreasureKind = 'decoy';
-    // decoy HP 锚定到最近一次真宝箱 HP × ratio (保留差异感但不脱节)
-    const refHp = G.lastRealTreasureHp || Math.round(cfgT.decoyHpBase * slotMult);
-    const decoyHp = Math.max(1, Math.round(refHp * (cfgT.decoyRatio || 0.5)));
-    return {
-      x: 0, y: -cfgT.h, targetY: 0, col: 0,
-      w: cfgT.w, h: cfgT.h,
-      hp: decoyHp, maxHp: decoyHp,
-      color: cfgT.decoyColor,
-      kind: 'decoy',
-      label: '???',
-      flashUntil: 0,
-    };
-  }
-
-  // 上一次 = decoy 或开局 → 发真实宝箱
+  // 直接发真实宝箱 (perk 或 buff 循环)
   if (pendingIdx < cfgT.perks.length) {
     const perk = cfgT.perks[pendingIdx];
     G.pendingPerkIdx = pendingIdx + 1;
@@ -3120,10 +3101,17 @@ function applyGateToNuo(gate) {
       // 减益: 静默, ms
       G.nuoStats.silenceUntil = G.now + Math.abs(v);
     } else if (v > 0) {
-      // 增益: 双倍火力, 用减少 silence interval 模拟 - 给一段攻速 buff
-      G.nuoStats.spd = Math.min(2.5, G.nuoStats.spd + v/1000);
-      // v ms 后衰减
-      setTimeout(() => { G.nuoStats.spd = Math.max(0.3, G.nuoStats.spd - v/1000); updateNuoUI(); }, v);
+      // [7/16 fix double-fire] 双倍火力: 主角 + BOBO 攻速 ×2, v ms 后精准还原
+      const boboBase = G.nuoStats.spd;
+      const playerBase = G.playerSpdMult || 1;
+      G.nuoStats.spd = boboBase * 2;
+      G.playerSpdMult = playerBase * 2;
+      updateNuoUI && updateNuoUI();
+      setTimeout(() => {
+        G.nuoStats.spd = boboBase;
+        G.playerSpdMult = playerBase;
+        updateNuoUI && updateNuoUI();
+      }, v);
     }
   } else {
     G.nuoStats[dim.key] = clamp(
@@ -3873,7 +3861,7 @@ function reset() {
   G.multiShot = 1;
   // [7/16 fix chest-exp / burst-fire] 初始化经验值+精通卡累积字段
   G.chestExp = 0;
-  G.chestExpThreshold = 100;
+  G.chestExpThreshold = 50;
   G.chestExpTier = 0;
   G.playerSpdMult = 1;
   G.playerHeadshotChance = 0;
@@ -4735,12 +4723,12 @@ function onEnemyKilled(e) {
   const expKey = e.isFinalBoss ? 'boss' : e.type;
   const gain = CHEST_EXP_TABLE[expKey] || 2;
   G.chestExp = (G.chestExp || 0) + gain;
-  if (G.chestExpThreshold === undefined) G.chestExpThreshold = 100;
+  if (G.chestExpThreshold === undefined) G.chestExpThreshold = 50;
   if (G.chestExpTier === undefined) G.chestExpTier = 0;
   if (G.chestExp >= G.chestExpThreshold) {
     spawnNewChest();
     G.chestExpTier++;
-    G.chestExpThreshold = Math.round(100 * Math.pow(1.5, G.chestExpTier));
+    G.chestExpThreshold = Math.round(50 * Math.pow(1.5, G.chestExpTier));
     G.chestExp = 0;
   }
   if (!G.cardPool) return;
