@@ -709,7 +709,10 @@ const MASTERY_CARDS = [
   // F Meta (3)
   { id:'f_greed', category:'F', name:'贪婪', desc:'击杀敌人 2% 概率立即召唤一道状态门' },
   { id:'f_resonance', category:'F', name:'共鸣', desc:'每持有 1 张精通卡, 攻击力+2%' },
-  { id:'f_gamble', category:'F', name:'恶魔赌局', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 详见分布表)' },
+  // [7/16 C1-5] 恶魔赌局按 spec §4.6 放 3 张可重复抽 (F16 三张独立 id, 效果都触发 gamble)
+  { id:'f_gamble_1', category:'F', name:'恶魔赌局 #1', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 详见分布表)' },
+  { id:'f_gamble_2', category:'F', name:'恶魔赌局 #2', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 详见分布表)' },
+  { id:'f_gamble_3', category:'F', name:'恶魔赌局 #3', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 详见分布表)' },
   // G Bobo 强化 (4)
   { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 激光伤害+50%' },
   { id:'g_overload', category:'G', name:'激光过载', desc:'Bobo 攻速+30% (0.7→0.54 秒/发)' },
@@ -1023,7 +1026,7 @@ const G = {
 
   // tweaks
   diffMult: 1,
-  gateInterval: 12,   // 12s 一道, 之前 6s 太频繁
+  gateInterval: 10,   // [7/16 C1-4] spec §5.1 明确固定 10s
   enemyMult: 1,
   currentLevel: typeof Storage !== 'undefined' ? Storage.get('currentLevel', 2) : 2,    // 当前关卡 (1=新手, 2=标准, 3=殊死), T07 持久化
 };
@@ -1081,15 +1084,16 @@ const CFG = {
   treasure: {
     spawnInterval: 4500,
     // 议题 12 · 二版调整: label 改编号 "1"..."8", HP × 4 拔高不能秒破
+    // [7/16 C1-3] HP 曲线整体上调 (spec §7.5.6 预体验拉高), 与 miniA/miniB 血量级别对齐
     perks: [
-      { id: 'fireRate',   hp: 80,   color: '#ffcc44', label: '1', desc: '主角射速 +1%/s 持续' },
-      { id: 'multiShot',  hp: 200,  color: '#44dd99', label: '2', desc: '弹道 +1, 每 30s +1' },
-      { id: 'atkUp',      hp: 400,  color: '#ff5544', label: '3', desc: '主角攻击每 5s +1' },
-      { id: 'explosive',  hp: 650,  color: '#ff8c00', label: '4', desc: '命中点小范围爆炸' },
-      { id: 'ricochet',   hp: 950,  color: '#4dffea', label: '5', desc: '子弹弹射下一个敌人' },
-      { id: 'laser',      hp: 1400, color: '#a64dff', label: '6', desc: '每 3s 折射激光' },
-      { id: 'mirror',     hp: 2000, color: '#ff88dd', label: '7', desc: '复制副手 NUO' },
-      { id: 'ultimate',   hp: 2800, color: '#ffd700', label: '8', desc: '每 10s 全屏爆炸' },
+      { id: 'fireRate',   hp: 300,  color: '#ffcc44', label: '1', desc: '主角射速 +1%/s 持续' },
+      { id: 'multiShot',  hp: 600,  color: '#44dd99', label: '2', desc: '弹道 +1, 每 30s +1' },
+      { id: 'atkUp',      hp: 1000, color: '#ff5544', label: '3', desc: '主角攻击每 5s +1' },
+      { id: 'explosive',  hp: 1500, color: '#ff8c00', label: '4', desc: '命中点小范围爆炸' },
+      { id: 'ricochet',   hp: 2200, color: '#4dffea', label: '5', desc: '子弹弹射下一个敌人' },
+      { id: 'laser',      hp: 3000, color: '#a64dff', label: '6', desc: '每 3s 折射激光' },
+      { id: 'mirror',     hp: 4000, color: '#ff88dd', label: '7', desc: '复制副手 NUO' },
+      { id: 'ultimate',   hp: 5000, color: '#ffd700', label: '8', desc: '每 10s 全屏爆炸' },
     ],
     repeatBuffs: [
       { id: 'atk++',  color: '#ff5544', label: '攻击++', desc: '主角伤害 +25%' },
@@ -1104,8 +1108,8 @@ const CFG = {
     decoyRatio: 0.5,  // 空宝箱 HP = 最近真宝箱 × 0.5
     decoyColor: '#3a3a3a',
     // 全局 slot 倍率 - 每个宝箱出场 idx +1, hp ×= slotGrowth^idx
-    // 1.15^10 ≈ 4.05, 1.15^20 ≈ 16.4, 后期足够陡
-    slotGrowth: 1.15,
+    // [7/16 C1-3] slotGrowth 1.15→1.10 (30 步 ×17, 原 1.15^30 ≈ ×66 过陡)
+    slotGrowth: 1.10,
     w: 145, h: 48,
     colCount: 1,
     slotHeight: 56,
@@ -1290,7 +1294,15 @@ function createEnemy(type, customX, customY) {
 }
 
 function createTreasure() {
-  // 决定本次生成的是 decoy / perk / repeat buff
+  const t = _createTreasureInner();
+  // [7/16 C1-3] 预体验 HP × 1.5 (spec §7.5.6 "宝箱 HP 拉高不能秒破")
+  if (G.isPreExperience && t.kind !== 'decoy') {
+    t.hp = Math.round(t.hp * 1.5);
+    t.maxHp = t.hp;
+  }
+  return t;
+}
+function _createTreasureInner() {
   // 全局 slot idx 递增, 每个宝箱出场 idx +1, hp ×= slotGrowth^idx
   // 强制穿插: 上一个是真实宝箱 (perk/buff), 下一个强制 decoy
   // decoy HP = 最近一次真宝箱 HP × decoyRatio (跟随真宝箱涨, 不脱节)
@@ -1975,9 +1987,10 @@ class BoboLaserBeam {
   }
 }
 
-// Bobo 激光射程 (通道高度的 rangeRatio)
+// Bobo 激光射程 (从主角向上到地平线的 rangeRatio)
+// [7/16 C1-2] 锚点改为 PLAYER_Y - HORIZON_Y (spec §2.2: "从主角站位向上, 约 2/3 屏高")
 function boboLaserRange() {
-  return (DEFENSE_Y - HORIZON_Y) * (BOBO_LASER_CONFIG.rangeRatio || 2/3);
+  return (PLAYER_Y - HORIZON_Y) * (BOBO_LASER_CONFIG.rangeRatio || 2/3);
 }
 
 // 距离 (逻辑坐标, 用于选目标; 不做透视失真)
@@ -2120,9 +2133,8 @@ function updateBoboLasers(dt) {
   const cooldown = baseCd / spdMul / overloadMul;
   // ===== END =====
 
-  // 议题 12 · 三版调整: Bobo 常态只发一束激光锁一个目标
-  // 撤销所有分叉/双激光/双倍火力多目标逻辑, 只保留单目标单束
-  const forkCount = 0;
+  // [7/16 C1-1] BOBO 激光分叉恢复: 弹道 N → 分叉 N-1 次 (spec §5.9 / §2.2.2)
+  const forkCount = Math.max(0, Math.round((G.nuoStats.blt || 1) - 1));
 
   G.nuos.forEach(n => {
     if (!n._boboLaserTimer) n._boboLaserTimer = 0;
@@ -2575,6 +2587,13 @@ function isPreExperienceLevel() {
 function triggerCardSelection() {
   if (!G.cardPool) G.cardPool = new CardPool();
 
+  // [7/16 C1-6] 预体验模式: 直接抽 3 张全给, 不弹 UI (spec §4.3.2 "预体验直接全拿")
+  if (G.isPreExperience) {
+    const three = G.cardPool.drawThree();
+    for (const c of three) applyCardEffect(c);
+    return;
+  }
+
   G.pendingCards = G.cardPool.drawThree();
   G.cardSelectionUI = {
     active: true,
@@ -2955,6 +2974,14 @@ function applyGateToNuo(gate) {
     if (dim.key === 'spd') G.nuoStats.spd = Math.max(0.2, G.nuoStats.spd);
     if (dim.key === 'blt') G.nuoStats.blt = Math.max(1, G.nuoStats.blt);
     if (dim.key === 'vel') G.nuoStats.vel = Math.max(0.3, G.nuoStats.vel);
+    // [7/16 C1-1] 弹道增益同步写主角 multiShot (spec §5.9 弹道 +N → 子弹发射数 +N)
+    // spec §5.1.1: 弹道总增益 +4 封顶 (base 1 + 4 = 5)
+    if (dim.key === 'blt') {
+      const delta = Math.round(v);
+      if (delta !== 0) {
+        G.multiShot = clamp((G.multiShot || 1) + delta, 1, 5);
+      }
+    }
   }
   updateNuoUI();
   // toast
@@ -4437,8 +4464,11 @@ function applyMasteryEffect(id) {
     // F 贪婪 - 挂钩 (在 onEnemyKilled 里判)
     case 'f_greed':
       break;
-    // F 恶魔赌局 - 立即摇一次
+    // F 恶魔赌局 - 立即摇一次 ([7/16 C1-5] 3 张独立 id 共用 gamble 处理)
     case 'f_gamble':
+    case 'f_gamble_1':
+    case 'f_gamble_2':
+    case 'f_gamble_3':
       applyDemonGamble();
       break;
     // G 制导激光 - 初始化计数
