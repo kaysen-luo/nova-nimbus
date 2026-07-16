@@ -4980,20 +4980,22 @@ function castSkill(id, level) {
       }, 600);
     }
   } else if (id === 'mercy') {
-    // [7/16 fix absolution-v3] 恩赐解脱 v3 重构 (K 定):
-    //   Lv1: 单目标 72x 真伤, 锁定 0.5s (60x → 72x, +20%)
-    //   Lv2: 同时锁头 2 个目标 + 命中后 3s 目标护甲 ×0.5
-    //   Lv3: 同时锁头 5 个 + 护甲增强 (×0.3) + 击杀无限刷 CD (5 个任一击杀立即刷)
+    // [7/16 fix absolution-v3.1] 恩赐解脱 v3.1: 三级统一目标筛选
+    //   Lv1/2/3 都: 先取 rankedList (BOBO 射程内 4阶仇恨), 空则退到全场 alive 非宝箱敌人 (按血多→少)
+    //   全场无敌人才静默不释放 (K 铁律)
+    //   Lv1 取 1, Lv2 取 2, Lv3 取 5
     const rankedList = rankedBoboTargets({ x: player.x, y: player.y }, G.enemies);
-    let targets;
-    if (level >= 3) {
-      targets = rankedList.slice(0, 5);
-    } else if (level >= 2) {
-      targets = rankedList.slice(0, 2);
-    } else {
-      const t = rankedList[0] || G.enemies.slice().sort((a,b) => b.hp - a.hp)[0];
-      targets = t ? [t] : [];
+    // 全场 fallback: 排除宝箱/道具, 血多的先 (更"值得"锁头)
+    const fallbackAll = (G.enemies || [])
+      .filter(e => e && e.hp > 0 && e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff')
+      .sort((a, b) => b.hp - a.hp);
+    // 合并去重: rankedList 优先, 不够再从 fallbackAll 补
+    const pool = [...rankedList];
+    for (const e of fallbackAll) {
+      if (!pool.includes(e)) pool.push(e);
     }
+    const need = (level >= 3) ? 5 : (level >= 2 ? 2 : 1);
+    const targets = pool.slice(0, need);
     // 无有效目标: 静默, 不消耗 CD
     if (targets.length === 0) {
       const st = G.skillState && G.skillState.mercy;
