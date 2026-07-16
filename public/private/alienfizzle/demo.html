@@ -1040,7 +1040,7 @@ const CFG = {
   player: {
     width: 26,
     height: 30,
-    bulletInterval: 280, // ms
+    bulletInterval: 200, // ms  [7/16 fix player-atkspd] 280 → 200 提升基础攻速
   },
   // BOBO 初始属性
   nuo: {
@@ -1384,13 +1384,16 @@ function createStateGate(opts) {
   const dim = pick(dims);
 
   // [7/16 fix gate-refactor] 各维度值分布:
-  //   defenseHeal 只有正值 (瞬时回血包)
+  //   defenseArmor / defenseMaxHP / defenseHeal: 100% 减益起步, 玩家必须平A打爆才变正 buff (K 定)
   //   其它: 60% 减益 (vmin~0), 40% 增益 (step~vmax*0.5)
   let initValue;
-  if (dim.key === 'defenseHeal') {
-    // 一定是正值 (0 也可以但没意义, 从 step 起步)
-    initValue = rand(dim.step, dim.vmax * 0.5);
+  const isDefenseDim = (dim.key === 'defenseArmor' || dim.key === 'defenseMaxHP' || dim.key === 'defenseHeal');
+  if (isDefenseDim) {
+    // 强制负值起步 (defenseHeal 也用负值代表"扣防线血包", 打爆后 released 触发正回血)
+    initValue = rand(dim.vmin, -Math.abs(dim.step));
     initValue = Math.round(initValue / dim.step) * dim.step;
+    // 若 vmin >= 0 (defenseHeal 原配置), 用 -step 作为负值
+    if (initValue >= 0) initValue = -Math.abs(dim.step);
   } else {
     const isDebuffStart = Math.random() < 0.6;
     if (isDebuffStart) {
@@ -1668,7 +1671,9 @@ function updateBullets(dt) {
         const bBox = { x: b.x - b.w/2, y: b.y - b.h/2, w: b.w, h: b.h };
         for (const gate of G.stateGates) {
           if (gate.released) continue;
-          const gateBox = { x: gate.x - gate.w/2, y: gate.y - gate.h/2, w: gate.w, h: gate.h };
+          // [7/16 fix gate-hitbox] 命中判定框左右扩 40% (视觉不变), 修子弹从两侧擦过 bug
+          const hitW = gate.w * 1.4;
+          const gateBox = { x: gate.x - hitW/2, y: gate.y - gate.h/2, w: hitW, h: gate.h };
           if (rectOverlap(bBox, gateBox)) {
             gate.value += gate.dim.step;
             gate.value = Math.round(gate.value / gate.dim.step) * gate.dim.step;
@@ -3905,7 +3910,7 @@ function reset() {
   G.gameOver = false;
   G.revivesUsed = 0;
   G.paused = false;
-  CFG.player.bulletInterval = 280; // 重置主角武器
+  CFG.player.bulletInterval = 200; // 重置主角武器 [7/16 fix player-atkspd]
 
   // 议题 10 · 切片 3 · 三选一 UI: 每局重置卡池 + 刷新次数
   G.cardPool = new CardPool();
@@ -4971,30 +4976,32 @@ function castSkill(id, level) {
       }, 600);
     }
   } else if (id === 'mercy') {
-    // [7/16 fix absolution-v2] 恩赐解脱 v2 重构
-    //   Lv1: 单目标 60x 真伤, 无目标静默, 锁定 0.5s
-    //   Lv2: 单目标 60x + 命中后 3s 内目标 armor ×0.5 (即减半)
-    //   Lv3: 5 目标 (BOBO 4阶仇恨排序取前 5), 每个降护甲, 恐惧改圆形 (r=90),
-    //        任一击杀立即刷 CD (无次数上限)
+    // [7/16 fix absolution-v3] 恩赐解脱 v3 重构 (K 定):
+    //   Lv1: 单目标 72x 真伤, 锁定 0.5s (60x → 72x, +20%)
+    //   Lv2: 同时锁头 2 个目标 + 命中后 3s 目标护甲 ×0.5
+    //   Lv3: 同时锁头 5 个 + 护甲增强 (×0.3) + 击杀无限刷 CD (5 个任一击杀立即刷)
     const rankedList = rankedBoboTargets({ x: player.x, y: player.y }, G.enemies);
     let targets;
     if (level >= 3) {
       targets = rankedList.slice(0, 5);
+    } else if (level >= 2) {
+      targets = rankedList.slice(0, 2);
     } else {
-      // Lv1/Lv2: 取排序里的第一个 (若无, 退化到血最高)
       const t = rankedList[0] || G.enemies.slice().sort((a,b) => b.hp - a.hp)[0];
       targets = t ? [t] : [];
     }
-    // [7/16 fix absolution-v2] 无有效目标: 静默, 不消耗 CD (回退 lastCast, 让下帧再触发)
+    // 无有效目标: 静默, 不消耗 CD
     if (targets.length === 0) {
       const st = G.skillState && G.skillState.mercy;
-      if (st) st.lastCast = now - st.cooldown + 500;  // 0.5s 后再试
+      if (st) st.lastCast = now - st.cooldown + 500;
       return;
     }
     const playerAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
-    const baseDmg = Math.round(playerAtk * 60);   // [7/16 fix absolution-v2] 40x → 60x
-    const lockMs = 500;                        // [7/16 fix absolution-v2] 1s → 0.5s
-    const lifeMs = 900;                        // 0.5s lock + 0.4s fade
+    const baseDmg = Math.round(playerAtk * 72);   // [7/16 fix absolution-v3] 60x → 72x (+20%)
+    const lockMs = 500;
+    const lifeMs = 900;
+    // [7/16 fix absolution-v3] Lv3 击杀刷 CD: 用 group 标记, 任意一个目标被本次技能击杀就刷 CD
+    const castGroup = { refreshed: false };
     for (const target of targets) {
       const lockX = target.x, lockY = target.y;
       G.skillVisuals.push({
@@ -5006,19 +5013,18 @@ function castSkill(id, level) {
         color: 'rgba(255, 50, 50, 0.95)',
         lineWidth: 4
       });
-      // 0.5s 后结算
       const capturedTarget = target;
       setTimeout(() => {
         if (!capturedTarget || capturedTarget.hp <= 0) return;
         const before = capturedTarget.hp;
-        // [7/16 fix skill-crit] 恩赐解脱独立判暴击
         const { dmg, crit } = rollSkillCrit(baseDmg);
         damageEnemy(capturedTarget, dmg, crit, true);
-        // [7/16 fix absolution-v2] Lv2/Lv3: 命中后降护甲 3s (×0.5, 存原值, 到期还原)
+        // [7/16 fix absolution-v3] Lv2: 护甲×0.5, Lv3: 护甲×0.3 (增强)
         if (level >= 2 && capturedTarget.hp > 0) {
+          const armorMult = (level >= 3) ? 0.3 : 0.5;
           const orig = capturedTarget._mercyArmorOrig != null ? capturedTarget._mercyArmorOrig : capturedTarget.armor;
           capturedTarget._mercyArmorOrig = orig;
-          capturedTarget.armor = Math.max(0, orig * 0.5);
+          capturedTarget.armor = Math.max(0, orig * armorMult);
           if (capturedTarget._mercyArmorTimer) clearTimeout(capturedTarget._mercyArmorTimer);
           capturedTarget._mercyArmorTimer = setTimeout(() => {
             if (capturedTarget && capturedTarget._mercyArmorOrig != null) {
@@ -5026,32 +5032,31 @@ function castSkill(id, level) {
               capturedTarget._mercyArmorOrig = null;
             }
           }, 3000);
-          floatText(capturedTarget.x, capturedTarget.y - 20, '护甲-50%', '#ff88dd', false);
+          const pctLabel = (level >= 3) ? '护甲-70%' : '护甲-50%';
+          floatText(capturedTarget.x, capturedTarget.y - 20, pctLabel, '#ff88dd', false);
         }
-        // [7/16 fix absolution-v2] Lv2/Lv3: 恐惧 (Lv2 锥形保持, Lv3 改圆形 r=90)
-        if (level >= 2) {
-          if (level >= 3) {
-            // 圆形恐惧 r=90
-            const fr = 90;
-            G.skillVisuals.push({
-              kind: 'ring', x: capturedTarget.x, y: capturedTarget.y, r: fr,
-              color: '#ff66aa', bornAt: G.now, life: 600
-            });
-            for (const e of G.enemies) {
-              if (!e || e.hp <= 0 || e === capturedTarget) continue;
-              if (e.kind === 'chest' || e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') continue;
-              const dx = e.x - capturedTarget.x, dy = e.y - capturedTarget.y;
-              if (dx*dx + dy*dy <= fr*fr) {
-                e.stunUntil = Math.max(e.stunUntil||0, G.now + 2000);
-              }
+        // Lv3: 圆形恐惧 r=90
+        if (level >= 3) {
+          const fr = 90;
+          G.skillVisuals.push({
+            kind: 'ring', x: capturedTarget.x, y: capturedTarget.y, r: fr,
+            color: '#ff66aa', bornAt: G.now, life: 600
+          });
+          for (const e of G.enemies) {
+            if (!e || e.hp <= 0 || e === capturedTarget) continue;
+            if (e.kind === 'chest' || e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') continue;
+            const dx = e.x - capturedTarget.x, dy = e.y - capturedTarget.y;
+            if (dx*dx + dy*dy <= fr*fr) {
+              e.stunUntil = Math.max(e.stunUntil||0, G.now + 2000);
             }
           }
         }
-        // [7/16 fix absolution-v2] Lv3: 击杀刷 CD (无上限)
-        if (level >= 3 && before > 0 && capturedTarget.hp <= 0) {
+        // [7/16 fix absolution-v3] Lv3: 任一目标被本次技能击杀立刷 CD (group 去重, 只刷一次)
+        if (level >= 3 && before > 0 && capturedTarget.hp <= 0 && !castGroup.refreshed) {
+          castGroup.refreshed = true;
           const st = G.skillState && G.skillState.mercy;
           if (st) {
-            st.lastCast = 0;  // 下次 tick 立即再次 cast
+            st.lastCast = 0;
             floatText(player.x, player.y - 60, 'CD 刷新!', '#ff66aa', true);
           }
         }
