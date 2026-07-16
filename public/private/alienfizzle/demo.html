@@ -2800,11 +2800,15 @@ function adWatchAll() {
 function applyCardEffect(card) {
   if (!G.cardPool) G.cardPool = new CardPool();
   if (card.type === 'skill') {
-    G.cardPool.acquireSkill(card.id);
+    // [7/16 fix skill-idempotent] 用 card.lv 幂等赋值, 不再 +1 递增 (修双点/UI 未关闭导致的越级)
+    const targetLv = card.lv;
+    // 只在目标等级更高时才升级 (防止老卡覆盖新等级)
+    if (G.cardPool.skillLevels[card.id] === undefined) G.cardPool.skillLevels[card.id] = 0;
+    if (targetLv > G.cardPool.skillLevels[card.id]) {
+      G.cardPool.skillLevels[card.id] = Math.min(3, targetLv);
+    }
     const s = SKILL_CARDS.find(x => x.id === card.id);
-    let lv = G.cardPool.skillLevels[card.id] || card.lv;
-    // [7/16 fix lv2] 去掉预体验对技能卡的双升级 (导致 0→2 跳过 Lv2 槽位视觉), 保证 0→1→2→3 单步递增
-    // (精通卡的 ×2 仍在下面保留)
+    const lv = G.cardPool.skillLevels[card.id];
     showBuffToast((s ? s.name : card.id) + ' Lv' + lv, true);
     applySkillEffect(card.id, lv);
   } else if (card.type === 'mastery') {
