@@ -699,6 +699,7 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-must">必须</span><strong>攻击力 / 攻速 / 暴击率 / 暴击伤害</strong> 4 项 → BOBO 直接全吃, 乘算到激光单次伤害 / 发射间隔上</li>
       <li><span class="tag tag-must">必须</span><strong>弹道 +N</strong> → 转化为 <strong>激光分叉 N 次</strong>: 打完主目标后按仇恨顺序自动跳打次优先级目标, 每次分叉不衰减 (与穿透卡不同)</li>
       <li><span class="tag tag-must">必须</span><strong>双倍火力</strong> (来自火力静默翻转) → BOBO <strong>同时发射 2 束激光锁 2 个目标</strong>, 分别按仇恨 P1 / P2 位取次优先级 (仇恨天然支持锁次优先级)</li>
+      <li style="color:#c62828"><strong>⚠️ V3.3.6 修订</strong>: 双倍火力实际实现为 <code>G.nuoStats.spd *= 2</code> (BOBO 激光<strong>发射攻速×2, 单目标</strong>), 非"2 束激光". <strong>见 §V3.3.6 权威</strong> — 本行历史描述保留供对比。</li>
       <li><span class="tag tag-must">必须</span><strong>火力静默 (未翻转的 debuff)</strong> → BOBO 静默 N 秒不发射激光 (原规则保留)</li>
     </ul>
 
@@ -943,6 +944,9 @@ Alien Fizzle · 玩法规格<br>
         <td>CD 缩短至 <strong>3.5s</strong>, 锥形角度扩至 <strong>90°</strong></td>
         <td>命中若 <strong>击杀目标</strong>, 立即在原位置 <strong>再触发一次</strong> (可链式连触发, 单帧最多结算 3 次防止无限链)</td>
       </tr>
+      <tr style="background:#fff3f0">
+        <td colspan="4" style="color:#c62828;padding:8px 12px"><strong>⚠️ V3.3.4 完全重写覆盖上一行</strong>: 三级统一 CD=5s, 伤害 72x 真伤; <strong>Lv1</strong>=单目标无破甲无恐惧; <strong>Lv2</strong>=2 目标 + armor×0.5 (3s 还原); <strong>Lv3</strong>=5 目标 + armor×0.3 + 圆形恐惧 r=90 stun 2s + 击杀刷 CD. <strong>见 §V3.3.4 权威</strong> — 本表历史描述保留供对比。</td>
+      </tr>
       <tr>
         <td><strong>高压领域</strong></td>
         <td>每 20s 在接敌通道下半部分创造一片高压电区域, 持续 10s。子弹穿过区域自带电属性击中敌人麻痹 0.5s; 敌人在区域内每 2s 被麻痹 0.5s 并受 100 点伤害</td>
@@ -967,7 +971,7 @@ Alien Fizzle · 玩法规格<br>
     <table>
       <tr><th>卡类</th><th>基础权重</th><th>重复权重</th><th>特殊修正</th></tr>
       <tr><td>技能升级卡 (5 张 × 3 级)</td><td>1.0</td><td>—</td><td>未解锁的下一级卡 <strong>不在池</strong> (对玩家隐藏); 已 Lv3 满级技能 <strong>不再出</strong>; <strong>已持有的下一级卡权重 ×2</strong> (加速成长)</td></tr>
-      <tr><td>精通卡 (20 张, §4.6)</td><td>1.5</td><td><strong>×0.5</strong> (实际 0.75)</td><td>每张一次性, 抽到即消耗; 恶魔赌局 3 张为例外, 允许重复出 (见 §4.6 F16)</td></tr>
+            <tr><td>精通卡 (20 张, §4.6)</td><td>1.5</td><td><strong>×0.5</strong> (实际 0.75)</td><td>每张一次性, 抽到即消耗; 恶魔赌局 3 张为例外, 允许重复出 (见 §4.6 F16)<br><span style="color:#c62828"><strong>⚠️ V3.3.8 修订</strong>: 恶魔赌局已合并为<strong>单张 f_gamble</strong>, 权重固定 1.5 不腰斩, 可在同一次三选一里出现多张 — 见 §V3.3.8。</span></td></tr>
     </table>
 
     <h4>4.3.2 单局刷新规则</h4>
@@ -1050,7 +1054,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
       <tr><td><strong>14</strong></td><td><strong>贪婪</strong></td><td>击杀敌人 <strong>2% 概率</strong> 立即召唤一道状态门 (与 10s 定时刷新独立)</td><td>额外门也遵循 §5 规则</td></tr>
       <tr><td><strong>15</strong></td><td><strong>共鸣</strong></td><td>每持有 1 张精通卡, 攻击力 <strong>+2%</strong> (基础值算 1 张自身, 即抽到即刻 +2%)</td><td>对 BOBO 生效</td></tr>
-      <tr><td><strong>16</strong></td><td><strong>恶魔赌局</strong> <span class="tag tag-may">3 张 · 可重复抽</span></td><td>精通卡池里放 <strong>3 张</strong> (可重复抽, 每张独立高 EV 结算一次)。抽到即摇一个系数 σ, 一次性重构 <strong>主角 + BOBO 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。见 §4.6.F16 概率分布表</td><td>Bobo 属性一起赌; 精通卡自身效果不吃赌局但基于新面板算数值; 后续获得的属性以新基线累加</td></tr>
+      <tr><td><strong>16</strong></td><td><strong>恶魔赌局</strong> <span class="tag tag-may">3 张 · 可重复抽</span></td><td>精通卡池里放 <strong>3 张</strong> (可重复抽, 每张独立高 EV 结算一次)。抽到即摇一个系数 σ, 一次性重构 <strong>主角 + BOBO 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。见 §4.6.F16 概率分布表</td><td>Bobo 属性一起赌; 精通卡自身效果不吃赌局但基于新面板算数值; 后续获得的属性以新基线累加<br><span style="color:#c62828"><strong>⚠️ V3.3.8</strong>: 现改为<strong>单张 f_gamble</strong>, 见 §V3.3.8</span></td></tr>
     </table>
 
     <div class="callout warn">
@@ -1263,6 +1267,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><td><strong>弹道 +N</strong></td><td>子弹发射数 +N</td><td><span style="color:#2e6b3a">✓ 转化为激光分叉 N 次</span> · 打完主目标后按仇恨顺序自动跳打次优先级目标, 每次分叉不衰减</td></tr>
       <tr><td><strong>弹道速度</strong></td><td>子弹飞行速度 × 系数</td><td><span style="color:#888">— 无意义</span> (激光零飞行时间), 该维度不作用于 BOBO</td></tr>
       <tr><td><strong>双倍火力</strong> (火力静默翻转)</td><td>N 秒内子弹伤害 ×2</td><td><span style="color:#2e6b3a">✓ 同时发射 2 束激光锁 2 个目标</span> · 分别取仇恨 P1 / P2 位次优先级 (仇恨天然支持锁次优先级); 若与弹道 +N 同存, 每束激光独立分叉</td></tr>
+      <tr style="background:#fff3f0"><td colspan="3" style="color:#c62828;padding:8px 12px"><strong>⚠️ V3.3.6 覆盖以上"双倍火力"行</strong>: 实际实现 = <strong>主角 <code>playerSpdMult *= 2</code>, BOBO <code>nuoStats.spd *= 2</code></strong> (双方射速翻倍, 均单目标, 非 2 束激光), 持续 v ms 后精准 restore. <strong>见 §V3.3.6 权威</strong>。</td></tr>
       <tr><td><strong>火力静默</strong> (未翻转 debuff)</td><td>N 秒内不发射子弹</td><td><span style="color:#b8451e">✗ N 秒内不发射激光</span></td></tr>
     </table>
 
@@ -1882,9 +1887,9 @@ if (targetLv &gt; skillLevels[id]) {
     <div class="callout" style="border-color:#dda840;margin-top:20px">
       <strong>P1 待补清单 (v3.3 尚未完成)</strong>
       <ul style="margin-top:6px">
-        <li><strong>空宝箱 idle 触发器</strong>: 长时间未破真宝箱时插入 2 个空宝箱, 挤出通道自动消失 (见 V3.3.5)</li>
-        <li><strong>普通关卡末尾偶发卡死</strong>: 已加 try-catch 兜底, 但根因未定位; 需要 F12 控制台捕获实际 Error</li>
-        <li><strong>spec ↔ demo 反向对齐</strong>: v3.3 大改后前序 §2 / §4 / §5 部分小节文字与实际 demo 数值有出入 (以本章节权威)</li>
+        <li><strong>空宝箱 idle 触发器</strong>: <span style="color:#2e7d32">✅ 2026-07-17 已完成 (demo commit b0e64c9 + 8a99803)</span> — 25s 未破真宝箱插 2 decoy, 场上 ≤ 2 decoy, decoy HP = 近真宝箱 × 0.5</li>
+        <li><strong>普通关卡末尾偶发卡死</strong>: <span style="color:#c17f00">🟡 2026-07-17 装了诊断工具 (demo commit c214fea)</span> — URL <code>?debug=1</code> 开启现场快照 + 屏幕红 badge + 4 处延迟回调 setTimeout 包 try-catch, 根因待 K 复现取证后定位</li>
+        <li><strong>spec ↔ demo 反向对齐</strong>: <span style="color:#2e7d32">✅ 2026-07-17 P0 已补</span> — §2.2.2 / §4.2 (mercy) / §4.3.1 / §4.6.F16 / §5.9 (5 处双倍火力/恩赐/恶魔赌局) 加了 "⚠️ V3.3.x 覆盖" 醒目标记, 历史文字保留供对比。P1/P2 冲突 (状态门 3 防线维度未入 §5.1 / §7.5.6 死引用 §4.5 / a_burst 未入 §4.6.A) 因不影响外包/游玩, 归入低优先级, 后续 v3.4 整段重写时统一处理</li>
       </ul>
     </div>
   </section>
