@@ -5260,7 +5260,7 @@ function applySkillEffect(skillId, level) {
   const now = G.now || performance.now();
   const cooldownMap = {
     together: 10000,
-    flywheel: 6000,
+    flywheel: 5000,
     mercy: 5000,
     highvoltage: 20000,
     laserpierce: 15000
@@ -5614,15 +5614,17 @@ function castSkill(id, level, chainDepth) {
     const r = (level >= 3) ? (TRACK_R_WIDTH / 4) : (TRACK_R_WIDTH / 6);
     const isLv3 = level >= 3;
     const lifeMs = isLv3 ? 12000 : 6000;
-    const moveVy = isLv3 ? -(cy - HORIZON_Y) / lifeMs : 0;
+    // [K10-14 Lv3] 前 6s 原地旋转 (vy=0), 后 6s 向上推进
+    // 分段移动逻辑在 tick 里处理, 这里只 spawn 参数
     G.skillVisuals.push({
       kind: 'flywheelZone',
       x: cx, y: cy, r,
       bornAt: G.now, life: lifeMs,
       color: 'rgba(255, 80, 80, 0.35)',
       lastTickAt: G.now,
-      vy: moveVy,
       lv3Move: isLv3,
+      spinMs: 6000,   // Lv3 原地旋转时长
+      pushMs: 6000,   // Lv3 向上推进时长
     });
   } else if (id === 'highvoltage') {
     // ===== 议题 10-4 高压领域 K 原口径重构 =====
@@ -5701,8 +5703,16 @@ function tickSkillVisuals(dt) {
   for (let i = G.skillVisuals.length - 1; i >= 0; i--) {
     const v = G.skillVisuals[i];
     if (v.kind === 'flywheelZone') {
-      if (v.vy) {
-        v.y = Math.max(HORIZON_Y, v.y + v.vy * dt * 1000);
+      // [K10-14 Lv3] 前 6s 原地旋转 vy=0, 后 6s 向上推进 vy=-(初始y-HORIZON_Y)/6000
+      if (v.lv3Move) {
+        const elapsed = G.now - v.bornAt;
+        if (elapsed >= (v.spinMs || 6000)) {
+          if (v._pushStartY === undefined) {
+            v._pushStartY = v.y;  // 记录推进起点 y
+            v._pushVy = -(v.y - HORIZON_Y) / (v.pushMs || 6000);
+          }
+          v.y = Math.max(HORIZON_Y, v.y + v._pushVy * dt * 1000);
+        }
       }
       if (now - (v.lastTickAt || v.bornAt) >= 1000) {
         v.lastTickAt = now;
@@ -5711,8 +5721,8 @@ function tickSkillVisuals(dt) {
           if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
           const dx = e.x - v.x, dy = e.y - v.y;
           if (dx*dx + dy*dy <= v.r * v.r) {
-            // [K10-11 削弱] 伤害 playerAtk × 2 → × 1.2 (让 200HP 小怪撑过 1 个飞轮生命, 需要下一个补刀)
-            const { dmg, crit } = rollSkillCrit(Math.round(getPlayerAtk() * 1.2));
+            // [K10-14 加强] 伤害 playerAtk × 1.2 → × 2.5 (精英不再刮痧, 小怪 200HP 撑半个飞轮)
+            const { dmg, crit } = rollSkillCrit(Math.round(getPlayerAtk() * 2.5));
             damageEnemy(e, dmg, crit, true);
           }
         });
