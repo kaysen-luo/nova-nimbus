@@ -1039,6 +1039,8 @@ const G = {
 // ============================================================
 // 配置常量 (数值层 - 后续可配置化)
 // ============================================================
+// [7/17 P1-2 diag] URL ?debug=1 开启诊断: catch dump 上下文 + 屏幕 error badge
+window.__DEBUG_MODE = new URLSearchParams(location.search).get('debug') === '1';
 const CFG = {
   // 主角
   player: {
@@ -3367,6 +3369,18 @@ function draw() {
   ctx.moveTo(SPLIT_X, 0);
   ctx.lineTo(SPLIT_X, H);
   ctx.stroke();
+
+  // [7/17 P1-2 diag] error badge: 出错后 5s 内右上角红条 (仅 __DEBUG_MODE)
+  if (window.__DEBUG_MODE && G._lastErrorAt && (G.now - G._lastErrorAt) < 5000) {
+    ctx.save();
+    ctx.fillStyle = 'rgba(255,40,40,0.92)';
+    ctx.fillRect(4, 4, W - 8, 22);
+    ctx.fillStyle = '#fff';
+    ctx.font = 'bold 11px monospace';
+    ctx.textBaseline = 'middle';
+    ctx.fillText('ERR: ' + (G._lastErrorMsg || '?'), 10, 15);
+    ctx.restore();
+  }
 }
 
 function drawBackground() {
@@ -3798,7 +3812,27 @@ function loop(ts) {
   requestAnimationFrame(loop);
   } catch (err) {
     // [7/16 fix endlvl-freeze] catch 任何 tick 内异常, 尽量继续跑 (避免卡死)
-    console.error('[loop] exception, continuing:', err);
+    // [7/17 P1-2 diag] 现场快照 dump + __DEBUG_MODE 时屏幕红 badge
+    const snap = {
+      msg: err && (err.message || String(err)),
+      stack: err && err.stack ? err.stack.split('\n').slice(0, 4).join(' | ') : '(no stack)',
+      level: G.currentLevel,
+      pre: !!G.isPreExperience,
+      t: G.startTime ? Math.round((G.now - G.startTime) / 1000) : -1,
+      enemies: G.enemies && G.enemies.length,
+      bullets: G.bullets && G.bullets.length,
+      treasures: G.treasures && G.treasures.length,
+      explosions: G.explosions && G.explosions.length,
+      guideLasers: G.perks && G.perks.boboGuideLasers && G.perks.boboGuideLasers.length,
+      defHP: G.defenseHP,
+      victory: G.victory,
+      gameOver: G.gameOver,
+    };
+    console.error('[loop-err]', snap);
+    if (window.__DEBUG_MODE) {
+      G._lastErrorMsg = (snap.msg || '').substring(0, 60);
+      G._lastErrorAt = G.now;
+    }
     try { requestAnimationFrame(loop); } catch(_) {}
   }
 }
@@ -5016,6 +5050,7 @@ function castSkill(id, level) {
         lockMs: 600
       });
       setTimeout(() => {
+       try {
         // [7/16 fix skill-crit] 站一起: 每目标独立判暴击 + [7/16 fix fire-synergy] 火焰联动
         const cxp = perspectiveX(lockX, lockY);
         G.enemies.slice().forEach(en => {
@@ -5033,6 +5068,7 @@ function castSkill(id, level) {
         // [7/16 fix together-buff] Lv3: 二段爆炸, 0.6s 后再来一次 (伤害 60%)
         if (level >= 3) {
           setTimeout(() => {
+           try {
             if (!G.enemies) return;
             const base2 = Math.round(baseDmg * 0.6);
             G.enemies.slice().forEach(en => {
@@ -5046,8 +5082,16 @@ function castSkill(id, level) {
               damageEnemy(en, eff2, c2, true);
             });
             G.explosions.push({ x: lockX, y: lockY, r, bornAt: G.now, life: 320 });
+           } catch (e) {
+             console.error('[delayed-err]', { where: 'together600Lv3', msg: e && e.message, stack: e && e.stack && e.stack.split('\n').slice(0,3).join(' | ') });
+             if (window.__DEBUG_MODE) { G._lastErrorMsg = 'DLY: ' + ((e && e.message) || '').substring(0, 50); G._lastErrorAt = G.now; }
+           }
           }, 600);
         }
+       } catch (e) {
+         console.error('[delayed-err]', { where: 'together600', msg: e && e.message, stack: e && e.stack && e.stack.split('\n').slice(0,3).join(' | ') });
+         if (window.__DEBUG_MODE) { G._lastErrorMsg = 'DLY: ' + ((e && e.message) || '').substring(0, 50); G._lastErrorAt = G.now; }
+       }
       }, 600);
     }
   } else if (id === 'mercy') {
@@ -5096,6 +5140,7 @@ function castSkill(id, level) {
       });
       const capturedTarget = target;
       setTimeout(() => {
+       try {
         if (!capturedTarget || capturedTarget.hp <= 0) return;
         const before = capturedTarget.hp;
         // [7/16 fix absolution-v3-order] Lv2/Lv3 先降护甲再打伤害, 本次伤害就吃到破甲加成
@@ -5107,10 +5152,15 @@ function castSkill(id, level) {
           capturedTarget.armor = Math.max(0, orig * armorMult);
           if (capturedTarget._mercyArmorTimer) clearTimeout(capturedTarget._mercyArmorTimer);
           capturedTarget._mercyArmorTimer = setTimeout(() => {
+           try {
             if (capturedTarget && capturedTarget._mercyArmorOrig != null) {
               capturedTarget.armor = capturedTarget._mercyArmorOrig;
               capturedTarget._mercyArmorOrig = null;
             }
+           } catch (e) {
+             console.error('[delayed-err]', { where: 'mercyArmorTimer3s', msg: e && e.message, stack: e && e.stack && e.stack.split('\n').slice(0,3).join(' | ') });
+             if (window.__DEBUG_MODE) { G._lastErrorMsg = 'DLY: ' + ((e && e.message) || '').substring(0, 50); G._lastErrorAt = G.now; }
+           }
           }, 3000);
           const pctLabel = (level >= 3) ? '护甲-70%' : '护甲-50%';
           floatText(capturedTarget.x, capturedTarget.y - 20, pctLabel, '#ff88dd', false);
@@ -5147,6 +5197,10 @@ function castSkill(id, level) {
             floatText(player.x, player.y - 60, 'CD 刷新!', '#ff66aa', true);
           }
         }
+       } catch (e) {
+         console.error('[delayed-err]', { where: 'mercy500', msg: e && e.message, stack: e && e.stack && e.stack.split('\n').slice(0,3).join(' | ') });
+         if (window.__DEBUG_MODE) { G._lastErrorMsg = 'DLY: ' + ((e && e.message) || '').substring(0, 50); G._lastErrorAt = G.now; }
+       }
       }, lockMs);
     }
   } else if (id === 'laserpierce') {
