@@ -1837,6 +1837,10 @@ function updateBullets(dt) {
 
 // 给一个敌人扣血 + 处理飘字 + 死亡 (从 enemies 数组里 splice)
 function damageEnemy(e, dmg, isCrit, fromPlayer, isHeadshot) {
+  // ===== 议题 10-4 · 恩赐易损: 结算入口统一乘 vulnMult =====
+  if (e && e.vulnUntil && (G.now || performance.now()) < e.vulnUntil && e.vulnMult) {
+    dmg = Math.max(1, Math.round(dmg * e.vulnMult));
+  }
   // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: 伤害修饰 hook =====
   if (G.cardPool) {
     let mult = 1;
@@ -1903,6 +1907,30 @@ function damageEnemy(e, dmg, isCrit, fromPlayer, isHeadshot) {
     }
     const idx = G.enemies.indexOf(e);
     if (idx >= 0) G.enemies.splice(idx, 1);
+    // ===== 议题 10-4 · 站一起 Lv2 灼烧尸爆 =====
+    if (e.burnStackUntil && G.now < e.burnStackUntil && G._togetherLv2 && !e._burnBoomProcessed) {
+      e._burnBoomProcessed = true;
+      const boomR = (DEFENSE_Y - HORIZON_Y) / 2;
+      const cxp = perspectiveX(e.x, e.y);
+      G.explosions = G.explosions || [];
+      G.explosions.push({ x: e.x, y: e.y, r: boomR, bornAt: G.now, life: 400 });
+      G.skillVisuals = G.skillVisuals || [];
+      G.skillVisuals.push({ kind: 'ring', x: e.x, y: e.y, r: boomR, color: '#ff8844', bornAt: G.now, life: 500 });
+      G.enemies.slice().forEach(nb => {
+        if (nb === e || nb.hp <= 0) return;
+        if (nb.kind === 'decoy' || nb.kind === 'perk' || nb.kind === 'buff' || nb.kind === 'chest') return;
+        const nxp = nb._cachedPX !== undefined ? nb._cachedPX : perspectiveX(nb.x, nb.y);
+        const dx = nxp - cxp, dy = nb.y - e.y;
+        if (Math.sqrt(dx*dx + dy*dy) > boomR) return;
+        damageEnemy(nb, 150, false, true);
+        // 邻居: 刷新灼烧 + 叠一层 (无上限)
+        if (nb.hp > 0) {
+          nb.burnStackLayers = (nb.burnStackLayers || 0) + 1;
+          nb.burnStackDmgPerSec = 20 * nb.burnStackLayers;
+          nb.burnStackUntil = G.now + 5000;
+        }
+      });
+    }
     G.kills += (e.score >= 200 ? 5 : e.score >= 60 ? 2 : 1);
     const killsEl = document.getElementById('hud-kills');
     if (killsEl) killsEl.textContent = G.kills;
@@ -2610,6 +2638,14 @@ function updateEnemies(dt) {
       if (e.y + e.h >= DEFENSE_Y) {
         e.y = DEFENSE_Y - e.h;
         e.atDefense = true;
+        // ===== 议题 10-4 · 高压 Lv3: 撞防线首次惩罚 (在高压区域内) =====
+        if (e._hvInside && !e._hvDefensePunished && G._hvLv3) {
+          e._hvDefensePunished = true;
+          e.stunUntil = Math.max(e.stunUntil || 0, G.now + 3000);
+          damageEnemy(e, 300, false, true);
+          floatText(e.x, e.y - 30, '高压击溃!', '#88ffff', true);
+          return; // 本 tick 不扣防线血
+        }
       }
     } else {
       // 攻击防线
@@ -5046,26 +5082,27 @@ function castSkill(id, level) {
 
   // 简易伤害: 复用现有实现的思路 (打磨阶段完善)
   if (id === 'together') {
-    // 找主要目标 (血量最多), 圆心通道宽 1/3 半径爆炸
+    // ===== 议题 10-4 站一起 K 原口径重构 =====
+    // Lv1: 主爆 150 + 施加 5s 灼烧 (20 伤/s × 5s = 100 DoT, 首次 layers=1)
+    // Lv2 质变: 灼烧死亡触发尸爆 (damageEnemy 死亡分支处理)
+    // Lv3: 40% 概率再释放一次 + 保留二段爆炸
+    G._togetherLv2 = (level >= 2);
+    G._togetherLv3 = (level >= 3);
     const target = G.enemies.slice().sort((a,b) => b.hp - a.hp)[0];
     if (target) {
-      // [7/16 fix together-buff] Lv3 范围 +50% (r ×1.5), Lv2 伤害 +30% (dmg ×1.3)
-      const baseR = (W - SPLIT_X) / 6;  // 通道宽 1/3 = 半径 1/6
+      const baseR = (W - SPLIT_X) / 6;
       const r = level >= 3 ? baseR * 1.5 : baseR;
-      // [7/16 fix together-buff] 基础 50 → 150 (K 反馈严重不足, 按普攻 5s 输出的 1.5x 建议)
       let baseDmg = 150;
-      if (level >= 2) baseDmg = Math.round(baseDmg * 1.3);   // Lv2: +30% 伤害
-      // [7/16 fix together-preview] 先 spawn 橙色呼吸圈提示 0.6s, 之后再结算伤害并淡出
+      if (level >= 2) baseDmg = Math.round(baseDmg * 1.3);
       const lockX = target.x, lockY = target.y;
       G.skillVisuals.push({
         kind: 'togetherPreview',
         x: lockX, y: lockY, r,
-        bornAt: G.now, life: 900,   // 0.6s 呼吸 + 0.3s 淡出
+        bornAt: G.now, life: 900,
         lockMs: 600
       });
       setTimeout(() => {
        try {
-        // [7/16 fix skill-crit] 站一起: 每目标独立判暴击 + [7/16 fix fire-synergy] 火焰联动
         const cxp = perspectiveX(lockX, lockY);
         G.enemies.slice().forEach(en => {
           if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
@@ -5076,10 +5113,15 @@ function castSkill(id, level) {
           const fireDmg = applyFireSynergy(en, dmg);
           const eff = Math.max(1, Math.round(fireDmg * (1 - en.armor)));
           damageEnemy(en, eff, crit, true);
+          // ===== 议题 10-4 · 施加灼烧栈 (每颗手雷刷新+叠一层, 无上限) =====
+          if (en.hp > 0) {
+            en.burnStackLayers = (en.burnStackLayers || 0) + 1;
+            en.burnStackDmgPerSec = 20 * en.burnStackLayers;
+            en.burnStackUntil = G.now + 5000;
+          }
         });
         G.explosions = G.explosions || [];
         G.explosions.push({ x: lockX, y: lockY, r, bornAt: G.now, life: 320 });
-        // [7/16 fix together-buff] Lv3: 二段爆炸, 0.6s 后再来一次 (伤害 60%)
         if (level >= 3) {
           setTimeout(() => {
            try {
@@ -5094,53 +5136,68 @@ function castSkill(id, level) {
               const fireDmg2 = applyFireSynergy(en, d2);
               const eff2 = Math.max(1, Math.round(fireDmg2 * (1 - en.armor)));
               damageEnemy(en, eff2, c2, true);
+              if (en.hp > 0) {
+                en.burnStackLayers = (en.burnStackLayers || 0) + 1;
+                en.burnStackDmgPerSec = 20 * en.burnStackLayers;
+                en.burnStackUntil = G.now + 5000;
+              }
             });
             G.explosions.push({ x: lockX, y: lockY, r, bornAt: G.now, life: 320 });
            } catch (e) {
-             console.error('[delayed-err]', { where: 'together600Lv3', msg: e && e.message, stack: e && e.stack && e.stack.split('\n').slice(0,3).join(' | ') });
-             if (window.__DEBUG_MODE) { G._lastErrorMsg = 'DLY: ' + ((e && e.message) || '').substring(0, 50); G._lastErrorAt = G.now; }
+             console.error('[delayed-err]', { where: 'together600Lv3', msg: e && e.message });
            }
           }, 600);
         }
+        // ===== 议题 10-4 · Lv3 40% 概率连锁再释放 =====
+        if (level >= 3 && Math.random() < 0.4) {
+          setTimeout(() => { try { castSkill('together', 3); } catch (e) {} }, 800);
+        }
        } catch (e) {
-         console.error('[delayed-err]', { where: 'together600', msg: e && e.message, stack: e && e.stack && e.stack.split('\n').slice(0,3).join(' | ') });
-         if (window.__DEBUG_MODE) { G._lastErrorMsg = 'DLY: ' + ((e && e.message) || '').substring(0, 50); G._lastErrorAt = G.now; }
+         console.error('[delayed-err]', { where: 'together600', msg: e && e.message });
        }
       }, 600);
     }
   } else if (id === 'mercy') {
-    // [7/16 fix absolution-v3.2] 恩赐解脱 v3.2: 修"无目标也施放"
-    //   目标筛选: 画面可见 + alive + 非宝箱/道具 (不再复用 BOBO 射程, 也不 fallback 到全场)
-    //   Lv1 取 1, Lv2 取 2, Lv3 取 5
-    //   目标池空 → 静默不释放不消耗 CD (K 铁律)
+    // ===== 议题 10-4 恩赐解脱 K 原口径重构: 破甲 → 易损 =====
+    // 全等级施加 vulnUntil (+20% 后续伤害 × 5s)
+    // Lv2: 90° 锥形取 2 目标, 秒杀 50% 再触发
+    // Lv3: 5 目标, 180° 半圆恐惧, 秒杀 100% 再触发
     const rankedList = rankedBoboTargets({ x: player.x, y: player.y }, G.enemies);
-    // 画面可见的候选 (HORIZON_Y 以下, DEFENSE_Y 以上, 排除宝箱/道具)
     const visibleAll = (G.enemies || [])
       .filter(e =>
         e && e.hp > 0 &&
         e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff' &&
         e.y > HORIZON_Y && e.y < DEFENSE_Y
-      )
-      .sort((a, b) => b.hp - a.hp);
-    // 合并去重: rankedList (BOBO 射程内 4阶) 优先, 不够再从可见池补
-    const pool = [...rankedList];
-    for (const e of visibleAll) {
-      if (!pool.includes(e)) pool.push(e);
+      );
+    let pool;
+    if (level >= 2) {
+      // Lv2/Lv3: 90° 锥内 (头顶向上, |dx| <= dy 即 ±45° 锥), 按距离排序
+      pool = visibleAll.filter(e => {
+        const dx = e.x - player.x, dy = player.y - e.y;
+        return dy > 0 && Math.abs(dx) <= dy;
+      }).sort((a, b) => {
+        const da = (a.x-player.x)**2 + (a.y-player.y)**2;
+        const db = (b.x-player.x)**2 + (b.y-player.y)**2;
+        return da - db;
+      });
+      // 不够就从 rankedList 补
+      for (const e of rankedList) if (!pool.includes(e)) pool.push(e);
+    } else {
+      pool = [...rankedList];
+      for (const e of visibleAll) if (!pool.includes(e)) pool.push(e);
     }
     const need = (level >= 3) ? 5 : (level >= 2 ? 2 : 1);
     const targets = pool.slice(0, need);
-    // 无有效目标: 静默, 不消耗 CD (500ms 后重试)
     if (targets.length === 0) {
       const st = G.skillState && G.skillState.mercy;
       if (st) st.lastCast = now - st.cooldown + 500;
       return;
     }
     const playerAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
-    const baseDmg = Math.round(playerAtk * 72);   // [7/16 fix absolution-v3] 60x → 72x (+20%)
+    const baseDmg = Math.round(playerAtk * 72);
     const lockMs = 500;
     const lifeMs = 900;
-    // [7/16 fix absolution-v3] Lv3 击杀刷 CD: 用 group 标记, 任意一个目标被本次技能击杀就刷 CD
-    const castGroup = { refreshed: false };
+    const castGroup = { anyKill: false };
     for (const target of targets) {
       const lockX = target.x, lockY = target.y;
       G.skillVisuals.push({
@@ -5157,36 +5214,13 @@ function castSkill(id, level) {
        try {
         if (!capturedTarget || capturedTarget.hp <= 0) return;
         const before = capturedTarget.hp;
-        // [7/16 fix absolution-v3-order] Lv2/Lv3 先降护甲再打伤害, 本次伤害就吃到破甲加成
-        let dmgAfterArmor = baseDmg;
-        if (level >= 2) {
-          const armorMult = (level >= 3) ? 0.3 : 0.5;
-          const orig = capturedTarget._mercyArmorOrig != null ? capturedTarget._mercyArmorOrig : capturedTarget.armor;
-          capturedTarget._mercyArmorOrig = orig;
-          capturedTarget.armor = Math.max(0, orig * armorMult);
-          if (capturedTarget._mercyArmorTimer) clearTimeout(capturedTarget._mercyArmorTimer);
-          capturedTarget._mercyArmorTimer = setTimeout(() => {
-           try {
-            if (capturedTarget && capturedTarget._mercyArmorOrig != null) {
-              capturedTarget.armor = capturedTarget._mercyArmorOrig;
-              capturedTarget._mercyArmorOrig = null;
-            }
-           } catch (e) {
-             console.error('[delayed-err]', { where: 'mercyArmorTimer3s', msg: e && e.message, stack: e && e.stack && e.stack.split('\n').slice(0,3).join(' | ') });
-             if (window.__DEBUG_MODE) { G._lastErrorMsg = 'DLY: ' + ((e && e.message) || '').substring(0, 50); G._lastErrorAt = G.now; }
-           }
-          }, 3000);
-          const pctLabel = (level >= 3) ? '护甲-70%' : '护甲-50%';
-          floatText(capturedTarget.x, capturedTarget.y - 20, pctLabel, '#ff88dd', false);
-          // 恩赐本次伤害也吃 armor 减免 (先降后打)
-          dmgAfterArmor = Math.max(1, Math.round(baseDmg * (1 - (capturedTarget.armor || 0))));
-        } else {
-          // Lv1 保持真伤口径
-          dmgAfterArmor = baseDmg;
-        }
-        const { dmg, crit } = rollSkillCrit(dmgAfterArmor);
+        // 施加易损 (全等级): +20% 后续伤害 × 5s
+        capturedTarget.vulnUntil = G.now + 5000;
+        capturedTarget.vulnMult = 1.2;
+        floatText(capturedTarget.x, capturedTarget.y - 20, '易损 +20%', '#ff88dd', false);
+        const { dmg, crit } = rollSkillCrit(baseDmg);
         damageEnemy(capturedTarget, dmg, crit, true);
-        // Lv3: 圆形恐惧 r=90
+        // Lv3: 180° 半圆恐惧
         if (level >= 3) {
           const fr = 90;
           G.skillVisuals.push({
@@ -5197,42 +5231,76 @@ function castSkill(id, level) {
             if (!e || e.hp <= 0 || e === capturedTarget) continue;
             if (e.kind === 'chest' || e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') continue;
             const dx = e.x - capturedTarget.x, dy = e.y - capturedTarget.y;
-            if (dx*dx + dy*dy <= fr*fr) {
+            // 半圆: y <= 主目标.y (即在主目标上方)
+            if (dy <= 0 && dx*dx + dy*dy <= fr*fr) {
               e.stunUntil = Math.max(e.stunUntil||0, G.now + 2000);
             }
           }
         }
-        // [7/16 fix absolution-v3] Lv3: 任一目标被本次技能击杀立刷 CD (group 去重, 只刷一次)
-        if (level >= 3 && before > 0 && capturedTarget.hp <= 0 && !castGroup.refreshed) {
-          castGroup.refreshed = true;
-          const st = G.skillState && G.skillState.mercy;
-          if (st) {
-            st.lastCast = 0;
-            floatText(player.x, player.y - 60, 'CD 刷新!', '#ff66aa', true);
-          }
-        }
+        if (before > 0 && capturedTarget.hp <= 0) castGroup.anyKill = true;
        } catch (e) {
-         console.error('[delayed-err]', { where: 'mercy500', msg: e && e.message, stack: e && e.stack && e.stack.split('\n').slice(0,3).join(' | ') });
-         if (window.__DEBUG_MODE) { G._lastErrorMsg = 'DLY: ' + ((e && e.message) || '').substring(0, 50); G._lastErrorAt = G.now; }
+         console.error('[delayed-err]', { where: 'mercy500', msg: e && e.message });
        }
       }, lockMs);
     }
+    // 击杀再触发: Lv2 50%, Lv3 100%
+    if (level >= 2) {
+      setTimeout(() => {
+        if (!castGroup.anyKill) return;
+        const p = (level >= 3) ? 1 : 0.5;
+        if (Math.random() < p) {
+          setTimeout(() => { try { castSkill('mercy', level); } catch (e) {} }, 400);
+        }
+      }, lockMs + 50);
+    }
   } else if (id === 'laserpierce') {
-    // 向前 3 单位宽 (90px) 贯穿激光, 沿主角 y 向上一条竖线打所有敌人
-    G.skillVisuals.push({
-      kind: 'vbeam', x: player.x, width: 90,
-      bornAt: G.now, life: 300, color: '#aaddff'
-    });
-    G.enemies.slice().forEach(e => {
-      // [7/16 fix P3] 宝箱只吃直接命中: 激光贯穿技能不打宝箱
-      if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
-      if (Math.abs(e.x - player.x) < 45 + e.w/2) {
-        damageEnemy(e, 800, false, true);
+    // ===== 议题 10-4 激光贯穿 K 原口径重构: 锁头目标, 沿 player→target 贯穿 =====
+    const rankedList = rankedBoboTargets({ x: player.x, y: player.y }, G.enemies);
+    const visibleAll = (G.enemies || [])
+      .filter(e => e && e.hp > 0 &&
+        e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff' &&
+        e.y > HORIZON_Y && e.y < DEFENSE_Y);
+    const pool = [...rankedList];
+    for (const e of visibleAll) if (!pool.includes(e)) pool.push(e);
+    const mainTarget = pool[0];
+    if (!mainTarget) {
+      const st = G.skillState && G.skillState.laserpierce;
+      if (st) st.lastCast = now - st.cooldown + 500;
+      return;
+    }
+    _laserpiercePierce(player, mainTarget, 90, 800);
+    // Lv2: 3s 余波区 (400/s DoT 沿线)
+    if (level >= 2) {
+      G.skillVisuals.push({
+        kind: 'laserpierceAftermath',
+        fromX: player.x, fromY: player.y,
+        toX: mainTarget.x, toY: mainTarget.y,
+        width: 90,
+        bornAt: G.now, life: 3000,
+        lastTickAt: G.now,
+        color: 'rgba(170, 220, 255, 0.35)'
+      });
+    }
+    // Lv3: 3s 内每 0.5s 从其他目标额外发射 1/3 宽度小激光
+    if (level >= 3) {
+      const subCount = 6; // 3s / 0.5s
+      for (let k = 1; k <= subCount; k++) {
+        setTimeout(() => {
+          try {
+            if (!G.enemies) return;
+            const others = (G.enemies || [])
+              .filter(e => e && e.hp > 0 && e !== mainTarget &&
+                e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff' &&
+                e.y > HORIZON_Y && e.y < DEFENSE_Y);
+            if (others.length === 0) return;
+            const nt = others[Math.floor(Math.random() * others.length)];
+            _laserpiercePierce(player, nt, 30, 400);
+          } catch (e) {}
+        }, k * 500);
       }
-    });
+    }
   } else if (id === 'flywheel') {
-    // 议题 12 · 二版调整: 飞轮海 6s 持续圆形红色伤害区 (直径 = 通道宽)
-    // [7/16 fix flywheel-center] 圆心改为距主角最近的敌人 (排除宝箱/道具), 无敌人时退化为通道中心
+    // 圆心改为距主角最近的敌人 (排除宝箱/道具), 无敌人时退化为通道中心
     let cx, cy;
     const enemyCandidates = (G.enemies || []).filter(e =>
       e.hp > 0 && e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff'
@@ -5249,11 +5317,10 @@ function castSkill(id, level) {
       cx = (TRACK_R_LEFT + TRACK_R_RIGHT) / 2;
       cy = H * 0.55;
     }
-    const r = TRACK_R_WIDTH / 2;
-    // [7/16 fix flywheel-lv3-move] Lv3: 持续时间 ×2, 且沿通道向顶端 (y 减小) 移动到 HORIZON_Y
+    // ===== 议题 10-4 飞轮海分级 r: Lv1/2 = W/4, Lv3 = W/2 =====
+    const r = (level >= 3) ? (TRACK_R_WIDTH / 2) : (TRACK_R_WIDTH / 4);
     const isLv3 = level >= 3;
     const lifeMs = isLv3 ? 12000 : 6000;
-    // 速度: 在 lifeMs 内从当前 cy 走到 HORIZON_Y (px/ms)
     const moveVy = isLv3 ? -(cy - HORIZON_Y) / lifeMs : 0;
     G.skillVisuals.push({
       kind: 'flywheelZone',
@@ -5261,33 +5328,86 @@ function castSkill(id, level) {
       bornAt: G.now, life: lifeMs,
       color: 'rgba(255, 80, 80, 0.35)',
       lastTickAt: G.now,
-      vy: moveVy,           // [7/16 fix flywheel-lv3-move]
-      lv3Move: isLv3,       // 标记, tick 里用
+      vy: moveVy,
+      lv3Move: isLv3,
     });
   } else if (id === 'highvoltage') {
-    // 议题 12 · 二版调整: 高压领域 10s 蓝色矩形色块 (接敌通道下半部分)
+    // ===== 议题 10-4 高压领域 K 原口径重构 =====
+    // 分级 h: Lv1=0.4, Lv2=0.5, Lv3=0.6 (channelLen); Lv1 每 0.5s 100 伤; Lv2 首入边缘 stun 2s + 内部每 2s stun 0.5s; Lv3 曲线伤 + 撞防线惩罚
+    G._hvLv3 = (level >= 3);
+    const channelLen = DEFENSE_Y - HORIZON_Y;
+    const hRatio = (level >= 3) ? 0.6 : (level >= 2 ? 0.5 : 0.4);
+    const h = channelLen * hRatio;
     const x = TRACK_R_LEFT;
     const w = TRACK_R_WIDTH;
-    const y = H * 0.5;
-    const h = DEFENSE_Y - H * 0.5;
+    const y = DEFENSE_Y - h;
     G.skillVisuals.push({
       kind: 'highvoltageZone',
       x, y, w, h,
       bornAt: G.now, life: 10000,
       color: 'rgba(80, 160, 255, 0.35)',
-      lastTickAt: G.now
+      lastTickAt: G.now,
+      level
     });
   }
+}
+
+// ===== 议题 10-4 · 激光贯穿辅助: 沿 player→target 打贯穿激光 =====
+function _laserpiercePierce(player, target, width, dmg) {
+  if (!player || !target) return;
+  const dx = target.x - player.x, dy = target.y - player.y;
+  const len = Math.sqrt(dx*dx + dy*dy) || 1;
+  const ux = dx / len, uy = dy / len;
+  // 延伸到画面顶端: 沿方向再延伸直到 y <= HORIZON_Y
+  let extX = target.x, extY = target.y;
+  if (uy < -0.001) {
+    const k = (HORIZON_Y - player.y) / uy;
+    extX = player.x + ux * k;
+    extY = HORIZON_Y;
+  }
+  G.skillVisuals = G.skillVisuals || [];
+  G.skillVisuals.push({
+    kind: 'laserpierceBeam',
+    fromX: player.x, fromY: player.y,
+    toX: extX, toY: extY,
+    width, bornAt: G.now, life: 300, color: '#aaddff'
+  });
+  // 命中沿线 (垂直距离 < width/2 且 t in [0, extLen]) 的所有非道具敌人
+  const halfW = width / 2;
+  const ex = extX - player.x, ey = extY - player.y;
+  const extLen = Math.sqrt(ex*ex + ey*ey) || 1;
+  const exu = ex / extLen, eyu = ey / extLen;
+  G.enemies.slice().forEach(e => {
+    if (!e || e.hp <= 0) return;
+    if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff' || e.kind === 'chest') return;
+    const rx = e.x - player.x, ry = e.y - player.y;
+    const t = rx * exu + ry * eyu;
+    if (t < 0 || t > extLen) return;
+    const perp = Math.abs(rx * (-eyu) + ry * exu);
+    if (perp <= halfW + (e.w || 20) / 2) {
+      damageEnemy(e, dmg, false, true);
+    }
+  });
 }
 
 function tickSkillVisuals(dt) {
   if (!G.skillVisuals) return;
   const now = G.now || performance.now();
+  // ===== 议题 10-4 · 全局灼烧栈 tick (每 1s 结算一次, 所有 burnStackUntil > now 的敌人) =====
+  if (!G._burnStackLastTick) G._burnStackLastTick = now;
+  if (now - G._burnStackLastTick >= 1000) {
+    G._burnStackLastTick = now;
+    (G.enemies || []).slice().forEach(e => {
+      if (!e || e.hp <= 0) return;
+      if (!e.burnStackUntil || now >= e.burnStackUntil) return;
+      const dps = e.burnStackDmgPerSec || 20;
+      damageEnemy(e, dps, false, true);
+      // 灼烧 tick 造成死亡的 (burnBoom hook 由 damageEnemy 自动处理)
+    });
+  }
   for (let i = G.skillVisuals.length - 1; i >= 0; i--) {
     const v = G.skillVisuals[i];
-    // 议题 12 · 二版调整: 飞轮海/高压领域持续伤害 tick
     if (v.kind === 'flywheelZone') {
-      // [7/16 fix flywheel-lv3-move] Lv3 沿通道向上移动 (dt 为秒, vy 单位 px/ms → 乘 1000)
       if (v.vy) {
         v.y = Math.max(HORIZON_Y, v.y + v.vy * dt * 1000);
       }
@@ -5295,28 +5415,86 @@ function tickSkillVisuals(dt) {
         v.lastTickAt = now;
         G.enemies.slice().forEach(e => {
           if (e.hp <= 0) return;
-          // [7/16 fix P3] 宝箱只吃直接命中: 飞轮海 AOE 不打宝箱
           if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
           const dx = e.x - v.x, dy = e.y - v.y;
           if (dx*dx + dy*dy <= v.r * v.r) {
-            // [7/16 fix skill-crit] 飞轮海 tick 独立判暴击
             const { dmg, crit } = rollSkillCrit(50);
             damageEnemy(e, dmg, crit, true);
           }
         });
       }
     } else if (v.kind === 'highvoltageZone') {
-      if (now - (v.lastTickAt || v.bornAt) >= 2000) {
+      // ===== 议题 10-4 高压领域 tick 重构 =====
+      const lv = v.level || 1;
+      // 快速 tick: 每 0.5s 造伤 (Lv1 100 平伤; Lv3 曲线 100→250)
+      if (now - (v.lastTickAt || v.bornAt) >= 500) {
         v.lastTickAt = now;
         G.enemies.slice().forEach(e => {
           if (e.hp <= 0) return;
-          // [7/16 fix P3] 宝箱只吃直接命中: 高压领域 AOE 不打宝箱
           if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
-          if (e.x >= v.x && e.x <= v.x + v.w && e.y >= v.y && e.y <= v.y + v.h) {
-            e.stunUntil = now + 500;
-            // [7/16 fix skill-crit] 高压领域独立判暴击
-            const { dmg, crit } = rollSkillCrit(100);
-            damageEnemy(e, dmg, crit, true);
+          const inZone = (e.x >= v.x && e.x <= v.x + v.w && e.y >= v.y && e.y <= v.y + v.h);
+          if (!inZone) {
+            // 离开区域: 清入区标记, 便于 Lv2 重新触发边缘 stun
+            if (e._hvInside) {
+              e._hvInside = false;
+              e._hvEdgeStunned = false;
+              e._hvEnterAt = 0;
+              e._hvLastStun = 0;
+            }
+            return;
+          }
+          // Lv2: 首次进入边缘 stun 2s
+          if (lv >= 2 && !e._hvInside) {
+            e._hvInside = true;
+            e._hvEnterAt = now;
+            if (!e._hvEdgeStunned) {
+              e._hvEdgeStunned = true;
+              e.stunUntil = Math.max(e.stunUntil||0, now + 2000);
+              floatText(e.x, e.y - 20, '高压麻痹!', '#88ffff', false);
+            }
+          } else if (lv < 2 && !e._hvInside) {
+            e._hvInside = true;
+            e._hvEnterAt = now;
+          }
+          // 伤害: Lv3 曲线 100→250, 否则 100
+          let hitDmg = 100;
+          if (lv >= 3) {
+            const ratio = Math.max(0, Math.min(1, (e.y - v.y) / (v.h || 1)));
+            hitDmg = 100 + 150 * ratio;
+          }
+          const { dmg, crit } = rollSkillCrit(Math.round(hitDmg));
+          damageEnemy(e, dmg, crit, true);
+        });
+      }
+      // Lv2: 内部每 2s stun 0.5s (进入 >2s 后)
+      if (lv >= 2 && now - (v._stunTickAt || v.bornAt) >= 2000) {
+        v._stunTickAt = now;
+        G.enemies.slice().forEach(e => {
+          if (!e || e.hp <= 0) return;
+          if (!e._hvInside) return;
+          if (now - (e._hvEnterAt || 0) < 2000) return;
+          if (now - (e._hvLastStun || 0) < 2000) return;
+          e._hvLastStun = now;
+          e.stunUntil = Math.max(e.stunUntil||0, now + 500);
+        });
+      }
+    } else if (v.kind === 'laserpierceAftermath') {
+      // ===== 议题 10-4 激光贯穿 Lv2 余波: 每 1s 沿线 400 伤 =====
+      if (now - (v.lastTickAt || v.bornAt) >= 1000) {
+        v.lastTickAt = now;
+        const ex = v.toX - v.fromX, ey = v.toY - v.fromY;
+        const extLen = Math.sqrt(ex*ex + ey*ey) || 1;
+        const exu = ex / extLen, eyu = ey / extLen;
+        const halfW = (v.width || 90) / 2;
+        G.enemies.slice().forEach(e => {
+          if (!e || e.hp <= 0) return;
+          if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff' || e.kind === 'chest') return;
+          const rx = e.x - v.fromX, ry = e.y - v.fromY;
+          const t = rx * exu + ry * eyu;
+          if (t < 0 || t > extLen * 3) return; // 沿线延伸更长, 覆盖贯穿
+          const perp = Math.abs(rx * (-eyu) + ry * exu);
+          if (perp <= halfW + (e.w || 20) / 2) {
+            damageEnemy(e, 400, false, true);
           }
         });
       }
@@ -5398,6 +5576,28 @@ function drawSkillVisuals() {
       ctx.beginPath();
       ctx.moveTo(v.fromX, v.fromY);
       ctx.lineTo(v.toX, v.toY);
+      ctx.stroke();
+    } else if (v.kind === 'laserpierceBeam') {
+      // ===== 议题 10-4 激光贯穿主光柱: 沿 player→ext 一条粗线 =====
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = v.color;
+      ctx.lineWidth = v.width || 90;
+      ctx.shadowColor = v.color;
+      ctx.shadowBlur = 20;
+      ctx.beginPath();
+      ctx.moveTo(v.fromX, v.fromY);
+      ctx.lineTo(v.toX, v.toY);
+      ctx.stroke();
+    } else if (v.kind === 'laserpierceAftermath') {
+      // ===== 议题 10-4 激光余波: 半透明沿线色块 =====
+      ctx.globalAlpha = alpha * 0.5;
+      ctx.strokeStyle = v.color;
+      ctx.lineWidth = v.width || 90;
+      ctx.beginPath();
+      ctx.moveTo(v.fromX, v.fromY);
+      // 向前延伸 3 倍长度
+      const dx = v.toX - v.fromX, dy = v.toY - v.fromY;
+      ctx.lineTo(v.fromX + dx * 3, v.fromY + dy * 3);
       ctx.stroke();
     }
   });
