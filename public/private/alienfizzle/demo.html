@@ -5151,8 +5151,8 @@ function castSkill(id, level, chainDepth) {
            }
           }, 600);
         }
-        // ===== 议题 10-4 · Lv3 40% 概率连锁再释放 =====
-        if (level >= 3 && chainDepth < 3 && Math.random() < 0.4) {
+        // ===== 议题 10-4 · Lv3 40% 概率连锁再释放 (chain ≤ 9, 最多 10 颗手雷) =====
+        if (level >= 3 && chainDepth < 9 && Math.random() < 0.4) {
           setTimeout(() => { try { castSkill('together', 3, chainDepth + 1); } catch (e) {} }, 800);
         }
        } catch (e) {
