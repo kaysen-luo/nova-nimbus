@@ -679,9 +679,9 @@ const SKILL_CARDS = [
     id: 'laserpierce',
     name: '激光贯穿',
     levels: [
-      { lv:1, desc:'蓄力 2s 后发射一根 3 个小兵单位宽的贯穿激光, 对一条直线上所有敌人造成 1 次闪光伤害 (800 伤)' },
-      { lv:2, desc:'闪光持续 3s, 造成额外 50% 余波伤害 (400/秒 x 3s)' },
-      { lv:3, desc:'持续时间内每 0.5s 向其他方向额外发射一根 1/3 宽度的小型贯穿激光' }
+      { lv:1, desc:'蓄力 2s 后由 BOBO 发射一根 60px 宽贯穿激光, 对一条直线上所有敌人造成 800 (playerAtk×32) 伤害' },
+      { lv:2, desc:'Lv1 + 3s 沿线余波, 每 0.5s 沿线 100 (playerAtk×4) 伤' },
+      { lv:3, desc:'Lv2 + 3s 内每 0.5s 从随机目标额外发射一根 10px 小激光, 200 (playerAtk×8) 伤' }
     ]
   }
 ];
@@ -5278,7 +5278,7 @@ function applySkillEffect(skillId, level) {
     flywheel: 5000,
     mercy: 5000,
     highvoltage: 20000,
-    laserpierce: 15000
+    laserpierce: 12000
   };
   const cd = cooldownMap[skillId] || 10000;
   // [7/16 fix skill-instant-cast] 获得/升级技能卡时立即施放一次 (spec §5), 再进入 CD
@@ -5576,7 +5576,26 @@ function castSkill(id, level, chainDepth) {
       if (st) st.lastCast = now - st.cooldown + 500;
       return;
     }
-    _laserpiercePierce(player, mainTarget, 60, Math.round(getPlayerAtk() * 32));
+    // [K10-17] BOBO 释放的技能, g_focus/g_burn 也作用于激光贯穿
+    const hasFocus = G.cardPool && G.cardPool.hasMastery('g_focus');
+    const mainDmg = Math.round(getPlayerAtk() * 32 * (hasFocus ? 1.5 : 1));
+    _laserpiercePierce(player, mainTarget, 60, mainDmg);
+    // g_focus 联动: 主激光后弹射 3 个最近邻居, 20% 递减
+    if (hasFocus) {
+      const nearby = (G.enemies || [])
+        .filter(e => e && e.hp > 0 && e !== mainTarget &&
+          e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff' &&
+          e.y > HORIZON_Y && e.y < DEFENSE_Y)
+        .map(e => ({ e, d: (e.x - mainTarget.x) ** 2 + (e.y - mainTarget.y) ** 2 }))
+        .sort((a, b) => a.d - b.d)
+        .slice(0, 3)
+        .map(o => o.e);
+      let bounceDmg = mainDmg;
+      nearby.forEach(n => {
+        bounceDmg = Math.round(bounceDmg * 0.8);
+        _laserpiercePierce(player, n, 60, bounceDmg);
+      });
+    }
     // Lv2: 3s 余波区 (400/s DoT 沿线)
     if (level >= 2) {
       G.skillVisuals.push({
@@ -5602,7 +5621,7 @@ function castSkill(id, level, chainDepth) {
                 e.y > HORIZON_Y && e.y < DEFENSE_Y);
             if (others.length === 0) return;
             const nt = others[Math.floor(Math.random() * others.length)];
-            _laserpiercePierce(player, nt, 10, Math.round(getPlayerAtk() * 16));
+            _laserpiercePierce(player, nt, 10, Math.round(getPlayerAtk() * 8));
           } catch (e) {}
         }, k * 500);
       }
@@ -5696,6 +5715,10 @@ function _laserpiercePierce(player, target, width, dmg) {
     const perp = Math.abs(rx * (-eyu) + ry * exu);
     if (perp <= halfW + (e.w || 20) / 2) {
       damageEnemy(e, dmg, false, true);
+      // [K10-17] g_burn 联动: 命中产生小爆炸 + 点燃
+      if (G.cardPool && G.cardPool.hasMastery('g_burn') && typeof applyBoboLaserBurnExplosion === 'function') {
+        applyBoboLaserBurnExplosion(e, dmg);
+      }
     }
   });
 }
@@ -5799,8 +5822,8 @@ function tickSkillVisuals(dt) {
         });
       }
     } else if (v.kind === 'laserpierceAftermath') {
-      // ===== 议题 10-4 激光贯穿 Lv2 余波: 每 1s 沿线 400 伤 =====
-      if (now - (v.lastTickAt || v.bornAt) >= 1000) {
+      // ===== 激光贯穿 Lv2 余波: 每 0.5s 沿线 100 伤 (K10-17) =====
+      if (now - (v.lastTickAt || v.bornAt) >= 500) {
         v.lastTickAt = now;
         const ex = v.toX - v.fromX, ey = v.toY - v.fromY;
         const extLen = Math.sqrt(ex*ex + ey*ey) || 1;
@@ -5811,10 +5834,15 @@ function tickSkillVisuals(dt) {
           if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff' || e.kind === 'chest') return;
           const rx = e.x - v.fromX, ry = e.y - v.fromY;
           const t = rx * exu + ry * eyu;
-          if (t < 0 || t > extLen * 3) return; // 沿线延伸更长, 覆盖贯穿
+          if (t < 0 || t > extLen * 3) return;
           const perp = Math.abs(rx * (-eyu) + ry * exu);
           if (perp <= halfW + (e.w || 20) / 2) {
-            damageEnemy(e, Math.round(getPlayerAtk() * 16), false, true);
+            const d = Math.round(getPlayerAtk() * 4);
+            damageEnemy(e, d, false, true);
+            // [K10-17] g_burn 联动: 余波每 tick 命中也挂爆炸+点燃
+            if (G.cardPool && G.cardPool.hasMastery('g_burn') && typeof applyBoboLaserBurnExplosion === 'function') {
+              applyBoboLaserBurnExplosion(e, d);
+            }
           }
         });
       }
