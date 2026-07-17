@@ -1939,11 +1939,11 @@ function damageEnemy(e, dmg, isCrit, fromPlayer, isHeadshot) {
         const nxp = nb._cachedPX !== undefined ? nb._cachedPX : perspectiveX(nb.x, nb.y);
         const dx = nxp - cxp, dy = nb.y - e.y;
         if (Math.sqrt(dx*dx + dy*dy) > boomR) return;
-        damageEnemy(nb, 150, false, true);
+        damageEnemy(nb, Math.round(getPlayerAtk() * 6), false, true);
         // 邻居: 刷新灼烧 + 叠一层 (无上限)
         if (nb.hp > 0) {
           nb.burnStackLayers = (nb.burnStackLayers || 0) + 1;
-          nb.burnStackDmgPerSec = 20 * nb.burnStackLayers;
+          nb.burnStackDmgPerSec = nb.burnStackLayers * getPlayerAtk() * 0.8;
           nb.burnStackUntil = G.now + 5000;
         }
       });
@@ -2659,7 +2659,7 @@ function updateEnemies(dt) {
         if (e._hvInside && !e._hvDefensePunished && G._hvLv3) {
           e._hvDefensePunished = true;
           e.stunUntil = Math.max(e.stunUntil || 0, G.now + 3000);
-          damageEnemy(e, 300, false, true);
+          damageEnemy(e, Math.round(getPlayerAtk() * 12), false, true);
           floatText(e.x, e.y - 30, '高压击溃!', '#88ffff', true);
           return; // 本 tick 不扣防线血
         }
@@ -5071,6 +5071,11 @@ function applyFireSynergy(target, dmg) {
   return dmg;
 }
 
+// [K10-5 global-scale] 主角攻击力口径, 5 大技能伤害均以此为基线, 保证后期玩家变强技能同步变强
+function getPlayerAtk() {
+  return (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
+}
+
 function castSkill(id, level, chainDepth) {
   // [K10-4 fix chain-guard] 链式再触发上限 3 (together 40% / mercy 50%/100% 击杀再触发)
   //   防理论永动机: 20 只怪 + mercy Lv3 100% 击杀刷新 → 无限链. 上限 3 后 = 最多 4 次连爆.
@@ -5108,11 +5113,32 @@ function castSkill(id, level, chainDepth) {
     // Lv3: 40% 概率再释放一次 + 保留二段爆炸
     G._togetherLv2 = (level >= 2);
     G._togetherLv3 = (level >= 3);
-    const target = G.enemies.slice().sort((a,b) => b.hp - a.hp)[0];
+    // [K10-5 together-cd-freeze] 链式再触发期间冻结 CD, 每次施放都刷新 lastCast
+    //   直到链停止 (最后一颗手雷) 后, CD 才从这一刻开始算
+    {
+      const _stTog = G.skillState && G.skillState.together;
+      if (_stTog) _stTog.lastCast = G.now || performance.now();
+    }
+    // [K10-5 together-lock] 锁定离防线最近的敌人 (y 最大 = 最靠下 = 最靠近 DEFENSE_Y)
+    //   过滤宝箱/道具/decoy, 只锁活体敌人
+    const _togCandidates = (G.enemies || []).filter(e =>
+      e && e.hp > 0 &&
+      e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff' &&
+      e.y > HORIZON_Y && e.y < DEFENSE_Y
+    );
+    if (_togCandidates.length === 0) {
+      // 无目标: 静默不释放不消耗 CD (对齐 mercy 的处理)
+      const _stTog2 = G.skillState && G.skillState.together;
+      if (_stTog2) _stTog2.lastCast = (G.now || performance.now()) - _stTog2.cooldown + 500;
+      return;
+    }
+    _togCandidates.sort((a, b) => b.y - a.y);
+    const target = _togCandidates[0];
     if (target) {
       const baseR = (W - SPLIT_X) / 6;
       const r = level >= 3 ? baseR * 1.5 : baseR;
-      let baseDmg = 150;
+      const playerAtk = getPlayerAtk();
+      let baseDmg = playerAtk * 6;
       if (level >= 2) baseDmg = Math.round(baseDmg * 1.3);
       const lockX = target.x, lockY = target.y;
       G.skillVisuals.push({
@@ -5136,12 +5162,21 @@ function castSkill(id, level, chainDepth) {
           // ===== 议题 10-4 · 施加灼烧栈 (每颗手雷刷新+叠一层, 无上限) =====
           if (en.hp > 0) {
             en.burnStackLayers = (en.burnStackLayers || 0) + 1;
-            en.burnStackDmgPerSec = 20 * en.burnStackLayers;
+            en.burnStackDmgPerSec = en.burnStackLayers * getPlayerAtk() * 0.8;
             en.burnStackUntil = G.now + 5000;
           }
         });
         G.explosions = G.explosions || [];
         G.explosions.push({ x: lockX, y: lockY, r, bornAt: G.now, life: 320 });
+        // [K10-5 together-lv3-burnzone] Lv3 主爆后 spawn 5s 燃烧地带 (tick 每 0.5s 续燃+叠层)
+        if (level >= 3) {
+          G.skillVisuals.push({
+            kind: 'togetherBurnZone',
+            x: lockX, y: lockY, r,
+            bornAt: G.now, life: 5000,
+            lastTickAt: G.now
+          });
+        }
         if (level >= 3) {
           setTimeout(() => {
            try {
@@ -5158,7 +5193,7 @@ function castSkill(id, level, chainDepth) {
               damageEnemy(en, eff2, c2, true);
               if (en.hp > 0) {
                 en.burnStackLayers = (en.burnStackLayers || 0) + 1;
-                en.burnStackDmgPerSec = 20 * en.burnStackLayers;
+                en.burnStackDmgPerSec = en.burnStackLayers * getPlayerAtk() * 0.8;
                 en.burnStackUntil = G.now + 5000;
               }
             });
@@ -5291,7 +5326,7 @@ function castSkill(id, level, chainDepth) {
       if (st) st.lastCast = now - st.cooldown + 500;
       return;
     }
-    _laserpiercePierce(player, mainTarget, 90, 800);
+    _laserpiercePierce(player, mainTarget, 90, Math.round(getPlayerAtk() * 32));
     // Lv2: 3s 余波区 (400/s DoT 沿线)
     if (level >= 2) {
       G.skillVisuals.push({
@@ -5317,7 +5352,7 @@ function castSkill(id, level, chainDepth) {
                 e.y > HORIZON_Y && e.y < DEFENSE_Y);
             if (others.length === 0) return;
             const nt = others[Math.floor(Math.random() * others.length)];
-            _laserpiercePierce(player, nt, 30, 400);
+            _laserpiercePierce(player, nt, 30, Math.round(getPlayerAtk() * 16));
           } catch (e) {}
         }, k * 500);
       }
@@ -5423,7 +5458,7 @@ function tickSkillVisuals(dt) {
     (G.enemies || []).slice().forEach(e => {
       if (!e || e.hp <= 0) return;
       if (!e.burnStackUntil || now >= e.burnStackUntil) return;
-      const dps = e.burnStackDmgPerSec || 20;
+      const dps = e.burnStackDmgPerSec || (getPlayerAtk() * 0.8);
       damageEnemy(e, dps, false, true);
       // 灼烧 tick 造成死亡的 (burnBoom hook 由 damageEnemy 自动处理)
     });
@@ -5441,7 +5476,7 @@ function tickSkillVisuals(dt) {
           if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
           const dx = e.x - v.x, dy = e.y - v.y;
           if (dx*dx + dy*dy <= v.r * v.r) {
-            const { dmg, crit } = rollSkillCrit(50);
+            const { dmg, crit } = rollSkillCrit(Math.round(getPlayerAtk() * 2));
             damageEnemy(e, dmg, crit, true);
           }
         });
@@ -5479,11 +5514,12 @@ function tickSkillVisuals(dt) {
             e._hvInside = true;
             e._hvEnterAt = now;
           }
-          // 伤害: Lv3 曲线 100→250, 否则 100
-          let hitDmg = 100;
+          // 伤害: Lv3 曲线 playerAtk*4 → playerAtk*10, 否则 playerAtk*4
+          const _pAtk = getPlayerAtk();
+          let hitDmg = _pAtk * 4;
           if (lv >= 3) {
             const ratio = Math.max(0, Math.min(1, (e.y - v.y) / (v.h || 1)));
-            hitDmg = 100 + 150 * ratio;
+            hitDmg = _pAtk * 4 + _pAtk * 6 * ratio;
           }
           const { dmg, crit } = rollSkillCrit(Math.round(hitDmg));
           damageEnemy(e, dmg, crit, true);
@@ -5517,8 +5553,25 @@ function tickSkillVisuals(dt) {
           if (t < 0 || t > extLen * 3) return; // 沿线延伸更长, 覆盖贯穿
           const perp = Math.abs(rx * (-eyu) + ry * exu);
           if (perp <= halfW + (e.w || 20) / 2) {
-            damageEnemy(e, 400, false, true);
+            damageEnemy(e, Math.round(getPlayerAtk() * 16), false, true);
           }
+        });
+      }
+    } else if (v.kind === 'togetherBurnZone') {
+      // [K10-5 together-lv3-burnzone] 5s 燃烧地带 tick: 每 0.5s 遍历区域内敌人, 续燃 + 叠层
+      if (now - (v.lastTickAt || v.bornAt) >= 500) {
+        v.lastTickAt = now;
+        const _pAtk = getPlayerAtk();
+        const cxp = perspectiveX(v.x, v.y);
+        G.enemies.slice().forEach(en => {
+          if (!en || en.hp <= 0) return;
+          if (en.kind === 'chest' || en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
+          const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
+          const dx = exp - cxp, dy = en.y - v.y;
+          if (dx*dx + dy*dy > v.r * v.r) return;
+          en.burnStackUntil = Math.max(en.burnStackUntil || 0, now + 5000);
+          en.burnStackLayers = (en.burnStackLayers || 0) + 1;
+          en.burnStackDmgPerSec = en.burnStackLayers * _pAtk * 0.8;
         });
       }
     }
@@ -5621,6 +5674,18 @@ function drawSkillVisuals() {
       // 向前延伸 3 倍长度
       const dx = v.toX - v.fromX, dy = v.toY - v.fromY;
       ctx.lineTo(v.fromX + dx * 3, v.fromY + dy * 3);
+      ctx.stroke();
+    } else if (v.kind === 'togetherBurnZone') {
+      // [K10-5 together-lv3-burnzone] 橙红色半透明圆形地带, 呼吸感增强"燃烧"氛围
+      const flicker = 0.6 + 0.2 * Math.sin(G.now / 120);
+      ctx.globalAlpha = alpha * 0.5 * flicker;
+      ctx.fillStyle = 'rgba(255, 100, 40, 1)';
+      ctx.beginPath();
+      ctx.arc(v.x, v.y, v.r, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.globalAlpha = alpha * 0.9;
+      ctx.strokeStyle = 'rgba(255, 160, 60, 1)';
+      ctx.lineWidth = 2;
       ctx.stroke();
     }
   });
