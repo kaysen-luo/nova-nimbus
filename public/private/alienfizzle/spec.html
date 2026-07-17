@@ -1964,6 +1964,7 @@ if (targetLv &gt; skillLevels[id]) {
   <button type="button" id="btn-toggle-edit" class="spec-ed-btn">✏️ 编辑</button>
   <button type="button" id="btn-save-edit" class="spec-ed-btn" disabled>💾 保存</button>
   <button type="button" id="btn-export-edit" class="spec-ed-btn">⬇ 导出</button>
+  <button type="button" id="btn-clear-edit" class="spec-ed-btn" title="丢弃本地存档(不再弹出加载提示)">🗑️</button>
 </div>
 <style>
   #spec-editor-toolbar {
@@ -2035,6 +2036,7 @@ if (targetLv &gt; skillLevels[id]) {
   const btnEdit = document.getElementById('btn-toggle-edit');
   const btnSave = document.getElementById('btn-save-edit');
   const btnExport = document.getElementById('btn-export-edit');
+  const btnClear = document.getElementById('btn-clear-edit');
   const modal = document.getElementById('spec-export-modal');
   const modalTA = document.getElementById('spec-export-textarea');
   const btnCopy = document.getElementById('btn-copy-export');
@@ -2043,11 +2045,24 @@ if (targetLv &gt; skillLevels[id]) {
   let dirty = false;
 
   // 加载时检查本地存档
+  //   [2026-07-17 fix] 修弹窗死循环: 
+  //     (1) 7/17 之前的旧存档一律静默丢弃 (K 反馈无限弹, 那份 7/16 02:55 是手机误触产生)
+  //     (2) 新存档改成三选一 (加载/忽略/丢弃), 避免用户没有"永久关掉"的出口
   try {
     const saved = localStorage.getItem(LS_KEY);
-    if (saved) {
-      const meta = localStorage.getItem(LS_KEY + '_meta') || '';
-      if (confirm('检测到本地保存的编辑版本' + (meta ? ' (' + meta + ')' : '') + ', 是否加载?')) {
+    const meta = localStorage.getItem(LS_KEY + '_meta') || '';
+    // 一次性丢弃 7/17 之前的旧存档 (格式 "YYYY-MM-DD HH:MM")
+    if (saved && meta && meta < '2026-07-17') {
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem(LS_KEY + '_meta');
+      console.log('[spec-edit] 已静默丢弃过时存档:', meta);
+    } else if (saved) {
+      // 新存档: 三选一
+      // OK   = 加载
+      // Cancel = 什么都不做 (下次继续弹)
+      // 想彻底关掉? 在 confirm 前再问一句
+      const shouldLoad = confirm('检测到本地保存的编辑版本' + (meta ? ' (' + meta + ')' : '') + '\n\n[确定] = 加载存档覆盖当前页面\n[取消] = 保留存档但不加载 (下次仍会询问)\n\n如需彻底丢弃存档, 请点确定后, 页面加载完毕点右上角 🗑️ 按钮');
+      if (shouldLoad) {
         // 只替换 main 内容, 保留工具条
         const parser = new DOMParser();
         const doc = parser.parseFromString(saved, 'text/html');
@@ -2078,6 +2093,15 @@ if (targetLv &gt; skillLevels[id]) {
 
   btnEdit.addEventListener('click', function(){
     setEditing(!editing);
+  });
+
+  btnClear.addEventListener('click', function(){
+    if (confirm('确定丢弃本地存档? 之后打开 spec 不再弹加载提示。\n(此操作只删本地存档, 不影响线上 spec 正文)')) {
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem(LS_KEY + '_meta');
+      btnClear.textContent = '✅';
+      setTimeout(function(){ btnClear.textContent = '🗑️'; }, 1500);
+    }
   });
 
   document.addEventListener('input', function(e){
