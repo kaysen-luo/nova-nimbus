@@ -5247,12 +5247,14 @@ function castSkill(id, level, chainDepth) {
        }
       }, lockMs);
     }
-    // 击杀再触发: Lv2 50%, Lv3 100%
+    // 击杀再触发: Lv2 50%, Lv3 100% (Lv3 清屏体验, 敌人打光自然停)
     if (level >= 2) {
       setTimeout(() => {
         if (!castGroup.anyKill) return;
         const p = (level >= 3) ? 1 : 0.5;
-        if (chainDepth < 3 && Math.random() < p) {
+        // [K10-4 tune] Lv3 无 chain 上限 (清屏爽感), Lv2 保持 3 上限防 50% 长链
+        const chainCap = (level >= 3) ? Infinity : 3;
+        if (chainDepth < chainCap && Math.random() < p) {
           setTimeout(() => { try { castSkill('mercy', level, chainDepth + 1); } catch (e) {} }, 400);
         }
       }, lockMs + 50);
