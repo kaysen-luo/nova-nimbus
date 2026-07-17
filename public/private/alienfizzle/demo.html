@@ -5576,14 +5576,14 @@ function castSkill(id, level, chainDepth) {
       if (st) st.lastCast = now - st.cooldown + 500;
       return;
     }
-    _laserpiercePierce(player, mainTarget, 90, Math.round(getPlayerAtk() * 32));
+    _laserpiercePierce(player, mainTarget, 60, Math.round(getPlayerAtk() * 32));
     // Lv2: 3s 余波区 (400/s DoT 沿线)
     if (level >= 2) {
       G.skillVisuals.push({
         kind: 'laserpierceAftermath',
         fromX: player.x, fromY: player.y,
         toX: mainTarget.x, toY: mainTarget.y,
-        width: 90,
+        width: 60,
         bornAt: G.now, life: 3000,
         lastTickAt: G.now,
         color: 'rgba(170, 220, 255, 0.35)'
@@ -5602,7 +5602,7 @@ function castSkill(id, level, chainDepth) {
                 e.y > HORIZON_Y && e.y < DEFENSE_Y);
             if (others.length === 0) return;
             const nt = others[Math.floor(Math.random() * others.length)];
-            _laserpiercePierce(player, nt, 30, Math.round(getPlayerAtk() * 16));
+            _laserpiercePierce(player, nt, 10, Math.round(getPlayerAtk() * 16));
           } catch (e) {}
         }, k * 500);
       }
