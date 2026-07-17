@@ -2707,7 +2707,13 @@ function updateEnemies(dt) {
     } else {
       // 攻击防线
       // [7/16 fix gate-refactor] 应用防线护甲减伤
-      const dmg = e.dps * dt * (1 - (G.defenseArmor || 0));
+      let dmg = e.dps * dt * (1 - (G.defenseArmor || 0));
+      // [K10-12 fix] 扎根护盾必须先吸伤! 之前只涨不扣, 防线无防护 (K 亲反馈)
+      if (G.cardPool && G.cardPool.hasMastery('e_root') && G.defenseShield > 0) {
+        const absorb = Math.min(G.defenseShield, dmg);
+        G.defenseShield -= absorb;
+        dmg -= absorb;
+      }
       G.defenseHP -= dmg;
       // [K10-6 review fix] 扎根反弹: 走 damageEnemy 保证击杀链 + rate limit 每敌 1s 1 次 + 公式改 defenseMax*5%
       if (G.cardPool && G.cardPool.hasMastery('e_root') && G.defenseShield > 0 && e.hp > 0) {
@@ -5178,7 +5184,7 @@ function applySkillEffect(skillId, level) {
   const now = G.now || performance.now();
   const cooldownMap = {
     together: 10000,
-    flywheel: 10000,
+    flywheel: 6000,
     mercy: 5000,
     highvoltage: 20000,
     laserpierce: 15000
