@@ -5302,7 +5302,8 @@ function castSkill(id, level, chainDepth) {
           if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
           const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
           const dx = exp - cxp, dy = en.y - lockY;
-          if (Math.sqrt(dx*dx + dy*dy) > r) return;
+          // [K10-10 square] 命中判定改方形 (半径 r 视为半边长)
+          if (Math.abs(dx) > r || Math.abs(dy) > r) return;
           const { dmg, crit } = rollSkillCrit(baseDmg);
           const fireDmg = applyFireSynergy(en, dmg);
           const eff = Math.max(1, Math.round(fireDmg * (1 - en.armor)));
@@ -5337,7 +5338,8 @@ function castSkill(id, level, chainDepth) {
               if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
               const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
               const dx = exp - perspectiveX(lockX, lockY), dy = en.y - lockY;
-              if (Math.sqrt(dx*dx + dy*dy) > r) return;
+              // [K10-10 square] 二段爆炸命中改方形
+              if (Math.abs(dx) > r || Math.abs(dy) > r) return;
               const { dmg: d2, crit: c2 } = rollSkillCrit(base2);
               const fireDmg2 = applyFireSynergy(en, d2);
               const eff2 = Math.max(1, Math.round(fireDmg2 * (1 - en.armor)));
@@ -5719,7 +5721,8 @@ function tickSkillVisuals(dt) {
           if (en.kind === 'chest' || en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
           const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
           const dx = exp - cxp, dy = en.y - v.y;
-          if (dx*dx + dy*dy > v.r * v.r) return;
+          // [K10-10 square] 燃烧地带 tick 判定改方形
+          if (Math.abs(dx) > v.r || Math.abs(dy) > v.r) return;
           en.burnStackUntil = Math.max(en.burnStackUntil || 0, now + 5000);
           en.burnStackLayers = Math.min(10, (en.burnStackLayers || 0) + 1);
           en.burnStackDmgPerSec = en.burnStackLayers * _pAtk * 0.8;
@@ -5769,7 +5772,7 @@ function drawSkillVisuals() {
       ctx.lineWidth = 2;
       ctx.strokeRect(v.x, v.y, v.w, v.h);
     } else if (v.kind === 'togetherPreview') {
-      // [7/16 fix together-preview] 橙色呼吸圈: 前 lockMs 内 alpha 呼吸 (0.2~0.5), 之后淡出
+      // [K10-10 square] 站一起预览改方形 (半径 v.r = 半边长)
       const elapsed = G.now - v.bornAt;
       const lockMs = v.lockMs || 0;
       let base;
@@ -5781,13 +5784,11 @@ function drawSkillVisuals() {
       }
       ctx.globalAlpha = base;
       ctx.fillStyle = 'rgba(255, 140, 40, 1)';
-      ctx.beginPath();
-      ctx.arc(v.x, v.y, v.r, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillRect(v.x - v.r, v.y - v.r, v.r * 2, v.r * 2);
       ctx.globalAlpha = Math.min(1, base * 2.4);
       ctx.strokeStyle = 'rgba(255, 165, 60, 1)';
       ctx.lineWidth = 2;
-      ctx.stroke();
+      ctx.strokeRect(v.x - v.r, v.y - v.r, v.r * 2, v.r * 2);
     } else if (v.kind === 'mercyBeam') {
       // [7/16 fix absolution] 红线: 前 lockMs 内保持满 alpha (锁定演示), 之后 (life - lockMs) 时间内线性淡出
       const elapsed = G.now - v.bornAt;
@@ -5827,17 +5828,15 @@ function drawSkillVisuals() {
       ctx.lineTo(v.fromX + dx * 3, v.fromY + dy * 3);
       ctx.stroke();
     } else if (v.kind === 'togetherBurnZone') {
-      // [K10-5 together-lv3-burnzone] 橙红色半透明圆形地带, 呼吸感增强"燃烧"氛围
+      // [K10-10 square] 燃烧地带改方形 (半径 v.r = 半边长)
       const flicker = 0.6 + 0.2 * Math.sin(G.now / 120);
       ctx.globalAlpha = alpha * 0.5 * flicker;
       ctx.fillStyle = 'rgba(255, 100, 40, 1)';
-      ctx.beginPath();
-      ctx.arc(v.x, v.y, v.r, 0, Math.PI * 2);
-      ctx.fill();
+      ctx.fillRect(v.x - v.r, v.y - v.r, v.r * 2, v.r * 2);
       ctx.globalAlpha = alpha * 0.9;
       ctx.strokeStyle = 'rgba(255, 160, 60, 1)';
       ctx.lineWidth = 2;
-      ctx.stroke();
+      ctx.strokeRect(v.x - v.r, v.y - v.r, v.r * 2, v.r * 2);
     }
   });
   ctx.restore();
