@@ -1946,7 +1946,7 @@ function damageEnemy(e, dmg, isCrit, fromPlayer, isHeadshot) {
         damageEnemy(nb, Math.round(getPlayerAtk() * 6), false, true);
         // 邻居: 刷新灼烧 + 叠一层 (无上限)
         if (nb.hp > 0) {
-          nb.burnStackLayers = Math.min(30, (nb.burnStackLayers || 0) + 1);
+          nb.burnStackLayers = Math.min(10, (nb.burnStackLayers || 0) + 1);
           nb.burnStackDmgPerSec = nb.burnStackLayers * getPlayerAtk() * 0.8;
           nb.burnStackUntil = G.now + 5000;
         }
@@ -5305,7 +5305,7 @@ function castSkill(id, level, chainDepth) {
           damageEnemy(en, eff, crit, true);
           // ===== 议题 10-4 · 施加灼烧栈 (每颗手雷刷新+叠一层, 无上限) =====
           if (en.hp > 0) {
-            en.burnStackLayers = Math.min(30, (en.burnStackLayers || 0) + 1);
+            en.burnStackLayers = Math.min(10, (en.burnStackLayers || 0) + 1);
             en.burnStackDmgPerSec = en.burnStackLayers * getPlayerAtk() * 0.8;
             en.burnStackUntil = G.now + 5000;
           }
@@ -5339,7 +5339,7 @@ function castSkill(id, level, chainDepth) {
               const eff2 = Math.max(1, Math.round(fireDmg2 * (1 - en.armor)));
               damageEnemy(en, eff2, c2, true);
               if (en.hp > 0) {
-                en.burnStackLayers = Math.min(30, (en.burnStackLayers || 0) + 1);
+                en.burnStackLayers = Math.min(10, (en.burnStackLayers || 0) + 1);
                 en.burnStackDmgPerSec = en.burnStackLayers * getPlayerAtk() * 0.8;
                 en.burnStackUntil = G.now + 5000;
               }
@@ -5717,7 +5717,7 @@ function tickSkillVisuals(dt) {
           const dx = exp - cxp, dy = en.y - v.y;
           if (dx*dx + dy*dy > v.r * v.r) return;
           en.burnStackUntil = Math.max(en.burnStackUntil || 0, now + 5000);
-          en.burnStackLayers = Math.min(30, (en.burnStackLayers || 0) + 1);
+          en.burnStackLayers = Math.min(10, (en.burnStackLayers || 0) + 1);
           en.burnStackDmgPerSec = en.burnStackLayers * _pAtk * 0.8;
         });
       }
