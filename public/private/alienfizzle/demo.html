@@ -703,21 +703,23 @@ const MASTERY_CARDS = [
   // D 伤害修饰 (2)
   { id:'d_hunter', category:'D', name:'精英以上猎手', desc:'对精英+boss 单位 +30% 伤害' },
   { id:'d_weak', category:'D', name:'弱者克星', desc:'对被施加减益 (减速/麻痹/燃烧等) 的单位 +40% 伤害' },
-  // E 防线相关 (3)
+  // E 叹息之壁 (4, 含新增扎根)
   { id:'e_reinforce', category:'E', name:'防线加固', desc:'防线 HP +30%' },
   { id:'e_echo', category:'E', name:'回响', desc:'每击杀 20 个敌人, 防线回 1% HP' },
   { id:'e_desperate', category:'E', name:'绝境反击', desc:'防线 HP 每下降 2%, 攻击力+1%' },
+  // [K10-6] 扎根: 一次性卡, 生成蓝色护盾, 有护盾时被打反弹真伤
+  { id:'e_root', category:'E', name:'扎根', desc:'防线生成护盾 (防线上限×0.8%/秒, 无上限), 护盾期间被攻击反弹真伤 (防线HP×5% + 护盾×20%) [不可重复]' },
   // F Meta (3)
   { id:'f_greed', category:'F', name:'贪婪', desc:'击杀敌人 2% 概率立即召唤一道状态门' },
   { id:'f_resonance', category:'F', name:'共鸣', desc:'每持有 1 张精通卡, 攻击力+2%' },
   // [7/16 fix gamble-merge] 恶魔赌局合并为单张可重复卡 (原 3 张独立 id 造成串行观感)
   //   drawThree 里对 f_gamble 特判权重不腰斩, 每次抽三选一都可能出现
   { id:'f_gamble', category:'F', name:'恶魔赌局', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 可重复获取)' },
-  // G Bobo 强化 (4)
-  { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 激光伤害+50%' },
+  // G Bobo 强化 (3, K10-6 全部一次性化)
+  { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 激光伤害+50%, 弹射+3 [不可重复]' },
   // [7/16 fix remove-overload] g_overload 已移除
-  { id:'g_burn', category:'G', name:'激光燃烧', desc:'Bobo 激光必触发点燃 (2 秒 50% 激光伤害 DoT)' },
-  { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 每次攻击攒 1 能量, 20 次后发一道 5s 持续制导激光, 50 伤/0.2s, 击杀跳目标, 联动穿透/爆炸卡' }
+  { id:'g_burn', category:'G', name:'激光爆燃', desc:'Bobo 激光命中产生小爆炸 (半径 36px, 主伤 12%) + 点燃 [不可重复]' },
+  { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 攒 20 次攻击发一道 5s 制导激光, 击杀跳目标. 联动 g_focus (伤害×1.5 + 弹射×3, 递减20%) 和 g_burn (爆炸+点燃) [不可重复]' }
 ];
 
 // --- 3. DEMON_GAMBLE_DISTRIBUTION (恶魔赌局系数概率分布, EV≈1.14) ---
@@ -781,6 +783,8 @@ class CardPool {
       const count = this.masteryCounts[m.id];
       // [7/16 fix burst-no-repeat] a_burst 连发快射不可重复获取, 拿过就从池里剔除
       if (m.id === 'a_burst' && count > 0) continue;
+      // [K10-6] 一次性卡: 扎根 + G 类三张
+      if ((m.id === 'e_root' || m.id === 'g_focus' || m.id === 'g_burn' || m.id === 'g_guide') && count > 0) continue;
       // [7/16 fix gamble-merge] 恶魔赌局权重不腰斩, 保持每次抽卡都可能出现 (它本来就是可重复摇色子的卡)
       const weight = m.id === 'f_gamble'
         ? 1.5
@@ -2178,6 +2182,28 @@ function selectBoboTarget(bobo, enemies) {
   return list.length ? list[0] : null;
 }
 
+// [K10-6 g_burn 爆燃] 小爆炸: 半径 36px, 主伤 12%, 只对紧贴主目标的邻居生效
+function applyBoboLaserBurnExplosion(center, mainDmg) {
+  const splashR = 36;
+  const splashDmg = Math.max(1, Math.round(mainDmg * 0.12));
+  const _now = G.now || performance.now();
+  const cx = center.x, cy = center.y;
+  G.enemies.forEach(en => {
+    if (en === center) return;
+    if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
+    const dx = en.x - cx, dy = en.y - cy;
+    if (Math.sqrt(dx*dx + dy*dy) > splashR) return;
+    const eff = Math.max(1, Math.round(splashDmg * (1 - (en.armor || 0))));
+    damageEnemy(en, eff, false, true);
+    // 邻居也吃点燃 DoT
+    en.burnUntil = _now + 2000;
+    en.burnDmg = mainDmg * 0.125;
+    en.lastBurnTick = _now;
+  });
+  G.explosions = G.explosions || [];
+  G.explosions.push({ x: cx, y: cy, r: splashR, bornAt: G.now, life: 240 });
+}
+
 // Bobo 激光单发伤害 (吃状态门 + 主角 buff 全套)
 function boboLaserDamage() {
   // 主角固定攻击力 (与 shootLoop 里 baseAtk 一致的口径)
@@ -2186,10 +2212,9 @@ function boboLaserDamage() {
   // 状态门增益全吃: G.nuoStats.atk 作为加成系数 (相对基础 CFG.nuo.base.atk 的比例)
   const nuoAtkMult = Math.max(0.1, (G.nuoStats.atk || CFG.nuo.base.atk) / CFG.nuo.base.atk);
   let dmg = base * nuoAtkMult;
-  // ===== 议题 10 · 切片 4: g_focus (Bobo 激光伤害 +50%) =====
-  if (G.cardPool) {
-    const focusN = G.cardPool.getMasteryCount('g_focus') || 0;
-    if (focusN > 0) dmg *= (1 + 0.5 * focusN);
+  // ===== 议题 10 · 切片 4: g_focus (Bobo 激光伤害 +50%) [K10-6 一次性化] =====
+  if (G.cardPool && G.cardPool.hasMastery('g_focus')) {
+    dmg *= 1.5;
   }
   // ===== END =====
   // 暴击 (吃 BOBO 暴击 + 主角额外暴击加成)
@@ -2209,12 +2234,13 @@ function fireBoboLaserChain(bobo, primaryTarget, rankedList, forkCount, beamColo
   const { dmg: d0, crit: c0 } = boboLaserDamage();
   const eff0 = Math.max(1, Math.round(d0 * (1 - (primaryTarget.armor || 0))));
   damageEnemy(primaryTarget, eff0, c0, false);
-  // ===== 议题 10 · 切片 4: g_burn (Bobo 激光燃烧) =====
+  // ===== 议题 10 · 切片 4: g_burn (Bobo 激光爆燃) [K10-6] 小爆炸 + 点燃 =====
   if (G.cardPool && G.cardPool.hasMastery('g_burn')) {
     const _now = G.now || performance.now();
     primaryTarget.burnUntil = _now + 2000;
     primaryTarget.burnDmg = d0 * 0.125;
     primaryTarget.lastBurnTick = _now;
+    applyBoboLaserBurnExplosion(primaryTarget, d0);
   }
   // ===== END =====
   G.boboLaserBeams.push(new BoboLaserBeam({ x: bobo.x, y: bobo.y }, { x: primaryTarget.x, y: primaryTarget.y }, beamColor));
@@ -2237,6 +2263,7 @@ function fireBoboLaserChain(bobo, primaryTarget, rankedList, forkCount, beamColo
       next.burnUntil = _now + 2000;
       next.burnDmg = dn * 0.125;
       next.lastBurnTick = _now;
+      applyBoboLaserBurnExplosion(next, dn);
     }
     G.boboLaserBeams.push(new BoboLaserBeam({ x: lastNode.x, y: lastNode.y }, { x: next.x, y: next.y }, beamColor));
     lastNode = next;
@@ -2281,6 +2308,10 @@ function updateBoboLasers(dt) {
   // [7/16 fix cluster-barrel] a_pierce: BOBO 主目标激光分叉 2 目标
   if (G.cardPool && G.cardPool.hasMastery('a_pierce')) {
     forkCount = Math.max(forkCount, 2);
+  }
+  // [K10-6] g_focus 一次性化: 额外弹射 +3
+  if (G.cardPool && G.cardPool.hasMastery('g_focus')) {
+    forkCount += 3;
   }
 
   G.nuos.forEach(n => {
@@ -2669,9 +2700,24 @@ function updateEnemies(dt) {
       // [7/16 fix gate-refactor] 应用防线护甲减伤
       const dmg = e.dps * dt * (1 - (G.defenseArmor || 0));
       G.defenseHP -= dmg;
+      // [K10-6 e_root 扎根反弹] 有 shield 期间, 每次被打反弹真伤
+      if (G.cardPool && G.cardPool.hasMastery('e_root') && G.defenseShield > 0 && e.hp > 0) {
+        const reflect = G.defenseHP * 0.05 + G.defenseShield * 0.20;
+        e.hp -= reflect;
+        floatText(e.x, e.y - 20, '↯' + Math.round(reflect), '#00ffff', false);
+        if (e.hp <= 0) e.hp = 0;
+      }
       if (G.defenseHP < 0) G.defenseHP = 0;
     }
   });
+  // [K10-6 e_root] 扎根护盾积累: 每秒 defenseMax * 0.008, 无上限; 防线破则清零
+  if (G.cardPool && G.cardPool.hasMastery('e_root')) {
+    if (G.defenseHP > 0) {
+      G.defenseShield = (G.defenseShield || 0) + (G.defenseMax || 0) * 0.008 * dt;
+    } else {
+      G.defenseShield = 0;
+    }
+  }
   updateDefenseBar();
 }
 
@@ -3407,6 +3453,9 @@ function draw() {
   // 飘字 (最上层)
   drawFloatTexts();
 
+  // [K10-6 e_root] 扎根护盾视觉 (蓝色半透明光罩, 呼吸感)
+  drawDefenseShield();
+
   // 议题 10 · 切片 4 · 精通卡+赌局+技能: 视觉层
   drawSkillVisuals();
   drawBoboGuideLasers();
@@ -4051,6 +4100,8 @@ function reset() {
   G.defenseMax = CFG.defense.maxHP;
   // [7/16 fix gate-refactor] 防线新属性初始化
   G.defenseArmor = 0;
+  // [K10-6 e_root] 扎根护盾, 无上限, 随时间累积
+  G.defenseShield = 0;
   // [7/16 fix gate-blt-3times] 弹道门累计计数
   G.gateBltEmitted = 0;
   G.kills = 0;
@@ -4827,6 +4878,11 @@ function applyMasteryEffect(id) {
     // E 绝境反击 - 挂钩
     case 'e_desperate':
       break;
+    // [K10-6] 扎根 - 挂钩, tick 里生成 shield, 伤害计算里读取
+    case 'e_root':
+      G.defenseShield = G.defenseShield || 0;
+      floatText(W/2, DEFENSE_Y - 30, '扎根!', '#66c8ff', true);
+      break;
     // F 贪婪 - 挂钩 (在 onEnemyKilled 里判)
     case 'f_greed':
       break;
@@ -4967,36 +5023,80 @@ function tickBoboGuideLasers(dt) {
     if (!gl.target || gl.target.hp <= 0 || G.enemies.indexOf(gl.target) < 0) {
       gl.target = selectBoboTarget(gl.from, G.enemies);
       if (!gl.target) continue;
-      // 击杀时若持有 a_explode → 小爆炸
-      if (G.cardPool && G.cardPool.hasMastery('a_explode') && gl.lastKilledPos) {
-        G.explosions = G.explosions || [];
-        G.explosions.push({ x: gl.lastKilledPos.x, y: gl.lastKilledPos.y, r: 20, bornAt: G.now, life: 280 }); // [7/16 fix 2] 爆炸半径缩至 ~65%
-      }
     }
-    // 每 200ms tick 50 伤害 (吃 g_focus)
+    // 每 200ms tick 50 伤害
     if (now - gl.lastTickAt >= 200) {
       gl.lastTickAt = now;
       let dmg = 50;
-      const focusN = G.cardPool ? (G.cardPool.getMasteryCount('g_focus') || 0) : 0;
-      if (focusN > 0) dmg *= (1 + 0.5 * focusN);
+      // [K10-6] 联动 g_focus: 伤害×1.5
+      const hasFocus = G.cardPool && G.cardPool.hasMastery('g_focus');
+      const hasBurn = G.cardPool && G.cardPool.hasMastery('g_burn');
+      if (hasFocus) dmg *= 1.5;
       const eff = Math.max(1, Math.round(dmg * (1 - (gl.target.armor || 0))));
       const killedPos = { x: gl.target.x, y: gl.target.y };
       damageEnemy(gl.target, eff, false, false);
-      // a_pierce 联动: 折射到附近 3 个敌人 80% 伤害
-      if (G.cardPool && G.cardPool.hasMastery('a_pierce')) {
-        const others = G.enemies.filter(e => e !== gl.target && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff').slice().sort((a,b) => { // [7/16 fix P3] 制导激光贯穿排除宝箱
+      // [K10-6] 联动 g_burn: 主目标点燃 + 小爆炸
+      if (hasBurn && gl.target && gl.target.hp > 0) {
+        gl.target.burnUntil = now + 2000;
+        gl.target.burnDmg = dmg * 0.125;
+        gl.target.lastBurnTick = now;
+        applyBoboLaserBurnExplosion(gl.target, dmg);
+      }
+      // [K10-6] 联动 g_focus: 弹射 3 邻居, 20% 递减
+      if (hasFocus && gl.target) {
+        const others = G.enemies.filter(e => e !== gl.target && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff').slice().sort((a,b) => {
           const da = (a.x-gl.target.x)**2 + (a.y-gl.target.y)**2;
           const db = (b.x-gl.target.x)**2 + (b.y-gl.target.y)**2;
           return da - db;
         }).slice(0, 3);
+        let mult = 0.8;
         others.forEach(o => {
-          const d2 = Math.max(1, Math.round(dmg * 0.8 * (1 - (o.armor||0))));
+          const d2 = Math.max(1, Math.round(dmg * mult * (1 - (o.armor||0))));
           damageEnemy(o, d2, false, false);
+          if (hasBurn && o.hp > 0) {
+            o.burnUntil = now + 2000;
+            o.burnDmg = dmg * mult * 0.125;
+            o.lastBurnTick = now;
+          }
+          mult *= 0.8;
         });
       }
       if (!gl.target || gl.target.hp <= 0) gl.lastKilledPos = killedPos;
     }
   }
+}
+
+// [K10-6 e_root] 扎根护盾视觉
+function drawDefenseShield() {
+  if (!G.cardPool || !G.cardPool.hasMastery('e_root')) return;
+  if (!G.defenseShield || G.defenseShield <= 0 || G.defenseHP <= 0) return;
+  // 光罩厚度 ∝ shield 值, 上限 40px (shield 到 100 时厚度饱和)
+  const thickness = Math.min(40, G.defenseShield * 0.4);
+  // 呼吸: 0.3-0.5 sin 呼吸
+  const t = (G.now || performance.now()) / 500;
+  const breath = 0.4 + Math.sin(t) * 0.1;
+  const y0 = DEFENSE_Y - thickness - 4;
+  const y1 = DEFENSE_Y - 4;
+  ctx.save();
+  const grad = ctx.createLinearGradient(0, y0, 0, y1);
+  grad.addColorStop(0, 'rgba(100, 180, 255, 0)');
+  grad.addColorStop(1, 'rgba(100, 180, 255, ' + breath.toFixed(3) + ')');
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, y0, W, thickness);
+  // 上沿白色描边增加辨识度
+  ctx.strokeStyle = 'rgba(220, 240, 255, ' + (breath * 0.9).toFixed(3) + ')';
+  ctx.lineWidth = 1.5;
+  ctx.beginPath();
+  ctx.moveTo(0, y0);
+  ctx.lineTo(W, y0);
+  ctx.stroke();
+  // 数字标注 (右上角)
+  ctx.fillStyle = 'rgba(180, 220, 255, 0.9)';
+  ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
+  ctx.textAlign = 'right';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText('扎根护盾 ' + Math.round(G.defenseShield), W - 8, y0 - 2);
+  ctx.restore();
 }
 
 function drawBoboGuideLasers() {
