@@ -775,10 +775,11 @@ class CardPool {
       const curLv = this.skillLevels[skill.id];
       if (curLv >= 3) continue; // 已满级
       const nextLv = curLv + 1;
-      // [K10-8 TEMP · 待回滚] 当前测试焦点技能权重放大 50x, 前 3 箱几乎必然连升 Lv3
-      // ⚠️ 仅用于 K10 阶段技能强度调试, 测试结束后须删除此 if 恢复标准权重 (1.0/2.0)
+      // [K10-8 TEMP · 待回滚] 当前测试焦点技能权重放大 50x, 其他技能压到 0.01 (几乎不出), 精通卡不动
+      // ⚠️ 仅用于 K10 阶段技能强度调试, 测试结束后须删除此段恢复标准权重 (1.0/2.0)
       let weight = curLv > 0 ? 2.0 : 1.0;  // 已持有的下一级权重x2
-      if (skill.id === 'flywheel') weight *= 50;  // ← TEMP 待回滚 (测试焦点)
+      if (skill.id === 'flywheel') weight *= 50;   // ← TEMP 待回滚 (测试焦点)
+      else weight = 0.01;                          // ← TEMP 待回滚 (非焦点压制)
       pool.push({ type:'skill', id:skill.id, lv:nextLv, weight });
     }
     // 2. 加入所有精通卡 (可重复)
@@ -5527,8 +5528,8 @@ function castSkill(id, level, chainDepth) {
       cx = (TRACK_R_LEFT + TRACK_R_RIGHT) / 2;
       cy = H * 0.55;
     }
-    // ===== 议题 10-4 飞轮海分级 r: Lv1/2 = W/4, Lv3 = W/2 =====
-    const r = (level >= 3) ? (TRACK_R_WIDTH / 2) : (TRACK_R_WIDTH / 4);
+    // ===== 议题 10-4 飞轮海分级 r: Lv1/2 = W/6, Lv3 = W/4 [K10-11 缩半, "一个接一个碾过通道"] =====
+    const r = (level >= 3) ? (TRACK_R_WIDTH / 4) : (TRACK_R_WIDTH / 6);
     const isLv3 = level >= 3;
     const lifeMs = isLv3 ? 12000 : 6000;
     const moveVy = isLv3 ? -(cy - HORIZON_Y) / lifeMs : 0;
@@ -5628,7 +5629,8 @@ function tickSkillVisuals(dt) {
           if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
           const dx = e.x - v.x, dy = e.y - v.y;
           if (dx*dx + dy*dy <= v.r * v.r) {
-            const { dmg, crit } = rollSkillCrit(Math.round(getPlayerAtk() * 2));
+            // [K10-11 削弱] 伤害 playerAtk × 2 → × 1.2 (让 200HP 小怪撑过 1 个飞轮生命, 需要下一个补刀)
+            const { dmg, crit } = rollSkillCrit(Math.round(getPlayerAtk() * 1.2));
             damageEnemy(e, dmg, crit, true);
           }
         });
