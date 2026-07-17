@@ -764,6 +764,8 @@ class CardPool {
   }
 
   // 抽取三选一 (从池中根据权重抽 3 张)
+  //   [K10-4 tune] URL 加 ?focus=<skillId> (together/flywheel/mercy/highvoltage/laserpierce)
+  //   可强制第一张必出目标技能卡 (未满级时), 其余两张正常抽 — 用于逐个技能调试
   drawThree() {
     const pool = [];
     // 1. 加入可见的技能卡 (当前等级 +1 那张)
@@ -784,6 +786,21 @@ class CardPool {
         ? 1.5
         : 1.5 * Math.pow(0.5, count);
       pool.push({ type:'mastery', id:m.id, weight });
+    }
+    // [K10-4 tune] 调试焦点: 强制第一张为焦点技能 (若未满级)
+    const focusMatch = /[?&]focus=(together|flywheel|mercy|highvoltage|laserpierce)\b/.exec(location.search);
+    if (focusMatch) {
+      const focusId = focusMatch[1];
+      const curLv = this.skillLevels[focusId];
+      if (curLv !== undefined && curLv < 3) {
+        const focusIdx = pool.findIndex(p => p.type === 'skill' && p.id === focusId);
+        if (focusIdx >= 0) {
+          const focusCard = pool[focusIdx];
+          pool.splice(focusIdx, 1);
+          const rest = this._weightedSampleWithoutReplacement(pool, 2);
+          return [focusCard, ...rest];
+        }
+      }
     }
     // 3. 按权重不放回抽 3 张
     return this._weightedSampleWithoutReplacement(pool, 3);
