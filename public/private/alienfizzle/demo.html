@@ -5054,8 +5054,11 @@ function applyFireSynergy(target, dmg) {
   return dmg;
 }
 
-function castSkill(id, level) {
-  console.log('[技能触发]', id, 'Lv' + level);
+function castSkill(id, level, chainDepth) {
+  // [K10-4 fix chain-guard] 链式再触发上限 3 (together 40% / mercy 50%/100% 击杀再触发)
+  //   防理论永动机: 20 只怪 + mercy Lv3 100% 击杀刷新 → 无限链. 上限 3 后 = 最多 4 次连爆.
+  chainDepth = chainDepth || 0;
+  console.log('[技能触发]', id, 'Lv' + level, chainDepth > 0 ? '(chain=' + chainDepth + ')' : '');
   // 极简可视化: 主角周围一圈 + 飘字
   if (!G.skillVisuals) G.skillVisuals = [];
   const player = G.player;
@@ -5149,8 +5152,8 @@ function castSkill(id, level) {
           }, 600);
         }
         // ===== 议题 10-4 · Lv3 40% 概率连锁再释放 =====
-        if (level >= 3 && Math.random() < 0.4) {
-          setTimeout(() => { try { castSkill('together', 3); } catch (e) {} }, 800);
+        if (level >= 3 && chainDepth < 3 && Math.random() < 0.4) {
+          setTimeout(() => { try { castSkill('together', 3, chainDepth + 1); } catch (e) {} }, 800);
         }
        } catch (e) {
          console.error('[delayed-err]', { where: 'together600', msg: e && e.message });
@@ -5214,12 +5217,13 @@ function castSkill(id, level) {
        try {
         if (!capturedTarget || capturedTarget.hp <= 0) return;
         const before = capturedTarget.hp;
-        // 施加易损 (全等级): +20% 后续伤害 × 5s
+        // [K10-4 review-fix mercy-vuln-order] 先打伤害, 再挂易损
+        //   K 口径"后续伤害 +20%" = 本发不吃易损, 之后的伤害才吃. 顺序: rollSkillCrit → damageEnemy → 挂 vuln
+        const { dmg, crit } = rollSkillCrit(baseDmg);
+        damageEnemy(capturedTarget, dmg, crit, true);
         capturedTarget.vulnUntil = G.now + 5000;
         capturedTarget.vulnMult = 1.2;
         floatText(capturedTarget.x, capturedTarget.y - 20, '易损 +20%', '#ff88dd', false);
-        const { dmg, crit } = rollSkillCrit(baseDmg);
-        damageEnemy(capturedTarget, dmg, crit, true);
         // Lv3: 180° 半圆恐惧
         if (level >= 3) {
           const fr = 90;
@@ -5248,8 +5252,8 @@ function castSkill(id, level) {
       setTimeout(() => {
         if (!castGroup.anyKill) return;
         const p = (level >= 3) ? 1 : 0.5;
-        if (Math.random() < p) {
-          setTimeout(() => { try { castSkill('mercy', level); } catch (e) {} }, 400);
+        if (chainDepth < 3 && Math.random() < p) {
+          setTimeout(() => { try { castSkill('mercy', level, chainDepth + 1); } catch (e) {} }, 400);
         }
       }, lockMs + 50);
     }
