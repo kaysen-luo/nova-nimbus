@@ -775,7 +775,9 @@ class CardPool {
       const curLv = this.skillLevels[skill.id];
       if (curLv >= 3) continue; // 已满级
       const nextLv = curLv + 1;
-      const weight = curLv > 0 ? 2.0 : 1.0;  // 已持有的下一级权重x2
+      // [K10-8] together (站一起) 权重放大 50x, 让前 3 个箱子几乎必然连续升到 Lv3
+      let weight = curLv > 0 ? 2.0 : 1.0;  // 已持有的下一级权重x2
+      if (skill.id === 'together') weight *= 50;
       pool.push({ type:'skill', id:skill.id, lv:nextLv, weight });
     }
     // 2. 加入所有精通卡 (可重复)
