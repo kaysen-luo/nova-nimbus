@@ -1658,6 +1658,7 @@ function updateBullets(dt) {
             } else {
               floatText(t.x, t.y - 18, '装备!', '#4dff9d', true);
               SFX.play('chest_pickup');
+              G.lastRealChestBreakAt = G.now;  // [7/17 P1-1] 破真宝箱, 重置 idle 计时
             }
             applyTreasure(t);
             G.treasures.splice(j, 1);
@@ -2681,6 +2682,56 @@ function spawnNewChest() {
   t.x = treasureColX(col);
   G.treasures.push(t);
   reflowTreasures();
+}
+
+// [7/17 P1-1] 空宝箱 idle 触发器: 长时间未破真宝箱时插入最多 2 个 decoy
+// 阈值 25s, 冷却 25s, 场上 decoy ≥ 2 时跳过
+function tickIdleDecoyTrigger() {
+  if (G.isPreExperience) return;  // 预体验关卡不触发 (方阵关卡逻辑独立)
+  if (!G.lastRealChestBreakAt) G.lastRealChestBreakAt = G.now;
+  if (G.now - G.lastRealChestBreakAt < 25000) return;
+
+  const existingDecoy = G.treasures.filter(t => t.kind === 'decoy').length;
+  if (existingDecoy >= 2) {
+    G.lastRealChestBreakAt = G.now;
+    return;
+  }
+
+  const need = Math.min(2, 2 - existingDecoy);
+  const cfgT = CFG.treasure;
+  const colCount = cfgT.colCount;
+  const maxPerCol = cfgT.maxPerCol || 3;
+
+  for (let i = 0; i < need; i++) {
+    const colCounts = new Array(colCount).fill(0);
+    for (const t of G.treasures) {
+      if (t.col >= 0 && t.col < colCount) colCounts[t.col]++;
+    }
+    const minColCount = Math.min(...colCounts);
+    const candidates = [];
+    for (let c = 0; c < colCount; c++) {
+      if (colCounts[c] === minColCount && colCounts[c] < maxPerCol) candidates.push(c);
+    }
+    if (candidates.length === 0) break;
+    const col = pick(candidates);
+
+    const decoyHp = Math.round(cfgT.decoyHpBase * Math.pow(cfgT.slotGrowth, G.treasureSlotIdx || 0));
+    G.treasureSlotIdx = (G.treasureSlotIdx || 0) + 1;
+    const decoy = {
+      x: treasureColX(col), y: -cfgT.h, targetY: 0, col,
+      w: cfgT.w, h: cfgT.h,
+      hp: decoyHp, maxHp: decoyHp,
+      color: cfgT.decoyColor || '#666',
+      kind: 'decoy',
+      label: '空箱',
+      desc: '',
+      flashUntil: 0,
+    };
+    G.treasures.push(decoy);
+  }
+
+  reflowTreasures();
+  G.lastRealChestBreakAt = G.now;
 }
 
 // 重新计算每列宝箱的 targetY (从上到下叠)
@@ -3731,6 +3782,7 @@ function loop(ts) {
     G._fpsLastSec = G.now;
   }
 
+  tickIdleDecoyTrigger();  // [7/17 P1-1] 空宝箱 idle 触发器
   update(dt);
   draw();
   requestAnimationFrame(loop);
@@ -3878,6 +3930,7 @@ function reset() {
   G.chestExp = 0;
   G.chestExpThreshold = 50;
   G.chestExpTier = 0;
+  G.lastRealChestBreakAt = 0;  // [7/17 P1-1] 上次破真宝箱时间, idle 触发器用
   G.playerSpdMult = 1;
   G.playerHeadshotChance = 0;
   G.multiShotNextAt = 0;
