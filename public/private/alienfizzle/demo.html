@@ -1934,7 +1934,8 @@ function damageEnemy(e, dmg, isCrit, fromPlayer, isHeadshot) {
     // ===== 议题 10-4 · 站一起 Lv2 灼烧尸爆 =====
     if (e.burnStackUntil && G.now < e.burnStackUntil && G._togetherLv2 && !e._burnBoomProcessed) {
       e._burnBoomProcessed = true;
-      const boomR = (DEFENSE_Y - HORIZON_Y) / 2;
+      // [K10-9] 灼烧尸爆半径对齐爆炸弹 (e.w * 0.5, 约 20px), 之前用半通道长导致全场链式清屏
+      const boomR = e.w ? e.w * 0.5 : 20;
       const cxp = perspectiveX(e.x, e.y);
       G.explosions = G.explosions || [];
       G.explosions.push({ x: e.x, y: e.y, r: boomR, bornAt: G.now, life: 400 });
