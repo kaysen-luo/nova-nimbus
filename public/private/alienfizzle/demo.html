@@ -2255,8 +2255,8 @@ function fireBoboLaserChain(bobo, primaryTarget, rankedList, forkCount, beamColo
     if (!next || next.hp <= 0) { i--; continue; }
     const { dmg: dn, crit: cn } = boboLaserDamage();
     // [7/16 fix cluster-barrel] a_pierce 时分叉不衰减
-    const forkMul = (G.cardPool && G.cardPool.hasMastery('a_pierce')) ? 1.0 : 0.75;
-    const effn = Math.max(1, Math.round(dn * forkMul * (1 - (next.armor || 0))));  // 分叉衰减 25% (集束枪管时不衰减)
+    const forkMul = (G.cardPool && G.cardPool.hasMastery('a_pierce')) ? 1.0 : 0.8;
+    const effn = Math.max(1, Math.round(dn * forkMul * (1 - (next.armor || 0))));  // [K10-6 review fix] 分叉衰减 20% (集束枪管时不衰减)
     damageEnemy(next, effn, cn, false);
     if (G.cardPool && G.cardPool.hasMastery('g_burn')) {
       const _now = G.now || performance.now();
@@ -2311,6 +2311,10 @@ function updateBoboLasers(dt) {
   }
   // [K10-6] g_focus 一次性化: 额外弹射 +3
   if (G.cardPool && G.cardPool.hasMastery('g_focus')) {
+    forkCount += 3;
+  }
+  // [K10-6 review fix] a_burst 联动 Bobo: 弹射 +3 (与 g_focus 叠加即 6 目标, K 意图)
+  if (G.cardPool && G.cardPool.hasMastery('a_burst')) {
     forkCount += 3;
   }
 
@@ -2700,12 +2704,18 @@ function updateEnemies(dt) {
       // [7/16 fix gate-refactor] 应用防线护甲减伤
       const dmg = e.dps * dt * (1 - (G.defenseArmor || 0));
       G.defenseHP -= dmg;
-      // [K10-6 e_root 扎根反弹] 有 shield 期间, 每次被打反弹真伤
+      // [K10-6 review fix] 扎根反弹: 走 damageEnemy 保证击杀链 + rate limit 每敌 1s 1 次 + 公式改 defenseMax*5%
       if (G.cardPool && G.cardPool.hasMastery('e_root') && G.defenseShield > 0 && e.hp > 0) {
-        const reflect = G.defenseHP * 0.05 + G.defenseShield * 0.20;
-        e.hp -= reflect;
-        floatText(e.x, e.y - 20, '↯' + Math.round(reflect), '#00ffff', false);
-        if (e.hp <= 0) e.hp = 0;
+        const _now = G.now || performance.now();
+        if (!e._lastReflectAt || _now - e._lastReflectAt >= 1000) {
+          e._lastReflectAt = _now;
+          const reflect = Math.round((G.defenseMax || 0) * 0.05 + G.defenseShield * 0.20);
+          if (reflect > 0) {
+            // 真伤穿甲: damageEnemy 内部对敌人无 armor 折算, 直接传入即可 (fromSkill=true, 视为技能真伤)
+            damageEnemy(e, reflect, false, true);
+            floatText(e.x, e.y - 20, '↯' + reflect, '#00ffff', false);
+          }
+        }
       }
       if (G.defenseHP < 0) G.defenseHP = 0;
     }
