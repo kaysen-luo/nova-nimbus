@@ -680,8 +680,8 @@ const SKILL_CARDS = [
     name: '激光贯穿',
     levels: [
       { lv:1, desc:'蓄力 2s 后由 BOBO 发射一根 60px 宽贯穿激光, 对一条直线上所有敌人造成 800 (playerAtk×32) 伤害' },
-      { lv:2, desc:'Lv1 + 3s 沿线余波, 每 0.5s 沿线 100 (playerAtk×4) 伤' },
-      { lv:3, desc:'Lv2 + 3s 内每 0.5s 从随机目标额外发射一根 10px 小激光, 200 (playerAtk×8) 伤' }
+      { lv:2, desc:'Lv1 + 2.5s 沿线余波, 每 0.5s 沿线 100 (playerAtk×4) 伤' },
+      { lv:3, desc:'Lv2 + 3s 内每 0.5s 从随机目标额外发射一根 5px 小激光, 200 (playerAtk×8) 伤' }
     ]
   }
 ];
@@ -5603,7 +5603,7 @@ function castSkill(id, level, chainDepth) {
         fromX: player.x, fromY: player.y,
         toX: mainTarget.x, toY: mainTarget.y,
         width: 60,
-        bornAt: G.now, life: 3000,
+        bornAt: G.now, life: 2500,
         lastTickAt: G.now,
         color: 'rgba(170, 220, 255, 0.35)'
       });
@@ -5621,7 +5621,7 @@ function castSkill(id, level, chainDepth) {
                 e.y > HORIZON_Y && e.y < DEFENSE_Y);
             if (others.length === 0) return;
             const nt = others[Math.floor(Math.random() * others.length)];
-            _laserpiercePierce(player, nt, 10, Math.round(getPlayerAtk() * 8));
+            _laserpiercePierce(player, nt, 5, Math.round(getPlayerAtk() * 8));
           } catch (e) {}
         }, k * 500);
       }
