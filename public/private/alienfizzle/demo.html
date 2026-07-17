@@ -5137,9 +5137,7 @@ function castSkill(id, level, chainDepth) {
     if (target) {
       const baseR = (W - SPLIT_X) / 6;
       const r = level >= 3 ? baseR * 1.5 : baseR;
-      const playerAtk = getPlayerAtk();
-      let baseDmg = playerAtk * 6;
-      if (level >= 2) baseDmg = Math.round(baseDmg * 1.3);
+      // [K10-5 fix] baseDmg 不再外层快照, 挪到命中瞬间 setTimeout 内现算, 保证与 playerAtk 同步
       const lockX = target.x, lockY = target.y;
       G.skillVisuals.push({
         kind: 'togetherPreview',
@@ -5150,6 +5148,9 @@ function castSkill(id, level, chainDepth) {
       setTimeout(() => {
        try {
         const cxp = perspectiveX(lockX, lockY);
+        // [K10-5 fix] 主爆命中瞬间现算 playerAtk (600ms 延迟窗口内玩家攻击力可能被状态门/精通刷新)
+        let baseDmg = getPlayerAtk() * 6;
+        if (level >= 2) baseDmg = Math.round(baseDmg * 1.3);
         G.enemies.slice().forEach(en => {
           if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
           const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
@@ -5181,7 +5182,10 @@ function castSkill(id, level, chainDepth) {
           setTimeout(() => {
            try {
             if (!G.enemies) return;
-            const base2 = Math.round(baseDmg * 0.6);
+            // [K10-5 fix] Lv3 二段爆炸 1200ms 延迟, 再现算一次 playerAtk
+            let baseDmg2 = getPlayerAtk() * 6;
+            if (level >= 2) baseDmg2 = Math.round(baseDmg2 * 1.3);
+            const base2 = Math.round(baseDmg2 * 0.6);
             G.enemies.slice().forEach(en => {
               if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
               const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
@@ -5248,8 +5252,7 @@ function castSkill(id, level, chainDepth) {
       if (st) st.lastCast = now - st.cooldown + 500;
       return;
     }
-    const playerAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
-    const baseDmg = Math.round(playerAtk * 72);
+    const baseDmg = Math.round(getPlayerAtk() * 72);
     const lockMs = 500;
     const lifeMs = 900;
     const castGroup = { anyKill: false };
