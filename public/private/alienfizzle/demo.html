@@ -2700,7 +2700,8 @@ function tickIdleDecoyTrigger() {
   const need = Math.min(2, 2 - existingDecoy);
   const cfgT = CFG.treasure;
   const colCount = cfgT.colCount;
-  const maxPerCol = cfgT.maxPerCol || 3;
+  // [7/17 P1-1 review-fix I2] 硬编码上限 2/列 (原引用不存在的 cfgT.maxPerCol 幽灵字段)
+  const MAX_PER_COL_DECOY = 2;
 
   for (let i = 0; i < need; i++) {
     const colCounts = new Array(colCount).fill(0);
@@ -2710,12 +2711,17 @@ function tickIdleDecoyTrigger() {
     const minColCount = Math.min(...colCounts);
     const candidates = [];
     for (let c = 0; c < colCount; c++) {
-      if (colCounts[c] === minColCount && colCounts[c] < maxPerCol) candidates.push(c);
+      if (colCounts[c] === minColCount && colCounts[c] < MAX_PER_COL_DECOY) candidates.push(c);
     }
     if (candidates.length === 0) break;
     const col = pick(candidates);
 
-    const decoyHp = Math.round(cfgT.decoyHpBase * Math.pow(cfgT.slotGrowth, G.treasureSlotIdx || 0));
+    // [7/17 P1-1 review-fix M1] decoy HP = 最近真宝箱 HP × decoyRatio (贴近玩家当前难度)
+    // fallback: 若尚无真宝箱记录, 用 decoyHpBase × slotGrowth^slotIdx
+    const ratio = (cfgT.decoyRatio || 0.5);
+    const decoyHp = G.lastRealTreasureHp
+      ? Math.max(60, Math.round(G.lastRealTreasureHp * ratio))
+      : Math.round(cfgT.decoyHpBase * Math.pow(cfgT.slotGrowth, G.treasureSlotIdx || 0));
     G.treasureSlotIdx = (G.treasureSlotIdx || 0) + 1;
     const decoy = {
       x: treasureColX(col), y: -cfgT.h, targetY: 0, col,
@@ -3747,12 +3753,16 @@ function loop(ts) {
   // [7/16 fix endlvl-freeze] loop 主体 try-catch: 防止任何一处 throw 导致 rAF 链断裂 → 卡死
   try {
   if (G.paused || G.gameOver) {
+    // [7/17 P1-1 review-fix I1] 暂停期间同步推进 lastRealChestBreakAt, 防止恢复瞬发 idle 触发器
+    if (G.lastRealChestBreakAt) G.lastRealChestBreakAt = G.now;
     requestAnimationFrame(loop);
     return;
   }
   // 议题 10 · 切片 3 · 三选一 UI: UI 激活时跳过 update, 但仍 draw + 处理 pause 累积
   if (G.cardSelectionUI && G.cardSelectionUI.active) {
     G.lastFrame = ts;  // 避免恢复时 dt 突增
+    // [7/17 P1-1 review-fix I1] UI 暂停期间同步推进 lastRealChestBreakAt, 防止恢复瞬发 idle 触发器
+    if (G.lastRealChestBreakAt) G.lastRealChestBreakAt = G.now;
     draw();
     requestAnimationFrame(loop);
     return;
