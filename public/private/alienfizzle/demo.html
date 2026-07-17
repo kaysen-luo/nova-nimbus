@@ -709,10 +709,8 @@ const MASTERY_CARDS = [
   { id:'e_desperate', category:'E', name:'绝境反击', desc:'防线 HP 每下降 2%, 攻击力+1%' },
   // [K10-6] 扎根: 一次性卡, 生成蓝色护盾, 有护盾时被打反弹真伤
   { id:'e_root', category:'E', name:'扎根', desc:'防线生成护盾 (defenseMax×0.8%/秒), 护盾期间被攻击反弹真伤 (defenseMax×5% + 护盾×20%). 受击后暂停积累 10s [不可重复]' },
-  // [K10-13] 等离子防线: 一次性卡, 每 20s 补齐护盾到 defenseMax
-  { id:'e_plasma', category:'E', name:'等离子防线', desc:'每 20s 检查一次, 护盾不足 defenseMax 时补齐 [不可重复]' },
-  // [K10-13] 等离子屑刃: 一次性卡, 护盾击破瞬间对最近 3 敌方形范围爆发真伤
-  { id:'e_shard', category:'E', name:'等离子屑刃', desc:'护盾被击破瞬间, 对最近的 3 个敌人方形范围造成"击破时护盾峰值"等值的真实伤害 [不可重复]' },
+  // [K10-15] 等离子防线: 一次性卡, 每 20s 用满盾替换 plasma 那份; 护盾击破瞬间对最近 3 敌方形范围爆发真伤 (屑刃并入)
+  { id:'e_plasma', category:'E', name:'等离子防线', desc:'每 20s 用满 defenseMax 护盾替换原护盾. 护盾被击破瞬间, 对最近 3 敌方形范围造成"击破前护盾峰值"等值的真实伤害 (不递减) [不可重复]' },
   // F Meta (3)
   { id:'f_greed', category:'F', name:'贪婪', desc:'击杀敌人 2% 概率立即召唤一道状态门' },
   { id:'f_resonance', category:'F', name:'共鸣', desc:'每持有 1 张精通卡, 攻击力+2%' },
@@ -792,7 +790,7 @@ class CardPool {
       // [7/16 fix burst-no-repeat] a_burst 连发快射不可重复获取, 拿过就从池里剔除
       if (m.id === 'a_burst' && count > 0) continue;
       // [K10-6] 一次性卡: 扎根 + 等离子防线/屑刃 + G 类三张
-      if ((m.id === 'e_root' || m.id === 'e_plasma' || m.id === 'e_shard' || m.id === 'g_focus' || m.id === 'g_burn' || m.id === 'g_guide') && count > 0) continue;
+      if ((m.id === 'e_root' || m.id === 'e_plasma' || m.id === 'g_focus' || m.id === 'g_burn' || m.id === 'g_guide') && count > 0) continue;
       // [7/16 fix gamble-merge] 恶魔赌局权重不腰斩, 保持每次抽卡都可能出现 (它本来就是可重复摇色子的卡)
       const weight = m.id === 'f_gamble'
         ? 1.5
@@ -2714,28 +2712,36 @@ function updateEnemies(dt) {
       let dmg = e.dps * dt * (1 - (G.defenseArmor || 0));
       // [K10-13] 记录受击时间戳 (供扎根涨盾冷却使用)
       G._lastDefenseHitAt = G.now || performance.now();
-      // [K10-12 fix] 扎根护盾必须先吸伤! 之前只涨不扣, 防线无防护 (K 亲反馈)
-      // [K10-13] 护盾也可能由 e_plasma 提供, 判断 shield>0 即吸伤
-      const _hadShield = G.defenseShield > 0;
-      if (_hadShield) {
-        const absorb = Math.min(G.defenseShield, dmg);
-        G.defenseShield -= absorb;
-        dmg -= absorb;
-        // [K10-13 e_shard] 等离子屑刃: 护盾这一 tick 被击穿, 对最近 3 敌爆发
-        if (G.defenseShield <= 0 && G.cardPool && G.cardPool.hasMastery('e_shard')) {
-          G.defenseShield = 0;
+      // [K10-15] 护盾扣除: 扎根优先扣 > 等离子后扣; 屑刃并入 e_plasma, 反弹仅 root
+      const totalShieldBefore = (G.defenseShieldRoot || 0) + (G.defenseShieldPlasma || 0);
+      const rootBefore = G.defenseShieldRoot || 0;
+      if (totalShieldBefore > 0) {
+        // 先扣扎根盾
+        if (G.defenseShieldRoot > 0 && dmg > 0) {
+          const ab = Math.min(G.defenseShieldRoot, dmg);
+          G.defenseShieldRoot -= ab;
+          dmg -= ab;
+        }
+        // 再扣等离子盾
+        if (G.defenseShieldPlasma > 0 && dmg > 0) {
+          const ab = Math.min(G.defenseShieldPlasma, dmg);
+          G.defenseShieldPlasma -= ab;
+          dmg -= ab;
+        }
+        _syncDefenseShield();
+        // 屑刃触发 (并入 e_plasma): 总盾从 >0 变 <=0 且持有 e_plasma
+        if (G.defenseShield <= 0 && G.cardPool && G.cardPool.hasMastery('e_plasma')) {
           triggerShardBurst();
         }
       }
       G.defenseHP -= dmg;
-      // [K10-6 review fix] 扎根反弹: 走 damageEnemy 保证击杀链 + rate limit 每敌 1s 1 次 + 公式改 defenseMax*5%
-      if (G.cardPool && G.cardPool.hasMastery('e_root') && G.defenseShield > 0 && e.hp > 0) {
+      // [K10-15] 扎根反弹: 仅扎根 shield > 0 时触发 (等离子 shield 不反弹), 公式项改成 shieldRoot
+      if (G.cardPool && G.cardPool.hasMastery('e_root') && rootBefore > 0 && e.hp > 0) {
         const _now = G.now || performance.now();
         if (!e._lastReflectAt || _now - e._lastReflectAt >= 1000) {
           e._lastReflectAt = _now;
-          const reflect = Math.round((G.defenseMax || 0) * 0.05 + G.defenseShield * 0.20);
+          const reflect = Math.round((G.defenseMax || 0) * 0.05 + rootBefore * 0.20);
           if (reflect > 0) {
-            // 真伤穿甲: damageEnemy 内部对敌人无 armor 折算, 直接传入即可 (fromSkill=true, 视为技能真伤)
             damageEnemy(e, reflect, false, true);
             floatText(e.x, e.y - 20, '↯' + reflect, '#00ffff', false);
           }
@@ -2746,37 +2752,43 @@ function updateEnemies(dt) {
   });
   // [K10-6 e_root] 扎根护盾积累: 每秒 defenseMax * 0.008, 无上限; 防线破则清零
   // [K10-13] 扎根涨盾, 受击后 10s 内暂停
+  // [K10-15] 只涨 shieldRoot 那份
   if (G.cardPool && G.cardPool.hasMastery('e_root')) {
     if (G.defenseHP > 0) {
       const _now = G.now || performance.now();
       const _hitAt = G._lastDefenseHitAt || 0;
       const _inCooldown = _hitAt > 0 && (_now - _hitAt) < 10000;
       if (!_inCooldown) {
-        G.defenseShield = (G.defenseShield || 0) + (G.defenseMax || 0) * 0.008 * dt;
-        G._shieldPeak = Math.max(G._shieldPeak || 0, G.defenseShield);
+        G.defenseShieldRoot = (G.defenseShieldRoot || 0) + (G.defenseMax || 0) * 0.008 * dt;
+        _syncDefenseShield();
       }
     } else {
-      G.defenseShield = 0;
+      G.defenseShieldRoot = 0;
+      _syncDefenseShield();
     }
   }
-  // [K10-13 e_plasma] 等离子防线: 每 20s 检查, 护盾不足 defenseMax 时补齐
+  // [K10-15 e_plasma] 等离子防线: 每 20s 用满 defenseMax 护盾替换 shieldPlasma 那份 (扎根那份不动)
   if (G.cardPool && G.cardPool.hasMastery('e_plasma') && G.defenseHP > 0) {
     const _now = G.now || performance.now();
     if (!G._plasmaNextAt) G._plasmaNextAt = _now + 20000;
     if (_now >= G._plasmaNextAt) {
       G._plasmaNextAt = _now + 20000;
-      if ((G.defenseShield || 0) < G.defenseMax) {
-        G.defenseShield = G.defenseMax;
-        G._shieldPeak = Math.max(G._shieldPeak || 0, G.defenseShield);
-        G.floatTexts = G.floatTexts || [];
-        G.floatTexts.push({ x: W/2, y: DEFENSE_Y - 30, text: '等离子防线充能!', color: '#66ddff', bornAt: G.now, life: 1000 });
-      }
+      G.defenseShieldPlasma = G.defenseMax;
+      _syncDefenseShield();
+      G.floatTexts = G.floatTexts || [];
+      G.floatTexts.push({ x: W/2, y: DEFENSE_Y - 30, text: '等离子防线充能!', color: '#66ddff', bornAt: G.now, life: 1000 });
     }
   }
   updateDefenseBar();
 }
 
-// [K10-13 e_shard] 等离子屑刃: 护盾被击破瞬间, 对最近 3 敌方形范围造成"峰值等值"真伤
+// [K10-15] 同步总盾 + 更新历史峰值 (供屑刃 _shieldPeak 判定)
+function _syncDefenseShield() {
+  G.defenseShield = (G.defenseShieldRoot || 0) + (G.defenseShieldPlasma || 0);
+  G._shieldPeak = Math.max(G._shieldPeak || 0, G.defenseShield);
+}
+
+// [K10-15 e_plasma 并入] 等离子屑刃: 护盾被击破瞬间, 对最近 3 敌方形范围造成"击破前护盾峰值"真伤 (不递减)
 function triggerShardBurst() {
   const burstDmg = Math.round(G._shieldPeak || 0);
   G._shieldPeak = 0;  // 消费一次, 重置
@@ -4223,7 +4235,10 @@ function reset() {
   // [7/16 fix gate-refactor] 防线新属性初始化
   G.defenseArmor = 0;
   // [K10-6 e_root] 扎根护盾, 无上限, 随时间累积
+  // [K10-15] 数据模型分离: root (扎根) + plasma (等离子), G.defenseShield 作为总盾 (供 UI + 屑刃判定)
   G.defenseShield = 0;
+  G.defenseShieldRoot = 0;
+  G.defenseShieldPlasma = 0;
   // [K10-13] 屑刃/等离子/受击 tracking
   G._shieldPeak = 0;
   G._plasmaNextAt = 0;
@@ -5007,11 +5022,11 @@ function applyMasteryEffect(id) {
     // [K10-6] 扎根 - 挂钩, tick 里生成 shield, 伤害计算里读取
     case 'e_root':
       G.defenseShield = G.defenseShield || 0;
+      G.defenseShieldRoot = G.defenseShieldRoot || 0;
       floatText(W/2, DEFENSE_Y - 30, '扎根!', '#66c8ff', true);
       break;
-    // [K10-13] 等离子防线 / 等离子屑刃 - 挂钩, tick 里读 hasMastery, 无 buff hook 需要 case 处理
+    // [K10-15] 等离子防线 (屑刃并入) - 挂钩, tick 里读 hasMastery
     case 'e_plasma':
-    case 'e_shard':
       break;
     // F 贪婪 - 挂钩 (在 onEnemyKilled 里判)
     case 'f_greed':
@@ -5721,8 +5736,8 @@ function tickSkillVisuals(dt) {
           if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
           const dx = e.x - v.x, dy = e.y - v.y;
           if (dx*dx + dy*dy <= v.r * v.r) {
-            // [K10-14 加强] 伤害 playerAtk × 1.2 → × 2.5 (精英不再刮痧, 小怪 200HP 撑半个飞轮)
-            const { dmg, crit } = rollSkillCrit(Math.round(getPlayerAtk() * 2.5));
+            // [K10-15 回滚 dmg] × 2.5 → × 1.2 (K10-11 数值), 保留 CD 5s + Lv3 前6s旋转+后6s推进
+            const { dmg, crit } = rollSkillCrit(Math.round(getPlayerAtk() * 1.2));
             damageEnemy(e, dmg, crit, true);
           }
         });
