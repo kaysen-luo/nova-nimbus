@@ -4618,6 +4618,20 @@ window.addEventListener('load', () => {
 
 // 议题 12 · 切片 2 · 开局弹窗 START
 function showIntroDialog() {
+  // [2026-07-17 fix] K 复测时嫌开局弹窗挡道, 改成默认跳过
+  //   URL 加 ?intro=1 才播放紧急预警过场 (保留能力供后续 K 手感验时用)
+  const wantIntro = /[?&]intro=1\b/.test(location.search);
+  if (!wantIntro) {
+    const dlg = document.getElementById('introDialog');
+    if (dlg) dlg.style.display = 'none';
+    if (typeof startPreExperience === 'function') {
+      startPreExperience();
+    } else if (typeof startGame === 'function') {
+      startGame(1);
+    }
+    return;
+  }
+
   const dlg = document.getElementById('introDialog');
   const txt = document.getElementById('introTextLines');
   const btn = document.getElementById('introConfirmBtn');
