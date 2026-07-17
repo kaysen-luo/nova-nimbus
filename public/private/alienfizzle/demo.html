@@ -1946,7 +1946,7 @@ function damageEnemy(e, dmg, isCrit, fromPlayer, isHeadshot) {
         damageEnemy(nb, Math.round(getPlayerAtk() * 6), false, true);
         // 邻居: 刷新灼烧 + 叠一层 (无上限)
         if (nb.hp > 0) {
-          nb.burnStackLayers = (nb.burnStackLayers || 0) + 1;
+          nb.burnStackLayers = Math.min(30, (nb.burnStackLayers || 0) + 1);
           nb.burnStackDmgPerSec = nb.burnStackLayers * getPlayerAtk() * 0.8;
           nb.burnStackUntil = G.now + 5000;
         }
@@ -2904,9 +2904,35 @@ function isPreExperienceLevel() {
 function triggerCardSelection() {
   if (!G.cardPool) G.cardPool = new CardPool();
 
+  // [K10-7 force-cards] URL ?forceCards=id1,id2,id3 强制指定三选一, 用于测试
+  //   支持技能卡 id (会计算下一级, 满级则 Lv3) 和精通卡 id
+  //   例: ?forceCards=laserpierce,g_focus,g_burn / ?forceCards=together,together,together / ?forceCards=e_root
+  let forcedCards = null;
+  const forceMatch = /[?&]forceCards=([^&]+)/.exec(location.search);
+  if (forceMatch) {
+    const ids = decodeURIComponent(forceMatch[1]).split(',').map(s => s.trim()).filter(Boolean);
+    forcedCards = ids.slice(0, 3).map(id => {
+      const skill = SKILL_CARDS.find(s => s.id === id);
+      if (skill) {
+        const cur = (G.cardPool.skillLevels && G.cardPool.skillLevels[id]) || 0;
+        const targetLv = Math.min(3, cur + 1);
+        return { type: 'skill', id: id, lv: targetLv };
+      }
+      const mastery = MASTERY_CARDS.find(m => m.id === id);
+      if (mastery) {
+        return { type: 'mastery', id: id };
+      }
+      console.warn('[forceCards] unknown id:', id);
+      return null;
+    }).filter(Boolean);
+    if (forcedCards.length > 0) {
+      console.log('[K10-7 forceCards]', forcedCards.map(c => c.id + (c.lv ? ' Lv' + c.lv : '')).join(' | '));
+    }
+  }
+
   // [7/16 fix P1] 回滚 C1-6: 预体验也走标准三选一 UI, 玩家自选 1 张
   // (效果 ×2 逻辑仍保留在 applyCardEffect 里, 不冲突)
-  G.pendingCards = G.cardPool.drawThree();
+  G.pendingCards = (forcedCards && forcedCards.length > 0) ? forcedCards : G.cardPool.drawThree();
   G.cardSelectionUI = {
     active: true,
     cards: G.pendingCards,
@@ -2940,8 +2966,15 @@ function selectCard(index) {
   if (!G.cardSelectionUI || !G.cardSelectionUI.active) return;
   const card = G.cardSelectionUI.cards[index];
   if (!card) return;
-  applyCardEffect(card);
-  closeCardSelectionUI();
+  // [K10-7 selectCard-guard] try/finally 保 UI 必关闭: 即使 applyCardEffect / applySkillEffect 抛异常
+  //   showBuffToast 已弹, 但下游抛错会阻塞 closeCardSelectionUI, 造成 UI 卡死
+  try {
+    applyCardEffect(card);
+  } catch (e) {
+    console.error('[selectCard-err]', { cardId: card && card.id, cardType: card && card.type, msg: e && e.message, stack: e && e.stack });
+  } finally {
+    closeCardSelectionUI();
+  }
 }
 
 function freeRefresh() {
@@ -5272,7 +5305,7 @@ function castSkill(id, level, chainDepth) {
           damageEnemy(en, eff, crit, true);
           // ===== 议题 10-4 · 施加灼烧栈 (每颗手雷刷新+叠一层, 无上限) =====
           if (en.hp > 0) {
-            en.burnStackLayers = (en.burnStackLayers || 0) + 1;
+            en.burnStackLayers = Math.min(30, (en.burnStackLayers || 0) + 1);
             en.burnStackDmgPerSec = en.burnStackLayers * getPlayerAtk() * 0.8;
             en.burnStackUntil = G.now + 5000;
           }
@@ -5306,7 +5339,7 @@ function castSkill(id, level, chainDepth) {
               const eff2 = Math.max(1, Math.round(fireDmg2 * (1 - en.armor)));
               damageEnemy(en, eff2, c2, true);
               if (en.hp > 0) {
-                en.burnStackLayers = (en.burnStackLayers || 0) + 1;
+                en.burnStackLayers = Math.min(30, (en.burnStackLayers || 0) + 1);
                 en.burnStackDmgPerSec = en.burnStackLayers * getPlayerAtk() * 0.8;
                 en.burnStackUntil = G.now + 5000;
               }
@@ -5671,8 +5704,9 @@ function tickSkillVisuals(dt) {
         });
       }
     } else if (v.kind === 'togetherBurnZone') {
-      // [K10-5 together-lv3-burnzone] 5s 燃烧地带 tick: 每 0.5s 遍历区域内敌人, 续燃 + 叠层
-      if (now - (v.lastTickAt || v.bornAt) >= 500) {
+      // [K10-5 together-lv3-burnzone] 5s 燃烧地带 tick: 每 1s 遍历区域内敌人, 续燃 + 叠层
+      // [K10-7 tune] 叠层速度从 0.5s 减半到 1s, 避免瞬秒清屏 (灼烧上限 30 层已在下方 Math.min 处兜底)
+      if (now - (v.lastTickAt || v.bornAt) >= 1000) {
         v.lastTickAt = now;
         const _pAtk = getPlayerAtk();
         const cxp = perspectiveX(v.x, v.y);
@@ -5683,7 +5717,7 @@ function tickSkillVisuals(dt) {
           const dx = exp - cxp, dy = en.y - v.y;
           if (dx*dx + dy*dy > v.r * v.r) return;
           en.burnStackUntil = Math.max(en.burnStackUntil || 0, now + 5000);
-          en.burnStackLayers = (en.burnStackLayers || 0) + 1;
+          en.burnStackLayers = Math.min(30, (en.burnStackLayers || 0) + 1);
           en.burnStackDmgPerSec = en.burnStackLayers * _pAtk * 0.8;
         });
       }
