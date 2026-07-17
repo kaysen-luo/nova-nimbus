@@ -718,7 +718,7 @@ const MASTERY_CARDS = [
   //   drawThree 里对 f_gamble 特判权重不腰斩, 每次抽三选一都可能出现
   { id:'f_gamble', category:'F', name:'恶魔赌局', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 可重复获取)' },
   // G Bobo 强化 (3, K10-6 全部一次性化)
-  { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 激光伤害+50%, 弹射+3 [不可重复]' },
+  { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 弹射+3, 激光伤害+50% [不可重复]' },
   // [7/16 fix remove-overload] g_overload 已移除
   { id:'g_burn', category:'G', name:'激光爆燃', desc:'Bobo 激光命中产生小爆炸 (半径 36px, 主伤 12%) + 点燃 [不可重复]' },
   { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 攒 20 次攻击发一道 5s 制导激光, 击杀跳目标. 联动 g_focus (伤害×1.5 + 弹射×3, 递减20%) 和 g_burn (爆炸+点燃) [不可重复]' }
@@ -5580,22 +5580,7 @@ function castSkill(id, level, chainDepth) {
     const hasFocus = G.cardPool && G.cardPool.hasMastery('g_focus');
     const mainDmg = Math.round(getPlayerAtk() * 32 * (hasFocus ? 1.5 : 1));
     _laserpiercePierce(player, mainTarget, 60, mainDmg);
-    // g_focus 联动: 主激光后弹射 3 个最近邻居, 20% 递减
-    if (hasFocus) {
-      const nearby = (G.enemies || [])
-        .filter(e => e && e.hp > 0 && e !== mainTarget &&
-          e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff' &&
-          e.y > HORIZON_Y && e.y < DEFENSE_Y)
-        .map(e => ({ e, d: (e.x - mainTarget.x) ** 2 + (e.y - mainTarget.y) ** 2 }))
-        .sort((a, b) => a.d - b.d)
-        .slice(0, 3)
-        .map(o => o.e);
-      let bounceDmg = mainDmg;
-      nearby.forEach(n => {
-        bounceDmg = Math.round(bounceDmg * 0.8);
-        _laserpiercePierce(player, n, 60, bounceDmg);
-      });
-    }
+    // [K10-19] g_focus 弹射+3 仅作用于 Bobo 平A, 不作用于激光贯穿 (K 口径: 否则 OP)
     // Lv2: 3s 余波区 (400/s DoT 沿线)
     if (level >= 2) {
       G.skillVisuals.push({
