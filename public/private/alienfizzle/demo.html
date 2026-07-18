@@ -777,11 +777,7 @@ class CardPool {
       const curLv = this.skillLevels[skill.id];
       if (curLv >= 3) continue; // 已满级
       const nextLv = curLv + 1;
-      // [K10-8 TEMP · 待回滚] 当前测试焦点技能权重放大 50x, 其他技能压到 0.01 (几乎不出), 精通卡不动
-      // ⚠️ 仅用于 K10 阶段技能强度调试, 测试结束后须删除此段恢复标准权重 (1.0/2.0)
       let weight = curLv > 0 ? 2.0 : 1.0;  // 已持有的下一级权重x2
-      if (skill.id === 'laserpierce') weight *= 50;   // ← TEMP 待回滚 (测试焦点)
-      else weight = 0.01;                          // ← TEMP 待回滚 (非焦点压制)
       pool.push({ type:'skill', id:skill.id, lv:nextLv, weight });
     }
     // 2. 加入所有精通卡 (可重复)
