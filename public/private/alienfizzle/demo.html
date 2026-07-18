@@ -663,7 +663,7 @@ const SKILL_CARDS = [
     levels: [
       { lv:1, desc:'每 5s 自动瞄准最高优先级目标发一颗超级子弹, 60x 攻击力真伤 (锁定 0.5s)' }, // [7/16 fix absolution-v2]
       { lv:2, desc:'[质变: 命中后目标 3s 内护甲 ×0.5]' }, // [7/16 fix absolution-v2]
-      { lv:3, desc:'[完全体: 同时锁定 5 目标 + 圆形恐惧 r=90 + 任一击杀立即刷 CD (无上限)]' } // [7/16 fix absolution-v2]
+      { lv:3, desc:'[完全体: 同时锁定 5 目标 + 颤栗减速 r=62 + 任一击杀立即刷 CD (无上限)]' } // [7/16 fix absolution-v2]
     ]
   },
   {
@@ -777,7 +777,7 @@ class CardPool {
       const curLv = this.skillLevels[skill.id];
       if (curLv >= 3) continue; // 已满级
       const nextLv = curLv + 1;
-      let weight = curLv > 0 ? 2.0 : 1.0;  // 已持有的下一级权重x2
+      let weight = curLv > 0 ? 1.3 : 1.0;  // 已持有的下一级权重x1.3
       pool.push({ type:'skill', id:skill.id, lv:nextLv, weight });
     }
     // 2. 加入所有精通卡 (可重复)
@@ -2688,6 +2688,8 @@ function updateEnemies(dt) {
     // 减速
     let spdMult = 1;
     if (e.slowUntil && now < e.slowUntil) spdMult = (e.slowMult || 0.7);
+    // 颤栗(mercy Lv3): 与减速取更慢者
+    if (e.chillUntil && now < e.chillUntil) spdMult = Math.min(spdMult, (e.chillMult || 0.5));
     if (!e.atDefense) {
       e.y += e.speed * spdMult * dt;
       if (e.y + e.h >= DEFENSE_Y) {
@@ -3583,6 +3585,33 @@ function draw() {
   // 飘字 (最上层)
   drawFloatTexts();
 
+  // 宝箱经验进度条 (接敌通道顶端, 预体验关卡不显示)
+  if (!G.isPreExperience && typeof G.chestExp === 'number' && typeof G.chestExpThreshold === 'number' && G.chestExpThreshold > 0) {
+    const barW = Math.round(TRACK_R_WIDTH * 0.6);
+    const barH = 8;
+    const barX = TRACK_R_LEFT + Math.round((TRACK_R_WIDTH - barW) / 2);
+    const barY = HORIZON_Y + 2;
+    const pct = Math.max(0, Math.min(1, G.chestExp / G.chestExpThreshold));
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.55)';
+    ctx.fillRect(barX, barY, barW, barH);
+    ctx.fillStyle = '#88c0d4';
+    ctx.fillRect(barX, barY, Math.round(barW * pct), barH);
+    ctx.strokeStyle = 'rgba(255,255,255,0.25)';
+    ctx.lineWidth = 1;
+    ctx.strokeRect(barX + 0.5, barY + 0.5, barW - 1, barH - 1);
+    ctx.fillStyle = '#e8f4fa';
+    ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'bottom';
+    ctx.strokeStyle = 'rgba(0,0,0,0.85)';
+    ctx.lineWidth = 3;
+    const label = '宝箱 ' + Math.round(G.chestExp) + '/' + G.chestExpThreshold;
+    ctx.strokeText(label, barX + barW / 2, barY - 1);
+    ctx.fillText(label, barX + barW / 2, barY - 1);
+    ctx.restore();
+  }
+
   // [K10-6 e_root] 扎根护盾视觉 (蓝色半透明光罩, 呼吸感)
   drawDefenseShield();
 
@@ -4204,7 +4233,7 @@ function reset() {
   G.multiShot = 1;
   // [7/16 fix chest-exp / burst-fire] 初始化经验值+精通卡累积字段
   G.chestExp = 0;
-  G.chestExpThreshold = 50;
+  G.chestExpThreshold = 80;
   G.chestExpTier = 0;
   G.lastRealChestBreakAt = 0;  // [7/17 P1-1] 上次破真宝箱时间, idle 触发器用
   G.playerSpdMult = 1;
@@ -5099,12 +5128,12 @@ function onEnemyKilled(e) {
   const expKey = e.isFinalBoss ? 'boss' : e.type;
   const gain = CHEST_EXP_TABLE[expKey] || 2;
   G.chestExp = (G.chestExp || 0) + gain;
-  if (G.chestExpThreshold === undefined) G.chestExpThreshold = 50;
+  if (G.chestExpThreshold === undefined) G.chestExpThreshold = 80;
   if (G.chestExpTier === undefined) G.chestExpTier = 0;
   if (G.chestExp >= G.chestExpThreshold) {
     spawnNewChest();
     G.chestExpTier++;
-    G.chestExpThreshold = Math.round(50 * Math.pow(1.5, G.chestExpTier));
+    G.chestExpThreshold = Math.round(80 * Math.pow(1.7, G.chestExpTier));
     G.chestExp = 0;
   }
   if (!G.cardPool) return;
@@ -5462,8 +5491,8 @@ function castSkill(id, level, chainDepth) {
   } else if (id === 'mercy') {
     // ===== 议题 10-4 恩赐解脱 K 原口径重构: 破甲 → 易损 =====
     // 全等级施加 vulnUntil (+20% 后续伤害 × 5s)
-    // Lv2: 90° 锥形取 2 目标, 秒杀 50% 再触发
-    // Lv3: 5 目标, 180° 半圆恐惧, 秒杀 100% 再触发
+    // Lv1: 60° 锥取 1 目标; Lv2: 90° 锥取 2 目标, 秒杀 50% 再触发
+    // Lv3: 120° 锥取 5 目标, 半圆颤栗(减速), 秒杀 100% 再触发
     const rankedList = rankedBoboTargets({ x: player.x, y: player.y }, G.enemies);
     const visibleAll = (G.enemies || [])
       .filter(e =>
@@ -5471,23 +5500,19 @@ function castSkill(id, level, chainDepth) {
         e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff' &&
         e.y > HORIZON_Y && e.y < DEFENSE_Y
       );
-    let pool;
-    if (level >= 2) {
-      // Lv2/Lv3: 90° 锥内 (头顶向上, |dx| <= dy 即 ±45° 锥), 按距离排序
-      pool = visibleAll.filter(e => {
-        const dx = e.x - player.x, dy = player.y - e.y;
-        return dy > 0 && Math.abs(dx) <= dy;
-      }).sort((a, b) => {
-        const da = (a.x-player.x)**2 + (a.y-player.y)**2;
-        const db = (b.x-player.x)**2 + (b.y-player.y)**2;
-        return da - db;
-      });
-      // 不够就从 rankedList 补
-      for (const e of rankedList) if (!pool.includes(e)) pool.push(e);
-    } else {
-      pool = [...rankedList];
-      for (const e of visibleAll) if (!pool.includes(e)) pool.push(e);
-    }
+    // 全等级锥形筛选: Lv1=60°(半角30°) / Lv2=90°(半角45°) / Lv3=120°(半角60°)
+    const coneHalfDeg = level >= 3 ? 60 : (level >= 2 ? 45 : 30);
+    const tanHalf = Math.tan(coneHalfDeg * Math.PI / 180);
+    let pool = visibleAll.filter(e => {
+      const dx = e.x - player.x, dy = player.y - e.y;
+      return dy > 0 && Math.abs(dx) <= dy * tanHalf;
+    }).sort((a, b) => {
+      const da = (a.x-player.x)**2 + (a.y-player.y)**2;
+      const db = (b.x-player.x)**2 + (b.y-player.y)**2;
+      return da - db;
+    });
+    // 不够就从 rankedList 补
+    for (const e of rankedList) if (!pool.includes(e)) pool.push(e);
     const need = (level >= 3) ? 5 : (level >= 2 ? 2 : 1);
     const targets = pool.slice(0, need);
     if (targets.length === 0) {
@@ -5495,7 +5520,7 @@ function castSkill(id, level, chainDepth) {
       if (st) st.lastCast = now - st.cooldown + 500;
       return;
     }
-    const baseDmg = Math.round(getPlayerAtk() * 72);
+    const baseDmg = Math.round(getPlayerAtk() * 48);
     const lockMs = 500;
     const lifeMs = 900;
     const castGroup = { anyKill: false };
@@ -5522,9 +5547,9 @@ function castSkill(id, level, chainDepth) {
         capturedTarget.vulnUntil = G.now + 5000;
         capturedTarget.vulnMult = 1.2;
         floatText(capturedTarget.x, capturedTarget.y - 20, '易损 +20%', '#ff88dd', false);
-        // Lv3: 180° 半圆恐惧
+        // Lv3: 半圆颤栗(减速)
         if (level >= 3) {
-          const fr = 90;
+          const fr = 62;
           G.skillVisuals.push({
             kind: 'ring', x: capturedTarget.x, y: capturedTarget.y, r: fr,
             color: '#ff66aa', bornAt: G.now, life: 600
@@ -5533,9 +5558,10 @@ function castSkill(id, level, chainDepth) {
             if (!e || e.hp <= 0 || e === capturedTarget) continue;
             if (e.kind === 'chest' || e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') continue;
             const dx = e.x - capturedTarget.x, dy = e.y - capturedTarget.y;
-            // 半圆: y <= 主目标.y (即在主目标上方)
+            // 半圆: y <= 主目标.y (即在主目标上方), 颤栗(减速) 1s
             if (dy <= 0 && dx*dx + dy*dy <= fr*fr) {
-              e.stunUntil = Math.max(e.stunUntil||0, G.now + 2000);
+              e.chillUntil = Math.max(e.chillUntil||0, G.now + 1000);
+              e.chillMult = 0.5;
             }
           }
         }
