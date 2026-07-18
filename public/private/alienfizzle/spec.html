@@ -970,7 +970,7 @@ Alien Fizzle · 玩法规格<br>
     <h4>4.3.1 混池权重</h4>
     <table>
       <tr><th>卡类</th><th>基础权重</th><th>重复权重</th><th>特殊修正</th></tr>
-      <tr><td>技能升级卡 (5 张 × 3 级)</td><td>1.0</td><td>—</td><td>未解锁的下一级卡 <strong>不在池</strong> (对玩家隐藏); 已 Lv3 满级技能 <strong>不再出</strong>; <strong>已持有的下一级卡权重 ×2</strong> (加速成长)</td></tr>
+      <tr><td>技能升级卡 (5 张 × 3 级)</td><td>1.0</td><td>—</td><td>未解锁的下一级卡 <strong>不在池</strong> (对玩家隐藏); 已 Lv3 满级技能 <strong>不再出</strong>; <strong>已持有的下一级卡权重 ×2</strong> (加速成长) <span style="color:#c62828"><strong>⚠️ V3.3.9 改为 ×1.3</strong> (原 ×2 三级技能太易速满, 降加权逼横向铺技能)</span></td></tr>
             <tr><td>精通卡 (20 张, §4.6)</td><td>1.5</td><td><strong>×0.5</strong> (实际 0.75)</td><td>每张一次性, 抽到即消耗; 恶魔赌局 3 张为例外, 允许重复出 (见 §4.6 F16)<br><span style="color:#c62828"><strong>⚠️ V3.3.8 修订</strong>: 恶魔赌局已合并为<strong>单张 f_gamble</strong>, 权重固定 1.5 不腰斩, 可在同一次三选一里出现多张 — 见 §V3.3.8。</span></td></tr>
     </table>
 
@@ -1746,6 +1746,16 @@ Alien Fizzle · 玩法规格<br>
     <h3>V3.3.4 · 恩赐解脱 v3.2 (完全重写)</h3>
     <p><strong>这是 §4.2 里"恩赐解脱"的最新权威规格, 覆盖 §4.2 原三级描述。</strong></p>
 
+    <div class="callout" style="border-color:#c62828;background:#fff5f5">
+      <strong>⚠️ V3.3.9 (2026-07-18) 削弱覆盖以下三处 — 见文末 V3.3.9 权威块</strong>:
+      <ul style="margin-top:6px">
+        <li>伤害倍率 72x → <strong>48x</strong> (中期不吃攻击力加成也能无限清屏, 不健康)</li>
+        <li>Lv3 "圆形恐惧 r=90 stun 2s" → <strong>半圆颤栗 r=62 (=2 小兵单位) · 移速×0.5 持续 1s</strong> (不再硬控)</li>
+        <li>新增 <strong>锥形取敌角度分级, 从 Lv1 起生效</strong>: Lv1=60° / Lv2=90° / Lv3=120° (总张角)</li>
+      </ul>
+      本 V3.3.4 段历史文字保留供对比, 数值以 V3.3.9 为准。
+    </div>
+
     <div class="callout">
       <strong>通用规则</strong> (三级共用):
       <ul style="margin-top:6px">
@@ -1800,8 +1810,8 @@ Alien Fizzle · 玩法规格<br>
     <ul>
       <li><strong>初始 3 个宝箱全部为真宝箱</strong>, 无空宝箱强制穿插 (原 <code>_createTreasureInner()</code> 的"真-空-真"逻辑已删)</li>
       <li>空宝箱由独立 idle 触发器在长时间未破宝箱时插入 (最多 2 个, 挤出通道自动消失) — <strong>标记为 P1 待补</strong>, 当前 demo 版本尚未实现</li>
-      <li>首个新宝箱阈值: <strong>50 exp</strong> (原 100, 降 50%)</li>
-      <li>阈值递增: 基数 50, 倍率 ×1.5, 序列 = <strong>50 / 75 / 112 / 168 / 253 / 379 / 569 / ...</strong></li>
+      <li>首个新宝箱阈值: <strong>50 exp</strong> (原 100, 降 50%) <span style="color:#c62828"><strong>⚠️ V3.3.9 改为 80</strong></span></li>
+      <li>阈值递增: 基数 50, 倍率 ×1.5, 序列 = <strong>50 / 75 / 112 / 168 / 253 / 379 / 569 / ...</strong> <span style="color:#c62828"><strong>⚠️ V3.3.9 改为基数 80 · 倍率 ×1.7</strong> (中期宝箱出太多躺赢, 曲线陡化。新序列 = 80 / 136 / 231 / 393 / 668 / ...)</span></li>
     </ul>
 
     <table>
@@ -1891,6 +1901,21 @@ if (targetLv &gt; skillLevels[id]) {
         <li><strong>普通关卡末尾偶发卡死</strong>: <span style="color:#c17f00">🟡 2026-07-17 装了诊断工具 (demo commit c214fea)</span> — URL <code>?debug=1</code> 开启现场快照 + 屏幕红 badge + 4 处延迟回调 setTimeout 包 try-catch, 根因待 K 复现取证后定位</li>
         <li><strong>spec ↔ demo 反向对齐</strong>: <span style="color:#2e7d32">✅ 2026-07-17 P0 已补</span> — §2.2.2 / §4.2 (mercy) / §4.3.1 / §4.6.F16 / §5.9 (5 处双倍火力/恩赐/恶魔赌局) 加了 "⚠️ V3.3.x 覆盖" 醒目标记, 历史文字保留供对比。P1/P2 冲突 (状态门 3 防线维度未入 §5.1 / §7.5.6 死引用 §4.5 / a_burst 未入 §4.6.A) 因不影响外包/游玩, 归入低优先级, 后续 v3.4 整段重写时统一处理</li>
       </ul>
+    </div>
+
+    <h3 style="color:#c62828">V3.3.9 · 恩赐削弱 + 权重/宝箱经验平衡 (2026-07-18 · demo commit 0021968)</h3>
+    <p><strong>这是恩赐解脱 / 抽卡权重 / 宝箱经验三处的最新权威规格, 覆盖 V3.3.4 / §4.3.1 / V3.3.5 对应数值。触发: K 复测反馈"恩赐太强 + 三级太易满 + 宝箱太多躺赢"。</strong></p>
+
+    <div class="callout" style="border-color:#c62828">
+      <strong>① 恩赐解脱削弱</strong> (mercy):
+      <ul style="margin-top:6px">
+        <li><strong>伤害倍率 72x → 48x</strong>: 中期不吃攻击力加成、不暴击也能无限刷新清屏, 不健康。<code>getPlayerAtk() × 48</code></li>
+        <li><strong>锥形取敌角度分级, 从 Lv1 起生效</strong> (原 Lv1 无锥形/Lv2+ 固定 90°): 总张角 Lv1=60° / Lv2=90° / Lv3=120°。实现 = 半角 <code>coneHalfDeg = level>=3?60:(level>=2?45:30)</code>, 判据 <code>dy&gt;0 &amp;&amp; |dx| &lt;= dy·tan(coneHalfDeg)</code>, 不足从 rankedList 兜底补</li>
+        <li><strong>Lv3 恐惧 → 颤栗</strong> (不再硬控): 原"圆形恐惧 r=90 · stun 2s" → "半圆颤栗 r=62 (=2 小兵单位, 小兵 w=31) · 移速 ×0.5 持续 1s"。字段 <code>e.chillUntil / e.chillMult=0.5</code>, 在 updateEnemies 位移处消费 (与 slowUntil 取 Math.min 更慢, 可叠加)</li>
+      </ul>
+      <strong>② 抽卡权重平衡</strong>: 已持有的下一级技能卡权重 <strong>×2 → ×1.3</strong> (§4.3.1)。原 ×2 让三级技能太易速满, 降加权逼玩家横向铺技能而非纵向速满。新卡仍 1.0。<br>
+      <strong>③ 宝箱经验门槛陡化</strong> (V3.3.5): 起步阈值 <strong>50 → 80</strong>, 递增倍率 <strong>×1.5 → ×1.7</strong>。原曲线中期宝箱出太多 → 前期起飞躺赢。新序列 = 80 / 136 / 231 / 393 / 668 / ...(方案2: 全程更难但前期不卡死, 保持曲线健康)<br>
+      <strong>④ 宝箱经验进度条 UI</strong> (新增): 接敌通道顶端 (barY=HORIZON_Y+2, barW=TRACK_R_WIDTH×0.6 居中) 画青色进度条 + 文字 "宝箱 X/Y", 展示 <code>G.chestExp / G.chestExpThreshold</code>。预体验关卡不显示 (<code>!G.isPreExperience</code>)。
     </div>
   </section>
 
