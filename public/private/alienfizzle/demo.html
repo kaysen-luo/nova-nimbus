@@ -4621,8 +4621,12 @@ function showLevelSelect() {
   const page = document.getElementById('levelSelectPage');
   const container = document.getElementById('levelBtnsContainer');
   if (!page || !container) return;
-  // 若从预体验通关来的, 记录预体验通关
+  // [隐藏预体验-测三关 TEMP · 待回滚] 预体验被跳过 → preExpCompleted 无法置位 → 三关锁死.
+  //   测试期临时解锁全部三关. 回滚时删除本 setProgress 三连 (level1/2/3Completed 是通关标记,
+  //   这里提前置位仅为解锁下一关按钮; 回滚后应清 localStorage 重置进度).
   setProgress('preExpCompleted');
+  setProgress('level1Completed');
+  setProgress('level2Completed');
   const levels = [
     { id: 1, key: 'level1Completed', name: '第 1 关 · 新手训练', desc: '低强度侦察 · 熟悉战场机制', unlockKey: 'preExpCompleted', color: '#5fb0ff' },
     { id: 2, key: 'level2Completed', name: '第 2 关 · 标准部署', desc: '常规兵种混编 · 中等挑战', unlockKey: 'level1Completed', color: '#88cc88' },
@@ -4894,10 +4898,12 @@ function showIntroDialog() {
   if (!wantIntro) {
     const dlg = document.getElementById('introDialog');
     if (dlg) dlg.style.display = 'none';
-    if (typeof startPreExperience === 'function') {
-      startPreExperience();
+    // [隐藏预体验-测三关 TEMP · 待回滚] 原: startPreExperience() 强制先玩预体验.
+    //   测试正式三关期间跳过预体验, 直接进关卡选择页. 回滚时改回 startPreExperience().
+    if (typeof showLevelSelect === 'function') {
+      showLevelSelect();
     } else if (typeof startGame === 'function') {
-      startGame(1);
+      startGame(2);
     }
     return;
   }
@@ -4941,10 +4947,11 @@ function showIntroDialog() {
     dlg.style.opacity = '0';
     setTimeout(() => {
       dlg.style.display = 'none';
-      if (typeof startPreExperience === 'function') {
-        startPreExperience();
+      // [隐藏预体验-测三关 TEMP · 待回滚] 原: startPreExperience(). 回滚时改回.
+      if (typeof showLevelSelect === 'function') {
+        showLevelSelect();
       } else if (typeof startGame === 'function') {
-        startGame(1);
+        startGame(2);
       }
     }, 500);
   };
