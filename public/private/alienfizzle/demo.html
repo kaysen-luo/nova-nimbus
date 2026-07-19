@@ -2487,32 +2487,19 @@ const ENEMY_FORMATIONS = {
   'elite-trail':[{type:'elite',lane:1,y:0},{type:'small',lane:0,y:50},{type:'small',lane:1,y:50},{type:'small',lane:2,y:50}],
 };
 
-// Phase 时间表 - 每段配 wave 池 + 节奏 + 在结尾插 elite/miniBoss
-// 总目标: 6 elite + 3 miniBoss 渐进释放, 最后 final boss
+// [K节奏v2] Phase 时间表重写: 总时长 300s 五段, 散兵化后不再用 pool/eliteInjects
+// 密度靠 waveInterval 递减内建, elite 比例靠 eliteProb 显式给。boss 一次性节点保留。
 const PHASES = [
-  // start: 秒, end: 秒, waveInterval: 秒, pool: formation 名, eliteInjects: 一次性事件, boss: 一次性 spawn
-  // v3: 前期降难度 (0-25s, 25-50s)，给玩家上手时间
-  { start: 0,   end: 25,  waveInterval: 4.5, pool: ['h3-small','v3','5x1','h3-small'], eliteInjects: [] },
-  // 25-50s: 加压期, elite 插入
-  { start: 25,  end: 50,  waveInterval: 3.5, pool: ['h3-small','5x1','3x3-mixed','v3'], eliteInjects: [{t:38, type:'elite'}, {t:48, type:'elite'}] },
-  // 50-70s: 双精英压制
-  { start: 50,  end: 70,  waveInterval: 2.2, pool: ['3x3-mixed','elite-guard','5x1','3x4-pressure'],
-    eliteInjects: [{t:55,type:'elite'},{t:60,type:'elite'},{t:65,type:'elite'}] },
-  // 70-85s: mini-boss A
-  { start: 70,  end: 85,  waveInterval: 2.0, pool: ['h3-small','5x1','3x3-mixed'], boss: {t:70, type:'miniA'} },
-  // 85-105s: 加压
-  { start: 85,  end: 105, waveInterval: 1.8, pool: ['elite-guard','3x4-pressure','elite-trail','3x3-mixed'],
-    eliteInjects: [{t:92,type:'elite'},{t:100,type:'elite'}] },
-  // 105-120s: mini-boss B
-  { start: 105, end: 120, waveInterval: 1.8, pool: ['3x3-mixed','5x1','elite-trail'], boss: {t:105, type:'miniB'} },
-  // 120-140s: 大群涌入
-  { start: 120, end: 140, waveInterval: 1.6, pool: ['3x4-pressure','3x6-swarm','elite-trail','elite-guard'], eliteInjects: [{t:130,type:'elite'}] },
-  // 140-155s: mini-boss C
-  { start: 140, end: 155, waveInterval: 1.6, pool: ['3x4-pressure','elite-trail'], boss: {t:140, type:'miniC'} },
-  // 155-175s: 双精英 + swarm
-  { start: 155, end: 175, waveInterval: 1.4, pool: ['3x6-swarm','3x4-pressure','elite-guard','double-elite'], eliteInjects: [{t:165,type:'elite'},{t:170,type:'elite'}] },
-  // 175s+: FINAL BOSS, 其他敌人继续 spawn (高频率)
-  { start: 175, end: 9999, waveInterval: 2.0, pool: ['3x4-pressure','elite-trail','elite-guard'], boss: {t:175, type:'boss'} },
+  // 0-60s 新手期: 纯小兵为主, 极少精英
+  { start:0,   end:60,  waveInterval:2.2, eliteProb:0.05 },
+  // 60-120s 前中期: 小兵为底 + 少量精英, miniA 出场
+  { start:60,  end:120, waveInterval:2.0, eliteProb:0.12, boss:{t:90,  type:'miniA'} },
+  // 120-180s 中期: 精英明显增多, miniB
+  { start:120, end:180, waveInterval:1.8, eliteProb:0.22, boss:{t:150, type:'miniB'} },
+  // 180-240s 中后期: 精英大量, miniC
+  { start:180, end:240, waveInterval:1.6, eliteProb:0.30, boss:{t:210, type:'miniC'} },
+  // 240-300s 后期高潮: 小兵+精英+final boss 夹杂, 压迫拉满
+  { start:240, end:300, waveInterval:1.4, eliteProb:0.38, boss:{t:260, type:'boss'} },
 ];
 
 // 获取右通道 3 lane 的 x 中点
@@ -2523,11 +2510,13 @@ function rightLaneX(lane) {
 }
 
 // 现在 phase
-function currentPhase(elapsed) {
-  for (const p of PHASES) {
+// [K时长分级] 支持传入自定义 phases (拉伸后运行时表), 默认回落到常量 PHASES
+function currentPhase(elapsed, phases) {
+  const list = phases || PHASES;
+  for (const p of list) {
     if (elapsed >= p.start && elapsed < p.end) return p;
   }
-  return PHASES[PHASES.length - 1];
+  return list[list.length - 1];
 }
 
 // 释放一个方阵到屏幕
@@ -2564,7 +2553,11 @@ function spawnEnemies() {
     return;
   }
   const elapsed = (G.now - G.startTime) / 1000;
-  const phase = currentPhase(elapsed);
+  // [K节奏v2] 300s 后停刷所有 wave 小兵/精英 (boss/miniBoss 一次性节点都在300前, 自然不再触发)
+  // [K时长分级] 停刷线改读拉伸后总时长 (第1关300s/第2关420s/第3关540s)
+  if (elapsed >= (G.levelEndSec || 300)) return;
+  // [K时长分级] currentPhase 读运行时拉伸表
+  const phase = currentPhase(elapsed, G.runtimePhases);
 
   // 1. 触发 phase 一次性事件: elite inject + boss spawn
   if (phase.eliteInjects) {
@@ -2578,53 +2571,47 @@ function spawnEnemies() {
       }
     }
   }
-  if (phase.boss) {
-    const key = `boss-${phase.boss.type}`;
+  // [Kboss分级] boss 触发改读关卡定制序列 G.runtimeBosses (不再绑 phase.boss)
+  if (G.runtimeBosses && G.runtimeBosses.length) {
     if (!G._bossSpawned) G._bossSpawned = new Set();
-    if (elapsed >= phase.boss.t && !G._bossSpawned.has(key)) {
-      G._bossSpawned.add(key);
-      // boss 在中央生成, 大 boss 站位
-      const tcfg = CFG.enemy.types[phase.boss.type];
-      const cx = TRACK_R_LEFT + TRACK_R_WIDTH / 2;
-      const e = createEnemy(phase.boss.type, cx, HORIZON_Y + 5);
-      if (e) {
-        G.enemies.push(e);
-        // boss 出场提示
-        floatText(W/2, H/2, e.isFinalBoss ? 'FINAL BOSS' : `小 BOSS ${e.isMiniBoss}`,
-                  e.isFinalBoss ? '#ffd700' : '#ff3d6b', true);
-        SFX.play('boss_alert');
+    for (const b of G.runtimeBosses) {
+      if (elapsed >= b.t && !G._bossSpawned.has(b.id)) {
+        G._bossSpawned.add(b.id);
+        // boss 在中央生成, 大 boss 站位
+        const tcfg = CFG.enemy.types[b.type];
+        const cx = TRACK_R_LEFT + TRACK_R_WIDTH / 2;
+        const e = createEnemy(b.type, cx, HORIZON_Y + 5);
+        if (e) {
+          G.enemies.push(e);
+          // boss 出场提示 (沿用原逻辑)
+          floatText(W/2, H/2, e.isFinalBoss ? 'FINAL BOSS' : `小 BOSS ${e.isMiniBoss}`,
+                    e.isFinalBoss ? '#ffd700' : '#ff3d6b', true);
+          SFX.play('boss_alert');
+        }
       }
     }
   }
 
-  // 2. wave 节奏 - 只在 waveInterval > 0 且当前没有 boss 在场时 spawn
+  // [K节奏v2] wave 节奏: waveInterval 已内建密度递减, 不再 ×0.67 加密
+  //   boss 在场规则: 前期(elapsed<240) mini-boss 阶段保持"boss在场停刷"给玩家喘息
+  //                  后期(elapsed>=240) final boss 阶段即使 boss 在场也继续刷小兵/精英, 压迫拉满
+  // [K时长分级] 240 也随关卡时长 scale (第2关=336s / 第3关=432s 才进入 final boss 期)
+  // [Kboss分级] 对齐 final boss 实际出场点 (levelEndSec * 0.867)
+  const _lateBossT = (G.levelEndSec || 300) * 0.867;
   const hasActiveBoss = G.enemies.some(e => e.isMiniBoss || e.isFinalBoss);
-  if (phase.waveInterval > 0 && !hasActiveBoss) {
+  if (phase.waveInterval > 0 && (!hasActiveBoss || elapsed >= _lateBossT)) {
     if (G.now >= G.nextEnemyAt) {
-      // [K正式关卡调优] 散兵化: 不再刷方阵, 改单只随机 spawn (随机 lane + x 抖动 + 类型按 phase 池的 elite 比例)
-      // 中后期(elapsed>=120)加量 50%: 仅靠 waveInterval ×0.67 提频 (等效 +50% 密度)。
-      //   [K正式关卡调优 review-fix] 原双乘(数量rand1-2 × 频率0.67)≈+125% 过猛, 删数量翻倍, 回到纯 +50%。
-      const isLate = elapsed >= 120;
-      const dens = isLate ? 0.67 : 1.0;
       spawnScatter(phase, 1);
-      G.nextEnemyAt = G.now + phase.waveInterval * 1000 * dens;
+      G.nextEnemyAt = G.now + phase.waveInterval * 1000;
     }
   }
 }
 
-// [K正式关卡调优] 散兵刷怪: 从当前 phase pool 里推断 elite 权重, 单只单只随机刷
-// - 类型: 若 pool 中方阵名含 'elite' 或 'double-elite', 认为该 phase 有 elite 出现概率
-// - lane 随机 0/1/2, x 在 lane 内做 ±0.35 lane 宽抖动, y 在地平线附近微抖
+// [K节奏v2] 散兵刷怪: 直接读 phase.eliteProb (旧的从 pool 名推权重逻辑已废弃)
 function spawnScatter(phase, count) {
   count = Math.max(1, count | 0);
-  // 计算 elite 权重: 池里含 'elite' 的方阵占比 → 转成 0.05~0.35 的 elite 概率
-  let eliteWeight = 0;
-  if (phase.pool && phase.pool.length) {
-    const hit = phase.pool.filter(n => /elite/i.test(n)).length;
-    eliteWeight = hit / phase.pool.length; // 0..1
-  }
-  // 温和映射: 0 → 5%, 1 → 35%
-  const eliteProb = 0.05 + eliteWeight * 0.30;
+  // [K节奏v2] elite 概率直接从 phase 显式字段读, 缺省 5%
+  const eliteProb = (phase && phase.eliteProb != null) ? phase.eliteProb : 0.05;
   for (let i = 0; i < count; i++) {
     const type = (Math.random() < eliteProb) ? 'elite' : 'small';
     const tcfg = CFG.enemy.types[type];
@@ -3003,23 +2990,38 @@ function updateTreasures(dt) {
     if ((t.kind === 'perk' || t.kind === 'buff') && !t.settledAt && t.y >= t.targetY) {
       t.settledAt = G.now || performance.now();
       t.obstacleSpawned = false;
+      // [K节奏v2] 浮动倒计时: 越后期越短。基准随游戏进度从30s线性降到15s, ±2s抖动, clamp[15,30]
+      // [K时长分级] 进度改按拉伸后总时长算 (G.levelEndSec), 保证 7/9 分钟关也贯穿整局
+      const _elapsedSec = ((G.now || performance.now()) - G.startTime) / 1000;
+      const _prog = Math.min(1, Math.max(0, _elapsedSec / (G.levelEndSec || 300)));
+      const _base = 30 - _prog * 15; // 30→15
+      t.obstacleDelay = Math.max(15, Math.min(30, _base + (Math.random() - 0.5) * 4)) * 1000;
     }
-    // [K正式关卡调优] 落定 20s 未破 → 前方(y 更大)随机刷 0~2 障碍, 仅触发一次
+    // [K节奏v2] 触发条件: 前60s全局豁免 + 浮动倒计时到 + 血量>0, 仅触发一次
+    // [K时长分级] 豁免期改按进度 20% (5min=60s / 7min=84s / 9min=108s)
+    const _nowMs = G.now || performance.now();
+    const _elapsedSec2 = (_nowMs - G.startTime) / 1000;
+    const _prog2 = _elapsedSec2 / (G.levelEndSec || 300);
     if ((t.kind === 'perk' || t.kind === 'buff')
         && t.settledAt && !t.obstacleSpawned
         && t.hp > 0
-        && (G.now || performance.now()) - t.settledAt >= 20000) {
+        && _prog2 >= 0.2
+        && _nowMs - t.settledAt >= (t.obstacleDelay || 20000)) {
       t.obstacleSpawned = true;
-      spawnObstaclesForTreasure(t);
+      spawnObstaclesForTreasure(t, _prog2);
     }
   });
 }
 
 // [K正式关卡调优] 因真宝箱超时未破触发, 在其前方(靠防线方向, y 更大)刷 0~2 个障碍
 // 障碍沿用 decoy 视觉与血量规则: HP = 最近真宝箱当前档 HP × decoyRatio, 跟随 slotMult
-function spawnObstaclesForTreasure(srcT) {
+function spawnObstaclesForTreasure(srcT, prog) {
   const cfgT = CFG.treasure;
-  const count = Math.floor(Math.random() * 3); // 0/1/2
+  // [K节奏v2] 数量分段: 60-120s 刷0-1个, 120s后刷0-2个 (60s前不会进来因触发条件已挡)
+  // [K时长分级] 改按进度百分比: 前40% 刷0-1, 40%后刷0-2 (调用方已传入 prog=elapsed/levelEndSec)
+  let count;
+  if ((prog || 0) < 0.4) count = Math.floor(Math.random() * 2); // 0/1
+  else count = Math.floor(Math.random() * 3);                    // 0/1/2
   if (count === 0) return;
   const ratio = cfgT.decoyRatio || 0.5;
   const baseHp = G.lastRealTreasureHp
@@ -4780,10 +4782,10 @@ function startGame(levelNum) {
   // T07: 持久化当前关卡, 下次启动默认进入
   Storage.set('currentLevel', levelNum);
   const LEVEL_CONFIG = {
-    0: { diffMult: 1.0,  enemyMult: 1.0,  name: '预体验 · 无双时刻' },
-    1: { diffMult: 0.5,  enemyMult: 0.6,  name: '第一关 · 新手训练' },
-    2: { diffMult: 1.0,  enemyMult: 1.0,  name: '第二关 · 标准战役' },
-    3: { diffMult: 1.5,  enemyMult: 1.4,  name: '第三关 · 殊死决战' }
+    0: { diffMult: 1.0,  enemyMult: 1.0,  durationScale: 1.0, miniBossCount: 3, name: '预体验 · 无双时刻' },  // [Kboss分级] 预体验不走此spawn, 兜底值
+    1: { diffMult: 0.5,  enemyMult: 0.6,  durationScale: 1.0, miniBossCount: 1, name: '第一关 · 新手训练' },  // [K时长分级] 300s=5min [Kboss分级] 1小+1大
+    2: { diffMult: 1.0,  enemyMult: 1.0,  durationScale: 1.4, miniBossCount: 3, name: '第二关 · 标准战役' },  // [K时长分级] 420s=7min [Kboss分级] 3小+1大
+    3: { diffMult: 1.5,  enemyMult: 1.4,  durationScale: 1.8, miniBossCount: 5, name: '第三关 · 殊死决战' }   // [K时长分级] 540s=9min [Kboss分级] 5小+1大
   };
   const cfg = LEVEL_CONFIG[levelNum] || LEVEL_CONFIG[2];
   document.getElementById('startPanel').style.display = 'none';
@@ -4791,6 +4793,34 @@ function startGame(levelNum) {
   reset();
   G.diffMult = cfg.diffMult;
   G.enemyMult = cfg.enemyMult;
+  // [K时长分级] 按关卡时长倍率拉伸 PHASES 时间轴 (waveInterval 不拉伸→更长关卡=更多怪)
+  const _scale = cfg.durationScale || 1.0;
+  G.levelTimeScale = _scale;
+  G.runtimePhases = PHASES.map(p => {
+    const np = Object.assign({}, p);
+    np.start = p.start * _scale;
+    np.end   = p.end   * _scale;
+    if (p.boss) np.boss = Object.assign({}, p.boss, { t: p.boss.t * _scale });
+    return np;
+  });
+  G.levelEndSec = 300 * _scale;  // 停刷线 = 拉伸后总时长 (300 / 420 / 540)
+  // [Kboss分级] 按关卡生成 mini-boss 序列 + final boss (与 PHASES.boss 解耦)
+  // 数量随关卡: 新手1 / 中等3 / 高难5; 时间点在关卡时长内均匀分布
+  {
+    const _miniTypes = ['miniA','miniB','miniC','miniB','miniC']; // 循环复用够5个
+    const _miniCount = cfg.miniBossCount || 3;
+    const _endSec = G.levelEndSec || 300;
+    const _finalT = _endSec * 0.867;                 // 对齐原 260/300
+    const _miniStart = _endSec * 0.30;
+    const _miniEnd   = _finalT - _endSec * 0.08;     // final 前留身位
+    G.runtimeBosses = [];
+    for (let i = 0; i < _miniCount; i++) {
+      const frac = (_miniCount === 1) ? 0.5 : i / (_miniCount - 1);
+      const t = _miniStart + (_miniEnd - _miniStart) * frac;
+      G.runtimeBosses.push({ t, type: _miniTypes[i % _miniTypes.length], id: 'mini'+i });
+    }
+    G.runtimeBosses.push({ t: _finalT, type: 'boss', id: 'final' });
+  }
   G.running = true;
   G.startTime = performance.now();
   G.pauseAccum = 0;
