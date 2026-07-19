@@ -1096,15 +1096,15 @@ const CFG = {
     maxSpawnInterval: 3500,
     types: {
       // small - 体积大但伤害适中, 给玩家反应时间
-      small:  {hp: 30,   speed: 50, dps: 5,   w: 31, h: 31, color: '#a44', shield: 0,    armor: 0,   score: 10},
+      small:  {hp: 60,   speed: 50, dps: 5,   w: 31, h: 31, color: '#a44', shield: 0,    armor: 0.10,   score: 10}, // [K正式关卡调优] hp×2, small armor 0→0.10
       // elite 高护甲 - 减伤 40%, hp 大幅提升
-      elite:  {hp: 280,  speed: 25, dps: 12,  w: 47, h: 47, color: '#a64dff', shield: 0, armor: 0.4, score: 60},
+      elite:  {hp: 560,  speed: 25, dps: 12,  w: 47, h: 47, color: '#a64dff', shield: 0, armor: 0.45, score: 60}, // [K正式关卡调优] hp×2, armor 0.4→0.45
       // mini-boss 渐强: HP 翻倍 + armor 阶梯 + dps 拉高
-      miniA:  {hp: 2400, speed: 20, dps: 28,  w: 70, h: 70, color: '#ff8c00', shield: 0, armor: 0.55, score: 200, isMiniBoss: 1},
-      miniB:  {hp: 5500, speed: 18, dps: 38,  w: 76, h: 76, color: '#ff3d6b', shield: 0, armor: 0.62, score: 350, isMiniBoss: 2},
-      miniC:  {hp: 10000, speed: 16, dps: 50, w: 82, h: 82, color: '#ff007a', shield: 0, armor: 0.68, score: 500, isMiniBoss: 3},
+      miniA:  {hp: 4800, speed: 20, dps: 28,  w: 70, h: 70, color: '#ff8c00', shield: 0, armor: 0.58, score: 200, isMiniBoss: 1}, // [K正式关卡调优] hp×2, armor 0.55→0.58
+      miniB:  {hp: 11000, speed: 18, dps: 38,  w: 76, h: 76, color: '#ff3d6b', shield: 0, armor: 0.65, score: 350, isMiniBoss: 2}, // [K正式关卡调优] hp×2, armor 0.62→0.65
+      miniC:  {hp: 20000, speed: 16, dps: 50, w: 82, h: 82, color: '#ff007a', shield: 0, armor: 0.70, score: 500, isMiniBoss: 3}, // [K正式关卡调优] hp×2, armor 0.68→0.70
       // 大 BOSS - 终极, hp 大幅拔高, dps 上升让玩家不能拖时间
-      boss:   {hp: 25000, speed: 12, dps: 60, w: 110, h: 110, color: '#5a00ff', shield: 0.0, armor: 0.75, score: 2000, isFinalBoss: true},
+      boss:   {hp: 50000, speed: 12, dps: 60, w: 110, h: 110, color: '#5a00ff', shield: 0.0, armor: 0.78, score: 2000, isFinalBoss: true}, // [K正式关卡调优] hp×2, armor 0.75→0.78
     },
   },
   // 宝箱 - 单列全宽排布 (整条左通道 165 宽), 开局默认排满 5 个
@@ -1116,14 +1116,15 @@ const CFG = {
     // 议题 12 · 二版调整: label 改编号 "1"..."8", HP × 4 拔高不能秒破
     // [7/16 C1-3] HP 曲线整体上调 (spec §7.5.6 预体验拉高), 与 miniA/miniB 血量级别对齐
     perks: [
-      { id: 'fireRate',   hp: 300,  color: '#ffcc44', label: '1', desc: '主角射速 +1%/s 持续' },
-      { id: 'multiShot',  hp: 600,  color: '#44dd99', label: '2', desc: '弹道 +1, 每 30s +1' },
-      { id: 'atkUp',      hp: 1000, color: '#ff5544', label: '3', desc: '主角攻击每 5s +1' },
-      { id: 'explosive',  hp: 1500, color: '#ff8c00', label: '4', desc: '命中点小范围爆炸' },
-      { id: 'ricochet',   hp: 2200, color: '#4dffea', label: '5', desc: '子弹弹射下一个敌人' },
-      { id: 'laser',      hp: 3000, color: '#a64dff', label: '6', desc: '每 3s 折射激光' },
-      { id: 'mirror',     hp: 4000, color: '#ff88dd', label: '7', desc: '复制副手 NUO' },
-      { id: 'ultimate',   hp: 5000, color: '#ffd700', label: '8', desc: '每 10s 全屏爆炸' },
+      // [K正式关卡调优] 真宝箱 HP 全档 ×2
+      { id: 'fireRate',   hp: 600,  color: '#ffcc44', label: '1', desc: '主角射速 +1%/s 持续' },
+      { id: 'multiShot',  hp: 1200,  color: '#44dd99', label: '2', desc: '弹道 +1, 每 30s +1' },
+      { id: 'atkUp',      hp: 2000, color: '#ff5544', label: '3', desc: '主角攻击每 5s +1' },
+      { id: 'explosive',  hp: 3000, color: '#ff8c00', label: '4', desc: '命中点小范围爆炸' },
+      { id: 'ricochet',   hp: 4400, color: '#4dffea', label: '5', desc: '子弹弹射下一个敌人' },
+      { id: 'laser',      hp: 6000, color: '#a64dff', label: '6', desc: '每 3s 折射激光' },
+      { id: 'mirror',     hp: 8000, color: '#ff88dd', label: '7', desc: '复制副手 NUO' },
+      { id: 'ultimate',   hp: 10000, color: '#ffd700', label: '8', desc: '每 10s 全屏爆炸' },
     ],
     repeatBuffs: [
       { id: 'atk++',  color: '#ff5544', label: '攻击++', desc: '主角伤害 +25%' },
@@ -1131,8 +1132,8 @@ const CFG = {
       { id: 'crit++', color: '#ffd441', label: '暴击+',  desc: '暴击率 +3%' },
     ],
     // repeat 阶段基础 HP
-    repeatHpStart: 3500,
-    repeatHpStep: 600,
+    repeatHpStart: 7000, // [K正式关卡调优] 3500→7000 (×2)
+    repeatHpStep: 1200, // [K正式关卡调优] 600→1200 (×2)
     // decoy 基础 HP - 也会跟随 slotMult 递增
     decoyHpBase: 180,
     decoyRatio: 0.5,  // 空宝箱 HP = 最近真宝箱 × 0.5
@@ -2600,10 +2601,41 @@ function spawnEnemies() {
   const hasActiveBoss = G.enemies.some(e => e.isMiniBoss || e.isFinalBoss);
   if (phase.waveInterval > 0 && !hasActiveBoss) {
     if (G.now >= G.nextEnemyAt) {
-      const formation = pick(phase.pool);
-      spawnFormation(formation);
-      G.nextEnemyAt = G.now + phase.waveInterval * 1000;
+      // [K正式关卡调优] 散兵化: 不再刷方阵, 改单只随机 spawn (随机 lane + x 抖动 + 类型按 phase 池的 elite 比例)
+      // 中后期(elapsed>=120)加量 50%: 仅靠 waveInterval ×0.67 提频 (等效 +50% 密度)。
+      //   [K正式关卡调优 review-fix] 原双乘(数量rand1-2 × 频率0.67)≈+125% 过猛, 删数量翻倍, 回到纯 +50%。
+      const isLate = elapsed >= 120;
+      const dens = isLate ? 0.67 : 1.0;
+      spawnScatter(phase, 1);
+      G.nextEnemyAt = G.now + phase.waveInterval * 1000 * dens;
     }
+  }
+}
+
+// [K正式关卡调优] 散兵刷怪: 从当前 phase pool 里推断 elite 权重, 单只单只随机刷
+// - 类型: 若 pool 中方阵名含 'elite' 或 'double-elite', 认为该 phase 有 elite 出现概率
+// - lane 随机 0/1/2, x 在 lane 内做 ±0.35 lane 宽抖动, y 在地平线附近微抖
+function spawnScatter(phase, count) {
+  count = Math.max(1, count | 0);
+  // 计算 elite 权重: 池里含 'elite' 的方阵占比 → 转成 0.05~0.35 的 elite 概率
+  let eliteWeight = 0;
+  if (phase.pool && phase.pool.length) {
+    const hit = phase.pool.filter(n => /elite/i.test(n)).length;
+    eliteWeight = hit / phase.pool.length; // 0..1
+  }
+  // 温和映射: 0 → 5%, 1 → 35%
+  const eliteProb = 0.05 + eliteWeight * 0.30;
+  for (let i = 0; i < count; i++) {
+    const type = (Math.random() < eliteProb) ? 'elite' : 'small';
+    const tcfg = CFG.enemy.types[type];
+    if (!tcfg) continue;
+    const lane = Math.floor(Math.random() * 3);
+    const laneW = TRACK_R_WIDTH / 3;
+    let x = rightLaneX(lane) + (Math.random() - 0.5) * laneW * 0.7;
+    x = clamp(x, TRACK_R_LEFT + tcfg.w/2, TRACK_R_RIGHT - tcfg.w/2);
+    const y = HORIZON_Y + 5 - Math.random() * 25; // 微错峰(略高一点从远处出来)
+    const e = createEnemy(type, x, y);
+    if (e) G.enemies.push(e);
   }
 }
 
@@ -2884,9 +2916,12 @@ function spawnNewChest() {
   reflowTreasures();
 }
 
-// [7/17 P1-1] 空宝箱 idle 触发器: 长时间未破真宝箱时插入最多 2 个 decoy
-// 阈值 25s, 冷却 25s, 场上 decoy ≥ 2 时跳过
+// [K正式关卡调优] 老 idle decoy 触发器彻底停用. 障碍改由 updateTreasures 内
+// "真宝箱落定 20s 未破 → 前方刷 0-2 障碍" 触发. 保留函数壳仅做 no-op, 兼容外部调用点.
 function tickIdleDecoyTrigger() {
+  return; // 停用: 正式关卡不再无条件冒空箱子
+}
+function _deprecated_tickIdleDecoyTrigger_OLD() {
   if (G.isPreExperience) return;  // 预体验关卡不触发 (方阵关卡逻辑独立)
   if (!G.lastRealChestBreakAt) G.lastRealChestBreakAt = G.now;
   if (G.now - G.lastRealChestBreakAt < 25000) return;
@@ -2964,7 +2999,53 @@ function updateTreasures(dt) {
       t.y += fallSpeed * dt;
       if (t.y > t.targetY) t.y = t.targetY;
     }
+    // [K正式关卡调优] 记录真宝箱"落定时刻"—— y 到达 targetY 且尚未打过标
+    if ((t.kind === 'perk' || t.kind === 'buff') && !t.settledAt && t.y >= t.targetY) {
+      t.settledAt = G.now || performance.now();
+      t.obstacleSpawned = false;
+    }
+    // [K正式关卡调优] 落定 20s 未破 → 前方(y 更大)随机刷 0~2 障碍, 仅触发一次
+    if ((t.kind === 'perk' || t.kind === 'buff')
+        && t.settledAt && !t.obstacleSpawned
+        && t.hp > 0
+        && (G.now || performance.now()) - t.settledAt >= 20000) {
+      t.obstacleSpawned = true;
+      spawnObstaclesForTreasure(t);
+    }
   });
+}
+
+// [K正式关卡调优] 因真宝箱超时未破触发, 在其前方(靠防线方向, y 更大)刷 0~2 个障碍
+// 障碍沿用 decoy 视觉与血量规则: HP = 最近真宝箱当前档 HP × decoyRatio, 跟随 slotMult
+function spawnObstaclesForTreasure(srcT) {
+  const cfgT = CFG.treasure;
+  const count = Math.floor(Math.random() * 3); // 0/1/2
+  if (count === 0) return;
+  const ratio = cfgT.decoyRatio || 0.5;
+  const baseHp = G.lastRealTreasureHp
+    ? Math.max(60, Math.round(G.lastRealTreasureHp * ratio))
+    : Math.round(cfgT.decoyHpBase * Math.pow(cfgT.slotGrowth, G.treasureSlotIdx || 0));
+  // [K正式关卡调优 review-fix] 障碍位于触发它的真宝箱正下方(y+, 靠防线), x 贴宝箱同列小幅抖动
+  //   原实现: x 在整条通道随机横向散布 + 自增 treasureSlotIdx。前者与单列宝箱柱不对齐,
+  //   后者会污染后续真宝箱 HP 曲线(每障碍 ×slotGrowth 越推越厚)。改为同列对齐 + 不动 slotIdx。
+  for (let i = 0; i < count; i++) {
+    const ox = clamp(
+      srcT.x + (Math.random() - 0.5) * cfgT.w * 0.5,
+      cfgT.w / 2 + 4, SPLIT_X - cfgT.w / 2 - 4
+    );
+    const oy = srcT.y + cfgT.h + 8 + i * (cfgT.h + 8);
+    const obs = {
+      x: ox, y: oy, targetY: oy, col: -1, // col=-1 排除出 reflow 列管理
+      w: cfgT.w, h: cfgT.h,
+      hp: baseHp, maxHp: baseHp,
+      color: cfgT.decoyColor || '#3a3a3a',
+      kind: 'decoy',
+      label: '障碍',
+      desc: '',
+      flashUntil: 0,
+    };
+    G.treasures.push(obs);
+  }
 }
 
 // spawnObstacles 已删除 (obstacle 整合进 treasure decoy)
@@ -4319,6 +4400,16 @@ function reset() {
     G.treasures.push(t);
   }
   reflowTreasures();
+  // [K正式关卡调优] 初始宝箱编号顺序反转: 原本创建顺序 label='1'→topY(最上,远离防线),
+  //   '2'→中, '3'→最下(靠防线). 现按屏幕位置反转 targetY, 让 label='1' 落在最下(靠防线), '3' 在最上.
+  //   实现: 反转 targetY 分配, 不改 label(label 绑 perk 内容不动).
+  {
+    const _topY = CFG.treasure.topY, _slotH = CFG.treasure.slotHeight;
+    const _initTs = G.treasures.slice();
+    _initTs.forEach((t, i) => {
+      t.targetY = _topY + (_initTs.length - 1 - i) * _slotH;
+    });
+  }
   // 直接把 y = targetY (不要从屏幕顶部下落, 开局就是排好的)
   G.treasures.forEach(t => { t.y = t.targetY; });
 
@@ -5204,7 +5295,7 @@ function tickBoboGuideLasers(dt) {
     // 每 200ms tick 50 伤害
     if (now - gl.lastTickAt >= 200) {
       gl.lastTickAt = now;
-      let dmg = 50;
+      let dmg = 40; // [K正式关卡调优] 50→40 (×0.8) K反馈"bobo单激光就能守线太强"故削基础段伤
       // [K10-6] 联动 g_focus: 伤害×1.5
       const hasFocus = G.cardPool && G.cardPool.hasMastery('g_focus');
       const hasBurn = G.cardPool && G.cardPool.hasMastery('g_burn');
