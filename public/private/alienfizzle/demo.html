@@ -5490,29 +5490,45 @@ function castSkill(id, level, chainDepth) {
     }
   } else if (id === 'mercy') {
     // ===== 议题 10-4 恩赐解脱 K 原口径重构: 破甲 → 易损 =====
-    // 全等级施加 vulnUntil (+20% 后续伤害 × 5s)
-    // Lv1: 60° 锥取 1 目标; Lv2: 90° 锥取 2 目标, 秒杀 50% 再触发
-    // Lv3: 120° 锥取 5 目标, 半圆颤栗(减速), 秒杀 100% 再触发
-    const rankedList = rankedBoboTargets({ x: player.x, y: player.y }, G.enemies);
+    // [K恩赐-锁头v2] 语义反转: 锥形不再用于选目标, 而是主目标身后的颤栗范围
+    // 主目标选取 = 三层优先级排序 (攻击防线 > 类型 boss/精英/小兵 > 血量% 高者优先)
+    // Lv1 取 1 / Lv2 取 2 / Lv3 取 5; 全等级施加 vulnUntil (+20% 后续伤害 × 5s)
+    // 全等级在主目标身后展开锥形颤栗; Lv2 秒杀 50% 再触发, Lv3 100% 再触发
+    // [K恩赐-锁头v2] 候选池: 全场存活可见敌人 (不做任何锥形/角度/距离筛选)
     const visibleAll = (G.enemies || [])
       .filter(e =>
         e && e.hp > 0 &&
         e.kind !== 'chest' && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff' &&
         e.y > HORIZON_Y && e.y < DEFENSE_Y
       );
-    // 全等级锥形筛选: Lv1=60°(半角30°) / Lv2=90°(半角45°) / Lv3=120°(半角60°)
+    // [K恩赐-锁头v2] mercy 专用三层排序 comparator (独立于 classifyEnemyTier / rankedBoboTargets)
+    //   Layer 1: e.atDefense === true 优先 (攻击中 > 未攻击)
+    //   Layer 2: 类型分档 boss(0) > 精英(1) > 小兵(2), 数字小者优先
+    //     boss = e.isFinalBoss || e.isMiniBoss; 精英 = e.type === 'elite'; 其余小兵
+    //   Layer 3: hp/maxHp 高者优先 (满血优先, 与 bobo "点残" 相反)
+    // 预期验证序列: A=半血小boss未攻, B=满血小boss未攻, C=满血精英未攻,
+    //   D=半血精英攻防, E=满血小兵未攻, F=满血小兵攻防, G=半血小兵攻防
+    //   → 正确顺序: D, F, G, B, A, C, E
+    const mercyTier = (e) => {
+      if (e.isFinalBoss || e.isMiniBoss) return 0;
+      if (e.type === 'elite') return 1;
+      return 2;
+    };
+    const mercyHpPct = (e) => {
+      const mx = e.maxHp || e.hp || 1;
+      return e.hp / mx;
+    };
+    const mercyCompare = (a, b) => {
+      const ad = a.atDefense === true ? 0 : 1;
+      const bd = b.atDefense === true ? 0 : 1;
+      if (ad !== bd) return ad - bd;
+      const at = mercyTier(a), bt = mercyTier(b);
+      if (at !== bt) return at - bt;
+      return mercyHpPct(b) - mercyHpPct(a); // 高血量在前
+    };
+    const pool = visibleAll.slice().sort(mercyCompare);
+    // [K恩赐-锁头v2] 锥形半角 (用于身后颤栗, 不用于选目标)
     const coneHalfDeg = level >= 3 ? 60 : (level >= 2 ? 45 : 30);
-    const tanHalf = Math.tan(coneHalfDeg * Math.PI / 180);
-    let pool = visibleAll.filter(e => {
-      const dx = e.x - player.x, dy = player.y - e.y;
-      return dy > 0 && Math.abs(dx) <= dy * tanHalf;
-    }).sort((a, b) => {
-      const da = (a.x-player.x)**2 + (a.y-player.y)**2;
-      const db = (b.x-player.x)**2 + (b.y-player.y)**2;
-      return da - db;
-    });
-    // 不够就从 rankedList 补
-    for (const e of rankedList) if (!pool.includes(e)) pool.push(e);
     const need = (level >= 3) ? 5 : (level >= 2 ? 2 : 1);
     const targets = pool.slice(0, need);
     if (targets.length === 0) {
@@ -5547,19 +5563,34 @@ function castSkill(id, level, chainDepth) {
         capturedTarget.vulnUntil = G.now + 5000;
         capturedTarget.vulnMult = 1.2;
         floatText(capturedTarget.x, capturedTarget.y - 20, '易损 +20%', '#ff88dd', false);
-        // Lv3: 半圆颤栗(减速)
-        if (level >= 3) {
-          const fr = 62;
-          G.skillVisuals.push({
-            kind: 'ring', x: capturedTarget.x, y: capturedTarget.y, r: fr,
-            color: '#ff66aa', bornAt: G.now, life: 600
-          });
-          for (const e of G.enemies) {
-            if (!e || e.hp <= 0 || e === capturedTarget) continue;
-            if (e.kind === 'chest' || e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') continue;
-            const dx = e.x - capturedTarget.x, dy = e.y - capturedTarget.y;
-            // 半圆: y <= 主目标.y (即在主目标上方), 颤栗(减速) 1s
-            if (dy <= 0 && dx*dx + dy*dy <= fr*fr) {
+        // [K恩赐-锁头v2] 全等级身后锥形颤栗 (语义反转: 锥顶=主目标, 轴=player→target 延长线)
+        //   coneLen = 2 * 小兵直径; 小兵 w=31 (types.small, line 1099), 直径≈31, coneLen=62
+        //   判定: v = e - target; proj = v·dir ∈ (0, coneLen]; 夹角 ≤ coneHalfDeg
+        {
+          const MINION_W = 31; // types.small.w
+          const coneLen = 2 * MINION_W;
+          const rdx = capturedTarget.x - player.x;
+          const rdy = capturedTarget.y - player.y;
+          const rlen = Math.sqrt(rdx*rdx + rdy*rdy);
+          if (rlen > 0.001) {
+            const dirX = rdx / rlen, dirY = rdy / rlen;
+            const cosHalf = Math.cos(coneHalfDeg * Math.PI / 180);
+            // [K恩赐-锁头v2] 锥形视觉 (扇形, 与判定形状一致: 顶点=主目标, 沿 dir 半角 coneHalfDeg)
+            G.skillVisuals.push({
+              kind: 'mercyCone', x: capturedTarget.x, y: capturedTarget.y,
+              dirX, dirY, coneLen, halfRad: coneHalfDeg * Math.PI / 180,
+              color: 'rgba(255, 102, 170, 0.28)', bornAt: G.now, life: 600
+            });
+            for (const e of G.enemies) {
+              if (!e || e.hp <= 0 || e === capturedTarget) continue;
+              if (e.kind === 'chest' || e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') continue;
+              const vx = e.x - capturedTarget.x, vy = e.y - capturedTarget.y;
+              const proj = vx*dirX + vy*dirY;
+              if (proj <= 0 || proj > coneLen) continue;
+              const vlen = Math.sqrt(vx*vx + vy*vy);
+              if (vlen < 0.001) continue;
+              const cosAng = proj / vlen; // = dot(v,dir)/|v|
+              if (cosAng < cosHalf) continue;
               e.chillUntil = Math.max(e.chillUntil||0, G.now + 1000);
               e.chillMult = 0.5;
             }
@@ -5891,6 +5922,22 @@ function drawSkillVisuals() {
       ctx.shadowBlur = 12;
       ctx.beginPath();
       ctx.arc(v.x, v.y, v.r * (0.4 + t * 0.9), 0, Math.PI * 2);
+      ctx.stroke();
+    } else if (v.kind === 'mercyCone') {
+      // [K恩赐-锁头v2] 身后颤栗锥形可视化 (顶点=主目标, 沿 dir 展开 halfRad 半角, 长 coneLen)
+      const ang = Math.atan2(v.dirY, v.dirX);
+      ctx.globalAlpha = alpha * 0.85;
+      ctx.fillStyle = v.color;
+      ctx.shadowColor = v.color;
+      ctx.shadowBlur = 10;
+      ctx.beginPath();
+      ctx.moveTo(v.x, v.y);
+      ctx.arc(v.x, v.y, v.coneLen, ang - v.halfRad, ang + v.halfRad);
+      ctx.closePath();
+      ctx.fill();
+      ctx.globalAlpha = alpha;
+      ctx.strokeStyle = 'rgba(255, 140, 200, 0.85)';
+      ctx.lineWidth = 2;
       ctx.stroke();
     } else if (v.kind === 'vbeam') {
       ctx.fillStyle = v.color;
