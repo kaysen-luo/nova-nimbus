@@ -2102,22 +2102,21 @@ if (targetLv &gt; skillLevels[id]) {
   let dirty = false;
 
   // 加载时检查本地存档
-  //   [2026-07-17 fix] 修弹窗死循环: 
-  //     (1) 7/17 之前的旧存档一律静默丢弃 (K 反馈无限弹, 那份 7/16 02:55 是手机误触产生)
-  //     (2) 新存档改成三选一 (加载/忽略/丢弃), 避免用户没有"永久关掉"的出口
+  //   [2026-07-17 fix] 修弹窗死循环 (按固定日期砍, 治标)
+  //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
+  //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
+  //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
+  const SPEC_PUBLISHED = '2026-07-20 09:44';  // ← 每次重新部署 spec 时更新此值
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
-    // 一次性丢弃 7/17 之前的旧存档 (格式 "YYYY-MM-DD HH:MM")
-    if (saved && meta && meta < '2026-07-17') {
+    // 本地存档旧于线上发布时间 → 过时, 静默丢弃 (不弹窗)
+    if (saved && (!meta || meta < SPEC_PUBLISHED)) {
       localStorage.removeItem(LS_KEY);
       localStorage.removeItem(LS_KEY + '_meta');
-      console.log('[spec-edit] 已静默丢弃过时存档:', meta);
+      console.log('[spec-edit] 已静默丢弃过时存档:', meta || '(无时间戳)', '< 发布时间', SPEC_PUBLISHED);
     } else if (saved) {
-      // 新存档: 三选一
-      // OK   = 加载
-      // Cancel = 什么都不做 (下次继续弹)
-      // 想彻底关掉? 在 confirm 前再问一句
+      // 存档比线上发布还新 = 用户发布后又本地编辑过, 才提示是否加载
       const shouldLoad = confirm('检测到本地保存的编辑版本' + (meta ? ' (' + meta + ')' : '') + '\n\n[确定] = 加载存档覆盖当前页面\n[取消] = 保留存档但不加载 (下次仍会询问)\n\n如需彻底丢弃存档, 请点确定后, 页面加载完毕点右上角 🗑️ 按钮');
       if (shouldLoad) {
         // 只替换 main 内容, 保留工具条
