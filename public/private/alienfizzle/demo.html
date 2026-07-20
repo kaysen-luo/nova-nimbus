@@ -793,7 +793,7 @@ class CardPool {
       if (curLv >= 3) continue; // 已满级
       const nextLv = curLv + 1;
       let weight = curLv > 0 ? 1.3 : 1.0;  // 已持有的下一级权重x1.3
-      pool.push({ type:'skill', id:skill.id, lv:nextLv, weight });
+      pool.push({ type:'skill', id:skill.id, lv:nextLv, weight, category:'skill' });
     }
     // 2. 加入所有精通卡 (可重复)
     for (const m of MASTERY_CARDS) {
@@ -802,11 +802,10 @@ class CardPool {
       if (m.id === 'a_burst' && count > 0) continue;
       // [K10-6] 一次性卡: 扎根 + 等离子防线/屑刃 + G 类三张
       if ((m.id === 'e_root' || m.id === 'e_plasma' || m.id === 'g_focus' || m.id === 'g_burn' || m.id === 'g_guide') && count > 0) continue;
-      // [7/16 fix gamble-merge] 恶魔赌局权重不腰斩, 保持每次抽卡都可能出现 (它本来就是可重复摇色子的卡)
-      const weight = m.id === 'f_gamble'
-        ? 1.5
-        : 1.5 * Math.pow(0.5, count);
-      pool.push({ type:'mastery', id:m.id, weight });
+      // [K8-2 精通卡拿过即剔除] 精通卡设计上每张一次性 (拿过就从池里出), 恶魔赌局例外 (设计即为可重复摇色子)
+      if (m.id !== 'f_gamble' && count > 0) continue;
+      const weight = 1.5;
+      pool.push({ type:'mastery', id:m.id, weight, category:m.category });
     }
     // [K10-4 tune] 调试焦点: 强制第一张为焦点技能 (若未满级)
     const focusMatch = /[?&]focus=(together|flywheel|mercy|highvoltage|laserpierce)\b/.exec(location.search);
@@ -3118,11 +3117,11 @@ function triggerCardSelection() {
       if (skill) {
         const cur = (G.cardPool.skillLevels && G.cardPool.skillLevels[id]) || 0;
         const targetLv = Math.min(3, cur + 1);
-        return { type: 'skill', id: id, lv: targetLv };
+        return { type: 'skill', id: id, lv: targetLv, category: 'skill' };
       }
       const mastery = MASTERY_CARDS.find(m => m.id === id);
       if (mastery) {
-        return { type: 'mastery', id: id };
+        return { type: 'mastery', id: id, category: mastery.category };
       }
       console.warn('[forceCards] unknown id:', id);
       return null;
@@ -5754,10 +5753,11 @@ function castSkill(id, level, chainDepth) {
         const shotDmg = Math.round(getPlayerAtk() * mult);
         const { dmg, crit } = rollSkillCrit(shotDmg);
         damageEnemy(capturedTarget, dmg, crit, true);
-        // 高倍率飘字提示 (≥64x 才提示, 让玩家感知到"这一发是高光")
-        if (mult >= 64) {
-          floatText(capturedTarget.x, capturedTarget.y - 40, mult + 'x!', mult >= 96 ? '#ffdc41' : '#ff88bb', true);
-        }
+        // [K恩赐-倍率飘字] 每次结算都显示倍率, 分档配色让玩家一眼感知这一发是平淡还是高光
+        //   24-48x = 平淡白 · 64-80x = 粉色 · 96-112x = 金色 (极光)
+        const _multColor = mult >= 96 ? '#ffdc41' : (mult >= 64 ? '#ff88bb' : '#ffffff');
+        const _multBig = mult >= 64;
+        floatText(capturedTarget.x, capturedTarget.y - 40, mult + 'x', _multColor, _multBig);
         capturedTarget.vulnUntil = G.now + 5000;
         capturedTarget.vulnMult = 1.2;
         floatText(capturedTarget.x, capturedTarget.y - 20, '易损 +20%', '#ff88dd', false);
