@@ -3295,21 +3295,27 @@ function drawCardSelectionUI() {
 
 function drawCard(card, x, y, w, h) {
   const isSkill = card.type === 'skill';
+  const isWall = card.category === 'E';
+  // [K7-4 三分类视觉] 卡身/边框/顶栏/title 文字统一按 skill/wall/mastery 三色
+  const cardBg = isSkill ? 'rgba(30, 50, 100, 0.98)' : (isWall ? 'rgba(80, 60, 20, 0.98)' : 'rgba(60, 40, 80, 0.98)');
+  const cardBorder = isSkill ? 'rgba(160, 210, 255, 1)' : (isWall ? 'rgba(255, 193, 92, 1)' : 'rgba(220, 170, 250, 1)');
+  const titleBg = isSkill ? 'rgba(120,180,255,0.5)' : (isWall ? 'rgba(255,193,92,0.5)' : 'rgba(200,140,240,0.5)');
+  const titleText = isSkill ? 'SKILL' : (isWall ? 'WALL OF SIGHS' : 'MASTERY');
   // 背景
-  ctx.fillStyle = isSkill ? 'rgba(30, 50, 100, 0.98)' : 'rgba(60, 40, 80, 0.98)';
+  ctx.fillStyle = cardBg;
   ctx.fillRect(x, y, w, h);
-  ctx.strokeStyle = isSkill ? 'rgba(160, 210, 255, 1)' : 'rgba(220, 170, 250, 1)';
+  ctx.strokeStyle = cardBorder;
   ctx.lineWidth = 2;
   ctx.strokeRect(x, y, w, h);
 
   // [7/16 fix 1] 顶部类型标签: 高度 18→24, 字号 10→13, sans-serif 替代等宽提升可读性
-  ctx.fillStyle = isSkill ? 'rgba(120,180,255,0.5)' : 'rgba(200,140,240,0.5)';
+  ctx.fillStyle = titleBg;
   ctx.fillRect(x, y, w, 24);
   ctx.fillStyle = '#fff';
   ctx.font = 'bold 13px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(isSkill ? 'SKILL' : 'MASTERY', x + w/2, y + 12);
+  ctx.fillText(titleText, x + w/2, y + 12);
 
   // [7/16 fix 1] 标题字号 13→18, 加阴影
   let title = '?';
@@ -3385,7 +3391,7 @@ function drawCard(card, x, y, w, h) {
   if (!isSkill) {
     const m = MASTERY_CARDS.find(mc => mc.id === card.id);
     const cat = m ? m.category : '?';
-    ctx.fillStyle = 'rgba(200, 140, 240, 0.75)';
+    ctx.fillStyle = isWall ? 'rgba(255, 193, 92, 0.75)' : 'rgba(200, 140, 240, 0.75)';
     ctx.fillRect(x + 5, y + h - 26, 26, 22);
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 14px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
