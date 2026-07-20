@@ -724,6 +724,21 @@ const MASTERY_CARDS = [
   { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 攒 20 次攻击发一道 5s 制导激光, 击杀跳目标. 联动 g_focus (伤害×1.5 + 弹射×3, 递减20%) 和 g_burn (爆炸+点燃) [不可重复]' }
 ];
 
+// [K5-卡片标签] 卡面功能标签映射 (id -> 标签数组, 每卡≤3). 独立常量, 不侵入卡数据结构
+const CARD_TAG_MAP = {
+  // 技能卡
+  together:'技能·AOE', flywheel:'技能·AOE·持续', mercy:'技能·单体·减速',
+  highvoltage:'技能·AOE·麻痹', laserpierce:'技能·AOE·BOBO',
+  // 精通卡
+  a_pierce:'普攻·穿透·AOE', a_bounce:'普攻·AOE', a_explode:'普攻·AOE', a_burst:'普攻·增伤',
+  b_burn:'普攻·燃烧', b_slow:'普攻·减速', b_poison:'普攻·中毒',
+  c_feast:'增益·攻速', c_meltdown:'增益·暴击',
+  d_hunter:'增伤', d_weak:'增伤',
+  e_reinforce:'防御', e_echo:'回血', e_desperate:'防御·增伤', e_root:'防御·护盾', e_plasma:'防御·护盾·AOE',
+  f_greed:'Meta·召唤', f_resonance:'Meta·增伤', f_gamble:'Meta',
+  g_focus:'BOBO', g_burn:'BOBO·燃烧·AOE', g_guide:'BOBO·AOE',
+};
+
 // --- 3. DEMON_GAMBLE_DISTRIBUTION (恶魔赌局系数概率分布, EV≈1.14) ---
 const DEMON_GAMBLE_DISTRIBUTION = [
   { coeff: 0.5,  probability: 0.05 },
@@ -1100,11 +1115,11 @@ const CFG = {
       // elite 高护甲 - 减伤 40%, hp 大幅提升
       elite:  {hp: 560,  speed: 25, dps: 12,  w: 47, h: 47, color: '#a64dff', shield: 0, armor: 0.45, score: 60}, // [K正式关卡调优] hp×2, armor 0.4→0.45
       // mini-boss 渐强: HP 翻倍 + armor 阶梯 + dps 拉高
-      miniA:  {hp: 4800, speed: 20, dps: 28,  w: 70, h: 70, color: '#ff8c00', shield: 0, armor: 0.58, score: 200, isMiniBoss: 1}, // [K正式关卡调优] hp×2, armor 0.55→0.58
-      miniB:  {hp: 11000, speed: 18, dps: 38,  w: 76, h: 76, color: '#ff3d6b', shield: 0, armor: 0.65, score: 350, isMiniBoss: 2}, // [K正式关卡调优] hp×2, armor 0.62→0.65
-      miniC:  {hp: 20000, speed: 16, dps: 50, w: 82, h: 82, color: '#ff007a', shield: 0, armor: 0.70, score: 500, isMiniBoss: 3}, // [K正式关卡调优] hp×2, armor 0.68→0.70
+      miniA:  {hp: 4800, speed: 40, dps: 28,  w: 70, h: 70, color: '#ff8c00', shield: 0, armor: 0.58, score: 200, isMiniBoss: 1}, // [K正式关卡调优] hp×2, armor 0.55→0.58 // [K5-速度×2]
+      miniB:  {hp: 11000, speed: 36, dps: 38,  w: 76, h: 76, color: '#ff3d6b', shield: 0, armor: 0.65, score: 350, isMiniBoss: 2}, // [K正式关卡调优] hp×2, armor 0.62→0.65 // [K5-速度×2]
+      miniC:  {hp: 20000, speed: 32, dps: 50, w: 82, h: 82, color: '#ff007a', shield: 0, armor: 0.70, score: 500, isMiniBoss: 3}, // [K正式关卡调优] hp×2, armor 0.68→0.70 // [K5-速度×2]
       // 大 BOSS - 终极, hp 大幅拔高, dps 上升让玩家不能拖时间
-      boss:   {hp: 50000, speed: 12, dps: 60, w: 110, h: 110, color: '#5a00ff', shield: 0.0, armor: 0.78, score: 2000, isFinalBoss: true}, // [K正式关卡调优] hp×2, armor 0.75→0.78
+      boss:   {hp: 50000, speed: 24, dps: 60, w: 110, h: 110, color: '#5a00ff', shield: 0.0, armor: 0.78, score: 2000, isFinalBoss: true}, // [K正式关卡调优] hp×2, armor 0.75→0.78 // [K5-速度×2]
     },
   },
   // 宝箱 - 单列全宽排布 (整条左通道 165 宽), 开局默认排满 5 个
@@ -1151,7 +1166,7 @@ const CFG = {
   // obstacle 已整合进 treasure decoy, 不再独立存在
   // 状态门
   gate: {
-    speed: 130,    // 6/29 K 反馈: 原 95 太慢, 加速 +37% 试一下
+    speed: 260,    // [K5-速度×2] 原130 (6/29 K 反馈: 原 95 太慢, 加速 +37% 试一下)
     maxConcurrent: 1,     // 同屏最多 1 个 (从 2 改回 1, 太频繁了)
     // [7/16 fix gate-refactor] blt/vel 移除, 新增防线三维, crt/critDmg vmax 收窄
     dimensions: [
@@ -1599,7 +1614,7 @@ function shootLoop() {
   const effInterval = meltdownBlock ? Infinity : (CFG.player.bulletInterval / playerSpdMult);
   // 主角射击 - 多弹道 + 暴击 + atkMult + atkBonus
   if (G.now - G.player.lastShot >= effInterval) {
-    const baseAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1);
+    const baseAtk = (20 + (G.playerAtkBonus || 0)) * (G.playerAtkMult || 1) * (G.playerBurstDmgMult || 1); // [K5-连发降伤] 连发快射时单发×0.5
     const bltCount = Math.max(1, Math.round(G.multiShot || 1));
     const spread = 10;
     // 暴击率 = BOBO 状态门给的暴击率 (G.nuoStats.crt 含上限 15%) + buff 的 critBonus
@@ -1811,12 +1826,12 @@ function updateBullets(dt) {
               // [7/16 fix pierce-inherit-split] 集束枪管命中主目标也触发分裂 (小子弹不穿透/不再分裂)
               const baseVy = b.vy || (-CFG.bullet.speed);
               const baseVx = b.vx || 0;
-              const speed = Math.sqrt(baseVx * baseVx + baseVy * baseVy);
-              const theta = Math.atan2(baseVy, baseVx); // 主子弹方向
-              const offsets = [-Math.PI/8*3, -Math.PI/8, Math.PI/8, Math.PI/8*3]; // ±22.5°, ±67.5°
+              const speed = Math.sqrt(baseVx * baseVx + baseVy * baseVy) || CFG.bullet.speed;
+              // [K5-裂头弹v3] 命中瞬间按绝对角度四散 (canvas坐标系: 0°=右, 90°=下, 逆时针为负)
+              const splitAngles = [-30, 50, 130, 210]; // 度, 绝对角度
               const splitDmg = Math.max(1, Math.round(b.atk * 0.5));
-              offsets.forEach(off => {
-                const ang = theta + off;
+              splitAngles.forEach(deg => {
+                const ang = deg * Math.PI / 180;
                 const nb = createBullet(e.x, e.y, 'player', splitDmg, 1, b.crit);
                 nb.vx = Math.cos(ang) * speed;
                 nb.vy = Math.sin(ang) * speed;
@@ -2489,17 +2504,18 @@ const ENEMY_FORMATIONS = {
 
 // [K节奏v2] Phase 时间表重写: 总时长 300s 五段, 散兵化后不再用 pool/eliteInjects
 // 密度靠 waveInterval 递减内建, elite 比例靠 eliteProb 显式给。boss 一次性节点保留。
+// [K5-出怪3倍] waveInterval 曲线重设: 前期略升+后期陡增, 总量约171→521只(×3), 只改此字段
 const PHASES = [
   // 0-60s 新手期: 纯小兵为主, 极少精英
-  { start:0,   end:60,  waveInterval:2.2, eliteProb:0.05 },
+  { start:0,   end:60,  waveInterval:1.6, eliteProb:0.05 },
   // 60-120s 前中期: 小兵为底 + 少量精英, miniA 出场
-  { start:60,  end:120, waveInterval:2.0, eliteProb:0.12, boss:{t:90,  type:'miniA'} },
+  { start:60,  end:120, waveInterval:1.05, eliteProb:0.12, boss:{t:90,  type:'miniA'} },
   // 120-180s 中期: 精英明显增多, miniB
-  { start:120, end:180, waveInterval:1.8, eliteProb:0.22, boss:{t:150, type:'miniB'} },
+  { start:120, end:180, waveInterval:0.62, eliteProb:0.22, boss:{t:150, type:'miniB'} },
   // 180-240s 中后期: 精英大量, miniC
-  { start:180, end:240, waveInterval:1.6, eliteProb:0.30, boss:{t:210, type:'miniC'} },
+  { start:180, end:240, waveInterval:0.42, eliteProb:0.30, boss:{t:210, type:'miniC'} },
   // 240-300s 后期高潮: 小兵+精英+final boss 夹杂, 压迫拉满
-  { start:240, end:300, waveInterval:1.4, eliteProb:0.38, boss:{t:260, type:'boss'} },
+  { start:240, end:300, waveInterval:0.32, eliteProb:0.38, boss:{t:260, type:'boss'} },
 ];
 
 // 获取右通道 3 lane 的 x 中点
@@ -3333,6 +3349,21 @@ function drawCard(card, x, y, w, h) {
   ctx.font = '13px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
   ctx.textAlign = 'left';
   ctx.textBaseline = 'alphabetic';
+  // [K5-卡片标签] 描述上方绘制功能标签一行, descTop 下移 16px
+  const _tag = CARD_TAG_MAP[card.id];
+  if (_tag) {
+    ctx.fillStyle = isSkill ? '#8fd0ff' : '#d9a8f5';
+    ctx.font = 'bold 11px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
+    ctx.textAlign = 'center';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(_tag, x + w/2, descTop);
+    descTop += 16;
+    // 恢复描述文本样式
+    ctx.fillStyle = '#f0f0f0';
+    ctx.font = '13px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'alphabetic';
+  }
   wrapText(desc, x + 8, descTop, w - 16, 17);
 
   // 精通卡: 类别标签 - [7/16 fix 1] 放大
@@ -4314,6 +4345,7 @@ function reset() {
   G.playerAtkBonus = 0;
   G.playerCritBonus = 0;
   G.multiShot = 1;
+  G.playerBurstDmgMult = 1; // [K5-连发降伤] 每局重置
   // [7/16 fix chest-exp / burst-fire] 初始化经验值+精通卡累积字段
   G.chestExp = 0;
   G.chestExpThreshold = 80;
@@ -5143,6 +5175,7 @@ function applyMasteryEffect(id) {
         G.playerSpdMult = (G.playerSpdMult || 1) * 1.3;
         setMultiShotUncapped((G.multiShot || 1) + 3);  // [7/16 fix burst-fire-v2] +2 → +3
         G.playerHeadshotChance = (G.playerHeadshotChance || 0) + 0.05;
+        G.playerBurstDmgMult = 0.5; // [K5-连发降伤] 换来+3弹道
         G.perks._aBurstApplied = true;
       }
       break;
