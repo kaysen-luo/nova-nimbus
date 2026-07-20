@@ -942,7 +942,7 @@ Alien Fizzle · 玩法规格<br>
       </tr>
       <tr>
         <td><strong>恩赐解脱</strong></td>
-        <td>每 <strong>12s</strong> 自动锁定当前最高优先级 <strong>1 个</strong>敌人发射超级子弹, 基础 <strong>24 × 主角攻击力</strong>真实伤害 (穿透 armor); 每发独立摇 <strong>变异倍率</strong> — 24x(35%)/32x(25%)/48x(15%)/64x(10%)/80x(7%)/96x(5%)/<strong>112x(3%)</strong>, 期望 ≈ 43.76x; 目标身后 <strong>60° 锥形</strong>区域 (锥长 = 2 敌人小兵单位) 内敌人 <strong>原地不动 1s</strong> (硬控 stun); 命中挂 <strong>易损 +20% × 5s</strong>; 击杀目标 <strong>40% 概率</strong>再触发 (无上限, 运气可无限连)</td>
+        <td>每 <strong>12s</strong> 自动锁定当前最高优先级 <strong>1 个</strong>敌人发射超级子弹, 基础 <strong>24 × 主角攻击力</strong>真实伤害 (穿透 armor); 每发独立摇 <strong>变异倍率</strong> — 24x(30%)/32x(23%)/48x(17%)/64x(12%)/80x(8%)/96x(6%)/<strong>112x(4%)</strong>, 期望 ≈ 47.04x; 目标身后 <strong>60° 锥形</strong>区域 (锥长 = 2 敌人小兵单位) 内敌人 <strong>原地不动 1s</strong> (硬控 stun); 命中挂 <strong>易损 +20% × 5s</strong>; 击杀目标 <strong>40% 概率</strong>再触发 (无上限, 运气可无限连)</td>
         <td>质变: 同帧锁定 <strong>2 个</strong>目标, 锥形扩至 <strong>90°</strong>; 击杀 <strong>50% 概率</strong>再触发 (锥形硬控 + 变异倍率同 Lv1)</td>
         <td>完全体: 同帧锁定 <strong>5 个</strong>目标, 锥形扩至 <strong>120°</strong>; 击杀 <strong>60% 概率</strong>再触发 (锥形硬控 + 变异倍率同 Lv1)</td>
       </tr>
@@ -2120,7 +2120,7 @@ if (targetLv &gt; skillLevels[id]) {
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-20 18:10';  // ← 每次重新部署 spec 时更新此值
+  const SPEC_PUBLISHED = '2026-07-20 18:30';  // ← 每次重新部署 spec 时更新此值
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';

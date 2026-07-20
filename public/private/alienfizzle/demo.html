@@ -5715,16 +5715,17 @@ function castSkill(id, level, chainDepth) {
     }
     const baseDmg = Math.round(getPlayerAtk() * 48);
     // [K恩赐-变异伤害] 保留 baseDmg 变量做兜底, 实际每次结算走 rollMercyMult() 返回的倍率
-    // 倍率分布: 24x(35%) · 32x(25%) · 48x(15%) · 64x(10%) · 80x(7%) · 96x(5%) · 112x(3%)
-    //   期望 ≈ 43.76x, boss 战靠 112x 高光爆点, 清杂靠 chain 概率削弱 (Lv3 60% chain + 12s CD)
+    // 倍率分布: 24x(30%) · 32x(23%) · 48x(17%) · 64x(12%) · 80x(8%) · 96x(6%) · 112x(4%)
+    //   期望 ≈ 47.04x (对齐老 48x, 单发不削), 削 op 全靠 CD 12s + chain 40/50/60% 无上限
+    //   ≥64x 高光 30% / 112x 极光 4% → boss 战爆点感, 清杂削由 CD+chain 承载
     function rollMercyMult() {
       const r = Math.random();
-      if (r < 0.35) return 24;
-      if (r < 0.60) return 32;
-      if (r < 0.75) return 48;
-      if (r < 0.85) return 64;
-      if (r < 0.92) return 80;
-      if (r < 0.97) return 96;
+      if (r < 0.30) return 24;
+      if (r < 0.53) return 32;
+      if (r < 0.70) return 48;
+      if (r < 0.82) return 64;
+      if (r < 0.90) return 80;
+      if (r < 0.96) return 96;
       return 112;
     }
     const lockMs = 500;
