@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v3.3</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v3.4</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -380,10 +380,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-08">边缘情况清单</a></li>
   <li><a href="#ch-09">待定项 (需 Kaysen 后续拍板)</a></li>
   <li><a href="#ch-10">实施路径</a></li>
-  <li><a href="#ch-v33">V3.3 · 7月16-17日调优增量 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v33">V3.3 · 7月16-17日调优增量</a></li>
+  <li><a href="#ch-v34">V3.4 · K5 五项调优 (7-20) <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v3.3 · 2026-07-17<br>
+v3.4 · 2026-07-20<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -392,17 +393,17 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v3.3</span>
+<span class="badge">GAME SPEC · v3.4</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v3.3 (调优 + P1 反向对齐)</div>
+<div class="value">v3.4 (K5 五项调优)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-17</div>
+<div class="value">2026-07-20</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -1918,7 +1919,7 @@ if (targetLv &gt; skillLevels[id]) {
       <strong>④ 宝箱经验进度条 UI</strong> (新增): 接敌通道顶端 (barY=HORIZON_Y+2, barW=TRACK_R_WIDTH×0.6 居中) 画青色进度条 + 文字 "宝箱 X/Y", 展示 <code>G.chestExp / G.chestExpThreshold</code>。预体验关卡不显示 (<code>!G.isPreExperience</code>)。
     </div>
 
-    <h3 style="color:#c62828">V3.4 · K5 五项调优 (2026-07-20 · demo commit 519d2c6 + 9292ca5)</h3>
+    <h3 id="ch-v34" style="color:#c62828">V3.4 · K5 五项调优 (2026-07-20 · demo commit 519d2c6 + 9292ca5)</h3>
     <p><strong>这是出怪节奏 / 裂头弹 / 连发快射 / 卡片标签 / 敌人门速度五处的最新权威规格。触发: K 反馈"出怪比之前更少 + 裂头弹没生效"。</strong></p>
 
     <div class="callout" style="border-color:#c62828">
@@ -2106,7 +2107,7 @@ if (targetLv &gt; skillLevels[id]) {
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-20 09:44';  // ← 每次重新部署 spec 时更新此值
+  const SPEC_PUBLISHED = '2026-07-20 10:20';  // ← 每次重新部署 spec 时更新此值
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
