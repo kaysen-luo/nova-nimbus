@@ -1917,6 +1917,38 @@ if (targetLv &gt; skillLevels[id]) {
       <strong>③ 宝箱经验门槛陡化</strong> (V3.3.5): 起步阈值 <strong>50 → 80</strong>, 递增倍率 <strong>×1.5 → ×1.7</strong>。原曲线中期宝箱出太多 → 前期起飞躺赢。新序列 = 80 / 136 / 231 / 393 / 668 / ...(方案2: 全程更难但前期不卡死, 保持曲线健康)<br>
       <strong>④ 宝箱经验进度条 UI</strong> (新增): 接敌通道顶端 (barY=HORIZON_Y+2, barW=TRACK_R_WIDTH×0.6 居中) 画青色进度条 + 文字 "宝箱 X/Y", 展示 <code>G.chestExp / G.chestExpThreshold</code>。预体验关卡不显示 (<code>!G.isPreExperience</code>)。
     </div>
+
+    <h3 style="color:#c62828">V3.4 · K5 五项调优 (2026-07-20 · demo commit 519d2c6 + 9292ca5)</h3>
+    <p><strong>这是出怪节奏 / 裂头弹 / 连发快射 / 卡片标签 / 敌人门速度五处的最新权威规格。触发: K 反馈"出怪比之前更少 + 裂头弹没生效"。</strong></p>
+
+    <div class="callout" style="border-color:#c62828">
+      <strong>① 出怪曲线重设 (总量 ×3)</strong> (PHASES.waveInterval):
+      <ul style="margin-top:6px">
+        <li>问题: V3.3 节奏 v2 把强度从 ~175s 摊薄到 300s 五段, 每一刻密度都被稀释, 尤其抹平了旧版 120s 后的爆发尾段 → 体感"越玩越空"。</li>
+        <li><strong>只改 waveInterval 单一 lever</strong> (eliteProb / boss 时间点冻结不动): 段1(0-60s) 2.2→<strong>1.6</strong> · 段2(60-120s) 2.0→<strong>1.05</strong> · 段3(120-180s) 1.8→<strong>0.62</strong> · 段4(180-240s) 1.6→<strong>0.42</strong> · 段5(240-300s) 1.4→<strong>0.32</strong></li>
+        <li>曲线形状: 前期略升 (+39%), 后期段5 密度暴涨约 3.3x, 全程总量约 <strong>171 → 521 只 (×3)</strong>。关卡时长分级 (300/420/540s) 的 runtimePhases 拉伸机制不变。</li>
+      </ul>
+      <strong>② 裂头弹 / 集束枪管 分裂角度改绝对角度</strong> (a_bounce + a_pierce 共用分裂块):
+      <ul style="margin-top:6px">
+        <li><strong>变更前</strong>: 相对子弹飞行方向 ±22.5° / ±67.5° 偏移 (theta + offset), 视觉上四颗几乎同向, 看不出"炸开"。</li>
+        <li><strong>变更后 (权威)</strong>: 命中主目标瞬间按 <strong>绝对角度 [-30°, 50°, 130°, 210°]</strong> 四散 (canvas 坐标系 0°=右 / 90°=下)。<code>splitAngles.forEach(deg => ang = deg×π/180)</code>, speed 加 <code>|| CFG.bullet.speed</code> 兜底防 0 速。50% 伤害 / 不再穿透分裂 / 继承特效不变。</li>
+      </ul>
+      <strong>③ 连发快射 (a_burst) 单发降伤</strong>:
+      <ul style="margin-top:6px">
+        <li>新增 <code>G.playerBurstDmgMult</code> (默认 1, 拿卡后 = 0.5, 每局重置为 1)。主角平 A <code>baseAtk × (G.playerBurstDmgMult || 1)</code>, <strong>只作用主角平 A, 不影响 BOBO 激光</strong>。</li>
+        <li>设计意图: 玩家换来 +3 弹道 (3 条弹道) 但单条强度减半, 总输出略升、覆盖面变宽。攻速 +30% / 5% 爆头 / 不可重复获取不变。</li>
+      </ul>
+      <strong>④ 卡片功能标签</strong> (新增 <code>CARD_TAG_MAP</code>):
+      <ul style="margin-top:6px">
+        <li>独立常量 (不侵入 SKILL_CARDS / MASTERY_CARDS 数据结构), 25 张卡各挂 ≤3 个功能标签 (普攻 / 技能 / 单体 / AOE / 减速 / 燃烧 / 中毒 / 麻痹 / 增伤 / 回血 / 防御 / 护盾 / 召唤 / BOBO / Meta 等)。</li>
+        <li>drawCard 在标题下、描述上渲染一行 11px 彩字 (技能 #8fd0ff / 精通 #d9a8f5), descTop 下移 16px 避让描述。</li>
+      </ul>
+      <strong>⑤ Boss + 状态门 移动速度 ×2</strong> (CFG):
+      <ul style="margin-top:6px">
+        <li>敌人 speed: miniA 20→<strong>40</strong> · miniB 18→<strong>36</strong> · miniC 16→<strong>32</strong> · boss 12→<strong>24</strong> (small 50 / elite 25 <strong>不动</strong>)。</li>
+        <li>状态门 gate.speed 130→<strong>260</strong>。以上仍各乘 G.diffMult。</li>
+      </ul>
+    </div>
   </section>
 
   <section class="chapter" id="ch-08">
