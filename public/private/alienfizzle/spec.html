@@ -942,13 +942,13 @@ Alien Fizzle · 玩法规格<br>
       </tr>
       <tr>
         <td><strong>恩赐解脱</strong></td>
-        <td>每 <strong>5s</strong> 自动锁定当前 HP 最高的 <strong>1 个</strong>敌人发射超级子弹, 造成 <strong>48 × 主角攻击力</strong>的真实伤害 (穿透 armor); 目标身后 <strong>60° 锥形</strong>区域 (锥长 = 2 敌人小兵单位) 内敌人施加 <strong>颤栗 1s</strong> (移速 ×0.5, 非硬控)</td>
+        <td>每 <strong>5s</strong> 自动锁定当前 HP 最高的 <strong>1 个</strong>敌人发射超级子弹, 造成 <strong>48 × 主角攻击力</strong>的真实伤害 (穿透 armor); 目标身后 <strong>60° 锥形</strong>区域 (锥长 = 2 敌人小兵单位) 内敌人 <strong>原地不动 1s</strong> (硬控 stun)</td>
         <td>质变: 同帧锁定 <strong>2 个</strong>目标, 锥形扩至 <strong>90°</strong>; 单帧内秒杀敌人 <strong>50% 概率</strong>再次释放 (可无限触发链)</td>
         <td>完全体: 同帧锁定 <strong>5 个</strong>目标, 锥形扩至 <strong>120°</strong>; 单帧内秒杀敌人 <strong>必然</strong>再次释放 (可无限触发链, 单帧结算上限 3 次防死循环)</td>
       </tr>
       <tr>
         <td><strong>高压领域</strong></td>
-        <td>每 20s 在接敌通道下半部 (<strong>0.4× 通道长</strong>) 创造一片高压电区域, 持续 10s。子弹穿过区域自带电属性击中敌人麻痹 0.5s; 敌人在区域内 <strong>每 0.5s 受 100 点伤害</strong> (纯伤跳; 麻痹从 Lv2 起附加)</td>
+        <td>每 20s 在接敌通道下半部 (<strong>0.4× 通道长</strong>) 创造一片高压电区域, 持续 10s。<strong>被动 (激活期间全局)</strong>: 主角子弹命中敌人附带 <strong>麻痹 0.5s</strong> (不受作用范围限制)。<strong>区域内</strong>: 每 <strong>0.5s</strong> 受 100 点伤害 (纯伤跳; 麻痹从 Lv2 起附加)</td>
         <td>区域范围扩至 <strong>0.5× 通道长</strong>; 敌人 <strong>触边缘麻痹 2s</strong>, 进入区域内 <strong>每 2s 麻痹 0.5s</strong></td>
         <td>区域范围扩至 <strong>0.6× 通道长</strong>; <strong>越靠底部伤害越高</strong> (曲线, 靠底最高倍率); 在高压领域内首次撞防线 <strong>免伤 + 麻痹 3s</strong></td>
       </tr>
@@ -2120,7 +2120,7 @@ if (targetLv &gt; skillLevels[id]) {
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-20 17:15';  // ← 每次重新部署 spec 时更新此值
+  const SPEC_PUBLISHED = '2026-07-20 17:45';  // ← 每次重新部署 spec 时更新此值
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';

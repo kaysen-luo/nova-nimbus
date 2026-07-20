@@ -1132,14 +1132,14 @@ const CFG = {
     // [7/16 C1-3] HP 曲线整体上调 (spec §7.5.6 预体验拉高), 与 miniA/miniB 血量级别对齐
     perks: [
       // [K正式关卡调优] 真宝箱 HP 全档 ×2
-      { id: 'fireRate',   hp: 600,  color: '#ffcc44', label: '1', desc: '主角射速 +1%/s 持续' },
-      { id: 'multiShot',  hp: 1200,  color: '#44dd99', label: '2', desc: '弹道 +1, 每 30s +1' },
-      { id: 'atkUp',      hp: 2000, color: '#ff5544', label: '3', desc: '主角攻击每 5s +1' },
-      { id: 'explosive',  hp: 3000, color: '#ff8c00', label: '4', desc: '命中点小范围爆炸' },
-      { id: 'ricochet',   hp: 4400, color: '#4dffea', label: '5', desc: '子弹弹射下一个敌人' },
-      { id: 'laser',      hp: 6000, color: '#a64dff', label: '6', desc: '每 3s 折射激光' },
-      { id: 'mirror',     hp: 8000, color: '#ff88dd', label: '7', desc: '复制副手 NUO' },
-      { id: 'ultimate',   hp: 10000, color: '#ffd700', label: '8', desc: '每 10s 全屏爆炸' },
+      { id: 'fireRate',   hp: 384,  color: '#ffcc44', label: '1', desc: '主角射速 +1%/s 持续' }, // [K7-3 血量再降20%]
+      { id: 'multiShot',  hp: 768,  color: '#44dd99', label: '2', desc: '弹道 +1, 每 30s +1' }, // [K7-3 血量再降20%]
+      { id: 'atkUp',      hp: 1280, color: '#ff5544', label: '3', desc: '主角攻击每 5s +1' }, // [K7-3 血量再降20%]
+      { id: 'explosive',  hp: 1920, color: '#ff8c00', label: '4', desc: '命中点小范围爆炸' }, // [K7-3 血量再降20%]
+      { id: 'ricochet',   hp: 2816, color: '#4dffea', label: '5', desc: '子弹弹射下一个敌人' }, // [K7-3 血量再降20%]
+      { id: 'laser',      hp: 3840, color: '#a64dff', label: '6', desc: '每 3s 折射激光' }, // [K7-3 血量再降20%]
+      { id: 'mirror',     hp: 5120, color: '#ff88dd', label: '7', desc: '复制副手 NUO' }, // [K7-3 血量再降20%]
+      { id: 'ultimate',   hp: 6400, color: '#ffd700', label: '8', desc: '每 10s 全屏爆炸' }, // [K7-3 血量再降20%]
     ],
     repeatBuffs: [
       { id: 'atk++',  color: '#ff5544', label: '攻击++', desc: '主角伤害 +25%' },
@@ -1147,11 +1147,11 @@ const CFG = {
       { id: 'crit++', color: '#ffd441', label: '暴击+',  desc: '暴击率 +3%' },
     ],
     // repeat 阶段基础 HP
-    repeatHpStart: 7000, // [K正式关卡调优] 3500→7000 (×2)
-    repeatHpStep: 1200, // [K正式关卡调优] 600→1200 (×2)
+    repeatHpStart: 4480, // [K7-3 血量再降20%] 5600→4480 (×0.8)
+    repeatHpStep: 768, // [K7-3 血量再降20%] 960→768 (×0.8)
     // decoy 基础 HP - 也会跟随 slotMult 递增
     decoyHpBase: 180,
-    decoyRatio: 0.5,  // 空宝箱 HP = 最近真宝箱 × 0.5
+    decoyRatio: 0.375,  // [K6-2 血量] 0.5→0.375 (箱-20% 后障碍净-40%)
     decoyColor: '#3a3a3a',
     // 全局 slot 倍率 - 每个宝箱出场 idx +1, hp ×= slotGrowth^idx
     // [7/16 C1-3] slotGrowth 1.15→1.10 (30 步 ×17, 原 1.15^30 ≈ ×66 过陡)
@@ -1178,11 +1178,11 @@ const CFG = {
       {key: 'critDmg',      label: '暴击伤害',   vmin: -0.05, vmax: 0.08, step: 0.01, unit: '%'},
       {key: 'silence',      label: '火力静默',   vmin: -4000, vmax: 2000, step: 200,  unit: 'ms'},
       // 防线护甲 (0-30%, 每门 +5% 上限)
-      {key: 'defenseArmor', label: '防线护甲',   vmin: -0.05, vmax: 0.10, step: 0.01, unit: '%'},
+      {key: 'defenseArmor', label: '防线护甲',   vmin: -0.15, vmax: 0.10, step: 0.005, unit: '%'}, // [K7-1 防线门区间加大步进降低]
       // 防线血量上限 (每门 +50)
-      {key: 'defenseMaxHP', label: '防线上限',   vmin: -100,  vmax: 150,  step: 50,   unit: ''},
+      {key: 'defenseMaxHP', label: '防线上限',   vmin: -300,  vmax: 150,  step: 25,   unit: ''}, // [K7-1 防线门区间加大步进降低]
       // 防线回血包 (瞬时 +50 HP)
-      {key: 'defenseHeal',  label: '防线回血',   vmin: 0,     vmax: 100,  step: 50,   unit: ''},
+      {key: 'defenseHeal',  label: '防线回血',   vmin: -200,  vmax: 100,  step: 25,   unit: ''}, // [K7-1 防线门区间加大步进降低]
     ],
   },
   // 防线
@@ -1425,6 +1425,11 @@ function createStateGate(opts) {
   let dims = CFG.gate.dimensions;
   if ((G.gateBltEmitted || 0) >= 3) {
     dims = dims.filter(d => d.key !== 'blt');
+  }
+  // [K7-2 防线门2分钟后才出] 游戏前120s排除防线三维
+  const _elapsedSec = (G.now - G.startTime) / 1000;
+  if (_elapsedSec < 120) {
+    dims = dims.filter(d => d.key !== 'defenseArmor' && d.key !== 'defenseMaxHP' && d.key !== 'defenseHeal');
   }
   const dim = pick(dims);
 
@@ -1744,7 +1749,7 @@ function updateBullets(dt) {
         // 打敌人 (状态门 released 时子弹穿透)
         for (let j = G.enemies.length - 1; j >= 0; j--) {
           const e = G.enemies[j];
-          // 碰撞用投影后的 X (与视觉一致), 用各自 y 的投影 X 算距离
+          if (b._skipEnemy === e) continue; // [K6-3 命中即生效] 分裂子弹永久跳过源敌人, 避免立即被同一目标再次消耗
           const bxp = perspectiveX(b.x, b.y);
           const exp = e._cachedPX; // [7/16 fix 1]
           const bScale = perspectiveScale(b.y);
@@ -1760,6 +1765,10 @@ function updateBullets(dt) {
             const dmg = Math.max(1, Math.round(rawDmg * (1 - e.armor)));
             damageEnemy(e, dmg, b.crit, b.owner === 'player', b.headshot);
             hit = true;
+            // [高压被动] 高压领域激活期间, 主角子弹命中敌人附带 0.5s 麻痹 (不看是否穿过区域)
+            if (b.owner === 'player' && G.skillVisuals && G.skillVisuals.some(v => v && v.kind === 'highvoltageZone')) {
+              e.stunUntil = Math.max(e.stunUntil || 0, (G.now || performance.now()) + 500);
+            }
             // ===== 议题 10 · 切片 4 · 精通卡+赌局+技能: B 状态施加 =====
             if (G.cardPool) {
               const now = G.now || performance.now();
@@ -1827,16 +1836,20 @@ function updateBullets(dt) {
               const baseVy = b.vy || (-CFG.bullet.speed);
               const baseVx = b.vx || 0;
               const speed = Math.sqrt(baseVx * baseVx + baseVy * baseVy) || CFG.bullet.speed;
-              // [K5-裂头弹v3] 命中瞬间按绝对角度四散 (canvas坐标系: 0°=右, 90°=下, 逆时针为负)
-              const splitAngles = [-30, 50, 130, 210]; // 度, 绝对角度
+              // [K6-3 V字分裂] 沿主子弹前进方向张开 V 字: 基准=前进方向, ±30° 两颗小子弹 (总夹角60°)
+              // 纯向上射时 = 左上/右上 V 字 (对应屏幕绝对 240°/300°); 斜射时跟随前进方向, 始终朝前散开打后续敌人
+              const baseAng = Math.atan2(baseVy, baseVx); // 主子弹前进方向 (弧度)
+              const splitOffsets = [-30, 30]; // 度, 相对前进方向左右各 30°
               const splitDmg = Math.max(1, Math.round(b.atk * 0.5));
-              splitAngles.forEach(deg => {
-                const ang = deg * Math.PI / 180;
+              splitOffsets.forEach(off => {
+                const ang = baseAng + off * Math.PI / 180;
                 const nb = createBullet(e.x, e.y, 'player', splitDmg, 1, b.crit);
                 nb.vx = Math.cos(ang) * speed;
                 nb.vy = Math.sin(ang) * speed;
                 nb._noSplit = true;
                 nb._noPierce = true;
+                // [K6-3 命中即生效] 根因: 分裂子弹在 e.x,e.y 生成, 若 e 未死则下一帧仍在其 AABB 内被同一敌人立刻消耗, 表现为"只有击杀才见分裂". 修法: 标记源敌人, 碰撞检测跳过它 (最小侵入).
+                nb._skipEnemy = e;
                 // 继承主子弹的攻击特效标记
                 if (b._burn) nb._burn = b._burn;
                 if (b._slow) nb._slow = b._slow;
@@ -2613,9 +2626,10 @@ function spawnEnemies() {
   //                  后期(elapsed>=240) final boss 阶段即使 boss 在场也继续刷小兵/精英, 压迫拉满
   // [K时长分级] 240 也随关卡时长 scale (第2关=336s / 第3关=432s 才进入 final boss 期)
   // [Kboss分级] 对齐 final boss 实际出场点 (levelEndSec * 0.867)
-  const _lateBossT = (G.levelEndSec || 300) * 0.867;
-  const hasActiveBoss = G.enemies.some(e => e.isMiniBoss || e.isFinalBoss);
-  if (phase.waveInterval > 0 && (!hasActiveBoss || elapsed >= _lateBossT)) {
+  const hasFinalBoss = G.enemies.some(e => e.isFinalBoss);
+  const hasMiniBoss = G.enemies.some(e => e.isMiniBoss);
+  // [K6-1 boss停刷] final boss 出场后彻底停刷; mini-boss 在场维持原喘息停刷
+  if (phase.waveInterval > 0 && !hasFinalBoss && !hasMiniBoss) {
     if (G.now >= G.nextEnemyAt) {
       spawnScatter(phase, 1);
       G.nextEnemyAt = G.now + phase.waveInterval * 1000;
@@ -3352,7 +3366,9 @@ function drawCard(card, x, y, w, h) {
   // [K5-卡片标签] 描述上方绘制功能标签一行, descTop 下移 16px
   const _tag = CARD_TAG_MAP[card.id];
   if (_tag) {
-    ctx.fillStyle = isSkill ? '#8fd0ff' : '#d9a8f5';
+    // [K7-4 三类卡片配色] 技能=蓝 / 叹息之壁(E类防线卡)=金 / 枪械精通(其余)=紫
+    const _isWall = (card.category === 'E');
+    ctx.fillStyle = isSkill ? '#8fd0ff' : (_isWall ? '#ffc15c' : '#d9a8f5');
     ctx.font = 'bold 11px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
@@ -5752,8 +5768,8 @@ function castSkill(id, level, chainDepth) {
               if (vlen < 0.001) continue;
               const cosAng = proj / vlen; // = dot(v,dir)/|v|
               if (cosAng < cosHalf) continue;
-              e.chillUntil = Math.max(e.chillUntil||0, G.now + 1000);
-              e.chillMult = 0.5;
+              e.stunUntil = Math.max(e.stunUntil||0, G.now + 1000);
+              // [K恩赐-颤栗改硬控] 原颤栗减速 (chillMult 0.5) 改为原地不动 1s, 与 mercy 击杀链保持强控体验
             }
           }
         }
