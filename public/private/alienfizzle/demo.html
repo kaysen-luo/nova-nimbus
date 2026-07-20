@@ -661,9 +661,9 @@ const SKILL_CARDS = [
     id: 'mercy',
     name: '恩赐解脱',
     levels: [
-      { lv:1, desc:'每 5s 自动瞄准最高优先级目标发一颗超级子弹, 48x 攻击力真伤 (锁定 0.5s)' }, // [7/16 fix absolution-v2] [7/20 fix mercy-text-sync 60x→48x 对齐运行代码 L5700]
-      { lv:2, desc:'[质变: 命中后目标 3s 内护甲 ×0.5]' }, // [7/16 fix absolution-v2]
-      { lv:3, desc:'[完全体: 同时锁定 5 目标 + 颤栗减速 r=62 + 任一击杀立即刷 CD (无上限)]' } // [7/16 fix absolution-v2]
+      { lv:1, desc:'每 12s 锁定最高优先级目标发一颗超级子弹, 24x atk 真伤 + 概率变异 (32/48/64/80/96/112x); 锥形硬控 1s; 击杀 40% 再触发无上限' },
+      { lv:2, desc:'[质变: 同时锁定 2 目标, 锥形扩至 90°, 击杀 50% 再触发]' },
+      { lv:3, desc:'[完全体: 同时锁定 5 目标, 锥形扩至 120°, 击杀 60% 再触发]' }
     ]
   },
   {
@@ -5478,7 +5478,7 @@ function applySkillEffect(skillId, level) {
   const cooldownMap = {
     together: 10000,
     flywheel: 5000,
-    mercy: 5000,
+    mercy: 12000,
     highvoltage: 20000,
     laserpierce: 12000
   };
@@ -5714,6 +5714,19 @@ function castSkill(id, level, chainDepth) {
       return;
     }
     const baseDmg = Math.round(getPlayerAtk() * 48);
+    // [K恩赐-变异伤害] 保留 baseDmg 变量做兜底, 实际每次结算走 rollMercyMult() 返回的倍率
+    // 倍率分布: 24x(35%) · 32x(25%) · 48x(15%) · 64x(10%) · 80x(7%) · 96x(5%) · 112x(3%)
+    //   期望 ≈ 43.76x, boss 战靠 112x 高光爆点, 清杂靠 chain 概率削弱 (Lv3 60% chain + 12s CD)
+    function rollMercyMult() {
+      const r = Math.random();
+      if (r < 0.35) return 24;
+      if (r < 0.60) return 32;
+      if (r < 0.75) return 48;
+      if (r < 0.85) return 64;
+      if (r < 0.92) return 80;
+      if (r < 0.97) return 96;
+      return 112;
+    }
     const lockMs = 500;
     const lifeMs = 900;
     const castGroup = { anyKill: false };
@@ -5735,8 +5748,15 @@ function castSkill(id, level, chainDepth) {
         const before = capturedTarget.hp;
         // [K10-4 review-fix mercy-vuln-order] 先打伤害, 再挂易损
         //   K 口径"后续伤害 +20%" = 本发不吃易损, 之后的伤害才吃. 顺序: rollSkillCrit → damageEnemy → 挂 vuln
-        const { dmg, crit } = rollSkillCrit(baseDmg);
+        // [K恩赐-变异伤害] 每目标独立摇倍率 (24/32/48/64/80/96/112x), 打出高光爆点
+        const mult = rollMercyMult();
+        const shotDmg = Math.round(getPlayerAtk() * mult);
+        const { dmg, crit } = rollSkillCrit(shotDmg);
         damageEnemy(capturedTarget, dmg, crit, true);
+        // 高倍率飘字提示 (≥64x 才提示, 让玩家感知到"这一发是高光")
+        if (mult >= 64) {
+          floatText(capturedTarget.x, capturedTarget.y - 40, mult + 'x!', mult >= 96 ? '#ffdc41' : '#ff88bb', true);
+        }
         capturedTarget.vulnUntil = G.now + 5000;
         capturedTarget.vulnMult = 1.2;
         floatText(capturedTarget.x, capturedTarget.y - 20, '易损 +20%', '#ff88dd', false);
@@ -5779,14 +5799,12 @@ function castSkill(id, level, chainDepth) {
        }
       }, lockMs);
     }
-    // 击杀再触发: Lv2 50%, Lv3 100% (Lv3 清屏体验, 敌人打光自然停)
-    if (level >= 2) {
+    // [K恩赐-变异伤害重构] 击杀再触发全等级生效: Lv1 40% / Lv2 50% / Lv3 60%, 不设 chain 上限 (运气好允许无限连)
+    {
       setTimeout(() => {
         if (!castGroup.anyKill) return;
-        const p = (level >= 3) ? 1 : 0.5;
-        // [K10-4 tune] Lv3 无 chain 上限 (清屏爽感), Lv2 保持 3 上限防 50% 长链
-        const chainCap = (level >= 3) ? Infinity : 3;
-        if (chainDepth < chainCap && Math.random() < p) {
+        const p = (level >= 3) ? 0.6 : (level >= 2 ? 0.5 : 0.4);
+        if (Math.random() < p) {
           setTimeout(() => { try { castSkill('mercy', level, chainDepth + 1); } catch (e) {} }, 400);
         }
       }, lockMs + 50);
