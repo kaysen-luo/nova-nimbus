@@ -384,10 +384,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v34">V3.4 · K5 五项调优 (7-20)</a></li>
   <li><a href="#ch-v35">V3.5 · K7-20 批次调优 (7-20 晚)</a></li>
   <li><a href="#ch-v36">V3.6 · K21-slot6 6槽位宝箱+障碍新机制</a></li>
-  <li><a href="#ch-v37">V3.7 · K21-gate+boss+exp 状态门重构+boss奖励+经验降档 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v37">V3.7 · K21-gate+boss+exp 状态门重构+boss奖励+经验降档</a></li>
+  <li><a href="#ch-v38">V3.8 · K21-4pack AOE作用宝箱+g_guide无视射程+障碍reflow等同宝箱+repeatHpStep降档 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v3.7 · 2026-07-21<br>
+v3.8 · 2026-07-21<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -2163,6 +2164,55 @@ if (targetLv &gt; skillLevels[id]) {
         <li>两重奖励叠加塑造 <strong>boss = 仪式感 + 硬收益</strong> 的关卡钩子玩家召唤</li>
       </ul>
     </div>
+
+    <h3 id="ch-v38" style="color:#c62828">V3.8 · K21-4pack · AOE 作用宝箱 + g_guide 无视射程 + 障碍 reflow 等同宝箱 + repeatHpStep 降档 (2026-07-21)</h3>
+    <p><strong>四项联动: (1) 精通卡 AOE (爆炸/裂头/穿透/弹射) 全部对宝箱生效 — 打宝箱的爽度对齐打敌人; (2) 制导激光 g_guide 目标选取无视射程 — 攒满 12 击后必打屏内最优仇恨目标; (3) 障碍 reflow 与宝箱同规则统一收拢 — 击破任一即全体顺移; (4) repeatHpStep 768→220 · 后期障碍血量约 -70% 打得动。</strong></p>
+
+    <div class="callout" style="border-color:#c62828">
+      <strong>① 精通卡 AOE 作用于宝箱 (chest-as-enemy)</strong>:
+      <p style="margin-top:6px">以前"宝箱只吃直接命中"的历史规则 (7/16 fix P3) 全部撤回, 宝箱视同敌人单位吃 AOE, 打宝箱触发所有精通效果。</p>
+      <ul style="margin-top:6px">
+        <li><strong>a_explode (爆炸弹)</strong>: 直命宝箱 → 30% 主伤 splash 半径 <code>t.w × 0.5</code>, 同时作用于附近宝箱/障碍 (通过 <code>splashAroundTreasures</code> 新函数); 打敌人爆炸时 splash 也同步作用于宝箱</li>
+        <li><strong>a_bounce (裂头弹)</strong>: 直命宝箱作为主目标也触发 V 字 ±30° 分裂, 子弹伤害 50%, 小弹不再穿透/分裂 (<code>_noSplit</code> / <code>_noPierce</code>)</li>
+        <li><strong>a_pierce (穿透)</strong>: 打宝箱也消耗穿透次数 (2 次), 每穿一次伤害 ×0.8; 命中宝箱不阻断继续飞</li>
+        <li><strong>ricochet (弹射)</strong>: 弹射候选允许宝箱, 若最近候选是宝箱走宝箱扣血 (<code>damageTreasureFromAoe</code>), 伤害 = <code>rawDmg × 0.6</code></li>
+        <li><strong>新函数</strong>: <code>damageTreasureFromAoe(t, dmg)</code> — 障碍削上限 (hp/maxHp 各扣 dmg) + 飘字 + 击破触发 <code>applyTreasure</code>+<code>reflowTreasures</code>; <code>splashAroundTreasures(cx, cy, r, dmg)</code> — 反向遍历 <code>G.treasures</code> 走投影 x 距离判定</li>
+        <li><strong>splashAround 兼容</strong>: 撤回排除 treasure-kind 的过滤, 改为仅排除 <code>hp<=0</code>, 末尾追加 <code>splashAroundTreasures</code> 调用</li>
+        <li><strong>findNextRicochetTarget 兼容</strong>: 撤回 treasure-kind 排除, 宝箱同池竞争最近候选 (200px 上限内)</li>
+      </ul>
+
+      <strong>② g_guide 制导激光目标选取无视射程</strong>:
+      <ul style="margin-top:6px">
+        <li><strong>问题</strong>: 之前攒满 12 击后, 若屏内所有敌人都超过 <code>boboLaserRange()</code>, 制导激光沉默不发, 玩家攒击白攒</li>
+        <li><strong>方案</strong>: <code>selectBoboTarget(bobo, enemies, opts)</code> 新增 <code>opts.ignoreRange</code>; 走 <code>rankedBoboTargets</code> 时若 <code>ignoreRange=true</code>, 跳过 <code>distanceToBobo &lt;= range</code> 过滤, 全屏内敌人都参与仇恨排序</li>
+        <li><strong>调用点 2 处</strong>: (a) 制导触发瞬间 (<code>tickBoboGuide</code> 首次选取), (b) 制导期跳目标 (<code>tickBoboGuideLasers</code> 目标丢失后重选) — 均传 <code>{ ignoreRange: true }</code></li>
+        <li><strong>不变项</strong>: 每 200ms tick 50 伤害 · 走 hatredPriority 排序 (与 mercyBeam 一致) · 排除宝箱/诱饵/道具</li>
+      </ul>
+
+      <strong>③ 障碍 reflow 与宝箱同规则</strong>:
+      <ul style="margin-top:6px">
+        <li><strong>V3.6 (K21-slot6) 旧规则</strong>: 障碍固定占其原始 slotIdx, 宝箱只收拢到未被占用的槽 → 击破前排宝箱时, 后排宝箱不会跨障碍前移, 视觉不整齐</li>
+        <li><strong>V3.8 新规则</strong>: 障碍与宝箱统一按 <code>targetY</code> 降序收拢, 依次填槽 0/1/2/... — 击破任一实体 (宝箱或障碍) → 全体自动往 A 顺移, 无跳槽</li>
+        <li><strong>代码</strong>: <code>reflowTreasures</code> 去掉 <code>usedSlots</code> 分离, 单个 <code>colItems.sort</code> 后线性填槽 (cursor 0→5)</li>
+      </ul>
+
+      <strong>④ repeatHpStep 768→220 · 后期障碍血量降档</strong>:
+      <ul style="margin-top:6px">
+        <li><code>CFG.treasure.repeatHpStep</code>: <s>768</s> → <strong>220</strong> (<s>K7-3 血量再降20%</s> 覆盖)</li>
+        <li><code>repeatHpStart</code> 保持 <strong>4480</strong> 不变 (前期基础血量不动)</li>
+        <li><strong>后期约 -70%</strong>: repeat 阶段每 slot 递增血量从 768 骤降至 220, 高层 repeat slot HP 曲线从陡增变缓增</li>
+        <li><strong>动机</strong>: 玩家反馈 K7-3 后期障碍血墙太厚, 精通 AOE 作用宝箱新规下, 障碍打得动+爽感对齐</li>
+      </ul>
+
+      <strong>⑤ 设计意图 (联动)</strong>:
+      <ul style="margin-top:6px">
+        <li>精通 AOE 作用宝箱 → <strong>宝箱与敌人在战术上同池</strong>, 爆炸/穿透/弹射不再"漏箱"</li>
+        <li>g_guide 无视射程 → <strong>制导必打</strong>, 不再有攒满白攒的黑盒时刻</li>
+        <li>reflow 统一 → <strong>击破节奏顺滑</strong>, 视觉无跳槽</li>
+        <li>血量降档 → <strong>后期打得动</strong>, AOE 作用宝箱的爽度真正落地</li>
+        <li>四项联动 = <strong>宝箱通道的爽感闭环</strong></li>
+      </ul>
+    </div>
   </section>
 
   <section class="chapter" id="ch-08">
@@ -2320,7 +2370,7 @@ if (targetLv &gt; skillLevels[id]) {
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-21 12:39';  // ← 每次重新部署 spec 时更新此值
+  const SPEC_PUBLISHED = '2026-07-21 14:53';  // ← 每次重新部署 spec 时更新此值
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
