@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v3.6</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v3.7</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -383,10 +383,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v33">V3.3 · 7月16-17日调优增量</a></li>
   <li><a href="#ch-v34">V3.4 · K5 五项调优 (7-20)</a></li>
   <li><a href="#ch-v35">V3.5 · K7-20 批次调优 (7-20 晚)</a></li>
-  <li><a href="#ch-v36">V3.6 · K21-slot6 6槽位宝箱+障碍新机制 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v36">V3.6 · K21-slot6 6槽位宝箱+障碍新机制</a></li>
+  <li><a href="#ch-v37">V3.7 · K21-gate+boss+exp 状态门重构+boss奖励+经验降档 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v3.6 · 2026-07-21<br>
+v3.7 · 2026-07-21<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -395,13 +396,13 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v3.6</span>
+<span class="badge">GAME SPEC · v3.7</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v3.6 (K21-slot6 · 6槽位宝箱+障碍新机制)</div>
+<div class="value">v3.7 (K21-gate+boss+exp · 状态门重构+boss奖励+经验降档)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
@@ -2088,6 +2089,80 @@ if (targetLv &gt; skillLevels[id]) {
         <li><strong>技能视觉投影对齐</strong>: <code>mercyBeam</code> / <code>laserpierceAftermath</code> / <code>laserpierceBeam</code> / <code>ring</code> / <code>mercyCone</code> / <code>togetherPreview</code> / <code>togetherBurnZone</code> / <code>highvoltageZone</code> (梯形化) — 全部走 <code>perspectiveX</code> 与敌人渲染对齐</li>
       </ul>
     </div>
+
+    <h3 id="ch-v37" style="color:#c62828">V3.7 · K21-gate+boss+exp · 状态门重构 + boss 击杀奖励 + 经验降档 (2026-07-21)</h3>
+    <p><strong>状态门 5 处参数收紧 + 起步概率新规 (删除防线三维 100% 减益起步, 全 8 维统一斜率公式) + 经验档位降 93% (新手关大 boss 前刚好 10 张卡) + boss 击杀新增三选一/金色状态门双重奖励 (小 boss 全关卡触发, 大 boss 仅无尽模式)。</strong></p>
+
+    <div class="callout" style="border-color:#c62828">
+      <strong>① 状态门参数改 5 处</strong>:
+      <ul style="margin-top:6px">
+        <li><code>atk.vmax</code>: <s>8</s> → <strong>5</strong></li>
+        <li><code>spd.vmin</code>: <s>-0.6</s> → <strong>-1</strong></li>
+        <li><code>critDmg.vmin</code>: <s>-0.05</s> → <strong>-0.10</strong></li>
+        <li><code>defenseArmor.vmin</code>: <s>-0.15</s> → <strong>-0.20</strong>, <code>step</code>: <s>0.005</s> → <strong>0.02</strong></li>
+        <li>其他维度 (<code>crt</code> / <code>silence</code> / <code>defenseMaxHP</code> / <code>defenseHeal</code>) 维持不变</li>
+      </ul>
+
+      <strong>② 起步概率新规 (删除防线三维 100% 减益起步)</strong>:
+      <ul style="margin-top:6px">
+        <li><strong>全 8 维统一公式</strong>: <code>pDebuff = min(0.8, 0.2 + 0.6 × min(t, 90) / 90)</code></li>
+        <li>t=0s: P_debuff = <strong>20%</strong> (早期 80% 刷增益, 玩家开局友好)</li>
+        <li>t=45s: P_debuff = <strong>50%</strong> (中点开始反转)</li>
+        <li>t=90s+: P_debuff = <strong>80%</strong> (后期 80% 刷减益, 推开防线三维的战略需求)</li>
+        <li>保留 K7-2 前 120s 排除防线三维过滤器 (<strong>不变</strong>)</li>
+        <li><strong>设计意图</strong>: 早期以增益为主帮玩家起步, 后期以减益为主创造破门需求, 45s 为均衡时刻</li>
+      </ul>
+
+      <strong>③ 经验降档 (新手关大 boss 前刚好 10 张卡)</strong>:
+      <ul style="margin-top:6px">
+        <li><strong>变更前</strong>: <code>chestExpThreshold</code> 初始 60, 递增 60 × 1.5^tier (前 10 张累计 6798 exp)</li>
+        <li><strong>变更后</strong>: 初始 <strong>15</strong>, 递增 <strong>15 × 1.25^tier</strong> (前 10 张累计 <strong>442 exp</strong>)</li>
+        <li><strong>降幅</strong>: -93% (数量级降低)</li>
+        <li><strong>锚定标准</strong>: 新手关 0-260s 大 boss 前预期累计 exp ≈ 420-500 (基于 PHASES + diffMult=0.5 + enemyMult=0.6 + 实杀率 75% 纯数学估算, 未跑自动化探测), 中庸方案 442 exp 恰好达标</li>
+        <li><code>CHEST_EXP_TABLE</code> (small=2 / elite=4 / miniA=10 / miniB=20 / miniC=40 / boss=100) <strong>不变</strong></li>
+      </ul>
+
+      <strong>④ boss 击杀奖励 (新机制)</strong>:
+      <p style="margin-top:6px"><strong>触发时机</strong>: <code>onEnemyKilled</code> 内钩子</p>
+      <ul style="margin-top:6px">
+        <li><strong>小 boss (miniBoss) — 全关卡触发</strong>:
+          <ul>
+            <li>1 次三选一弹窗 (队列化: <code>G.pendingCardPicks++</code>)</li>
+            <li>1 个金色状态门 (t+2s 刷)</li>
+          </ul>
+        </li>
+        <li><strong>大 boss (finalBoss) — 仅无尽模式触发</strong>:
+          <ul>
+            <li>2 次三选一弹窗</li>
+            <li>3 个金色状态门 (t+2s / t+4s / t+6s 依次刷)</li>
+            <li><strong>关卡限制</strong>: 仅当 <code>G.isEndlessMode === true</code> 触发, <code>undefined</code>/<code>false</code> 均跳过 (正式 3 关大 boss = 本关最后一个怪, 不及时杀完就不给奖励)</li>
+          </ul>
+        </li>
+      </ul>
+
+      <strong>⑤ 三选一队列机制</strong>:
+      <ul style="margin-top:6px">
+        <li><code>G.pendingCardPicks</code> 计数器, 玩家关闭一次弹窗 → 下一帧 <code>tryDrainPendingCardPicks</code> 自动弹下一次</li>
+        <li>大 boss 2 次自然连开</li>
+      </ul>
+
+      <strong>⑥ 金色状态门 (新实体)</strong>:
+      <ul style="margin-top:6px">
+        <li>独立于 <code>G.stateGates</code>, 存于 <code>G.goldenGates</code> 数组, 不占 <code>maxConcurrent=1</code>, 可与普通门共存</li>
+        <li><code>value = dim.vmax</code> (满增益), <code>released=true</code>, <code>isGolden=true</code>, 玩家碰到直接触发满额 buff</li>
+        <li><strong>维度选取</strong>: 8 维全池独立随机 (可撞车, 不去重)</li>
+        <li><strong>横向位置</strong>: 右赛道内随机 (同普通门 <code>xMin</code>/<code>xMax</code>)</li>
+        <li><strong>视觉</strong>: 金色 <code>#ffd700</code> + 脉动光环 + ★ BOSS 角标</li>
+        <li><strong>队列时机</strong>: 固定间隔 2s 依次刷 (基于 <code>G.now</code> game-time, 兑现暂停/三选一 UI 中断)</li>
+      </ul>
+
+      <strong>⑦ 设计意图</strong>:
+      <ul style="margin-top:6px">
+        <li>boss 击杀才是真正高峰时刻, 以前只掉经验不够爽</li>
+        <li>三选一保证向下建设, 金门保证即时面板提升</li>
+        <li>两重奖励叠加塑造 <strong>boss = 仪式感 + 硬收益</strong> 的关卡钩子玩家召唤</li>
+      </ul>
+    </div>
   </section>
 
   <section class="chapter" id="ch-08">
@@ -2245,7 +2320,7 @@ if (targetLv &gt; skillLevels[id]) {
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-21 10:02';  // ← 每次重新部署 spec 时更新此值
+  const SPEC_PUBLISHED = '2026-07-21 12:39';  // ← 每次重新部署 spec 时更新此值
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
