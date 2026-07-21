@@ -1148,7 +1148,7 @@ const CFG = {
     ],
     // repeat 阶段基础 HP
     repeatHpStart: 4480, // [K7-3 血量再降20%] 5600→4480 (×0.8)
-    repeatHpStep: 768, // [K7-3 血量再降20%] 960→768 (×0.8)
+    repeatHpStep: 220, // [K21-4pack hp-growth 768→220 后期约-70%]
     // decoy 基础 HP - 也会跟随 slotMult 递增
     decoyHpBase: 180,
     decoyRatio: 0.375,  // [K6-2 血量] 0.5→0.375 (箱-20% 后障碍净-40%)
@@ -1680,6 +1680,7 @@ function updateBullets(dt) {
         const tBox = { x: t.x - t.w/2, y: t.y - t.h/2, w: t.w, h: t.h };
         if (rectOverlap(bBoxL, tBox)) {
           const dmg = Math.round(b.atk);
+          const rawDmg = b.atk; // [K21-4pack chest-as-enemy] 供 explode/bounce splash 计算
           // [K21-slot6 · 障碍削上限] 障碍受伤时 maxHp 与 hp 各扣 dmg (保 hp<=maxHp)
           if (t.isObstacle) {
             t.maxHp = Math.max(t.hp - dmg, t.maxHp - dmg);
@@ -1694,6 +1695,45 @@ function updateBullets(dt) {
           hit = true;
           // 伤害飘字
           floatText(t.x + (Math.random()-0.5)*30, t.y - 10, '-' + dmg, b.crit ? '#ffd441' : '#ff6a8b', b.crit);
+          // [K21-4pack chest-as-enemy] 爆炸弹 a_explode: 30% 主伤 splash (走 splashAround 路径)
+          const _explosiveOnT = (G.perks && G.perks.explosive) || (G.cardPool && G.cardPool.hasMastery('a_explode'));
+          if (b.owner === 'player' && _explosiveOnT) {
+            const splashR = t.w ? t.w * 0.5 : 20;
+            const isMastery = G.cardPool && G.cardPool.hasMastery('a_explode');
+            const splashRatio = isMastery ? 0.3 : 0.4;
+            const splashDmg = Math.max(1, Math.round(rawDmg * splashRatio));
+            splashAround(t.x, t.y, splashR, splashDmg, t);
+            G.explosions = G.explosions || [];
+            G.explosions.push({ x: t.x, y: t.y, r: splashR, bornAt: G.now, life: 280 });
+          }
+          // [K21-4pack chest-as-enemy] 裂头弹 a_bounce: 命中宝箱作为主目标也触发 V 字分裂 (小弹不再穿透/分裂)
+          if (b.owner === 'player' && G.cardPool && !b._noSplit && G.cardPool.hasMastery('a_bounce')) {
+            const baseVy = b.vy || (-CFG.bullet.speed);
+            const baseVx = b.vx || 0;
+            const speed = Math.sqrt(baseVx * baseVx + baseVy * baseVy) || CFG.bullet.speed;
+            const baseAng = Math.atan2(baseVy, baseVx);
+            const splitOffsets = [-30, 30];
+            const splitDmg = Math.max(1, Math.round(b.atk * 0.5));
+            splitOffsets.forEach(off => {
+              const ang = baseAng + off * Math.PI / 180;
+              const nb = createBullet(t.x, t.y, 'player', splitDmg, 1, b.crit);
+              nb.vx = Math.cos(ang) * speed;
+              nb.vy = Math.sin(ang) * speed;
+              nb._noSplit = true;
+              nb._noPierce = true;
+              G.bullets.push(nb);
+            });
+            b._noSplit = true;
+          }
+          // [K21-4pack chest-as-enemy] 穿透 a_pierce: 打宝箱也消耗穿透次数
+          if (b.owner === 'player' && G.cardPool && G.cardPool.hasMastery('a_pierce') && !b._noPierce) {
+            if (b._pierceLeft === undefined) b._pierceLeft = 2;
+            if (b._pierceLeft > 0) {
+              b._pierceLeft--;
+              b.atk *= 0.8;
+              hit = false; // 继续飞
+            }
+          }
           if (t.hp <= 0) {
             if (t.kind === 'decoy') {
               floatText(t.x, t.y - 18, '×无效', '#888', false);
@@ -1799,7 +1839,7 @@ function updateBullets(dt) {
               const cxp = perspectiveX(e.x, e.y);
               G.enemies.forEach(en => {
                 if (en === e) return;
-                if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
+                if (en.hp <= 0) return; // [K21-4pack chest-as-enemy] 不再排除 treasure-kind (若挂 enemies 上); 主宝箱走下面 splashAroundTreasures
                 const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
                 const dx = exp - cxp, dy = en.y - e.y;
                 if (Math.sqrt(dx*dx + dy*dy) > splashR) return;
@@ -1808,6 +1848,8 @@ function updateBullets(dt) {
                 const eff = Math.max(1, Math.round(fireDmg * (1 - en.armor)));
                 damageEnemy(en, eff, sc, true);
               });
+              // [K21-4pack chest-as-enemy] 30% 主伤 splash 同步作用于宝箱
+              splashAroundTreasures(e.x, e.y, splashR, splashDmg);
               G.explosions = G.explosions || [];
               G.explosions.push({ x: e.x, y: e.y, r: splashR, bornAt: G.now, life: 280 });
             }
@@ -1819,6 +1861,14 @@ function updateBullets(dt) {
               while (remaining-- > 0) {
                 const next = findNextRicochetTarget(cur);
                 if (!next) break;
+                // [K21-4pack chest-as-enemy] 若弹射到宝箱走宝箱路径
+                if (G.treasures && G.treasures.indexOf(next) >= 0) {
+                  const ricDmg = Math.max(1, Math.round(rawDmg * 0.6));
+                  damageTreasureFromAoe(next, ricDmg);
+                  floatText(next.x, next.y - 4, '弹射', '#4dffea', false);
+                  cur = next;
+                  continue;
+                }
                 const ricDmg = Math.max(1, Math.round(rawDmg * 0.6 * (1 - next.armor)));
                 damageEnemy(next, ricDmg, false, true);
                 floatText(next.x, next.y - 4, '弹射', '#4dffea', false);
@@ -1988,37 +2038,97 @@ function damageEnemy(e, dmg, isCrit, fromPlayer, isHeadshot) {
 
 // 爆炸弹 - 在 (cx, cy) 周围 radius 内除 except 之外的敌人扣 splashDmg
 // 判定用投影后的屏幕距离 (与视觉一致), cx/cy 是逻辑坐标 (中心点也按 cy 投影)
+// [K21-4pack chest-as-enemy] 宝箱视同敌人单位吃 AOE
+function damageTreasureFromAoe(t, dmg) {
+  if (!t || t.hp <= 0) return;
+  // 障碍削上限: hp 与 maxHp 各扣 dmg (与子弹直命入口对齐)
+  if (t.isObstacle) {
+    t.maxHp = Math.max(t.hp - dmg, t.maxHp - dmg);
+  }
+  t.hp -= dmg;
+  t.flashUntil = G.now + 80;
+  t.lastHitAt = G.now;
+  if ((t.kind === 'perk' || t.kind === 'buff') && t.settledAt) {
+    t.settledAt = G.now;
+  }
+  floatText(t.x + (Math.random()-0.5)*30, t.y - 10, '-' + dmg, '#ff6a8b', false);
+  if (t.hp <= 0) {
+    if (t.kind === 'decoy') {
+      floatText(t.x, t.y - 18, '×无效', '#888', false);
+    } else {
+      floatText(t.x, t.y - 18, '装备!', '#4dff9d', true);
+      SFX.play('chest_pickup');
+      G.lastRealChestBreakAt = G.now;
+    }
+    applyTreasure(t);
+    const idx = G.treasures.indexOf(t);
+    if (idx >= 0) G.treasures.splice(idx, 1);
+    reflowTreasures();
+  }
+}
+
+function splashAroundTreasures(cx, cy, radius, splashDmg) {
+  if (!G.treasures) return;
+  const cxp = perspectiveX(cx, cy);
+  // 反向遍历因可能 splice
+  for (let i = G.treasures.length - 1; i >= 0; i--) {
+    const t = G.treasures[i];
+    if (!t || t.hp <= 0) continue;
+    const txp = perspectiveX(t.x, t.y);
+    const dx = txp - cxp;
+    const dy = t.y - cy;
+    if (Math.sqrt(dx*dx + dy*dy) > radius) continue;
+    damageTreasureFromAoe(t, Math.max(1, Math.round(splashDmg)));
+  }
+}
+
 function splashAround(cx, cy, radius, splashDmg, except) {
   const cxp = perspectiveX(cx, cy);
   G.enemies.forEach(e => {
     if (e === except) return;
-    // [7/16 fix P3] 宝箱只吃直接命中: 排除任何 treasure-kind (decoy/perk/buff) 实体, 防止 AOE 溅射到宝箱
-    if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
-    const exp = e._cachedPX !== undefined ? e._cachedPX : perspectiveX(e.x, e.y); // [7/16 fix 1]
+    // [K21-4pack chest-as-enemy] 宝箱如出现在 G.enemies (兼容留字段), 按敌人吃; 主宝箱走下方 splashAroundTreasures
+    if (e.hp <= 0) return;
+    const exp = e._cachedPX !== undefined ? e._cachedPX : perspectiveX(e.x, e.y);
     const dx = exp - cxp;
     const dy = e.y - cy;
     if (Math.sqrt(dx*dx + dy*dy) > radius) return;
     const dmg = Math.max(1, Math.round(splashDmg * (1 - e.armor)));
     damageEnemy(e, dmg, false, true);
   });
+  // [K21-4pack chest-as-enemy] 同步作用于宝箱
+  splashAroundTreasures(cx, cy, radius, splashDmg);
 }
 
 // 弹射弹 - 找离 from 最近的另一个敌人 (相同 lane 优先)
+// [K21-4pack chest-as-enemy] 弹射候选允许宝箱; 若最近候选是宝箱, 单独走宝箱扣血
 function findNextRicochetTarget(from) {
   let best = null;
   let bestDist = Infinity;
   G.enemies.forEach(e => {
     if (e === from) return;
-    // [7/16 fix P3] 宝箱只吃直接命中: 弹射候选排除 treasure-kind
-    if (e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') return;
+    if (e.hp <= 0) return;
     const dx = e.x - from.x;
     const dy = e.y - from.y;
     const d = Math.sqrt(dx*dx + dy*dy);
-    if (d < bestDist && d < 200) {  // 最大弹射距离 200px
+    if (d < bestDist && d < 200) {
       bestDist = d;
       best = e;
     }
   });
+  // 宝箱也参与候选
+  if (G.treasures) {
+    G.treasures.forEach(t => {
+      if (t === from) return;
+      if (!t || t.hp <= 0) return;
+      const dx = t.x - from.x;
+      const dy = t.y - from.y;
+      const d = Math.sqrt(dx*dx + dy*dy);
+      if (d < bestDist && d < 200) {
+        bestDist = d;
+        best = t;
+      }
+    });
+  }
   return best;
 }
 
@@ -2181,15 +2291,16 @@ function classifyEnemyTier(e) {
   return 3;
 }
 
-function rankedBoboTargets(bobo, enemies) {
+function rankedBoboTargets(bobo, enemies, opts) {
   if (!enemies || enemies.length === 0) return [];
   const range = boboLaserRange();
+  const ignoreRange = !!(opts && opts.ignoreRange); // [K21-4pack guide-no-range]
   const inRange = [];
   for (const e of enemies) {
     if (!e || e.hp <= 0) continue;
     // [7/16 fix mercy-target-filter] 排除宝箱/诱饵/道具, 防止恩赐锁到非敌人
     if (e.kind === 'chest' || e.kind === 'decoy' || e.kind === 'perk' || e.kind === 'buff') continue;
-    if (distanceToBobo(bobo, e) <= range) inRange.push(e);
+    if (ignoreRange || distanceToBobo(bobo, e) <= range) inRange.push(e);
   }
   if (inRange.length === 0) return [];
   inRange.sort((a, b) => {
@@ -2202,8 +2313,8 @@ function rankedBoboTargets(bobo, enemies) {
   return inRange;
 }
 
-function selectBoboTarget(bobo, enemies) {
-  const list = rankedBoboTargets(bobo, enemies);
+function selectBoboTarget(bobo, enemies, opts) {
+  const list = rankedBoboTargets(bobo, enemies, opts);
   return list.length ? list[0] : null;
 }
 
@@ -2215,7 +2326,7 @@ function applyBoboLaserBurnExplosion(center, mainDmg) {
   const cx = center.x, cy = center.y;
   G.enemies.forEach(en => {
     if (en === center) return;
-    if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
+    if (en.hp <= 0) return; // [K21-4pack chest-as-enemy] 拿掉 kind 过滤; 宝箱走下面 splashAroundTreasures
     const dx = en.x - cx, dy = en.y - cy;
     if (Math.sqrt(dx*dx + dy*dy) > splashR) return;
     const eff = Math.max(1, Math.round(splashDmg * (1 - (en.armor || 0))));
@@ -2225,6 +2336,8 @@ function applyBoboLaserBurnExplosion(center, mainDmg) {
     en.burnDmg = mainDmg * 0.125;
     en.lastBurnTick = _now;
   });
+  // [K21-4pack chest-as-enemy] g_burn 爆燃 splash 也作用于宝箱
+  splashAroundTreasures(cx, cy, splashR, splashDmg);
   G.explosions = G.explosions || [];
   G.explosions.push({ x: cx, y: cy, r: splashR, bornAt: G.now, life: 240 });
 }
@@ -2940,17 +3053,12 @@ function tickIdleDecoyTrigger() {
 function reflowTreasures() {
   const colCount = CFG.treasure.colCount;
   for (let c = 0; c < colCount; c++) {
-    // [K21-slot6 · reflow] 只对宝箱(perk/buff)排序收拢, 障碍(isObstacle)不参与收拢, 固定在其槽位
-    const colItems = G.treasures.filter(t => t.col === c);
-    const chests = colItems.filter(t => !t.isObstacle).sort((a, b) => b.targetY - a.targetY); // 靠 A 的在前
-    const obstacles = colItems.filter(t => t.isObstacle);
-    // 障碍占用的槽 idx 集合 (A=0, B=1, ..., F=5)
-    const usedSlots = new Set();
-    obstacles.forEach(o => { if (typeof o.slotIdx === 'number') usedSlots.add(o.slotIdx); });
-    // 宝箱按顺序填入未被障碍占用的最靠 A 的槽
+    // [K21-4pack obstacle-reflow] 障碍与宝箱统一按 targetY 降序收拢, 依次填槽 0/1/2/...
+    // 击破任一 (宝箱或障碍) → 全体自动往 A 顺移
+    const colItems = G.treasures.filter(t => t.col === c)
+      .sort((a, b) => b.targetY - a.targetY); // 靠 A 的在前
     let cursor = 0;
-    for (const t of chests) {
-      while (usedSlots.has(cursor) && cursor < 6) cursor++;
+    for (const t of colItems) {
       if (cursor >= 6) break;
       t.slotIdx = cursor;
       t.targetY = slotYFromIdx(cursor);
@@ -5496,7 +5604,8 @@ function drawGoldenGate(g) {
 
 // ----- 制导激光 (g_guide) -----
 function triggerBoboGuideLaser(bobo) {
-  const target = selectBoboTarget(bobo, G.enemies);
+  // [K21-4pack guide-no-range] 制导激光触发瞬间目标选取无视射程 (仍走 hatredPriority 排序)
+  const target = selectBoboTarget(bobo, G.enemies, { ignoreRange: true });
   if (!target) return;
   G.perks.boboGuideLasers = G.perks.boboGuideLasers || [];
   G.perks.boboGuideLasers.push({
@@ -5516,7 +5625,7 @@ function tickBoboGuideLasers(dt) {
     if (now >= gl.endAt) { G.perks.boboGuideLasers.splice(i, 1); continue; }
     // 目标丢失 → 跳最近
     if (!gl.target || gl.target.hp <= 0 || G.enemies.indexOf(gl.target) < 0) {
-      gl.target = selectBoboTarget(gl.from, G.enemies);
+      gl.target = selectBoboTarget(gl.from, G.enemies, { ignoreRange: true }); // [K21-4pack guide-no-range] 制导期跳目标全程无视射程
       if (!gl.target) continue;
     }
     // 每 200ms tick 50 伤害
