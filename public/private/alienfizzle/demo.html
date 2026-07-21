@@ -2927,6 +2927,8 @@ function spawnNewChest() {
     if (colCounts[i] === minColCount) candidates.push(i);
   }
   const col = pick(candidates);
+  // [K21-slot6 · cap] 通道满 6 (含障碍) 不刷新宝箱
+  if (occupiedSlotsForCol(col).size >= 6) return;
   const t = createTreasure();
   t.col = col;
   t.x = treasureColX(col);
@@ -2935,64 +2937,10 @@ function spawnNewChest() {
 }
 
 // [K正式关卡调优] 老 idle decoy 触发器彻底停用. 障碍改由 updateTreasures 内
-// "真宝箱落定 20s 未破 → 前方刷 0-2 障碍" 触发. 保留函数壳仅做 no-op, 兼容外部调用点.
+// "真宝箱落定 20s 未破 → 前方刷 0-2 障碍" 触发. 保留函数壳仅做 no-op, 兼容外部调用点 (L4270).
 function tickIdleDecoyTrigger() {
   return; // 停用: 正式关卡不再无条件冒空箱子
 }
-function _deprecated_tickIdleDecoyTrigger_OLD() {
-  if (G.isPreExperience) return;  // 预体验关卡不触发 (方阵关卡逻辑独立)
-  if (!G.lastRealChestBreakAt) G.lastRealChestBreakAt = G.now;
-  if (G.now - G.lastRealChestBreakAt < 25000) return;
-
-  const existingDecoy = G.treasures.filter(t => t.kind === 'decoy').length;
-  if (existingDecoy >= 2) {
-    G.lastRealChestBreakAt = G.now;
-    return;
-  }
-
-  const need = Math.min(2, 2 - existingDecoy);
-  const cfgT = CFG.treasure;
-  const colCount = cfgT.colCount;
-  // [7/17 P1-1 review-fix I2] 硬编码上限 2/列 (原引用不存在的 cfgT.maxPerCol 幽灵字段)
-  const MAX_PER_COL_DECOY = 2;
-
-  for (let i = 0; i < need; i++) {
-    const colCounts = new Array(colCount).fill(0);
-    for (const t of G.treasures) {
-      if (t.col >= 0 && t.col < colCount) colCounts[t.col]++;
-    }
-    const minColCount = Math.min(...colCounts);
-    const candidates = [];
-    for (let c = 0; c < colCount; c++) {
-      if (colCounts[c] === minColCount && colCounts[c] < MAX_PER_COL_DECOY) candidates.push(c);
-    }
-    if (candidates.length === 0) break;
-    const col = pick(candidates);
-
-    // [7/17 P1-1 review-fix M1] decoy HP = 最近真宝箱 HP × decoyRatio (贴近玩家当前难度)
-    // fallback: 若尚无真宝箱记录, 用 decoyHpBase × slotGrowth^slotIdx
-    const ratio = (cfgT.decoyRatio || 0.5);
-    const decoyHp = G.lastRealTreasureHp
-      ? Math.max(60, Math.round(G.lastRealTreasureHp * ratio))
-      : Math.round(cfgT.decoyHpBase * Math.pow(cfgT.slotGrowth, G.treasureSlotIdx || 0));
-    G.treasureSlotIdx = (G.treasureSlotIdx || 0) + 1;
-    const decoy = {
-      x: treasureColX(col), y: -cfgT.h, targetY: 0, col,
-      w: cfgT.w, h: cfgT.h,
-      hp: decoyHp, maxHp: decoyHp,
-      color: cfgT.decoyColor || '#666',
-      kind: 'decoy',
-      label: '空箱',
-      desc: '',
-      flashUntil: 0,
-    };
-    G.treasures.push(decoy);
-  }
-
-  reflowTreasures();
-  G.lastRealChestBreakAt = G.now;
-}
-
 // [K21-slot6 · reflow] 6槽位重排: A(防线端)~F(传送门端), A 最下, F 最上
 // 槽位大小 = cfgT.h (不是 slotHeight), A 锚定 = topY + (initCount-1)*slotHeight (保持视觉不变)
 // 每列按 targetY 从大到小排 (最靠 A 的排第一), 依次落进 A/B/C/D/... 空槽
