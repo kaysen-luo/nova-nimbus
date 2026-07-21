@@ -386,10 +386,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v36">V3.6 · K21-slot6 6槽位宝箱+障碍新机制</a></li>
   <li><a href="#ch-v37">V3.7 · K21-gate+boss+exp 状态门重构+boss奖励+经验降档</a></li>
   <li><a href="#ch-v38">V3.8 · K21-4pack AOE作用宝箱+g_guide无视射程+障碍reflow等同宝箱+repeatHpStep降档</a></li>
-  <li><a href="#ch-v39">V3.9 · K21-4pack-fix 穿透reflow瞬移+分裂45°+AOE统一伤宝箱+障碍挤入宝箱前 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v39">V3.9 · K21-4pack-fix 穿透reflow瞬移+分裂45°+AOE统一伤宝箱+障碍挤入宝箱前</a></li>
+  <li><a href="#ch-v40">V4.0 · K21-bosshp 大 BOSS 血量 50000→30000 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v3.9 · 2026-07-21<br>
+v4.0 · 2026-07-21<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -2276,6 +2277,30 @@ if (targetLv &gt; skillLevels[id]) {
     </div>
   </section>
 
+  <section class="chapter">
+    <h3 id="ch-v40" style="color:#c62828">V4.0 · K21-bosshp · 大 BOSS 血量 50000 → 30000 (2026-07-21 傍晚)</h3>
+    <div class="doc-body">
+      <p class="lead">K21-4pack-fix 之后, 精通卡 AOE 全打宝箱 + 三大招 AOE 全打宝箱, 玩家的实际输出 pipeline 拉起来了。原 boss 50000 血在这个新输出面前太肉, 拖尾时间过长, 玩家心智从"打 boss"变成"耗 boss"。</p>
+
+      <p><strong>① 调整</strong>:</p>
+      <ul>
+        <li><code>CFG.enemyTypes.boss.hp</code>: <strong>50000 → 30000</strong> (-40%)</li>
+        <li>其它字段全部不动: speed 24 / dps 60 / w×h 110 / armor 0.78 / score 2000 / isFinalBoss:true</li>
+      </ul>
+
+      <p><strong>② 联动检查</strong>:</p>
+      <ul>
+        <li>小 boss 血量 (miniA 6000 / miniB 11000 / miniC 20000) 不动, 大小 boss 差距从 2.5-8.3× 收窄到 1.5-5×, 更合理的爬坡</li>
+        <li>K21-boss 段"大 boss 奖励仅无尽模式" (2×三选一 + 3 金门) 逻辑不受影响, 只是死得更快</li>
+        <li>score 2000 不改, 保持大 boss 击杀分权重</li>
+      </ul>
+
+      <p><strong>③ 数值定位</strong>: <code>demo.html</code> L1122 · tag <code>[K21-bosshp]</code></p>
+
+      <p><strong>④ 设计意图</strong>: 让玩家在中后期"感受到 boss 会死"而不是"感受到自己在耗"。真实数据待亲测反馈。</p>
+    </div>
+  </section>
+
   <section class="chapter" id="ch-08">
     <span class="chapter-num">§ 08 · 边缘情况清单</span>
     <h2>16 条规则边界<br>+ 处理预案</h2>
@@ -2431,7 +2456,7 @@ if (targetLv &gt; skillLevels[id]) {
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-21 16:31';  // ← 每次重新部署 spec 时更新此值
+  const SPEC_PUBLISHED = '2026-07-21 17:00';  // ← 每次重新部署 spec 时更新此值
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
