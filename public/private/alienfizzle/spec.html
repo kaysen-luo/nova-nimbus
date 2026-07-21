@@ -385,10 +385,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v35">V3.5 · K7-20 批次调优 (7-20 晚)</a></li>
   <li><a href="#ch-v36">V3.6 · K21-slot6 6槽位宝箱+障碍新机制</a></li>
   <li><a href="#ch-v37">V3.7 · K21-gate+boss+exp 状态门重构+boss奖励+经验降档</a></li>
-  <li><a href="#ch-v38">V3.8 · K21-4pack AOE作用宝箱+g_guide无视射程+障碍reflow等同宝箱+repeatHpStep降档 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v38">V3.8 · K21-4pack AOE作用宝箱+g_guide无视射程+障碍reflow等同宝箱+repeatHpStep降档</a></li>
+  <li><a href="#ch-v39">V3.9 · K21-4pack-fix 穿透reflow瞬移+分裂45°+AOE统一伤宝箱+障碍挤入宝箱前 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v3.8 · 2026-07-21<br>
+v3.9 · 2026-07-21<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -2213,6 +2214,66 @@ if (targetLv &gt; skillLevels[id]) {
         <li>四项联动 = <strong>宝箱通道的爽感闭环</strong></li>
       </ul>
     </div>
+
+    <h3 id="ch-v39" style="color:#c62828">V3.9 · K21-4pack-fix · 穿透 reflow 瞬移 + 分裂 45° + AOE 统一伤宝箱 + 障碍挤入宝箱前 (2026-07-21 下午)</h3>
+    <p><strong>V3.8 上线后 K 实机反馈 5 项修复: (F1) 穿透弹在宝箱 reflow 顺移填坑时能立即命中下移到位的上方箱 — 通过 y 瞬移补偿; (F2) 分裂弹保持标准物理飞, 打不到就打不到, 不再作弊寻箱; (F3) 三个 AOE 大招 (站一起 / 飞轮海 / 激光贯穿) 全部对宝箱造成伤害, 判定几何与该技能敌人伤害一致; (F4) 障碍生成改为\"挤入宝箱前\" — 从 20s 未受击的宝箱池随机挑 1 targetBox, 障碍刷在 targetBox.slotIdx, 该 col 所有 slotIdx≥insertSlot 的 treasures 全部 slotIdx+=1 顺移; (F5) 分裂弹角度 30° → 45°。</strong></p>
+
+    <div class="callout" style="border-color:#c62828">
+      <strong>F1 · 穿透弹 reflow 顺移瞬移补偿 (方向: slotIdx 减小 = 填坑上移)</strong>:
+      <p style="margin-top:6px">V3.8 reflow 引入后, 击破前排宝箱 → 后排宝箱 slotIdx 减小 (往 A 方向填坑) → 但视觉 y 是渐变过渡的; 穿透弹此刻已飞过后排的旧 y 位, 会\"擦过\"下移到位的上方箱 (肉眼看似穿透没命中新位置的箱)。</p>
+      <ul style="margin-top:6px">
+        <li><strong>方案</strong>: reflow 时若某 treasure 的 slotIdx <em>减小</em> (顺移填坑方向), 立即把 <code>t.y</code> 瞬移到新 slotIdx 对应的 targetY (跳过渐变), 让飞行中穿透弹能立刻命中</li>
+        <li><strong>不影响</strong>: slotIdx 增大 (障碍挤入导致的下移) 仍走原渐变, 避免视觉突兀</li>
+        <li><strong>代码</strong>: <code>reflowTreasures</code> 内 slot 计算后 <code>if (newSlot &lt; t.slotIdx) t.y = computeTargetY(newSlot)</code></li>
+      </ul>
+
+      <strong>F2 · 分裂弹保持标准 ±45° 物理飞 (不寻箱)</strong>:
+      <ul style="margin-top:6px">
+        <li><strong>V3.8 遗留</strong>: 裂头弹 V 字分裂子弹曾一度按\"作弊寻最近箱\"处理, 观感诡异</li>
+        <li><strong>V3.9 拨正</strong>: 分裂子弹按 <strong>标准 ±45°</strong> (V3.8 是 ±30°) 物理飞, 打到宝箱算伤害, 打不到拉倒 — 与打敌人的分裂逻辑对齐</li>
+        <li><strong>动机</strong>: 简单 + 一致, 玩家心智模型统一 (\"分裂弹就是分裂弹, 不认宝箱\")</li>
+      </ul>
+
+      <strong>F3 · 三个 AOE 技能全部对宝箱造成伤害 (走统一函数)</strong>:
+      <ul style="margin-top:6px">
+        <li><strong>覆盖 3 个技能</strong>: (a) 站一起 (聚合 AOE), (b) 飞轮海 (飞轮群), (c) 激光贯穿 (穿透激光)</li>
+        <li><strong>判定几何</strong>: 每个技能对宝箱的命中判定与对敌人的判定 <strong>完全一致</strong> (半径 / 矩形 / 射线, 不做另一套)</li>
+        <li><strong>统一函数</strong>: 均走 <code>damageTreasureFromAoe(treasure, dmg)</code> — V3.8 引入的宝箱削血 + 飘字 + reflow 通道, 保证击破后自动顺移</li>
+        <li><strong>与 V3.8 关系</strong>: V3.8 只覆盖了精通卡 AOE (爆炸/裂头/穿透/弹射), 大招 AOE 是漏网 — V3.9 补齐</li>
+      </ul>
+
+      <strong>F4 · 障碍生成改为\"挤入宝箱前\"</strong>:
+      <p style="margin-top:6px">V3.8 障碍走 reflow 同规则收拢, 但 <em>生成位置</em> 仍是找空槽; V3.9 改为强插式: 挑一个\"20s 未受击\"的宝箱 targetBox, 直接挤到它前面, 后排全部往 B 顺移。</p>
+      <ul style="margin-top:6px">
+        <li><strong>候选池</strong>: 从当前 <code>G.treasures</code> 筛出 <code>kind === 'chest'</code> 且 <code>now - t.lastHitTime &gt;= 20000</code> 的宝箱 list</li>
+        <li><strong>选中</strong>: 从 list 随机挑 1 个 <code>targetBox</code> (无候选 → 本次 spawn 放弃)</li>
+        <li><strong>刷在哪</strong>: 障碍 slotIdx = <code>targetBox.slotIdx</code> (即 insertSlot); 同 col 内所有 <code>t.slotIdx &gt;= insertSlot</code> 的 treasures 全部 <code>slotIdx += 1</code> 顺移</li>
+        <li><strong>溢出保护</strong>: 若顺移后 slot5 已被占 (会造成 slotIdx=6 溢出), 触发 <code>resetAll</code> 放弃本次 spawn, 保证 6 槽位不破</li>
+        <li><strong>动机</strong>: 障碍成为\"打脸\"事件 — 玩家攒了 20s 没打的宝箱前突然被塞障碍, 制造紧张感与优先级决策</li>
+      </ul>
+
+      <strong>F5 · 分裂弹角度 30° → 45°</strong>:
+      <ul style="margin-top:6px">
+        <li><code>a_bounce</code> V 字分裂角度: <s>±30°</s> → <strong>±45°</strong></li>
+        <li>覆盖范围更广, 分裂弹更有存在感; 与 F2 的\"标准物理飞\"合起来 = 更宽扇形 + 不作弊 = 依赖玩家瞄准的箱位</li>
+      </ul>
+
+      <strong>⑥ 设计意图 (V3.9 五项联动)</strong>:
+      <ul style="margin-top:6px">
+        <li>F1 让穿透弹在 reflow 中 <strong>不再擦位</strong>, 打起来对得上眼</li>
+        <li>F2+F5 让分裂弹 <strong>诚实但更宽</strong>, 玩家心智不再\"寻箱魔法\"</li>
+        <li>F3 让 3 个大招 <strong>AOE 通杀宝箱</strong>, 补齐 V3.8 只覆盖精通卡的漏</li>
+        <li>F4 让障碍成为 <strong>宝箱通道的插队事件</strong>, 20s 冷板凳宝箱前挤障碍 = 玩家必须换焦点</li>
+        <li>五项联动 = <strong>V3.8 爽感闭环之上再补精度与节奏</strong></li>
+      </ul>
+
+      <strong>⑦ 部署记录</strong>:
+      <ul style="margin-top:6px">
+        <li>commits: <code>c8ff3f3</code> + <code>3cce1c8</code></li>
+        <li>demo 直链: <a href="https://a285c400.nova-nimbus.pages.dev/private/alienfizzle/demo" style="color:#c62828">a285c400.nova-nimbus.pages.dev</a></li>
+        <li>测试: playwright 4/4 pass (F1-F5 全部活体断言通过)</li>
+      </ul>
+    </div>
   </section>
 
   <section class="chapter" id="ch-08">
@@ -2370,7 +2431,7 @@ if (targetLv &gt; skillLevels[id]) {
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-21 14:53';  // ← 每次重新部署 spec 时更新此值
+  const SPEC_PUBLISHED = '2026-07-21 16:31';  // ← 每次重新部署 spec 时更新此值
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
