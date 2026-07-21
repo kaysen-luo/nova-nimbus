@@ -3161,6 +3161,14 @@ function updateTreasures(dt) {
       if (Math.random() >= 0.5) { resetAll(); return; }
       // [K21-4pack-fix F4] 障碍改为"挤入符合条件的宝箱前": 前提该列 F 端有空槽可挤
       if (firstEmptySlot(col) < 0) { resetAll(); return; }
+      // [K21-4pack-fix F4-overflow] 顺移是"所有 slotIdx >= insertSlot 均 +1"的均匀平移,
+      //   只要顶槽 (MAX_SLOT=5) 已被占, 就必然溢出到 slot6, 与中间是否有空槽无关。
+      //   反例: 占 {0,3,5}, insertSlot=0 → 顺移后 {1,4,6} 溢出。
+      //   因此候选 targetBox 必须满足其所在列的 slot MAX_SLOT 当前为空。
+      const MAX_SLOT = 5; // 与 firstEmptySlot 里的 6 槽阵 (idx 0..5) 一致
+      const occupiedInCol = occupiedSlotsForCol(col);
+      if (occupiedInCol.has(MAX_SLOT)) { resetAll(); return; }
+      // slot5 空 ⇒ list 中不存在 slotIdx=5 的候选, 其余全部合法, 无需逐个 filter
       // 从 list (该列 20s 未受击的候选宝箱) 里随机挑 1 个作为被挤箱
       const targetBox = list[Math.floor(Math.random() * list.length)];
       const insertSlot = targetBox.slotIdx;
