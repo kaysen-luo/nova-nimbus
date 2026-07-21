@@ -1712,7 +1712,7 @@ function updateBullets(dt) {
             const baseVx = b.vx || 0;
             const speed = Math.sqrt(baseVx * baseVx + baseVy * baseVy) || CFG.bullet.speed;
             const baseAng = Math.atan2(baseVy, baseVx);
-            const splitOffsets = [-30, 30];
+            const splitOffsets = [-45, 45]; // [K21-4pack-fix F5] 分裂角度 30°→45°
             const splitDmg = Math.max(1, Math.round(b.atk * 0.5));
             splitOffsets.forEach(off => {
               const ang = baseAng + off * Math.PI / 180;
@@ -1885,7 +1885,7 @@ function updateBullets(dt) {
               // [K6-3 V字分裂] 沿主子弹前进方向张开 V 字: 基准=前进方向, ±30° 两颗小子弹 (总夹角60°)
               // 纯向上射时 = 左上/右上 V 字 (对应屏幕绝对 240°/300°); 斜射时跟随前进方向, 始终朝前散开打后续敌人
               const baseAng = Math.atan2(baseVy, baseVx); // 主子弹前进方向 (弧度)
-              const splitOffsets = [-30, 30]; // 度, 相对前进方向左右各 30°
+              const splitOffsets = [-45, 45]; // [K21-4pack-fix F5] 相对前进方向左右各 45° (30→45)
               const splitDmg = Math.max(1, Math.round(b.atk * 0.5));
               splitOffsets.forEach(off => {
                 const ang = baseAng + off * Math.PI / 180;
@@ -3060,8 +3060,15 @@ function reflowTreasures() {
     let cursor = 0;
     for (const t of colItems) {
       if (cursor >= 6) break;
+      // [K21-4pack-fix F1] 上方箱填坑瞬移: 已在槽内 (有 slotIdx) 且 slotIdx 减小 (向 A 顺移填坑) → y 立即到位
+      //   跳过缓动, 避免穿透子弹这帧继续向上飞时打不中 B 箱的 bug
+      //   新箱首次入场 (旧 slotIdx == undefined) / F4 挤压方向 (slotIdx 增大) 走标准缓动, 不动
+      const _oldSlot = t.slotIdx;
       t.slotIdx = cursor;
       t.targetY = slotYFromIdx(cursor);
+      if (typeof _oldSlot === 'number' && cursor < _oldSlot) {
+        t.y = t.targetY; // 瞬移
+      }
       cursor++;
     }
   }
@@ -3152,11 +3159,21 @@ function updateTreasures(dt) {
       };
       // 50% roll
       if (Math.random() >= 0.5) { resetAll(); return; }
-      // 找空槽
-      const slot = firstEmptySlot(col);
-      if (slot < 0) { resetAll(); return; }
-      // 刷 1 个障碍
-      spawnObstacleAt(col, slot, list[0]);
+      // [K21-4pack-fix F4] 障碍改为"挤入符合条件的宝箱前": 前提该列 F 端有空槽可挤
+      if (firstEmptySlot(col) < 0) { resetAll(); return; }
+      // 从 list (该列 20s 未受击的候选宝箱) 里随机挑 1 个作为被挤箱
+      const targetBox = list[Math.floor(Math.random() * list.length)];
+      const insertSlot = targetBox.slotIdx;
+      // 该 col 所有 slotIdx >= insertSlot 的 treasures (箱+已有障碍) 全部 slotIdx += 1 顺移
+      // slotIdx 增大 = targetY 减小 (上移), 走标准缓动 (F1 只处理减小方向, 不会瞬移)
+      G.treasures.forEach(tt => {
+        if (tt.col === col && typeof tt.slotIdx === 'number' && tt.slotIdx >= insertSlot) {
+          tt.slotIdx += 1;
+          tt.targetY = slotYFromIdx(tt.slotIdx);
+        }
+      });
+      // 障碍刷在 targetBox 原槽位
+      spawnObstacleAt(col, insertSlot, targetBox);
       resetAll();
     });
   }
@@ -5872,6 +5889,17 @@ function castSkill(id, level, chainDepth) {
             en.burnStackUntil = G.now + 5000;
           }
         });
+        // [K21-4pack-fix F3-together] 站一起主爆同步作用宝箱, 方形判定与敌人一致
+        if (G.treasures) {
+          for (let ti = G.treasures.length - 1; ti >= 0; ti--) {
+            const tt = G.treasures[ti];
+            if (!tt || tt.hp <= 0) continue;
+            const txp = perspectiveX(tt.x, tt.y);
+            if (Math.abs(txp - cxp) > r || Math.abs(tt.y - lockY) > r) continue;
+            const { dmg: td } = rollSkillCrit(baseDmg);
+            damageTreasureFromAoe(tt, Math.max(1, td));
+          }
+        }
         G.explosions = G.explosions || [];
         G.explosions.push({ x: lockX, y: lockY, r, bornAt: G.now, life: 320 });
         // [K10-5 together-lv3-burnzone] Lv3 主爆后 spawn 5s 燃烧地带 (tick 每 0.5s 续燃+叠层)
@@ -6217,6 +6245,19 @@ function _laserpiercePierce(player, target, width, dmg) {
       }
     }
   });
+  // [K21-4pack-fix F3-laserpierce] 激光贯穿沿线同步作用宝箱, 判定与敌人一致 (t∈[0,extLen], perp≤halfW+w/2)
+  if (G.treasures) {
+    for (let ti = G.treasures.length - 1; ti >= 0; ti--) {
+      const tt = G.treasures[ti];
+      if (!tt || tt.hp <= 0) continue;
+      const rx = tt.x - player.x, ry = tt.y - player.y;
+      const tp = rx * exu + ry * eyu;
+      if (tp < 0 || tp > extLen) continue;
+      const perp = Math.abs(rx * (-eyu) + ry * exu);
+      if (perp > halfW + (tt.w || 20) / 2) continue;
+      damageTreasureFromAoe(tt, dmg);
+    }
+  }
 }
 
 function tickSkillVisuals(dt) {
@@ -6260,6 +6301,17 @@ function tickSkillVisuals(dt) {
             damageEnemy(e, dmg, crit, true);
           }
         });
+        // [K21-4pack-fix F3-flywheel] 飞轮海每秒 tick 同步作用宝箱, 圆形判定与敌人一致
+        if (G.treasures) {
+          for (let ti = G.treasures.length - 1; ti >= 0; ti--) {
+            const tt = G.treasures[ti];
+            if (!tt || tt.hp <= 0) continue;
+            const dxT = tt.x - v.x, dyT = tt.y - v.y;
+            if (dxT*dxT + dyT*dyT > v.r * v.r) continue;
+            const { dmg: td } = rollSkillCrit(Math.round(getPlayerAtk() * 1.2));
+            damageTreasureFromAoe(tt, Math.max(1, td));
+          }
+        }
       }
     } else if (v.kind === 'highvoltageZone') {
       // ===== 议题 10-4 高压领域 tick 重构 =====
