@@ -5405,9 +5405,8 @@ function tryDrainPendingCardPicks() {
 
 // [K21-boss reward] 生成金色状态门: value=vmax 满增益, 碰即触发, 不占 maxConcurrent
 function spawnGoldenGate() {
-  const dims = CFG.gate.dimensions.filter(d =>
-    d.key !== 'defenseArmor' && d.key !== 'defenseMaxHP' && d.key !== 'defenseHeal' && d.key !== 'silence'
-  );
+  // [K21-golden fix] K 定金门从 8 维全池独立随机, dev 违规排除 4 维已修正
+  const dims = CFG.gate.dimensions;
   const dim = pick(dims.length > 0 ? dims : CFG.gate.dimensions);
   const safeMargin = 8;
   const xMin = TRACK_R_LEFT + GATE_WIDTH/2 + safeMargin;
