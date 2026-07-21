@@ -689,17 +689,18 @@ const SKILL_CARDS = [
 // --- 2. MASTERY_CARDS (20 张精通卡, 可重复获得) ---
 const MASTERY_CARDS = [
   // A 子弹形态 (3)
-  { id:'a_pierce', category:'A', name:'集束枪管', desc:'普攻+20%, 穿透 2 (伤害递减 20%), 命中分裂 4 弹, BOBO 主目标激光分叉 2' }, // [7/16 fix cluster-barrel] + [7/16 fix pierce-inherit-split]
-  { id:'a_bounce', category:'A', name:'裂头弹', desc:'击中主目标瞬间四散分裂 4 颗小子弹, 50% 伤害, 不再穿透/分裂, 继承攻击特效' }, // [7/16 fix skull-splitter]
+  { id:'a_pierce', category:'A', name:'集束枪管', desc:'普攻+20%, 穿透 2 (伤害递减 20%)' }, // [K7-20 削卡] 去除命中分裂+BOBO 折射联动
+  { id:'a_bounce', category:'A', name:'裂头弹', desc:'击中主目标瞬间分裂 2 颗小子弹, 50% 伤害, 不再穿透/分裂, 继承攻击特效' }, // [K7-20 削卡] desc 同步实际 splitOffsets=2
   { id:'a_explode', category:'A', name:'爆炸弹', desc:'子弹命中产生小范围爆炸, 30% 主伤害' },
-  { id:'a_burst', category:'A', name:'连发快射', desc:'攻速+30%, 弹道+3, 单发伤害降为 50% (总输出略升), 5% 爆头额外 50% 伤害 (不可重复获取)' }, // [7/16 fix burst-fire] [7/16 fix burst-no-repeat]
+  { id:'a_focusbeam', category:'A', name:'集束激光', desc:'普攻+20%, BOBO 激光折射 +2' }, // [K7-20 新卡] 20%攻+bobo 弹射2
+  { id:'a_burst', category:'A', name:'连发快射', desc:'攻速+30%, 弹道+2, 单发伤害降为 55% (不可重复获取)' }, // [K7-20 削卡] 弹道 3→2, 单发 0.5→0.55, 删爆头
   // B 状态施加 (3) 全必触发
   { id:'b_burn', category:'B', name:'燃烧弹', desc:'必触发点燃, 2 秒内 50% 主伤害 DoT' },
   { id:'b_slow', category:'B', name:'减速弹', desc:'必触发减速 30% 持续 2 秒' },
   { id:'b_poison', category:'B', name:'毒液弹', desc:'命中挂毒, 每 0.5s 扣 20 真伤, 持续 4s, 可叠 3 层 (每层×1.5)' }, // [7/16 fix poison]
   // C 特殊触发 (2)
   { id:'c_feast', category:'C', name:'食髓', desc:'击杀精英以上敌人后 5s 内攻速+50%' },
-  { id:'c_meltdown', category:'C', name:'熔核', desc:'自动循环 11 秒: 3s 爬升 (1x→3x攻速) + 5s 满态 (3x攻速+20暴率+50暴伤) + 3s 静默' },
+  { id:'c_meltdown', category:'C', name:'熔核', desc:'自动循环 11 秒: 3s 爬升 (1x→3x攻速) + 5s 满态 (3x攻速) + 3s 静默' }, // [K7-20 削卡] 删满态 20%暴率+50%暴伤
   // D 伤害修饰 (2)
   { id:'d_hunter', category:'D', name:'精英以上猎手', desc:'对精英+boss 单位 +30% 伤害' },
   { id:'d_weak', category:'D', name:'弱者克星', desc:'对被施加减益 (减速/麻痹/燃烧等) 的单位 +40% 伤害' },
@@ -718,10 +719,10 @@ const MASTERY_CARDS = [
   //   drawThree 里对 f_gamble 特判权重不腰斩, 每次抽三选一都可能出现
   { id:'f_gamble', category:'F', name:'恶魔赌局', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 可重复获取)' },
   // G Bobo 强化 (3, K10-6 全部一次性化)
-  { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 弹射+3, 激光伤害+50% [不可重复]' },
+  { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 弹射+5, 激光伤害+100% [不可重复]' }, // [K7-20 bobo强化] 弹射 3→5, 伤害 50%→100%
   // [7/16 fix remove-overload] g_overload 已移除
-  { id:'g_burn', category:'G', name:'激光爆燃', desc:'Bobo 激光命中产生小爆炸 (半径 36px, 主伤 12%) + 点燃 [不可重复]' },
-  { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 攒 20 次攻击发一道 5s 制导激光, 击杀跳目标. 联动 g_focus (伤害×1.5 + 弹射×3, 递减20%) 和 g_burn (爆炸+点燃) [不可重复]' }
+  { id:'g_burn', category:'G', name:'激光爆燃', desc:'Bobo 激光命中产生爆炸 (半径 50px, 主伤 25%) + 点燃 [不可重复]' }, // [K7-20 bobo强化] 半径 36→50, 主伤 12%→25%
+  { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 攒 12 次攻击发一道 5s 制导激光, 击杀跳目标. 联动 g_focus (伤害×1.5 + 弹射×3, 递减20%) 和 g_burn (爆炸+点燃) [不可重复]' } // [K7-20 bobo强化] 攒击数 20→12
 ];
 
 // [K5-卡片标签] 卡面功能标签映射 (id -> 标签数组, 每卡≤3). 独立常量, 不侵入卡数据结构
@@ -730,7 +731,7 @@ const CARD_TAG_MAP = {
   together:'技能·AOE', flywheel:'技能·AOE·持续', mercy:'技能·单体·减速',
   highvoltage:'技能·AOE·麻痹', laserpierce:'技能·AOE·BOBO',
   // 精通卡
-  a_pierce:'普攻·穿透·AOE', a_bounce:'普攻·AOE', a_explode:'普攻·AOE', a_burst:'普攻·增伤',
+  a_pierce:'普攻·穿透·AOE', a_bounce:'普攻·AOE', a_explode:'普攻·AOE', a_focusbeam:'BOBO·折射', a_burst:'普攻·增伤',
   b_burn:'普攻·燃烧', b_slow:'普攻·减速', b_poison:'普攻·中毒',
   c_feast:'增益·攻速', c_meltdown:'增益·暴击',
   d_hunter:'增伤', d_weak:'增伤',
@@ -763,7 +764,7 @@ function rollDemonGamble() {
 
 // --- 4. BOBO_LASER_CONFIG (Bobo 激光基础参数) ---
 const BOBO_LASER_CONFIG = {
-  attackSpeed: 0.7, // 秒/发
+  attackSpeed: 1.0, // 秒/发 [K7-20 bobo削] 0.7→1.0, 单发DPS降30% (前期辅助定位)
   rangeRatio: 2/3,  // 议题 12 · 三版调整: 射程回 2/3
   damageRatio: 0.6, // 相对主角固定攻击力的比例
   hatredPriority: ['attacking_defense', 'boss', 'elite', 'minion'],  // 高到低
@@ -1605,8 +1606,7 @@ function shootLoop() {
         playerSpdMult *= 1 + 2 * (cyc / 3000);
       } else if (cyc < 8000) {
         playerSpdMult *= 3;
-        playerCritExtra += 0.2;
-        playerCritDmgExtra += 0.5;
+        // [K7-20 削卡] 删除满态 20% 暴率 + 50% 暴伤 (仅保留 3x 攻速)
       } else {
         meltdownBlock = true;
       }
@@ -1626,17 +1626,12 @@ function shootLoop() {
     const critRate = Math.min(1, (G.playerCritRate !== undefined ? G.playerCritRate : G.nuoStats.crt) + (G.playerCritBonus || 0) + playerCritExtra);
     // 暴击伤害 = 基础 ×2 + critDmg 加成 (来自状态门 critDmg 维度)
     const critMult = 2 + (G.nuoStats.critDmg || 0) + playerCritDmgExtra;
-    // [7/16 fix burst-fire] 爆头率 (与暴击独立, 与暴击可叠加)
-    const headshotRate = G.playerHeadshotChance || 0;
     for (let i = 0; i < bltCount; i++) {
       const offset = (i - (bltCount-1)/2) * spread;
-      const headshot = Math.random() < headshotRate;
       const crit = Math.random() < critRate;
       let atk = baseAtk;
-      if (headshot) atk *= 1.5; // [7/16 fix burst-fire] 爆头 +50%
       if (crit) atk *= critMult;
-      const b = createBullet(G.player.x + offset, G.player.y - G.player.h/2, 'player', atk, 1, crit);
-      b.headshot = headshot; // [7/16 fix burst-fire] 标记爆头以便飘字用黄色
+      const b = createBullet(G.player.x + offset, G.player.y - G.player.h/2, 'player', atk, 1, crit); // [K7-20 削卡] 删除爆头逻辑
       G.bullets.push(b);
     }
     G.player.lastShot = G.now;
@@ -1692,8 +1687,17 @@ function updateBullets(dt) {
         const tBox = { x: t.x - t.w/2, y: t.y - t.h/2, w: t.w, h: t.h };
         if (rectOverlap(bBoxL, tBox)) {
           const dmg = Math.round(b.atk);
+          // [K21-slot6 · 障碍削上限] 障碍受伤时 maxHp 与 hp 各扣 dmg (保 hp<=maxHp)
+          if (t.isObstacle) {
+            t.maxHp = Math.max(t.hp - dmg, t.maxHp - dmg);
+          }
           t.hp -= dmg;
           t.flashUntil = G.now + 80;     // 闪白 80ms
+          t.lastHitAt = G.now; // [K7-20 障碍规则] 被击中时间戳, 用于障碍触发条件重置
+          // [K21-slot6 · AOE重置] 宝箱被击中 → 重置 obstacleDelay 计时器
+          if ((t.kind === 'perk' || t.kind === 'buff') && t.settledAt) {
+            t.settledAt = G.now;
+          }
           hit = true;
           // 伤害飘字
           floatText(t.x + (Math.random()-0.5)*30, t.y - 10, '-' + dmg, b.crit ? '#ffd441' : '#ff6a8b', b.crit);
@@ -1829,7 +1833,7 @@ function updateBullets(dt) {
               }
             }
             if (b.owner === 'player' && G.cardPool && !b._noSplit &&
-                (G.cardPool.hasMastery('a_bounce') || G.cardPool.hasMastery('a_pierce'))) {
+                G.cardPool.hasMastery('a_bounce')) { // [K7-20 削卡] a_pierce 不再触发命中分裂
               // [7/16 fix skull-splitter] spawn 4 颗子弹, ±22.5° 和 ±67.5°, 50% 伤害
               // [7/16 fix pierce-inherit-split] 集束枪管命中主目标也触发分裂 (小子弹不穿透/不再分裂)
               const baseVy = b.vy || (-CFG.bullet.speed);
@@ -1932,10 +1936,7 @@ function damageEnemy(e, dmg, isCrit, fromPlayer, isHeadshot) {
   e.flashUntil = G.now + 80;
   SFX.play('hit');
   // 飘字
-  if (isHeadshot) {
-    // [7/16 fix burst-fire] 爆头用黄色, 与暴击 (橙) / 普通 (白/金) 区分
-    floatText(e.x, e.y - 10, '爆头 ' + dmg + '!', '#ffff33', true);
-  } else if (isCrit) {
+  if (isCrit) {
     floatText(e.x, e.y - 10, '暴击 ' + dmg + '!', '#ffd441', true);
   } else if (e.armor >= 0.4) {
     floatText(e.x + (Math.random()-0.5)*20, e.y - 10, '-' + dmg + ' 硬', '#aaccff', false);
@@ -2213,10 +2214,10 @@ function selectBoboTarget(bobo, enemies) {
   return list.length ? list[0] : null;
 }
 
-// [K10-6 g_burn 爆燃] 小爆炸: 半径 36px, 主伤 12%, 只对紧贴主目标的邻居生效
+// [K10-6 g_burn 爆燃] 小爆炸: 半径 50px, 主伤 25%, 只对紧贴主目标的邻居生效 [K7-20 强化: 36/12% → 50/25%]
 function applyBoboLaserBurnExplosion(center, mainDmg) {
-  const splashR = 36;
-  const splashDmg = Math.max(1, Math.round(mainDmg * 0.12));
+  const splashR = 50; // [K7-20 bobo强化] 36→50
+  const splashDmg = Math.max(1, Math.round(mainDmg * 0.25)); // [K7-20 bobo强化] 12%→25%
   const _now = G.now || performance.now();
   const cx = center.x, cy = center.y;
   G.enemies.forEach(en => {
@@ -2245,7 +2246,7 @@ function boboLaserDamage() {
   let dmg = base * nuoAtkMult;
   // ===== 议题 10 · 切片 4: g_focus (Bobo 激光伤害 +50%) [K10-6 一次性化] =====
   if (G.cardPool && G.cardPool.hasMastery('g_focus')) {
-    dmg *= 1.5;
+    dmg *= 2.0; // [K7-20 bobo强化] 1.5→2.0 (伤害 50%→100%)
   }
   // ===== END =====
   // 暴击 (吃 BOBO 暴击 + 主角额外暴击加成)
@@ -2285,8 +2286,8 @@ function fireBoboLaserChain(bobo, primaryTarget, rankedList, forkCount, beamColo
     const next = rankedList[picked++];
     if (!next || next.hp <= 0) { i--; continue; }
     const { dmg: dn, crit: cn } = boboLaserDamage();
-    // [7/16 fix cluster-barrel] a_pierce 时分叉不衰减
-    const forkMul = (G.cardPool && G.cardPool.hasMastery('a_pierce')) ? 1.0 : 0.8;
+    // [K7-20 削卡] a_pierce 不再影响 BOBO 分叉衰减, 恢复固定 0.8
+    const forkMul = 0.8;
     const effn = Math.max(1, Math.round(dn * forkMul * (1 - (next.armor || 0))));  // [K10-6 review fix] 分叉衰减 20% (集束枪管时不衰减)
     damageEnemy(next, effn, cn, false);
     if (G.cardPool && G.cardPool.hasMastery('g_burn')) {
@@ -2299,10 +2300,10 @@ function fireBoboLaserChain(bobo, primaryTarget, rankedList, forkCount, beamColo
     G.boboLaserBeams.push(new BoboLaserBeam({ x: lastNode.x, y: lastNode.y }, { x: next.x, y: next.y }, beamColor));
     lastNode = next;
   }
-  // ===== 议题 10 · 切片 4: g_guide (每次攻击攒能量, 20 次触发制导激光) =====
+  // ===== 议题 10 · 切片 4: g_guide (每次攻击攒能量, 12 次触发制导激光) [K7-20 强化: 20→12] =====
   if (G.cardPool && G.cardPool.hasMastery('g_guide')) {
     G.perks.boboAttackCount = (G.perks.boboAttackCount || 0) + 1;
-    if (G.perks.boboAttackCount >= 20) {
+    if (G.perks.boboAttackCount >= 12) { // [K7-20 bobo强化] 攒击数 20→12, 制导激光更频繁
       G.perks.boboAttackCount = 0;
       triggerBoboGuideLaser(bobo);
     }
@@ -2336,13 +2337,14 @@ function updateBoboLasers(dt) {
 
   // [7/16 C1-1] BOBO 激光分叉恢复: 弹道 N → 分叉 N-1 次 (spec §5.9 / §2.2.2)
   let forkCount = Math.max(0, Math.round((G.nuoStats.blt || 1) - 1));
-  // [7/16 fix cluster-barrel] a_pierce: BOBO 主目标激光分叉 2 目标
-  if (G.cardPool && G.cardPool.hasMastery('a_pierce')) {
-    forkCount = Math.max(forkCount, 2);
-  }
+  // [K7-20 削卡] a_pierce 不再影响 BOBO 分叉 (原 forkCount=max(forkCount,2) 删除)
   // [K10-6] g_focus 一次性化: 额外弹射 +3
   if (G.cardPool && G.cardPool.hasMastery('g_focus')) {
-    forkCount += 3;
+    forkCount += 5; // [K7-20 bobo强化] 3→5
+  }
+  // [K7-20 新卡] 集束激光: BOBO 折射 +2
+  if (G.cardPool && G.cardPool.hasMastery('a_focusbeam')) {
+    forkCount += 2;
   }
   // [K10-6 review fix] a_burst 联动 Bobo: 弹射 +3 (与 g_focus 叠加即 6 目标, K 意图)
   if (G.cardPool && G.cardPool.hasMastery('a_burst')) {
@@ -2991,25 +2993,67 @@ function _deprecated_tickIdleDecoyTrigger_OLD() {
   G.lastRealChestBreakAt = G.now;
 }
 
-// 重新计算每列宝箱的 targetY (从上到下叠)
+// [K21-slot6 · reflow] 6槽位重排: A(防线端)~F(传送门端), A 最下, F 最上
+// 槽位大小 = cfgT.h (不是 slotHeight), A 锚定 = topY + (initCount-1)*slotHeight (保持视觉不变)
+// 每列按 targetY 从大到小排 (最靠 A 的排第一), 依次落进 A/B/C/D/... 空槽
 function reflowTreasures() {
   const colCount = CFG.treasure.colCount;
-  const slotH = CFG.treasure.slotHeight;
-  const topY = CFG.treasure.topY;
-  // 按列分组, 按 targetY 排序 (老的在上, 新的在下)
   for (let c = 0; c < colCount; c++) {
-    const colTreasures = G.treasures.filter(t => t.col === c);
-    // 排序: 老宝箱保持位置 (按 createdAt) - 这里简化为按 y 升序
-    colTreasures.sort((a, b) => a.targetY - b.targetY);
-    colTreasures.forEach((t, i) => {
-      t.targetY = topY + i * slotH;
-    });
+    // [K21-slot6 · reflow] 只对宝箱(perk/buff)排序收拢, 障碍(isObstacle)不参与收拢, 固定在其槽位
+    const colItems = G.treasures.filter(t => t.col === c);
+    const chests = colItems.filter(t => !t.isObstacle).sort((a, b) => b.targetY - a.targetY); // 靠 A 的在前
+    const obstacles = colItems.filter(t => t.isObstacle);
+    // 障碍占用的槽 idx 集合 (A=0, B=1, ..., F=5)
+    const usedSlots = new Set();
+    obstacles.forEach(o => { if (typeof o.slotIdx === 'number') usedSlots.add(o.slotIdx); });
+    // 宝箱按顺序填入未被障碍占用的最靠 A 的槽
+    let cursor = 0;
+    for (const t of chests) {
+      while (usedSlots.has(cursor) && cursor < 6) cursor++;
+      if (cursor >= 6) break;
+      t.slotIdx = cursor;
+      t.targetY = slotYFromIdx(cursor);
+      cursor++;
+    }
   }
+}
+
+// [K21-slot6 · slot-helpers] 槽位 idx → targetY: A(idx=0) 最下贴防线, F(idx=5) 最上
+function slotAnchorY() {
+  const cfgT = CFG.treasure;
+  return cfgT.topY + (cfgT.initCount - 1) * cfgT.slotHeight; // 与旧最下位置对齐
+}
+function slotYFromIdx(idx) {
+  return slotAnchorY() - idx * CFG.treasure.h;
+}
+// [K21-slot6 · slot-helpers] 收集某列所有被占用的 slotIdx (宝箱 + 障碍)
+function occupiedSlotsForCol(col) {
+  const s = new Set();
+  for (const t of G.treasures) {
+    if (t.col === col && typeof t.slotIdx === 'number') s.add(t.slotIdx);
+  }
+  return s;
+}
+// [K21-slot6 · slot-helpers] 找该列最靠 A 的空槽 idx (0..5), 无则 -1
+function firstEmptySlot(col) {
+  const used = occupiedSlotsForCol(col);
+  for (let i = 0; i < 6; i++) if (!used.has(i)) return i;
+  return -1;
 }
 
 // 宝箱下落补位 + 出生下降
 function updateTreasures(dt) {
   const fallSpeed = CFG.treasure.fallSpeed;
+  const _nowMs = G.now || performance.now();
+  // [K21-slot6 · 障碍涨血] 每帧对所有障碍做涨血 tick: baseGrowRate/s, 被击 10s 内暂停, 封顶 maxHp
+  G.treasures.forEach(t => {
+    if (!t.isObstacle) return;
+    if (t.hp <= 0) return;
+    if (t.lastHitAt && _nowMs - t.lastHitAt < 10000) return;
+    if (t.hp >= t.maxHp) return;
+    const growPerSec = t.baseGrowRate || (t.maxHp * 0.008);
+    t.hp = Math.min(t.maxHp, t.hp + growPerSec * dt);
+  });
   G.treasures.forEach(t => {
     if (t.y < t.targetY) {
       t.y += fallSpeed * dt;
@@ -3026,57 +3070,77 @@ function updateTreasures(dt) {
       const _base = 30 - _prog * 15; // 30→15
       t.obstacleDelay = Math.max(15, Math.min(30, _base + (Math.random() - 0.5) * 4)) * 1000;
     }
-    // [K节奏v2] 触发条件: 前60s全局豁免 + 浮动倒计时到 + 血量>0, 仅触发一次
-    // [K时长分级] 豁免期改按进度 20% (5min=60s / 7min=84s / 9min=108s)
-    const _nowMs = G.now || performance.now();
-    const _elapsedSec2 = (_nowMs - G.startTime) / 1000;
-    const _prog2 = _elapsedSec2 / (G.levelEndSec || 300);
-    if ((t.kind === 'perk' || t.kind === 'buff')
-        && t.settledAt && !t.obstacleSpawned
-        && t.hp > 0
-        && _prog2 >= 0.2
-        && _nowMs - t.settledAt >= (t.obstacleDelay || 20000)) {
-      t.obstacleSpawned = true;
-      spawnObstaclesForTreasure(t, _prog2);
-    }
   });
+
+  // [K21-slot6 · 障碍触发roll] 每帧扫描所有宝箱, 收集"计时到点"列表 R (按 col 分组)
+  //   R 非空 → roll 50%: false 全部重置, true 只刷 1 个障碍 (该列空槽随机), 完事后全 R 重置
+  //   若该列无空槽 → 不出障碍但也重置 R 内所有宝箱倒计时
+  const _elapsedSec2 = (_nowMs - G.startTime) / 1000;
+  const _prog2 = _elapsedSec2 / (G.levelEndSec || 300);
+  if (_prog2 >= 0.2) {
+    // 按 col 分组收集就绪宝箱
+    const readyByCol = new Map(); // col → [treasures]
+    G.treasures.forEach(t => {
+      if (t.kind !== 'perk' && t.kind !== 'buff') return;
+      if (!t.settledAt || t.hp <= 0) return;
+      if (_nowMs - t.settledAt < (t.obstacleDelay || 20000)) return;
+      // [K21-slot6 · 障碍触发roll] 3s 保护: 最近被打过则重置该宝箱倒计时, 不进 R
+      if (t.lastHitAt && _nowMs - t.lastHitAt < 3000) {
+        t.settledAt = _nowMs;
+        t.obstacleDelay = Math.max(15, Math.min(30, (30 - _prog2 * 15) + (Math.random() - 0.5) * 4)) * 1000;
+        return;
+      }
+      if (!readyByCol.has(t.col)) readyByCol.set(t.col, []);
+      readyByCol.get(t.col).push(t);
+    });
+    readyByCol.forEach((list, col) => {
+      // 统一重置该列 R 内所有宝箱倒计时的闭包
+      const resetAll = () => {
+        list.forEach(t => {
+          t.settledAt = _nowMs;
+          t.obstacleDelay = Math.max(15, Math.min(30, (30 - _prog2 * 15) + (Math.random() - 0.5) * 4)) * 1000;
+        });
+      };
+      // 50% roll
+      if (Math.random() >= 0.5) { resetAll(); return; }
+      // 找空槽
+      const slot = firstEmptySlot(col);
+      if (slot < 0) { resetAll(); return; }
+      // 刷 1 个障碍
+      spawnObstacleAt(col, slot, list[0]);
+      resetAll();
+    });
+  }
 }
 
-// [K正式关卡调优] 因真宝箱超时未破触发, 在其前方(靠防线方向, y 更大)刷 0~2 个障碍
-// 障碍沿用 decoy 视觉与血量规则: HP = 最近真宝箱当前档 HP × decoyRatio, 跟随 slotMult
-function spawnObstaclesForTreasure(srcT, prog) {
+// [K21-slot6 · 障碍生成] 在指定 col/slotIdx 生成 1 个障碍
+//   起始 HP 固定 500; maxHp = 该槽位换成真箱时 HP × decoyRatio (repeat 曲线 × slotMult × ratio)
+//   每秒涨 maxHp*0.008 (在 updateTreasures 里 tick), 被击 10s 内暂停, 伤害永久削 maxHp
+function spawnObstacleAt(col, slotIdx, refTreasure) {
   const cfgT = CFG.treasure;
-  // [K节奏v2] 数量分段: 60-120s 刷0-1个, 120s后刷0-2个 (60s前不会进来因触发条件已挡)
-  // [K时长分级] 改按进度百分比: 前40% 刷0-1, 40%后刷0-2 (调用方已传入 prog=elapsed/levelEndSec)
-  let count;
-  if ((prog || 0) < 0.4) count = Math.floor(Math.random() * 2); // 0/1
-  else count = Math.floor(Math.random() * 3);                    // 0/1/2
-  if (count === 0) return;
   const ratio = cfgT.decoyRatio || 0.5;
-  const baseHp = G.lastRealTreasureHp
-    ? Math.max(60, Math.round(G.lastRealTreasureHp * ratio))
-    : Math.round(cfgT.decoyHpBase * Math.pow(cfgT.slotGrowth, G.treasureSlotIdx || 0));
-  // [K正式关卡调优 review-fix] 障碍位于触发它的真宝箱正下方(y+, 靠防线), x 贴宝箱同列小幅抖动
-  //   原实现: x 在整条通道随机横向散布 + 自增 treasureSlotIdx。前者与单列宝箱柱不对齐,
-  //   后者会污染后续真宝箱 HP 曲线(每障碍 ×slotGrowth 越推越厚)。改为同列对齐 + 不动 slotIdx。
-  for (let i = 0; i < count; i++) {
-    const ox = clamp(
-      srcT.x + (Math.random() - 0.5) * cfgT.w * 0.5,
-      cfgT.w / 2 + 4, SPLIT_X - cfgT.w / 2 - 4
-    );
-    const oy = srcT.y + cfgT.h + 8 + i * (cfgT.h + 8);
-    const obs = {
-      x: ox, y: oy, targetY: oy, col: -1, // col=-1 排除出 reflow 列管理
-      w: cfgT.w, h: cfgT.h,
-      hp: baseHp, maxHp: baseHp,
-      color: cfgT.decoyColor || '#3a3a3a',
-      kind: 'decoy',
-      label: '障碍',
-      desc: '',
-      flashUntil: 0,
-    };
-    G.treasures.push(obs);
-  }
+  // maxHp = repeat 曲线当前档 × slotMult × ratio (slotMult 用当前 treasureSlotIdx)
+  const slotMult = Math.pow(cfgT.slotGrowth, G.treasureSlotIdx || 0);
+  const baseFull = (cfgT.repeatHpStart + (G.repeatBuffCount || 0) * cfgT.repeatHpStep) * slotMult;
+  const maxHp = Math.max(500, Math.round(baseFull * ratio));
+  const startHp = 500;
+  const targetY = slotYFromIdx(slotIdx);
+  const obs = {
+    x: treasureColX(col), y: targetY, targetY: targetY,
+    col: col, slotIdx: slotIdx,
+    w: cfgT.w, h: cfgT.h,
+    hp: startHp, maxHp: maxHp,
+    baseGrowRate: maxHp * 0.008, // 每秒涨 maxHp * 0.008
+    isObstacle: true,
+    lastHitAt: 0,
+    color: cfgT.decoyColor || '#3a3a3a',
+    kind: 'decoy',
+    label: '障碍',
+    desc: '',
+    flashUntil: 0,
+  };
+  G.treasures.push(obs);
+  reflowTreasures(); // 障碍占槽后, 其他宝箱按 A→F 重排
 }
 
 // spawnObstacles 已删除 (obstacle 整合进 treasure decoy)
@@ -3297,9 +3361,10 @@ function drawCard(card, x, y, w, h) {
   const isSkill = card.type === 'skill';
   const isWall = card.category === 'E';
   // [K7-4 三分类视觉] 卡身/边框/顶栏/title 文字统一按 skill/wall/mastery 三色
-  const cardBg = isSkill ? 'rgba(30, 50, 100, 0.98)' : (isWall ? 'rgba(80, 60, 20, 0.98)' : 'rgba(60, 40, 80, 0.98)');
-  const cardBorder = isSkill ? 'rgba(160, 210, 255, 1)' : (isWall ? 'rgba(255, 193, 92, 1)' : 'rgba(220, 170, 250, 1)');
-  const titleBg = isSkill ? 'rgba(120,180,255,0.5)' : (isWall ? 'rgba(255,193,92,0.5)' : 'rgba(200,140,240,0.5)');
+  // [K7-20 削卡] E 类叹息之壁配色全量改银灰 (原金色系 → 银灰系, 与标签/徽章一致)
+  const cardBg = isSkill ? 'rgba(30, 50, 100, 0.98)' : (isWall ? 'rgba(50, 55, 65, 0.98)' : 'rgba(60, 40, 80, 0.98)');
+  const cardBorder = isSkill ? 'rgba(160, 210, 255, 1)' : (isWall ? 'rgba(200, 208, 220, 1)' : 'rgba(220, 170, 250, 1)');
+  const titleBg = isSkill ? 'rgba(120,180,255,0.5)' : (isWall ? 'rgba(200,208,220,0.5)' : 'rgba(200,140,240,0.5)');
   const titleText = isSkill ? 'SKILL' : (isWall ? 'WALL OF SIGHS' : 'MASTERY');
   // 背景
   ctx.fillStyle = cardBg;
@@ -3373,7 +3438,7 @@ function drawCard(card, x, y, w, h) {
   if (_tag) {
     // [K7-4 三类卡片配色] 技能=蓝 / 叹息之壁(E类防线卡)=金 / 枪械精通(其余)=紫
     const _isWall = (card.category === 'E');
-    ctx.fillStyle = isSkill ? '#8fd0ff' : (_isWall ? '#ffc15c' : '#d9a8f5');
+    ctx.fillStyle = isSkill ? '#8fd0ff' : (_isWall ? '#c8ccd6' : '#d9a8f5'); // [K7-20 削卡] E 类配色银色
     ctx.font = 'bold 11px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
     ctx.textAlign = 'center';
     ctx.textBaseline = 'alphabetic';
@@ -3391,7 +3456,7 @@ function drawCard(card, x, y, w, h) {
   if (!isSkill) {
     const m = MASTERY_CARDS.find(mc => mc.id === card.id);
     const cat = m ? m.category : '?';
-    ctx.fillStyle = isWall ? 'rgba(255, 193, 92, 0.75)' : 'rgba(200, 140, 240, 0.75)';
+    ctx.fillStyle = isWall ? 'rgba(200, 208, 220, 0.75)' : 'rgba(200, 140, 240, 0.75)'; // [K7-20 削卡] E 类配色银色
     ctx.fillRect(x + 5, y + h - 26, 26, 22);
     ctx.fillStyle = '#fff';
     ctx.font = 'bold 14px -apple-system,"PingFang SC",BlinkMacSystemFont,sans-serif';
@@ -4369,11 +4434,11 @@ function reset() {
   G.playerBurstDmgMult = 1; // [K5-连发降伤] 每局重置
   // [7/16 fix chest-exp / burst-fire] 初始化经验值+精通卡累积字段
   G.chestExp = 0;
-  G.chestExpThreshold = 80;
+  G.chestExpThreshold = 60; // [K7-20 经验放宽] 60/1.5 (原 80/1.7), 前 10 张卡累计需求降 44%
   G.chestExpTier = 0;
   G.lastRealChestBreakAt = 0;  // [7/17 P1-1] 上次破真宝箱时间, idle 触发器用
   G.playerSpdMult = 1;
-  G.playerHeadshotChance = 0;
+  G.playerHeadshotChance = 0; // [K7-20 削卡] 保留 0 兜底, a_burst 不再写入
   G.multiShotNextAt = 0;
   G.fireRateTickAt = 0;
   G.fireRateBaseInterval = CFG.player.bulletInterval;
@@ -5190,13 +5255,19 @@ function applyMasteryEffect(id) {
     case 'g_focus':
     case 'g_burn':
       break;
-    // [7/16 fix burst-fire] 连发快射: 攻速+30%, 弹道+3, 5% 爆头 (只挂 1 次)
+    // [K7-20 新卡] 集束激光: 普攻+20% (一次性)
+    case 'a_focusbeam':
+      if (!G.perks._aFocusbeamApplied) {
+        G.playerAtkMult = 1.2 * (G.playerAtkMult || 1);
+        G.perks._aFocusbeamApplied = true;
+      }
+      break;
+    // [K7-20 削卡] 连发快射: 攻速+30%, 弹道+2, 单发 0.55 (删爆头)
     case 'a_burst':
       if (!G.perks._aBurstApplied) {
         G.playerSpdMult = (G.playerSpdMult || 1) * 1.3;
-        setMultiShotUncapped((G.multiShot || 1) + 3);  // [7/16 fix burst-fire-v2] +2 → +3
-        G.playerHeadshotChance = (G.playerHeadshotChance || 0) + 0.05;
-        G.playerBurstDmgMult = 0.5; // [K5-连发降伤] 换来+3弹道
+        setMultiShotUncapped((G.multiShot || 1) + 2); // [K7-20 削卡] +3 → +2
+        G.playerBurstDmgMult = 0.55; // [K7-20 削卡] 0.5 → 0.55
         G.perks._aBurstApplied = true;
       }
       break;
@@ -5310,12 +5381,12 @@ function onEnemyKilled(e) {
   const expKey = e.isFinalBoss ? 'boss' : e.type;
   const gain = CHEST_EXP_TABLE[expKey] || 2;
   G.chestExp = (G.chestExp || 0) + gain;
-  if (G.chestExpThreshold === undefined) G.chestExpThreshold = 80;
+  if (G.chestExpThreshold === undefined) G.chestExpThreshold = 60; // [K7-20 经验放宽]
   if (G.chestExpTier === undefined) G.chestExpTier = 0;
   if (G.chestExp >= G.chestExpThreshold) {
     spawnNewChest();
     G.chestExpTier++;
-    G.chestExpThreshold = Math.round(80 * Math.pow(1.7, G.chestExpTier));
+    G.chestExpThreshold = Math.round(60 * Math.pow(1.5, G.chestExpTier)); // [K7-20 经验放宽] 60/1.5
     G.chestExp = 0;
   }
   if (!G.cardPool) return;
@@ -5740,8 +5811,10 @@ function castSkill(id, level, chainDepth) {
       const lockX = target.x, lockY = target.y;
       G.skillVisuals.push({
         kind: 'mercyBeam',
-        fromX: player.x, fromY: player.y,
-        toX: lockX, toY: lockY,
+        fromX: perspectiveX(player.x, player.y), fromY: player.y,
+        toX: perspectiveX(lockX, lockY), toY: lockY,
+        // [K8-4 mercy红线投影修复] fromX/toX 出生时锁定屏幕投影坐标, 与敌人渲染位置严格对齐;
+        //   原用逻辑坐标 → 越靠右远端偏差越大 (逻辑X离屏幕中心W/2越远, 投影收缩越猛)
         bornAt: G.now, life: lifeMs,
         lockMs,
         color: 'rgba(255, 50, 50, 0.95)',
@@ -5840,8 +5913,9 @@ function castSkill(id, level, chainDepth) {
     if (level >= 2) {
       G.skillVisuals.push({
         kind: 'laserpierceAftermath',
-        fromX: player.x, fromY: player.y,
-        toX: mainTarget.x, toY: mainTarget.y,
+        // [K7-20 激光贯穿投影对齐] fromX/toX 出生锁定 perspectiveX, 与敌人渲染位置对齐 (同 mercyBeam 修法)
+        fromX: perspectiveX(player.x, player.y), fromY: player.y,
+        toX: perspectiveX(mainTarget.x, mainTarget.y), toY: mainTarget.y,
         width: 60,
         bornAt: G.now, life: 2500,
         lastTickAt: G.now,
@@ -5937,8 +6011,9 @@ function _laserpiercePierce(player, target, width, dmg) {
   G.skillVisuals = G.skillVisuals || [];
   G.skillVisuals.push({
     kind: 'laserpierceBeam',
-    fromX: player.x, fromY: player.y,
-    toX: extX, toY: extY,
+    // [K7-20 激光贯穿投影对齐] fromX/toX 出生锁定 perspectiveX, 与敌人渲染位置对齐 (同 mercyBeam 修法)
+    fromX: perspectiveX(player.x, player.y), fromY: player.y,
+    toX: perspectiveX(extX, extY), toY: extY,
     width, bornAt: G.now, life: 300, color: '#aaddff'
   });
   // 命中沿线 (垂直距离 < width/2 且 t in [0, extLen]) 的所有非道具敌人
@@ -6123,7 +6198,8 @@ function drawSkillVisuals() {
       ctx.shadowColor = v.color;
       ctx.shadowBlur = 12;
       ctx.beginPath();
-      ctx.arc(v.x, v.y, v.r * (0.4 + t * 0.9), 0, Math.PI * 2);
+      // [K7-20 技能视觉投影对齐] 圆心/方心走 perspectiveX 与敌人渲染对齐; 半径/宽高按 K 决策暂不缩放 (远端可能偏大, 后续如需再改)
+      ctx.arc(perspectiveX(v.x, v.y), v.y, v.r * (0.4 + t * 0.9), 0, Math.PI * 2);
       ctx.stroke();
     } else if (v.kind === 'mercyCone') {
       // [K恩赐-锁头v2] 身后颤栗锥形可视化 (顶点=主目标, 沿 dir 展开 halfRad 半角, 长 coneLen)
@@ -6133,8 +6209,10 @@ function drawSkillVisuals() {
       ctx.shadowColor = v.color;
       ctx.shadowBlur = 10;
       ctx.beginPath();
-      ctx.moveTo(v.x, v.y);
-      ctx.arc(v.x, v.y, v.coneLen, ang - v.halfRad, ang + v.halfRad);
+      // [K7-20 技能视觉投影对齐] 圆心/方心走 perspectiveX 与敌人渲染对齐; 半径/宽高按 K 决策暂不缩放
+      const vpx_mc = perspectiveX(v.x, v.y);
+      ctx.moveTo(vpx_mc, v.y);
+      ctx.arc(vpx_mc, v.y, v.coneLen, ang - v.halfRad, ang + v.halfRad);
       ctx.closePath();
       ctx.fill();
       ctx.globalAlpha = alpha;
@@ -6151,19 +6229,30 @@ function drawSkillVisuals() {
       ctx.globalAlpha = alpha * 0.9;
       ctx.fillStyle = v.color;
       ctx.beginPath();
-      ctx.arc(v.x, v.y, v.r, 0, Math.PI * 2);
+      // [K7-20 技能视觉投影对齐] 圆心/方心走 perspectiveX 与敌人渲染对齐; 半径/宽高按 K 决策暂不缩放
+      ctx.arc(perspectiveX(v.x, v.y), v.y, v.r, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = 'rgba(255, 120, 120, 0.6)';
       ctx.lineWidth = 2;
       ctx.stroke();
     } else if (v.kind === 'highvoltageZone') {
       // 议题 12 · 二版调整: 高压领域 10s 蓝色矩形色块
+      // [K7-20 高压领域梯形化] 沿右赛道透视绘制梯形, 逻辑坐标经 perspectiveX 投影 4 顶点
       ctx.globalAlpha = alpha * 0.9;
       ctx.fillStyle = v.color;
-      ctx.fillRect(v.x, v.y, v.w, v.h);
+      const _yBot = v.y + v.h, _yTop = v.y;
+      const _xBL = perspectiveX(v.x, _yBot), _xBR = perspectiveX(v.x + v.w, _yBot);
+      const _xTL = perspectiveX(v.x, _yTop), _xTR = perspectiveX(v.x + v.w, _yTop);
+      ctx.beginPath();
+      ctx.moveTo(_xBL, _yBot);
+      ctx.lineTo(_xBR, _yBot);
+      ctx.lineTo(_xTR, _yTop);
+      ctx.lineTo(_xTL, _yTop);
+      ctx.closePath();
+      ctx.fill();
       ctx.strokeStyle = 'rgba(160, 210, 255, 0.7)';
       ctx.lineWidth = 2;
-      ctx.strokeRect(v.x, v.y, v.w, v.h);
+      ctx.stroke();
     } else if (v.kind === 'togetherPreview') {
       // [K10-10 square] 站一起预览改方形 (半径 v.r = 半边长)
       const elapsed = G.now - v.bornAt;
@@ -6177,11 +6266,13 @@ function drawSkillVisuals() {
       }
       ctx.globalAlpha = base;
       ctx.fillStyle = 'rgba(255, 140, 40, 1)';
-      ctx.fillRect(v.x - v.r, v.y - v.r, v.r * 2, v.r * 2);
+      // [K7-20 技能视觉投影对齐] 圆心/方心走 perspectiveX 与敌人渲染对齐; 半径/宽高按 K 决策暂不缩放
+      const vpx_tp = perspectiveX(v.x, v.y);
+      ctx.fillRect(vpx_tp - v.r, v.y - v.r, v.r * 2, v.r * 2);
       ctx.globalAlpha = Math.min(1, base * 2.4);
       ctx.strokeStyle = 'rgba(255, 165, 60, 1)';
       ctx.lineWidth = 2;
-      ctx.strokeRect(v.x - v.r, v.y - v.r, v.r * 2, v.r * 2);
+      ctx.strokeRect(vpx_tp - v.r, v.y - v.r, v.r * 2, v.r * 2);
     } else if (v.kind === 'mercyBeam') {
       // [7/16 fix absolution] 红线: 前 lockMs 内保持满 alpha (锁定演示), 之后 (life - lockMs) 时间内线性淡出
       const elapsed = G.now - v.bornAt;
@@ -6225,11 +6316,13 @@ function drawSkillVisuals() {
       const flicker = 0.6 + 0.2 * Math.sin(G.now / 120);
       ctx.globalAlpha = alpha * 0.5 * flicker;
       ctx.fillStyle = 'rgba(255, 100, 40, 1)';
-      ctx.fillRect(v.x - v.r, v.y - v.r, v.r * 2, v.r * 2);
+      // [K7-20 技能视觉投影对齐] 圆心/方心走 perspectiveX 与敌人渲染对齐; 半径/宽高按 K 决策暂不缩放
+      const vpx_tb = perspectiveX(v.x, v.y);
+      ctx.fillRect(vpx_tb - v.r, v.y - v.r, v.r * 2, v.r * 2);
       ctx.globalAlpha = alpha * 0.9;
       ctx.strokeStyle = 'rgba(255, 160, 60, 1)';
       ctx.lineWidth = 2;
-      ctx.strokeRect(v.x - v.r, v.y - v.r, v.r * 2, v.r * 2);
+      ctx.strokeRect(vpx_tb - v.r, v.y - v.r, v.r * 2, v.r * 2);
     }
   });
   ctx.restore();
