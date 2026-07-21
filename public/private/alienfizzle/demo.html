@@ -1170,15 +1170,15 @@ const CFG = {
     maxConcurrent: 1,     // 同屏最多 1 个 (从 2 改回 1, 太频繁了)
     // [7/16 fix gate-refactor] blt/vel 移除, 新增防线三维, crt/critDmg vmax 收窄
     dimensions: [
-      {key: 'atk',          label: '攻击力',     vmin: -10,   vmax: 8,    step: 0.4,  unit: ''},
-      {key: 'spd',          label: '攻速',       vmin: -0.6,  vmax: 0.5,  step: 0.04, unit: 'x'},
+      {key: 'atk',          label: '攻击力',     vmin: -10,   vmax: 5,    step: 0.4,  unit: ''}, // [K21-gate params]
+      {key: 'spd',          label: '攻速',       vmin: -1,    vmax: 0.5,  step: 0.04, unit: 'x'}, // [K21-gate params]
       // 暴击率单门上限收窄到 +5% (原 15%)
       {key: 'crt',          label: '暴击率',     vmin: -0.1,  vmax: 0.05, step: 0.015, unit: '%'},
       // 暴击伤害单门上限收窄到 +8% (原 10%)
-      {key: 'critDmg',      label: '暴击伤害',   vmin: -0.05, vmax: 0.08, step: 0.01, unit: '%'},
+      {key: 'critDmg',      label: '暴击伤害',   vmin: -0.10, vmax: 0.08, step: 0.01, unit: '%'}, // [K21-gate params]
       {key: 'silence',      label: '火力静默',   vmin: -4000, vmax: 2000, step: 200,  unit: 'ms'},
       // 防线护甲 (0-30%, 每门 +5% 上限)
-      {key: 'defenseArmor', label: '防线护甲',   vmin: -0.15, vmax: 0.10, step: 0.005, unit: '%'}, // [K7-1 防线门区间加大步进降低]
+      {key: 'defenseArmor', label: '防线护甲',   vmin: -0.20, vmax: 0.10, step: 0.02, unit: '%'}, // [K21-gate params]
       // 防线血量上限 (每门 +50)
       {key: 'defenseMaxHP', label: '防线上限',   vmin: -300,  vmax: 150,  step: 25,   unit: ''}, // [K7-1 防线门区间加大步进降低]
       // 防线回血包 (瞬时 +50 HP)
@@ -1433,26 +1433,17 @@ function createStateGate(opts) {
   }
   const dim = pick(dims);
 
-  // [7/16 fix gate-refactor] 各维度值分布:
-  //   defenseArmor / defenseMaxHP / defenseHeal: 100% 减益起步, 玩家必须平A打爆才变正 buff (K 定)
-  //   其它: 60% 减益 (vmin~0), 40% 增益 (step~vmax*0.5)
+  // [K21-gate ramp] 减益概率随时间平滑: t=0s 时 P=0.2, t=90s 时 P=0.8, 之后恒 0.8
+  const _tSec = Math.max(0, (G.now - (G.startTime || G.now)) / 1000);
+  const pDebuff = Math.min(0.8, 0.2 + 0.6 * Math.min(_tSec, 90) / 90);
+  const isDebuffStart = Math.random() < pDebuff;
   let initValue;
-  const isDefenseDim = (dim.key === 'defenseArmor' || dim.key === 'defenseMaxHP' || dim.key === 'defenseHeal');
-  if (isDefenseDim) {
-    // 强制负值起步 (defenseHeal 也用负值代表"扣防线血包", 打爆后 released 触发正回血)
-    initValue = rand(dim.vmin, -Math.abs(dim.step));
+  if (isDebuffStart) {
+    initValue = rand(dim.vmin, 0);
     initValue = Math.round(initValue / dim.step) * dim.step;
-    // 若 vmin >= 0 (defenseHeal 原配置), 用 -step 作为负值
-    if (initValue >= 0) initValue = -Math.abs(dim.step);
   } else {
-    const isDebuffStart = Math.random() < 0.6;
-    if (isDebuffStart) {
-      initValue = rand(dim.vmin, 0);
-      initValue = Math.round(initValue / dim.step) * dim.step;
-    } else {
-      initValue = rand(dim.step, dim.vmax * 0.5);
-      initValue = Math.round(initValue / dim.step) * dim.step;
-    }
+    initValue = rand(dim.step, dim.vmax * 0.5);
+    initValue = Math.round(initValue / dim.step) * dim.step;
   }
 
   if (dim.key === 'blt') {
@@ -1547,6 +1538,8 @@ function update(dt) {
 
   // 状态门
   updateStateGate(dt);
+  // [K21-boss reward] 金色状态门 (boss 奖励), 独立于 stateGates, 不占 maxConcurrent
+  updateGoldenGates(dt);
 
   // 防线 HP 检查
   if (G.defenseHP <= 0) {
@@ -3648,6 +3641,8 @@ function draw() {
 
   // 状态门
   if (G.stateGates && G.stateGates.length > 0) G.stateGates.forEach(drawStateGate);
+  // [K21-boss reward] 金色状态门
+  if (G.goldenGates && G.goldenGates.length > 0) G.goldenGates.forEach(drawGoldenGate);
 
   // 敌人
   G.enemies.forEach(drawEnemy);
@@ -4382,7 +4377,7 @@ function reset() {
   G.playerBurstDmgMult = 1; // [K5-连发降伤] 每局重置
   // [7/16 fix chest-exp / burst-fire] 初始化经验值+精通卡累积字段
   G.chestExp = 0;
-  G.chestExpThreshold = 60; // [K7-20 经验放宽] 60/1.5 (原 80/1.7), 前 10 张卡累计需求降 44%
+  G.chestExpThreshold = 15; // [K21-exp 降档] 60/1.5 → 15/1.25 (新手关大 boss 前刚好 10 张)
   G.chestExpTier = 0;
   G.lastRealChestBreakAt = 0;  // [7/17 P1-1] 上次破真宝箱时间, idle 触发器用
   G.playerSpdMult = 1;
@@ -4404,6 +4399,11 @@ function reset() {
   G.floatTexts = [];
   G.stateGate = null;       // legacy 兼容字段, 不再使用
   G.stateGates = [];        // 新: array, 同屏多门
+  // [K21-boss reward] 金色状态门 (boss 击杀奖励), 不占 maxConcurrent, value 已 = vmax, 碰即触发
+  G.goldenGates = [];
+  G.goldenGateQueue = [];   // {atGameTime} 排队待生成
+  G.pendingCardPicks = 0;   // 三选一队列: 待弹次数 (弹一次消费一次)
+  if (G.isEndlessMode === undefined) G.isEndlessMode = false; // fallback: 非无尽
   G.defenseHP = CFG.defense.maxHP;
   G.defenseMax = CFG.defense.maxHP;
   // [7/16 fix gate-refactor] 防线新属性初始化
@@ -5329,12 +5329,12 @@ function onEnemyKilled(e) {
   const expKey = e.isFinalBoss ? 'boss' : e.type;
   const gain = CHEST_EXP_TABLE[expKey] || 2;
   G.chestExp = (G.chestExp || 0) + gain;
-  if (G.chestExpThreshold === undefined) G.chestExpThreshold = 60; // [K7-20 经验放宽]
+  if (G.chestExpThreshold === undefined) G.chestExpThreshold = 15; // [K21-exp 降档] 60/1.5 → 15/1.25
   if (G.chestExpTier === undefined) G.chestExpTier = 0;
   if (G.chestExp >= G.chestExpThreshold) {
     spawnNewChest();
     G.chestExpTier++;
-    G.chestExpThreshold = Math.round(60 * Math.pow(1.5, G.chestExpTier)); // [K7-20 经验放宽] 60/1.5
+    G.chestExpThreshold = Math.round(15 * Math.pow(1.25, G.chestExpTier)); // [K21-exp 降档] 60/1.5 → 15/1.25
     G.chestExp = 0;
   }
   if (!G.cardPool) return;
@@ -5362,12 +5362,137 @@ function onEnemyKilled(e) {
       floatText(e.x, e.y - 30, '贪婪!', '#ff88dd', true);
     }
   }
+
+  // [K21-boss reward] boss 击杀奖励
+  //   小 boss: 1 次三选一 + 1 个金门 (2s 后刷); 全关卡/无尽都给
+  //   大 boss: 2 次三选一 + 3 个金门 (2s/4s/6s); 仅无尽模式才给
+  if (e.isMiniBoss) {
+    triggerBossReward('mini');
+  } else if (e.isFinalBoss) {
+    if (G.isEndlessMode === true) triggerBossReward('final');
+  }
 }
 
 function spawnBonusStateGate() {
   G.stateGates = G.stateGates || [];
   // [7/16 fix gate-blt-limit] 贪婪路径: 弹道门降权 + 值 cap +1
   G.stateGates.push(createStateGate({ restrictBlt: true }));
+}
+
+// [K21-boss reward] boss 奖励分发: 三选一队列 + 金门队列 (game-time 驱动, 兼容暂停)
+function triggerBossReward(bossType) {
+  const cfg = bossType === 'mini' ? { picks: 1, goldenGates: 1 } : { picks: 2, goldenGates: 3 };
+  // 1. 三选一: 用 pendingCardPicks 计数, 每弹完一次自动开下一次 (见 selectCard 后 tick)
+  G.pendingCardPicks = (G.pendingCardPicks || 0) + cfg.picks;
+  // 立即尝试弹一次 (若当前无 UI 且非预体验静默期)
+  tryDrainPendingCardPicks();
+  // 2. 金门排队: 2s/4s/6s 依次刷 (game-time, 暂停不推进)
+  G.goldenGateQueue = G.goldenGateQueue || [];
+  const t0 = G.now || performance.now();
+  for (let i = 0; i < cfg.goldenGates; i++) {
+    G.goldenGateQueue.push({ atGameTime: t0 + (i + 1) * 2000 });
+  }
+}
+
+// [K21-boss reward] 三选一队列排空: 若当前无 UI 且有 pending, 弹一次
+function tryDrainPendingCardPicks() {
+  if (!G.pendingCardPicks || G.pendingCardPicks <= 0) return;
+  if (G.cardSelectionUI && G.cardSelectionUI.active) return;
+  if (G.gameOver || G.paused) return;
+  G.pendingCardPicks--;
+  triggerCardSelection();
+}
+
+// [K21-boss reward] 生成金色状态门: value=vmax 满增益, 碰即触发, 不占 maxConcurrent
+function spawnGoldenGate() {
+  const dims = CFG.gate.dimensions.filter(d =>
+    d.key !== 'defenseArmor' && d.key !== 'defenseMaxHP' && d.key !== 'defenseHeal' && d.key !== 'silence'
+  );
+  const dim = pick(dims.length > 0 ? dims : CFG.gate.dimensions);
+  const safeMargin = 8;
+  const xMin = TRACK_R_LEFT + GATE_WIDTH/2 + safeMargin;
+  const xMax = TRACK_R_RIGHT - GATE_WIDTH/2 - safeMargin;
+  const x = rand(xMin, xMax);
+  const gate = {
+    x, y: -GATE_HEIGHT,
+    w: GATE_WIDTH, h: GATE_HEIGHT,
+    dim,
+    value: dim.vmax, // 满增益, 碰即触发
+    state: 'released',
+    released: true,
+    speed: CFG.gate.speed * G.diffMult,
+    isGolden: true,
+  };
+  G.goldenGates = G.goldenGates || [];
+  G.goldenGates.push(gate);
+}
+
+// [K21-boss reward] 金门 tick: 排队生成 + 下移 + 玩家碰撞 + 出屏删除
+function updateGoldenGates(dt) {
+  G.goldenGates = G.goldenGates || [];
+  G.goldenGateQueue = G.goldenGateQueue || [];
+  // 1. 到点生成
+  const now = G.now;
+  for (let i = G.goldenGateQueue.length - 1; i >= 0; i--) {
+    if (now >= G.goldenGateQueue[i].atGameTime) {
+      spawnGoldenGate();
+      G.goldenGateQueue.splice(i, 1);
+    }
+  }
+  // 2. tick 下移 + 碰撞玩家 + 出屏
+  if (G.goldenGates.length === 0) {
+    tryDrainPendingCardPicks();
+    return;
+  }
+  const playerBox = {x: G.player.x - G.player.w/2, y: G.player.y - G.player.h/2, w: G.player.w, h: G.player.h};
+  for (let i = G.goldenGates.length - 1; i >= 0; i--) {
+    const gate = G.goldenGates[i];
+    gate.y += gate.speed * dt;
+    const gateBox = { x: gate.x - gate.w/2, y: gate.y - gate.h/2, w: gate.w, h: gate.h };
+    if (rectOverlap(gateBox, playerBox)) {
+      applyGateToNuo(gate);
+      G.goldenGates.splice(i, 1);
+      continue;
+    }
+    if (gate.y > H + 10) G.goldenGates.splice(i, 1);
+  }
+  // 3. 三选一队列排空 (若上一次刚关闭)
+  tryDrainPendingCardPicks();
+}
+
+// [K21-boss reward] 金门渲染: 金色 + 发光光环
+function drawGoldenGate(g) {
+  // 光环 (脉动)
+  const pulse = 0.5 + 0.5 * Math.sin((G.now || performance.now()) * 0.006);
+  const glowAlpha = 0.25 + 0.25 * pulse;
+  ctx.save();
+  ctx.shadowColor = 'rgba(255,215,0,0.9)';
+  ctx.shadowBlur = 18 + 8 * pulse;
+  ctx.fillStyle = `rgba(255,215,0,${glowAlpha})`;
+  ctx.strokeStyle = '#ffd700';
+  ctx.lineWidth = 3;
+  ctx.fillRect(g.x - g.w/2, g.y - g.h/2, g.w, g.h);
+  ctx.strokeRect(g.x - g.w/2, g.y - g.h/2, g.w, g.h);
+  ctx.restore();
+
+  // 数值
+  const v = g.value;
+  const dim = g.dim;
+  let display;
+  if (dim.unit === '%') display = `+${(v*100).toFixed(0)}%`;
+  else if (dim.unit === 'x') display = `+${v.toFixed(2)}x`;
+  else if (dim.unit === 'ms') display = `+${(v/1000).toFixed(1)}s`;
+  else display = `+${v.toFixed(1)}`;
+  ctx.fillStyle = '#fff';
+  ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText(`${dim.label}`, g.x, g.y - 4);
+  ctx.font = 'bold 13px ui-monospace,Menlo,monospace';
+  ctx.fillText(display, g.x, g.y + 9);
+  ctx.fillStyle = '#ffd700';
+  ctx.font = 'bold 9px ui-monospace';
+  ctx.fillText('★ BOSS', g.x + g.w/2 - 24, g.y - g.h/2 + 8);
 }
 
 // ----- 制导激光 (g_guide) -----
