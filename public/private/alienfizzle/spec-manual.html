@@ -3,19 +3,19 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v3.7</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 (手动维护版) spec-manual</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
-  background: #0a0e1a;
-  color: #c5cce0;
+  background: #f5f2ea;
+  color: #2d3748;
   font-family: -apple-system, BlinkMacSystemFont, "PingFang SC", "Segoe UI", Roboto, sans-serif;
   font-size: 14.5px;
   line-height: 1.75;
   -webkit-font-smoothing: antialiased;
 }
-a { color: #ff6b35; text-decoration: none; }
-a:hover { color: #ffa040; }
+a { color: #0f766e; text-decoration: none; }
+a:hover { color: #14b8a6; }
 
 /* === LAYOUT === */
 .layout {
@@ -24,8 +24,8 @@ a:hover { color: #ffa040; }
   min-height: 100vh;
 }
 .sidebar {
-  background: #0d1220;
-  border-right: 1px solid #1f2940;
+  background: #ffffff;
+  border-right: 1px solid #e5e0d3;
   padding: 32px 24px;
   position: sticky;
   top: 0;
@@ -33,7 +33,7 @@ a:hover { color: #ffa040; }
   overflow-y: auto;
 }
 .sidebar h2 {
-  color: #ff6b35;
+  color: #0f766e;
   font-size: 12px;
   letter-spacing: 2px;
   margin-bottom: 20px;
@@ -46,7 +46,7 @@ a:hover { color: #ffa040; }
   font-size: 13px;
 }
 .sidebar li a {
-  color: #c5cce0;
+  color: #2d3748;
   display: block;
   padding: 8px 12px;
   border-radius: 6px;
@@ -54,21 +54,22 @@ a:hover { color: #ffa040; }
   border-left: 2px solid transparent;
 }
 .sidebar li a:hover {
-  background: #131a2e;
-  border-left-color: #ff6b35;
-  color: #fff;
+  background: #ecfdf5;
+  border-left-color: #0f766e;
+  color: #0f766e;
+  text-decoration: underline;
 }
 .sidebar li a::before {
   content: counter(chapter, decimal-leading-zero);
-  color: #6b7494;
+  color: #6b7280;
   font-family: "SF Mono", monospace;
   font-size: 11px;
   margin-right: 10px;
 }
 .sidebar .new-tag {
   display: inline-block;
-  background: #ff6b35;
-  color: #0a0e1a;
+  background: #f97316;
+  color: #fff;
   font-size: 9px;
   padding: 1px 6px;
   border-radius: 8px;
@@ -79,23 +80,26 @@ a:hover { color: #ffa040; }
 .sidebar-footer {
   margin-top: 32px;
   padding-top: 20px;
-  border-top: 1px solid #1f2940;
-  color: #6b7494;
+  border-top: 1px solid #e5e0d3;
+  color: #6b7280;
   font-size: 11px;
   line-height: 1.7;
 }
 
 main {
-  padding: 48px 56px 80px;
-  max-width: 960px;
+  background: transparent;
+  padding: 40px 32px 80px;
+  max-width: 820px;
+  margin: 0 auto;
 }
 
 /* === DOC HEADER === */
 .doc-header { margin-bottom: 56px; }
 .badge {
   display: inline-block;
-  background: #ff6b35;
-  color: #0a0e1a;
+  background: transparent;
+  color: #0f766e;
+  border: 1px solid #0f766e;
   font-size: 11px;
   font-weight: 700;
   padding: 4px 12px;
@@ -104,14 +108,15 @@ main {
   margin-bottom: 20px;
 }
 .doc-header h1 {
+  font-family: 'Georgia', 'Songti SC', serif;
   font-size: 34px;
   line-height: 1.35;
-  color: #fff;
+  color: #134e4a;
   font-weight: 700;
   margin-bottom: 12px;
 }
 .doc-header .subtitle {
-  color: #b0b8d0;
+  color: #4a5568;
   font-size: 15px;
   margin-bottom: 28px;
 }
@@ -122,20 +127,20 @@ main {
   margin: 24px 0;
 }
 .meta-card {
-  background: #131a2e;
-  border: 1px solid #1f2940;
+  background: #fefdfb;
+  border: 1px solid #d4cdb8;
   border-radius: 8px;
   padding: 14px 16px;
 }
 .meta-card .label {
-  color: #6b7494;
+  color: #6b7280;
   font-size: 11px;
   letter-spacing: 1px;
   margin-bottom: 4px;
   text-transform: uppercase;
 }
 .meta-card .value {
-  color: #fff;
+  color: #134e4a;
   font-size: 14px;
   font-weight: 600;
 }
@@ -147,14 +152,16 @@ section.chapter {
 }
 section.chapter h2 {
   font-size: 26px;
-  color: #fff;
+  color: #0f766e;
+  border-bottom: 2px solid #0f766e;
+  padding-bottom: 6px;
   font-weight: 700;
   margin: 16px 0 8px;
   line-height: 1.4;
 }
 .chapter-num {
   display: block;
-  color: #ff6b35;
+  color: #6b7280;
   font-size: 12px;
   letter-spacing: 2px;
   font-weight: 700;
@@ -163,102 +170,107 @@ section.chapter h2 {
 }
 section.chapter h3 {
   font-size: 18px;
-  color: #fff;
+  color: #134e4a;
   margin: 32px 0 14px;
   padding-left: 12px;
-  border-left: 3px solid #ff6b35;
+  border-left: 3px solid #0f766e;
   font-weight: 600;
 }
-p { margin: 12px 0; color: #c5cce0; }
+section.chapter h4 {
+  color: #134e4a;
+}
+p { margin: 12px 0; color: #2d3748; }
 p.lead {
-  color: #d0d8ee;
+  color: #4a5568;
+  font-style: italic;
   font-size: 15.5px;
   margin: 16px 0 24px;
   padding: 14px 18px;
-  background: rgba(255, 107, 53, 0.06);
-  border-left: 3px solid #ff6b35;
+  background: #fefdfb;
+  border-left: 3px solid #0f766e;
   border-radius: 4px;
 }
-strong { color: #fff; }
-em { color: #ffa040; font-style: normal; }
-ul, ol { padding-left: 24px; margin: 12px 0; color: #c5cce0; }
+strong { color: #134e4a; }
+em { color: #0f766e; font-style: normal; }
+ul, ol { padding-left: 24px; margin: 12px 0; color: #2d3748; }
 li { margin-bottom: 8px; }
 code {
-  background: #1a2138;
-  color: #ffa040;
-  padding: 2px 7px;
-  border-radius: 4px;
+  background: #ecfdf5;
+  color: #065f46;
+  padding: 1px 4px;
+  border-radius: 3px;
   font-family: "SF Mono", Monaco, Consolas, monospace;
   font-size: 13px;
 }
-s { color: #6b7494; }
+s { color: #9ca3af; }
 
 /* === TABLES === */
 table {
   width: 100%;
   border-collapse: collapse;
   margin: 16px 0 24px;
-  background: #131a2e;
+  background: #ffffff;
+  border: 1px solid #e5e0d3;
   border-radius: 8px;
   overflow: hidden;
   font-size: 13.5px;
 }
 /* Monster table · 4 列布局, prompt-cell 允许自动换行 */
-table.monster-table td:first-child { width: 60px; color: #ffa040; text-align: center; }
-table.monster-table td:nth-child(2) { width: 90px; color: #7edcff; white-space: nowrap; }
-table.monster-table td:nth-child(3) { width: 220px; color: #c5cce0; }
+table.monster-table td:first-child { width: 60px; color: #0f766e; text-align: center; }
+table.monster-table td:nth-child(2) { width: 90px; color: #0369a1; white-space: nowrap; }
+table.monster-table td:nth-child(3) { width: 220px; color: #2d3748; }
 table.monster-table td.prompt-cell {
-  color: #a0acc5;
+  color: #4a5568;
   font-size: 12.5px;
   line-height: 1.6;
   word-break: break-word;
 }
-thead, table > tr:first-child { background: #1a2138; }
+thead, table > tr:first-child { background: #0f766e; }
 th {
   text-align: left;
   padding: 12px 14px;
   font-weight: 600;
-  color: #ffa040;
+  color: #ffffff;
   font-size: 12.5px;
   letter-spacing: 0.4px;
-  border-bottom: 1px solid #1f2940;
+  border-bottom: 1px solid #0f766e;
 }
 td {
   padding: 11px 14px;
-  border-bottom: 1px solid #1a2138;
-  color: #c5cce0;
+  border-bottom: 1px solid #e5e0d3;
+  color: #2d3748;
   vertical-align: top;
 }
 tr:last-child td { border-bottom: none; }
-tr:hover td { background: #161d33; }
+tbody tr:nth-child(even) td { background: #faf7ee; }
+tr:hover td { background: #ecfdf5; }
 
 /* === CALLOUT BOXES === */
 .callout {
   border-radius: 8px;
   padding: 16px 20px;
   margin: 16px 0;
-  border-left: 4px solid;
+  border-left: 4px solid #0f766e;
   font-size: 14px;
-  background: rgba(255, 255, 255, 0.02);
-  border-left-color: #6b7494;
-  color: #c5cce0;
+  background: #fefdfb;
+  color: #2d3748;
 }
 .callout.info {
-  background: rgba(64, 156, 255, 0.08);
-  border-left-color: #409cff;
-  color: #b3d4ff;
+  background: #fefdfb;
+  border-left-color: #0f766e;
+  color: #2d3748;
 }
 .callout.warn {
-  background: rgba(255, 160, 64, 0.08);
-  border-left-color: #ffa040;
-  color: #ffd9a8;
+  background: #fefdfb;
+  border-left-color: #f97316;
+  color: #2d3748;
 }
 .callout.success {
-  background: rgba(80, 200, 120, 0.08);
-  border-left-color: #50c878;
-  color: #b8f0c8;
+  background: #fefdfb;
+  border-left-color: #14b8a6;
+  color: #2d3748;
 }
-.callout strong { color: inherit; font-weight: 700; }
+.callout strong { color: #134e4a; font-weight: 700; }
 
 /* === TAGS === */
 .tag {
@@ -270,11 +282,14 @@ tr:hover td { background: #161d33; }
   letter-spacing: 0.3px;
   font-weight: 700;
   vertical-align: 1px;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #0f766e;
 }
-.tag-must   { background: #ff5050; color: #fff; }
-.tag-should { background: #ffa040; color: #0a0e1a; }
-.tag-may    { background: #6b7494; color: #fff; }
-.tag-todo   { background: #8a5cff; color: #fff; }
+.tag-must   { background: #ecfdf5; color: #065f46; border: 1px solid #0f766e; }
+.tag-should { background: #ecfdf5; color: #065f46; border: 1px solid #0f766e; }
+.tag-may    { background: #ecfdf5; color: #065f46; border: 1px solid #0f766e; }
+.tag-todo   { background: #ecfdf5; color: #065f46; border: 1px solid #0f766e; }
 
 /* === CHANGELOG (§00 diff 表) === */
 .changelog {
@@ -282,15 +297,16 @@ tr:hover td { background: #161d33; }
   width: 100%;
   border-collapse: collapse;
   margin: 16px 0 24px;
-  background: #131a2e;
+  background: #ffffff;
+  border: 1px solid #e5e0d3;
   border-radius: 8px;
   overflow: hidden;
   font-size: 13.5px;
 }
 .changelog .head {
   display: table-row;
-  background: #1a2138;
-  color: #ffa040;
+  background: #0f766e;
+  color: #ffffff;
   font-weight: 600;
   font-size: 12.5px;
   letter-spacing: 0.4px;
@@ -298,7 +314,7 @@ tr:hover td { background: #161d33; }
 .changelog .head > div {
   display: table-cell;
   padding: 12px 14px;
-  border-bottom: 1px solid #1f2940;
+  border-bottom: 1px solid #0f766e;
 }
 .cl-row {
   display: table-row;
@@ -306,35 +322,36 @@ tr:hover td { background: #161d33; }
 .cl-row > div {
   display: table-cell;
   padding: 11px 14px;
-  border-bottom: 1px solid #1a2138;
+  border-bottom: 1px solid #e5e0d3;
   vertical-align: top;
 }
 .cl-row:last-child > div { border-bottom: none; }
-.cl-row:hover > div { background: #161d33; }
-.cl-mod { color: #ff6b35; font-weight: 600; width: 15%; }
-.cl-from { color: #6b7494; width: 40%; }
-.cl-to { color: #c5cce0; width: 45%; }
+.cl-row:nth-child(even) > div { background: #faf7ee; }
+.cl-row:hover > div { background: #ecfdf5; }
+.cl-mod { color: #0f766e; font-weight: 600; width: 15%; }
+.cl-from { color: #6b7280; width: 40%; }
+.cl-to { color: #2d3748; width: 45%; }
 
 /* === SVG WRAP === */
 .svg-wrap {
   margin: 24px 0;
   padding: 24px;
-  background: #0d1220;
-  border: 1px solid #1f2940;
+  background: #fefdfb;
+  border: 1px solid #d4cdb8;
   border-radius: 10px;
   text-align: center;
 }
 .svg-wrap svg {
   max-width: 100%;
   height: auto;
-  background: #12172a;
+  background: #ffffff;
   border-radius: 6px;
   padding: 12px;
 }
 .svg-wrap .caption {
   display: block;
   margin-top: 14px;
-  color: #6b7494;
+  color: #6b7280;
   font-size: 12px;
   font-family: "SF Mono", monospace;
 }
@@ -354,7 +371,7 @@ tr:hover td { background: #161d33; }
     position: static;
     height: auto;
     border-right: none;
-    border-bottom: 1px solid #1f2940;
+    border-bottom: 1px solid #e5e0d3;
   }
   main { padding: 32px 20px 60px; }
   .doc-header h1 { font-size: 26px; }
@@ -367,7 +384,6 @@ tr:hover td { background: #161d33; }
 <aside class="sidebar">
 <h2>目录</h2>
 <ol>
-  <li><a href="#ch-00">改造速览</a></li>
   <li><a href="#ch-01">视角与世界观</a></li>
   <li><a href="#ch-02">角色系统</a></li>
   <li><a href="#ch-03">战场布局</a></li>
@@ -378,38 +394,30 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-07-5">预体验关卡 <span class="new-tag">NEW</span></a></li>
   <li><a href="#ch-07-6">无尽模式 <span class="new-tag">NEW</span></a></li>
   <li><a href="#ch-08">边缘情况清单</a></li>
-  <li><a href="#ch-09">待定项 (需 Kaysen 后续拍板)</a></li>
-  <li><a href="#ch-10">实施路径</a></li>
-  <li><a href="#ch-v33">V3.3 · 7月16-17日调优增量</a></li>
-  <li><a href="#ch-v34">V3.4 · K5 五项调优 (7-20)</a></li>
-  <li><a href="#ch-v35">V3.5 · K7-20 批次调优 (7-20 晚)</a></li>
-  <li><a href="#ch-v36">V3.6 · K21-slot6 6槽位宝箱+障碍新机制</a></li>
-  <li><a href="#ch-v37">V3.7 · K21-gate+boss+exp 状态门重构+boss奖励+经验降档</a></li>
-  <li><a href="#ch-v38">V3.8 · K21-4pack AOE作用宝箱+g_guide无视射程+障碍reflow等同宝箱+repeatHpStep降档</a></li>
-  <li><a href="#ch-v39">V3.9 · K21-4pack-fix 穿透reflow瞬移+分裂45°+AOE统一伤宝箱+障碍挤入宝箱前</a></li>
-  <li><a href="#ch-v40">V4.0 · K21-bosshp 大 BOSS 血量 50000→30000 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v4.0 · 2026-07-21<br>
+spec-manual · 2026-07-22<br>
 Alien Fizzle · 玩法规格<br>
+<a href="spec.html" style="color:#0f766e;">→ 权威 spec (完整版)</a><br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
 </div>
 </aside>
 
+
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v3.7</span>
-<h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
+<span class="badge">GAME SPEC · MANUAL</span>
+<h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档 (手动维护版)</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v3.7 (K21-gate+boss+exp · 状态门重构+boss奖励+经验降档)</div>
+<div class="value">spec-manual · 2026-07-22 · 手动维护</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-21</div>
+<div class="value">2026-07-22</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -428,205 +436,7 @@ Alien Fizzle · 玩法规格<br>
 <div class="value">art-spec-v3.html</div>
 </div>
 </div>
-
-<div class="callout info" style="margin-top:24px;">
-<strong>📌 v3.2 版本说明</strong><br>
-本次 v3.2 (议题 10 落地) 对 <strong>宝箱 / 状态门 / BOBO / 精通卡池</strong> 四大子系统做架构级分离与重构:
-<code>§04</code> 宝箱通道重写为 "技能升级卡 5×3 级 + 枪械精通卡池 22 张" 的三选一 roguelike 抽卡;
-<code>§05</code> 状态门重构维度库: 移除弹道 / 弹道速度两维, 新增防线护甲 / 防线上限 / 防线回血三维 (7/16), 并补齐各维度对 BOBO 的作用方式;
-<code>§02.2 / §02.3</code> BOBO 定位从 "技能挂件" 升级为 <strong>独立第二输出源</strong> (激光 + 4 阶仇恨), 镜像 BOBO 从宝箱池挪至无尽合成产出;
-新增 <code>§04.6 精通卡池</code> 附录 (22 张卡, 覆盖子弹形态 / 状态施加 / 特殊触发 / 伤害修饰 / 防线 / Meta / BOBO 强化 7 类)。
-<br><br>
-<strong>版本口子</strong>: 3 级制技能升级先跑 demo 验证手感, 若节奏差回滚 5 级制。恶魔赌局 V3.3.8 已改为<strong>单张可重复卡</strong>, 按 EV≈1.14 每次独立结算 (不再是 3 张累乘 1.58 口径)。
 </div>
-</div>
-
-<section class="chapter" id="ch-00">
-    <span class="chapter-num">§ 00 · 改造速览</span>
-    <h2>v2 → v3 八条核心变更</h2>
-    <p class="lead">下表是本次改造的 diff 清单, 每一条都对应正文一节。后续所有美术 / 程序 / 数值工作都以本表为锚点。</p>
-
-    <div class="changelog">
-      <div class="cl-row head">
-        <div>模块</div>
-        <div>v2 旧版</div>
-        <div>v3 新版</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">01 视角</div>
-        <div class="cl-from"><s>纯俯视 2D</s></div>
-        <div class="cl-to"><strong>一点透视斜俯视</strong> 30-40°, 2D 渲染, 远端收窄</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">02 题材</div>
-        <div class="cl-from"><s>飞机大战 · 推进式 shooter</s></div>
-        <div class="cl-to"><strong>人物守线</strong> · 敌人从顶往下推, 主角守底部防线</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">03 角色</div>
-        <div class="cl-from"><s>玩家 = 1 架飞机</s></div>
-        <div class="cl-to">主角 + <strong>BOBO</strong>(贴身悬浮球) + 外星生物 = 敌人</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">04 布局</div>
-        <div class="cl-from"><s>左右双通道 1:1</s></div>
-        <div class="cl-to">左右双通道 <strong>2 : 3</strong> (宝箱通道窄, 接敌通道宽)</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">05 左通道</div>
-        <div class="cl-from"><s>武器自动下滑, 主角接到即装备</s></div>
-        <div class="cl-to"><strong>宝箱冻结卡位</strong>, 击破才得武器, 混入障碍, 武器只装备主角</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">06 右通道</div>
-        <div class="cl-from"><s>纯接敌, 无属性变化</s></div>
-        <div class="cl-to"><strong>状态门</strong>定时刷新, 改 BOBO 属性, 可射击修正, 上限必转增益</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">07 火力</div>
-        <div class="cl-from"><s>玩家飞机自带武器</s></div>
-        <div class="cl-to">主角 + BOBO <strong>双弹道自动开火</strong>; 镜像 BOBO 后变三弹道</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">08 失败</div>
-        <div class="cl-from"><s>飞机被击落 = Game Over</s></div>
-        <div class="cl-to">敌人攻击 <strong>防线持久度</strong> 归零 = Game Over</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">09 <span style="color:#e0a93a">v3.1 新增</span></div>
-        <div class="cl-from"><s>—</s></div>
-        <div class="cl-to"><strong>预体验关卡 (关卡 0)</strong>: 新玩家首次强制体验 60s 爽感关, 双倍火力 + 反弹护盾</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">10 <span style="color:#e0a93a">v3.1 新增</span></div>
-        <div class="cl-from"><s>—</s></div>
-        <div class="cl-to"><strong>无尽模式</strong>: 最高难度 3 关通关后解锁, 分 wave 递增难度, 好友榜刷分</div>
-      </div>
-      <div class="cl-row">
-        <div class="cl-mod">11 <span style="color:#e0a93a">v3.2 重构</span></div>
-        <div class="cl-from"><s>宝箱 = 8 件固定配件序列</s></div>
-        <div class="cl-to"><strong>宝箱 = 三选一 roguelike 抽卡</strong> (5 张技能卡 × 3 级 + 22 张精通卡混池, 权重 1.0 vs 1.5); 状态门 = 平铺属性增益; BOBO 升级为独立第二输出源 (激光 + 4 阶仇恨), 镜像 BOBO 挪至无尽合成</div>
-      </div>
-    </div>
-  </section>
-
-  <!-- ========== 游玩路径总览 (v3.1 新增) ========== -->
-  <section class="chapter" id="ch-00-5">
-    <span class="chapter-num">§ 00.5 · 游玩路径总览</span>
-    <h2>从加载到无尽<br>玩家完整旅程</h2>
-    <p class="lead">玩家从第一帧到长线留存的完整路径。每一步都指向后续 spec 具体章节。</p>
-
-    <h3>0.5.1 流程总览</h3>
-    <table>
-      <tr><th>步骤</th><th>名称</th><th>触发</th><th>说明</th><th>详见</th></tr>
-      <tr><td>S1</td><td><strong>加载页</strong></td><td>启动游戏</td><td>深空黑背景 (#0a0e1a) + 暖橙 LOADING (#e8a94b) + 进度条, 2s 后自动淡出</td><td>§0.5.2</td></tr>
-      <tr><td>S2</td><td><strong>紧急警报弹窗</strong></td><td>加载完毕</td><td>首次进入弹窗制造紧张感, 按钮「看看怎么事」 → 进入预体验</td><td>§0.5.3</td></tr>
-      <tr><td>S3</td><td><strong>预体验关卡</strong></td><td>点击按钮</td><td>满配属性 + 6×10 方阵密集出兵 + 宝箱双倍效果 + 时长不封顶</td><td>§7.5</td></tr>
-      <tr><td>S4</td><td><strong>通关过场</strong></td><td>预体验通关</td><td>总部问话 → 玩家嘚瑟 → 通讯中断警告弹窗 → 按钮「继续」</td><td>§0.5.4</td></tr>
-      <tr><td>S5</td><td><strong>主菜单</strong></td><td>点击继续</td><td>三入口: 预体验 / 正式关卡 / 无尽模式, 按解锁链启用</td><td>§0.5.5</td></tr>
-      <tr><td>S6</td><td><strong>正式关卡</strong></td><td>点击正式关卡</td><td>二级页面: 关卡 1 / 2 / 3, 逐关解锁</td><td>§0.5.5</td></tr>
-      <tr><td>S7</td><td><strong>无尽模式</strong></td><td>通关第 3 关</td><td>主菜单无尽入口亮起</td><td>§7.6</td></tr>
-    </table>
-
-    <h3>0.5.2 加载页</h3>
-    <ul>
-      <li><span class="tag tag-must">必须</span>背景色 <strong>#0a0e1a</strong> (深空黑), 居中显示 <strong>LOADING</strong> 文字 (色值 #e8a94b, 暖橙)</li>
-      <li><span class="tag tag-should">建议</span>底部 1px 进度条或 spinner 动画, 给玩家反馈加载进度</li>
-      <li><span class="tag tag-must">必须</span>加载完毕后 <strong>自动淡出 (0.5s)</strong> 进入 S2 弹窗</li>
-    </ul>
-
-    <h3>0.5.3 紧急警报弹窗 · 首次进入</h3>
-    <div class="callout" style="text-align: center; line-height: 2; border-left: 4px solid #b8451e;">
-      ⚠️ <strong>紧急警报 · 前哨观测站</strong><br>
-      距离节点 7 探测到 <strong style="color: #b8451e">异常生命能量波动</strong><br>
-      未知生物集结规模: <code style="color: #e8a94b">[急速上升...]</code><br>
-      火力单元 · <strong style="color: #2e6b3a">待命</strong><br>
-      <br>
-      <span style="border: 1px solid #e8a94b; padding: 6px 24px; border-radius: 4px; color: #e8a94b; cursor: pointer;">看看怎么事</span>
-    </div>
-    <ul>
-      <li><span class="tag tag-must">必须</span><strong>仅首次进入游戏</strong>弹出, 之后再进游戏直接进主菜单</li>
-      <li><span class="tag tag-must">必须</span>点击按钮后直接进入 <strong>预体验关卡 (§7.5)</strong></li>
-    </ul>
-
-    <h3>0.5.4 预体验通关 · 通讯过场 (v3.2 拍板)</h3>
-    <p>预体验通关后, 按以下节奏推进 (Kaysen 2026-07-08 拍板):</p>
-
-    <h4>时序表</h4>
-    <table>
-      <tr><th>阶段</th><th>时长</th><th>屏幕状态</th><th>说明</th></tr>
-      <tr><td>1 · 空跑</td><td><strong>5 秒</strong></td><td>战场画面保留, 玩家可继续移动, 但已无敌人</td><td>让最后清场的爽感自然沉淀, 不定格不归中</td></tr>
-      <tr><td>2 · 通讯弹窗接入</td><td>瞬时</td><td>屏幕中央弹出<strong>纯字幕通讯窗口</strong> (无头像, 简洁样式)</td><td>窗口内首行显示 <strong>「LOADING...」</strong></td></tr>
-      <tr><td>3 · LOADING 呼吸</td><td><strong>2 秒</strong></td><td>「LOADING...」文字呼吸动画 (透明度 0.4 ↔ 1.0 循环)</td><td>模拟通讯建立中的等待感</td></tr>
-      <tr><td>4 · 对话 · 逐字打出</td><td>~4-6 秒</td><td>字幕逐字浮现 (打字机效果, 每字 ~80ms)</td><td>对话内容见下方</td></tr>
-      <tr><td>5 · 通讯中断</td><td>瞬时</td><td>画面短促抖动 + 静电噪声 (0.3s), 通讯窗切换为警告样式</td><td>字幕重置, 切入警告文案</td></tr>
-      <tr><td>6 · 警告文案 · 逐字打出</td><td>~5-7 秒</td><td>警告文案逐字浮现 (打字机效果)</td><td>警告内容见下方</td></tr>
-      <tr><td>7 · 按钮出现</td><td>瞬时</td><td>「继续」按钮从字幕下方淡入</td><td>玩家点击进入主菜单 (§0.5.5)</td></tr>
-    </table>
-
-    <h4>对话内容 (逐字打字机效果)</h4>
-    <div class="callout" style="text-align: center; line-height: 2.2; font-family: ui-monospace, Menlo, monospace;">
-      <strong style="color: #88c0d4">总部</strong>: 战况如何?<br>
-      <strong style="color: #e8a94b">主角</strong>: 哈哈哈不过如此, 脆得跟纸一样。
-    </div>
-
-    <h4>通讯中断警告文案 (逐字打字机效果)</h4>
-    <div class="callout" style="text-align: center; line-height: 2; border-left: 4px solid #b85478; font-family: ui-monospace, Menlo, monospace;">
-      <strong style="color: #b85478">⚠️ 通讯已中断</strong><br>
-      <br>
-      敌人启动<strong style="color: #a64dff">虚空屏蔽场</strong><br>
-      深空信号被压制<br>
-      补给通道被切断<br>
-      主基地失联<br>
-      <br>
-      看来只能靠我们自己了......<br>
-      <br>
-      <span style="border: 1px solid #b85478; padding: 6px 24px; border-radius: 4px; color: #b85478; cursor: pointer;">继续</span>
-    </div>
-
-    <h4>视觉规范</h4>
-    <ul>
-      <li><span class="tag tag-must">必须</span>通讯窗口为<strong>纯字幕居中样式</strong> (无角色头像, 无对话框图标), 简洁科幻感</li>
-      <li><span class="tag tag-must">必须</span>对话与警告均使用<strong>逐字打字机效果</strong>, 每字约 80ms 出现, 玩家可点击加速跳过 (可选)</li>
-      <li><span class="tag tag-must">必须</span>阶段 1 空跑 5s 期间<strong>不定格不归中不锁定操作</strong>, 玩家可继续在战场自由移动 (体验清场后的余韵)</li>
-      <li><span class="tag tag-must">必须</span>阶段 3 「LOADING...」呼吸动画使用透明度循环 (0.4 ↔ 1.0, 单向 1s)</li>
-      <li><span class="tag tag-must">必须</span>阶段 5 通讯中断瞬间: 画面抖动 (幅度 4-6px, 时长 0.3s) + 静电噪声音效, 强化"信号被切断"的仪式感</li>
-      <li><span class="tag tag-must">必须</span>主角<strong>无名字</strong>, 角色标签一律显示为「主角」</li>
-      <li><span class="tag tag-must">必须</span>总部代号 = 「总部」, 不引入其他称谓</li>
-      <li><span class="tag tag-should">建议</span>「LOADING...」字体可采用等宽字体 (ui-monospace / Menlo), 强化科技通讯感</li>
-    </ul>
-    <div class="callout warn">
-      <strong>设计意图 · 反寸止 + 悬念翻转</strong>: 5 秒空跑让玩家从"爽刚清完"的高峰自然平复, 不粗暴打断; LOADING 呼吸 + 逐字打字机制造"通讯正在建立"的仪式感; 总部问话 + 玩家嘚瑟建立自信峰值; 突然通讯中断 + 虚空屏蔽场文案给出"变弱"的合理性叙事, 让玩家带着"要变强回去"的驱动力进入主菜单。全程不弹一次强制打断, 玩家始终处于"我在被引导"而非"我被拽走"的心理状态。
-    </div>
-
-    <h3>0.5.5 主菜单 · 三级导航 + 解锁链</h3>
-
-    <h4>Lv1 · 主菜单</h4>
-    <table>
-      <tr><th>入口</th><th>初始状态</th><th>解锁条件</th></tr>
-      <tr><td><strong>预体验</strong></td><td>始终可用</td><td>—</td></tr>
-      <tr><td><strong>正式关卡</strong></td><td>🔒 置灰</td><td>预体验通关</td></tr>
-      <tr><td><strong>无尽模式</strong></td><td>🔒 置灰</td><td>正式关卡 · 第 3 关通关</td></tr>
-    </table>
-
-    <h4>Lv2 · 正式关卡 (二级页面)</h4>
-    <table>
-      <tr><th>关卡</th><th>初始状态</th><th>解锁条件</th></tr>
-      <tr><td><strong>关卡 1 · 新手训练</strong></td><td>默认可用</td><td>进入正式关卡页即可玩</td></tr>
-      <tr><td><strong>关卡 2 · 普通</strong></td><td>🔒 置灰</td><td>通关关卡 1</td></tr>
-      <tr><td><strong>关卡 3 · 困难 (殊死决战)</strong></td><td>🔒 置灰</td><td>通关关卡 2</td></tr>
-    </table>
-    <ul>
-      <li><span class="tag tag-must">必须</span>🔒 置灰按钮 <strong>不可点击</strong>, 带锁图标 + 提示文字 (如 "通关上一关解锁")</li>
-      <li><span class="tag tag-must">必须</span>解锁状态 <strong>持久化</strong> (本地存储 / 微信云存档), 玩家关掉重开不丢进度</li>
-      <li><span class="tag tag-must">必须</span>主菜单「预体验」入口 <strong>通关后仍可重玩</strong>, 不锁定, 玩家随时回味</li>
-    </ul>
-
-    <div class="callout warn">
-      <strong>设计意图 · 解锁链心理学</strong>: 预体验给满配爽感 → 正式关卡属性被重置回基线 → 虚空屏蔽场叙事给了 "变弱" 合理性 → 玩家带着 "我之前那么强现在这么弱" 的落差感进入正式关, 天然产生 "要变强回去" 的驱动力。
-    </div>
-  </section>
-
 
   <section class="chapter" id="ch-01">
     <span class="chapter-num">§ 01 · 视角与世界观</span>
@@ -896,7 +706,6 @@ Alien Fizzle · 玩法规格<br>
       <strong>临界情况 · 不抢行修正</strong>: 主角恰好骑在两通道分界线上时, 会出现 <em>主角弹道在宝箱通道 + BOBO 弹道在接敌通道</em> 的分裂状态。这是 <strong>feature 不是 bug</strong>, 代码不要做任何对齐 / 吸附 / 偏移修正, 让玩家自由利用这个边界位置做"边贪宝箱边守接敌"的精妙操作。
     </div>
   </section>
-
 
   <section class="chapter" id="ch-04">
     <span class="chapter-num">§ 04 · 宝箱通道(左) · v3.2 重写 · 三选一抽卡</span>
@@ -1296,7 +1105,6 @@ Alien Fizzle · 玩法规格<br>
     </div>
   </section>
 
-
   <section class="chapter" id="ch-06">
     <span class="chapter-num">§ 06 · 躲门空间几何</span>
     <h2>主角与状态门<br>3 种关系判定</h2>
@@ -1433,7 +1241,6 @@ Alien Fizzle · 玩法规格<br>
     </ul>
   </section>
 
-  <!-- ============ v3.1 增补 §07.5 预体验关卡 ============ -->
   <section class="chapter" id="ch-07-5">
     <span class="chapter-num">§ 07.5 · v3.1 新增 · 预体验关卡</span>
     <h2>预体验关卡<br>满配轰炸 · 让玩家一帧入坑</h2>
@@ -1560,7 +1367,6 @@ Alien Fizzle · 玩法规格<br>
     </table>
   </section>
 
-  <!-- ============ v3.1 增补 §07.6 无尽模式 ============ -->
   <section class="chapter" id="ch-07-6">
     <span class="chapter-num">§ 07.6 · v3.1 新增 · 无尽模式</span>
     <h2>撑多久 = 分多少<br>通关解锁的长线刷分玩法</h2>
@@ -1730,577 +1536,6 @@ Alien Fizzle · 玩法规格<br>
     </table>
   </section>
 
-  <section class="chapter" id="ch-v33">
-    <span class="chapter-num">§ V3.3 · 7月16-17日调优增量</span>
-    <h2>V3.3 调优增量<br>2026-07-16/17 权威</h2>
-    <p class="lead">本章节记录 2026-07-16 至 07-17 期间基于白模 demo 玩测反馈做出的一批调优 / bug 修复。<strong>凡本章节涉及的数值和规则, 以本章为准, 前序章节保留历史快照仅供参考</strong>。</p>
-
-    <div class="callout">
-      <strong>本章说明</strong>: 前序 §2.1 (主角) / §4.1 (宝箱) / §4.2 (技能卡 - mercy) / §4.6 (卡池附录) / §5.1 (状态门) / §5.2 (受击) 相关小节的部分数值已由本章覆盖。外包实施时请以本章为最终权威。
-    </div>
-
-    <h3>V3.3.1 · 主角基础攻速</h3>
-    <ul>
-      <li><strong>变更前</strong>: <code>bulletInterval = 280ms</code> (3.57 发/秒)</li>
-      <li><strong>变更后 (权威)</strong>: <code>bulletInterval = 200ms</code> (5 发/秒, 提速 +40%)</li>
-      <li><strong>原因</strong>: 玩家反馈守线来不及, 打宝箱又太慢, 整体节奏"便秘"</li>
-    </ul>
-
-    <h3>V3.3.2 · 状态门 · 防线三维强制减益起步</h3>
-    <p>状态门 <code>defenseArmor</code> / <code>defenseMaxHP</code> / <code>defenseHeal</code> 三个"防线维度"生成时的初始值分布调整:</p>
-    <ul>
-      <li><strong>变更前</strong>: defenseHeal 只出正值 (瞬时回血包); defenseArmor / defenseMaxHP 走通用 60% 减益 / 40% 增益</li>
-      <li><strong>变更后 (权威)</strong>: <strong>三维 100% 减益起步</strong> (强制负值), 玩家必须平A打爆到 vmax 触发 released 才变为正 buff 增益</li>
-      <li><strong>defenseHeal 特别说明</strong>: 原本 vmin=0 无负值域, 现改为 <code>-step</code> 起步 (若 rand 抽到 &gt;=0 则回落到 <code>-step</code>)。语义 = "防线漏血 debuff", 打爆后 released 触发正回血</li>
-      <li><strong>原因</strong>: 让"防线维度"逻辑对齐 — 玩家不主动干预 = 损防线; 主动打爆 = 收益</li>
-    </ul>
-
-    <h3>V3.3.3 · 状态门命中判定框放大</h3>
-    <ul>
-      <li><strong>变更前</strong>: 子弹命中判定框 = 视觉框 (约 90×28 px)</li>
-      <li><strong>变更后 (权威)</strong>: <strong>命中框左右各扩 40% (hitW = gate.w × 1.4 ≈ 126 px)</strong>, 视觉尺寸保持 gate.w 不变</li>
-      <li><strong>代码位置</strong>: <code>demo.html</code> 子弹碰撞循环中, 判定 <code>gate.released</code> 后构造 <code>gateBox</code> 那一段</li>
-      <li><strong>原因</strong>: 玩家反馈子弹经常从两侧擦过打不到状态门, 是判定精度问题, 视觉不动只加大 hitbox</li>
-    </ul>
-
-    <h3>V3.3.4 · 恩赐解脱 v3.2 (完全重写)</h3>
-    <p><strong>这是 §4.2 里"恩赐解脱"的最新权威规格, 覆盖 §4.2 原三级描述。</strong></p>
-
-    <div class="callout" style="border-color:#c62828;background:#fff5f5">
-      <strong>⚠️ V3.3.9 (2026-07-18) 削弱覆盖以下三处 — 见文末 V3.3.9 权威块</strong>:
-      <ul style="margin-top:6px">
-        <li>伤害倍率 72x → <strong>48x</strong> (中期不吃攻击力加成也能无限清屏, 不健康)</li>
-        <li>Lv3 "圆形恐惧 r=90 stun 2s" → <strong>半圆颤栗 r=62 (=2 小兵单位) · 移速×0.5 持续 1s</strong> (不再硬控)</li>
-        <li>新增 <strong>锥形取敌角度分级, 从 Lv1 起生效</strong>: Lv1=60° / Lv2=90° / Lv3=120° (总张角)</li>
-      </ul>
-      本 V3.3.4 段历史文字保留供对比, 数值以 V3.3.9 为准。
-    </div>
-
-    <div class="callout">
-      <strong>通用规则</strong> (三级共用):
-      <ul style="margin-top:6px">
-        <li>CD: <strong>5000ms (5s)</strong></li>
-        <li>伤害倍率: 主角面板攻击力 <code>(20 + G.playerAtkBonus) × G.playerAtkMult</code> × <strong>72x</strong> (原 60x, +20%)</li>
-        <li>独立判暴 (<code>rollSkillCrit</code>), 走主角暴击面板</li>
-        <li>锁定视觉: 红色激光束, 锁定 0.5s (<code>lockMs = 500</code>), 存活 0.9s</li>
-        <li><strong>获得 / 升级时立即施放一次</strong> (见 V3.3.7)</li>
-      </ul>
-    </div>
-
-    <div class="callout" style="border-color:#5588ff">
-      <strong>目标筛选顺序</strong> (三级统一):
-      <ol style="margin-top:6px">
-        <li>优先取 <strong>BOBO 射程内 4阶仇恨排序</strong> (<code>rankedBoboTargets</code>)</li>
-        <li>不足则从 <strong>画面内可见 + alive + 非宝箱/道具</strong> 敌人按 <strong>血量高→低</strong> 补足<br>
-          可见判定: <code>y &gt; HORIZON_Y &amp;&amp; y &lt; DEFENSE_Y</code></li>
-        <li><strong>必过滤</strong>: <code>kind === 'chest' | 'decoy' | 'perk' | 'buff'</code> 不视为可选目标</li>
-        <li><strong>目标池空 → 静默不释放不消耗 CD</strong> (500ms 后重试), 铁律</li>
-      </ol>
-    </div>
-
-    <table>
-      <tr><th>等级</th><th>目标数</th><th>破甲</th><th>额外机制</th></tr>
-      <tr>
-        <td><strong>Lv1</strong></td>
-        <td>1</td>
-        <td>无 (伤害 = 真伤, 不吃 armor 减免)</td>
-        <td>单束红色激光锁定</td>
-      </tr>
-      <tr>
-        <td><strong>Lv2</strong></td>
-        <td>2</td>
-        <td>armor ×0.5, 3s 精准还原</td>
-        <td>先降护甲再打伤害, 本次伤害吃到破甲加成; 飘字 "护甲-50%"</td>
-      </tr>
-      <tr>
-        <td><strong>Lv3</strong></td>
-        <td>5</td>
-        <td>armor ×0.3, 3s 精准还原</td>
-        <td>
-          先降护甲再打; 飘字 "护甲-70%"; <br>
-          <strong>圆形恐惧</strong>: 每个锁定目标周围 r=90 圆内所有其他敌人 stun 2s (排除宝箱/道具); <br>
-          <strong>击杀刷 CD</strong>: 5 个目标中任意一个被本次技能击杀 → <code>st.lastCast = 0</code>, 下帧立即再释放, 全组仅刷一次 (group.refreshed 标记去重)
-        </td>
-      </tr>
-    </table>
-
-    <p><strong>幂等赋值</strong>: 拿到 mercy 卡时用 <code>card.lv</code> 快照直接赋值, 不再 <code>skillLevels[id] += 1</code> 递增。见 V3.3.7。</p>
-
-    <h3>V3.3.5 · 宝箱经验值系统 + 初始 3 真宝箱</h3>
-    <ul>
-      <li><strong>初始 3 个宝箱全部为真宝箱</strong>, 无空宝箱强制穿插 (原 <code>_createTreasureInner()</code> 的"真-空-真"逻辑已删)</li>
-      <li>空宝箱由独立 idle 触发器在长时间未破宝箱时插入 (最多 2 个, 挤出通道自动消失) — <strong>标记为 P1 待补</strong>, 当前 demo 版本尚未实现</li>
-      <li>首个新宝箱阈值: <strong>50 exp</strong> (原 100, 降 50%) <span style="color:#c62828"><strong>⚠️ V3.3.9 改为 80</strong></span></li>
-      <li>阈值递增: 基数 50, 倍率 ×1.5, 序列 = <strong>50 / 75 / 112 / 168 / 253 / 379 / 569 / ...</strong> <span style="color:#c62828"><strong>⚠️ V3.3.9 改为基数 80 · 倍率 ×1.7</strong> (中期宝箱出太多躺赢, 曲线陡化。新序列 = 80 / 136 / 231 / 393 / 668 / ...)</span></li>
-    </ul>
-
-    <table>
-      <tr><th>敌人类型</th><th>击杀 exp</th></tr>
-      <tr><td>小兵 (small)</td><td>2</td></tr>
-      <tr><td>精英 (elite)</td><td>4</td></tr>
-      <tr><td>mini boss A</td><td>10</td></tr>
-      <tr><td>mini boss B</td><td>20</td></tr>
-      <tr><td>mini boss C</td><td>40</td></tr>
-      <tr><td>final boss</td><td>100</td></tr>
-    </table>
-
-    <h3>V3.3.6 · 双倍火力 buff 生效范围</h3>
-    <ul>
-      <li><strong>变更前</strong>: <code>G.nuoStats.spd += v/1000</code> — 仅 BOBO 侧, 加法, 数值玄学, 主角完全不吃</li>
-      <li><strong>变更后 (权威)</strong>:
-        <ul>
-          <li>主角: <code>G.playerSpdMult *= 2</code></li>
-          <li>BOBO: <code>G.nuoStats.spd *= 2</code></li>
-          <li>持续 <code>v</code> ms 后 <strong>精准 restore</strong> 到 base 值 (存前值, 不做渐进衰减)</li>
-        </ul>
-      </li>
-      <li><strong>原因</strong>: 原实现主角完全不吃双倍火力 buff, 字面意思和实际行为脱节</li>
-    </ul>
-
-    <h3>V3.3.7 · 连发快射 (a_burst) 弹道 +3 且不可重复</h3>
-    <ul>
-      <li><strong>变更前</strong>: <code>a_burst</code> 精通"弹道 +2, 攻速 +30%, 5% 爆头", 可重复获取 (权重腰斩)</li>
-      <li><strong>变更后 (权威)</strong>:
-        <ul>
-          <li>弹道 <strong>+3</strong> (原 +2)</li>
-          <li><strong>不可重复获取</strong>: 拿过一次后从三选一池永久剔除 (drawThree 特判 <code>count &gt; 0 → continue</code>)</li>
-          <li>攻速 +30% 和 5% 爆头保持不变</li>
-        </ul>
-      </li>
-      <li><strong>原因</strong>: 单次获取效果诚意到位, 不希望玩家靠堆叠 a_burst 打乱数值曲线</li>
-    </ul>
-
-    <h3>V3.3.8 · 恶魔赌局合并为单张可重复卡</h3>
-    <ul>
-      <li><strong>变更前</strong>: 3 张独立 id 卡 <code>f_gamble_1 / _2 / _3</code>, 每张抽后自身权重 ×0.5 → 观感变成"必须按 1→2→3 串行解锁"</li>
-      <li><strong>变更后 (权威)</strong>: 合并为 <strong>单张 <code>f_gamble</code></strong> (name "恶魔赌局")
-        <ul>
-          <li>drawThree 对 <code>id === 'f_gamble'</code> 特判: 权重 <strong>固定 1.5, 不随重复次数腰斩</strong></li>
-          <li>每次三选一都可能出现, 甚至一次三选一里出现多张 (概率虽低但允许)</li>
-          <li>效果结算不变: 0.5x~2.0x 系数分布 EV=1.14, 详见 §4.6 附录</li>
-        </ul>
-      </li>
-      <li><strong>原因</strong>: 赌局本质是可重复摇色子的 meta 卡, 3 张分身反而误导玩家理解为"版本更新"</li>
-    </ul>
-
-    <h3>V3.3.9 · 技能卡获取即时施放 + 幂等赋值</h3>
-    <p><strong>即时施放</strong>:</p>
-    <ul>
-      <li><strong>变更前</strong>: <code>applySkillEffect</code> 设 <code>lastCast = now</code>, 玩家拿卡后要等一整个 CD (5-20s) 才第一次触发 → 感觉不到技能获取的即时反馈</li>
-      <li><strong>变更后 (权威)</strong>: <code>applySkillEffect</code> 在设完 <code>skillState</code> 后 <strong>立即调 <code>castSkill(skillId, level)</code> 一次</strong>, 然后进 CD 循环
-        <ul>
-          <li>技能卡升级 Lv1 → Lv2 → Lv3 每次也各触发一次</li>
-          <li>若目标池空 (见 V3.3.4 铁律), 立即施放这一次也会静默跳过, 不消耗"首次施放权"</li>
-        </ul>
-      </li>
-    </ul>
-
-    <p><strong>幂等赋值</strong> (修 Lv2 → Lv3 越级 bug):</p>
-    <ul>
-      <li><strong>症状</strong>: 玩家看到三选一里的 Lv2 恩赐卡, 点击后 toast 弹的是 "Lv3"; 卡片本身"无法选择"到 Lv2</li>
-      <li><strong>根因</strong>: <code>applyCardEffect(card)</code> 老代码 <code>acquireSkill(card.id)</code> 是 <strong>递增</strong> <code>skillLevels[id] += 1</code>。若 UI 未及时关闭 / 触摸事件补发一次 mousedown (iOS Safari touchstart 后可能补 mousedown), 同一张 Lv2 卡被双点 → 从 1 递增到 3</li>
-      <li><strong>变更后 (权威)</strong>: 用 <code>card.lv</code> 快照 <strong>直接赋值 + guard</strong>:
-        <pre style="background:#0f1420;color:#c8d0e0;padding:12px;border-radius:6px;overflow-x:auto"><code>const targetLv = card.lv;   // drawThree 抽卡时快照的目标等级
-if (targetLv &gt; skillLevels[id]) {
-  skillLevels[id] = Math.min(3, targetLv);
-}</code></pre>
-      </li>
-      <li><strong>效果</strong>:
-        <ul>
-          <li>同一张卡重复应用幂等, 不会越级</li>
-          <li>老卡 (低 lv 快照) 也不能覆盖已有更高级</li>
-          <li>解决触摸事件补发 / 双点问题的同时, 保留了 <code>closeCardSelectionUI</code> 的守卫作为第二道防线</li>
-        </ul>
-      </li>
-    </ul>
-
-    <div class="callout" style="border-color:#dda840;margin-top:20px">
-      <strong>P1 待补清单 (v3.3 尚未完成)</strong>
-      <ul style="margin-top:6px">
-        <li><strong>空宝箱 idle 触发器</strong>: <span style="color:#2e7d32">✅ 2026-07-17 已完成 (demo commit b0e64c9 + 8a99803)</span> — 25s 未破真宝箱插 2 decoy, 场上 ≤ 2 decoy, decoy HP = 近真宝箱 × 0.5</li>
-        <li><strong>普通关卡末尾偶发卡死</strong>: <span style="color:#c17f00">🟡 2026-07-17 装了诊断工具 (demo commit c214fea)</span> — URL <code>?debug=1</code> 开启现场快照 + 屏幕红 badge + 4 处延迟回调 setTimeout 包 try-catch, 根因待 K 复现取证后定位</li>
-        <li><strong>spec ↔ demo 反向对齐</strong>: <span style="color:#2e7d32">✅ 2026-07-17 P0 已补</span> — §2.2.2 / §4.2 (mercy) / §4.3.1 / §4.6.F16 / §5.9 (5 处双倍火力/恩赐/恶魔赌局) 加了 "⚠️ V3.3.x 覆盖" 醒目标记, 历史文字保留供对比。P1/P2 冲突 (状态门 3 防线维度未入 §5.1 / §7.5.6 死引用 §4.5 / a_burst 未入 §4.6.A) 因不影响外包/游玩, 归入低优先级, 后续 v3.4 整段重写时统一处理</li>
-      </ul>
-    </div>
-
-    <h3 style="color:#c62828">V3.3.9 · 恩赐削弱 + 权重/宝箱经验平衡 (2026-07-18 · demo commit 0021968)</h3>
-    <p><strong>这是恩赐解脱 / 抽卡权重 / 宝箱经验三处的最新权威规格, 覆盖 V3.3.4 / §4.3.1 / V3.3.5 对应数值。触发: K 复测反馈"恩赐太强 + 三级太易满 + 宝箱太多躺赢"。</strong></p>
-
-    <div class="callout" style="border-color:#c62828">
-      <strong>① 恩赐解脱削弱</strong> (mercy):
-      <ul style="margin-top:6px">
-        <li><strong>伤害倍率 72x → 48x</strong>: 中期不吃攻击力加成、不暴击也能无限刷新清屏, 不健康。<code>getPlayerAtk() × 48</code></li>
-        <li><strong>锥形取敌角度分级, 从 Lv1 起生效</strong> (原 Lv1 无锥形/Lv2+ 固定 90°): 总张角 Lv1=60° / Lv2=90° / Lv3=120°。实现 = 半角 <code>coneHalfDeg = level>=3?60:(level>=2?45:30)</code>, 判据 <code>dy&gt;0 &amp;&amp; |dx| &lt;= dy·tan(coneHalfDeg)</code>, 不足从 rankedList 兜底补</li>
-        <li><strong>Lv3 恐惧 → 颤栗</strong> (不再硬控): 原"圆形恐惧 r=90 · stun 2s" → "半圆颤栗 r=62 (=2 小兵单位, 小兵 w=31) · 移速 ×0.5 持续 1s"。字段 <code>e.chillUntil / e.chillMult=0.5</code>, 在 updateEnemies 位移处消费 (与 slowUntil 取 Math.min 更慢, 可叠加)</li>
-      </ul>
-      <strong>② 抽卡权重平衡</strong>: 已持有的下一级技能卡权重 <strong>×2 → ×1.3</strong> (§4.3.1)。原 ×2 让三级技能太易速满, 降加权逼玩家横向铺技能而非纵向速满。新卡仍 1.0。<br>
-      <strong>③ 宝箱经验门槛陡化</strong> (V3.3.5): 起步阈值 <strong>50 → 80</strong>, 递增倍率 <strong>×1.5 → ×1.7</strong>。原曲线中期宝箱出太多 → 前期起飞躺赢。新序列 = 80 / 136 / 231 / 393 / 668 / ...(方案2: 全程更难但前期不卡死, 保持曲线健康)<br>
-      <strong>④ 宝箱经验进度条 UI</strong> (新增): 接敌通道顶端 (barY=HORIZON_Y+2, barW=TRACK_R_WIDTH×0.6 居中) 画青色进度条 + 文字 "宝箱 X/Y", 展示 <code>G.chestExp / G.chestExpThreshold</code>。预体验关卡不显示 (<code>!G.isPreExperience</code>)。
-    </div>
-
-    <h3 id="ch-v34" style="color:#c62828">V3.4 · K5 五项调优 (2026-07-20 · demo commit 519d2c6 + 9292ca5)</h3>
-    <p><strong>这是出怪节奏 / 裂头弹 / 连发快射 / 卡片标签 / 敌人门速度五处的最新权威规格。触发: K 反馈"出怪比之前更少 + 裂头弹没生效"。</strong></p>
-
-    <div class="callout" style="border-color:#c62828">
-      <strong>① 出怪曲线重设 (总量 ×3)</strong> (PHASES.waveInterval):
-      <ul style="margin-top:6px">
-        <li>问题: V3.3 节奏 v2 把强度从 ~175s 摊薄到 300s 五段, 每一刻密度都被稀释, 尤其抹平了旧版 120s 后的爆发尾段 → 体感"越玩越空"。</li>
-        <li><strong>只改 waveInterval 单一 lever</strong> (eliteProb / boss 时间点冻结不动): 段1(0-60s) 2.2→<strong>1.6</strong> · 段2(60-120s) 2.0→<strong>1.05</strong> · 段3(120-180s) 1.8→<strong>0.62</strong> · 段4(180-240s) 1.6→<strong>0.42</strong> · 段5(240-300s) 1.4→<strong>0.32</strong></li>
-        <li>曲线形状: 前期略升 (+39%), 后期段5 密度暴涨约 3.3x, 全程总量约 <strong>171 → 521 只 (×3)</strong>。关卡时长分级 (300/420/540s) 的 runtimePhases 拉伸机制不变。</li>
-      </ul>
-      <strong>② 裂头弹 / 集束枪管 分裂角度改绝对角度</strong> (a_bounce + a_pierce 共用分裂块):
-      <ul style="margin-top:6px">
-        <li><strong>变更前</strong>: 相对子弹飞行方向 ±22.5° / ±67.5° 偏移 (theta + offset), 视觉上四颗几乎同向, 看不出"炸开"。</li>
-        <li><strong>变更后 (权威)</strong>: 命中主目标瞬间按 <strong>绝对角度 [-30°, 50°, 130°, 210°]</strong> 四散 (canvas 坐标系 0°=右 / 90°=下)。<code>splitAngles.forEach(deg => ang = deg×π/180)</code>, speed 加 <code>|| CFG.bullet.speed</code> 兜底防 0 速。50% 伤害 / 不再穿透分裂 / 继承特效不变。</li>
-      </ul>
-      <strong>③ 连发快射 (a_burst) 单发降伤</strong>:
-      <ul style="margin-top:6px">
-        <li>新增 <code>G.playerBurstDmgMult</code> (默认 1, 拿卡后 = 0.5, 每局重置为 1)。主角平 A <code>baseAtk × (G.playerBurstDmgMult || 1)</code>, <strong>只作用主角平 A, 不影响 BOBO 激光</strong>。</li>
-        <li>设计意图: 玩家换来 +3 弹道 (3 条弹道) 但单条强度减半, 总输出略升、覆盖面变宽。攻速 +30% / 5% 爆头 / 不可重复获取不变。</li>
-      </ul>
-      <strong>④ 卡片功能标签</strong> (新增 <code>CARD_TAG_MAP</code>):
-      <ul style="margin-top:6px">
-        <li>独立常量 (不侵入 SKILL_CARDS / MASTERY_CARDS 数据结构), 22 张卡各挂 ≤3 个功能标签 (普攻 / 技能 / 单体 / AOE / 减速 / 燃烧 / 中毒 / 麻痹 / 增伤 / 回血 / 防御 / 护盾 / 召唤 / BOBO / Meta 等)。</li>
-        <li>drawCard 在标题下、描述上渲染一行 11px 彩字 (技能 #8fd0ff / 精通 #d9a8f5), descTop 下移 16px 避让描述。</li>
-      </ul>
-      <strong>⑤ Boss + 状态门 移动速度 ×2</strong> (CFG):
-      <ul style="margin-top:6px">
-        <li>敌人 speed: miniA 20→<strong>40</strong> · miniB 18→<strong>36</strong> · miniC 16→<strong>32</strong> · boss 12→<strong>24</strong> (small 50 / elite 25 <strong>不动</strong>)。</li>
-        <li>状态门 gate.speed 130→<strong>260</strong>。以上仍各乘 G.diffMult。</li>
-      </ul>
-    </div>
-
-    <h3 id="ch-v35" style="color:#c62828">V3.5 · K7-20 批次调优 (2026-07-20 晚)</h3>
-    <p><strong>今日晚间 K7-20 批次五块改动的权威规格 — 技能视觉透视对齐 / 卡牌削平衡 6 项 / 障碍规则修 / 经验曲线放宽 / BOBO 定位重构。</strong></p>
-
-    <div class="callout" style="border-color:#c62828">
-      <strong>① 技能视觉投影对齐 (一点透视修复)</strong>:
-      <ul style="margin-top:6px">
-        <li>问题: 所有技能视觉 (恩赐红线 / 激光贯穿 / ring / 锤箱 / 高压领域 等) 之前用逻辑坐标, 敌人用透视坐标, 右侧远端视觉目标偏移 <strong>50-100px</strong>。</li>
-        <li>修复: 8 处技能视觉逐项接入 <code>perspectiveX(x, y)</code>:
-          <ol style="margin:4px 0 4px 20px">
-            <li><code>mercyBeam</code> 恩赐红线 (fromX / toX push 时锁定投影)</li>
-            <li><code>laserpierceBeam</code> 激光主光柱 (push 锁定)</li>
-            <li><code>laserpierceAftermath</code> 激光余波 (push 锁定)</li>
-            <li><code>ring</code> 爆炸圈 (draw 时圆心投影)</li>
-            <li><code>mercyCone</code> 恩赐锥形 (draw 顶点投影)</li>
-            <li><code>flywheelZone</code> 锤箱区 (draw 圆心投影)</li>
-            <li><code>togetherPreview</code> / <code>togetherBurnZone</code> 方型区 (draw 方心投影)</li>
-            <li><code>highvoltageZone</code> 高压领域 (draw 从矩形改为 4 顶点梯形投影)</li>
-          </ol>
-        </li>
-        <li>半径 / 宽高暂不缩放 (只对齐位置), 待后续评估。</li>
-        <li>验证: Nova test 断言 <strong>20/20 全通过</strong> (playwright headless + canvas spy)。</li>
-      </ul>
-      <strong>② 卡牌削平衡 6 项</strong>:
-      <table style="margin-top:6px">
-        <tr><th>卡</th><th>前</th><th>后</th></tr>
-        <tr><td><code>a_pierce</code> 集束枪管</td><td>普攻+20%, 穿透2 (递减20%), 命中分裂4弹, BOBO 主目标激光折射2</td><td><strong>普攻+20%, 穿透2 (递减20%)</strong> (两个联动全删)</td></tr>
-        <tr><td><code>a_focusbeam</code> 集束激光 (新卡)</td><td>—</td><td><strong>普攻+20%, BOBO 激光折射+2</strong> (A 类)</td></tr>
-        <tr><td><code>a_bounce</code> 裂头弹</td><td>desc 写分裂 4 颗 (代码实际 2 颗)</td><td><strong>desc 同步为分裂 2 颗</strong> (代码不变)</td></tr>
-        <tr><td><code>a_burst</code> 连发快射</td><td>攻速+30%, 弹道+3, 单发50%, 5%爆头</td><td><strong>攻速+30%, 弹道+2, 单发55%</strong> (爆头完全删)</td></tr>
-        <tr><td><code>c_meltdown</code> 熔核</td><td>满态: 3x攻速+20%暴率+50%暴伤</td><td><strong>满态只留 3x攻速</strong> (暴击暴伤则删)</td></tr>
-        <tr><td>E 类叹息之壁配色</td><td>金色系 <code>#ffc15c</code> / <code>rgba(255,193,92,…)</code></td><td><strong>银灰系 <code>#c8ccd6</code> / <code>rgba(200,208,220,…)</code></strong> 卡身/边框/顶栏/标签/徽章 5 处全量换</td></tr>
-      </table>
-      <strong>③ 障碍规则修复 (宝箱局部保护)</strong>:
-      <ul style="margin-top:6px">
-        <li>Bug: 宝箱落定后倒计时 (15-30s) 到就刷障碍, 无论是否正在被打, 导致玩家打宝箱时障碍仍挡在宝箱前。</li>
-        <li>修复: 宝箱被打 <strong>3s 内不刷障碍</strong>, <strong>局部生效</strong> (同通道其他未被打的宝箱照常刷)。实现: 子弹命中时写 <code>t.lastHitAt</code>, 触发时 3s 内重置 <code>settledAt</code> 倒计时 + <code>return</code> 跳当前宝箱 (forEach 回调 return 不影响其他)。</li>
-      </ul>
-      <strong>④ 经验值曲线放宽</strong>:
-      <ul style="margin-top:6px">
-        <li>前: 初始阈值 <strong>80</strong>, 倍率 <strong>1.7^tier</strong> (前 10 张卡累计需 12080 exp)。</li>
-        <li>后: <strong>初始 60, 倍率 1.5^tier</strong> (前 10 张累计 6798 exp, 降 <strong>44%</strong>)。</li>
-        <li><code>CHEST_EXP_TABLE</code> (small=2 / elite=4 / miniA=10 / miniB=20 / miniC=40 / boss=100) <strong>不变</strong>。</li>
-        <li>背景: K 反馈打到大 boss 也只见到 7 张卡, 太少。</li>
-      </ul>
-      <strong>⑤ BOBO 定位重构 (前期削弱 + 后期强化)</strong>:
-      <ul style="margin-top:6px">
-        <li>目标: BOBO 前期回归辅助输出, 后期抽够 G 卡均可升为主力。</li>
-        <li><code>BOBO_LASER_CONFIG.attackSpeed</code>: 0.7s → <strong>1.0s</strong> (单发 DPS 降 30%)。</li>
-        <li><code>g_focus</code> 激光聚焦: 弹射 3 → <strong>5</strong>, 激光伤害 +50% → <strong>+100%</strong>。</li>
-        <li><code>g_burn</code> 激光爆燃: 半径 36 → <strong>50</strong>, 主伤 12% → <strong>25%</strong>。</li>
-        <li><code>g_guide</code> 激光制导: 攒击数 20 → <strong>12</strong>。</li>
-        <li>数学速算: 无 G 卡 DPS = <code>playerAtk × 0.6</code> (降前 0.857); 3 G 全拿后 AoE DPS ≈ <code>playerAtk × 7.2+</code> (主力级)。</li>
-      </ul>
-    </div>
-
-    <h3 id="ch-v36" style="color:#c62828">V3.6 · K21-slot6 · 6 槽位宝箱 + 障碍新机制 (2026-07-21)</h3>
-    <p><strong>宝箱通道从"抽象 y 顺序"升级为"A-F 6 槽位定位系统",  障碍触发/血量机制彻底重构 — 障碍不再瞬间满血、不再吞伤害, 玩家早期压制窗口的价值真正兑现。同批附带 K7-20 卡牌/BOBO/经验/视觉批次同步部署。</strong></p>
-
-    <div class="callout" style="border-color:#c62828">
-      <strong>① 6 槽位系统 (A-F)</strong>:
-      <ul style="margin-top:6px">
-        <li>通道从防线到传送门共 <strong>6 个槽位</strong>, 命名 <code>A / B / C / D / E / F</code>。</li>
-        <li><strong>A = 防线端</strong> (idx=0, y 最大, 最下); <strong>F = 传送门端</strong> (idx=5, y 最小, 最上)。</li>
-        <li>槽位间距 = 一个宝箱高度 <code>CFG.treasure.h</code> (锚定字段), <strong>非等分</strong>。旧字段 <code>CFG.treasure.slotHeight</code> 仍保留, reflow 已切到 <code>h</code>。</li>
-        <li><strong>填充顺序</strong>: A → B → C → D → E → F。</li>
-        <li><strong>击破收拢</strong>: 中间宝箱被打掉, 后方 (F 方向) 宝箱全体向 A 方向顺移一位; 新箱进当前最靠 A 的空槽。</li>
-        <li>通道满 6 (含障碍占位) → <strong>不再刷新宝箱</strong>。</li>
-      </ul>
-      <strong>② 障碍触发规则</strong>:
-      <ul style="margin-top:6px">
-        <li><strong>触发前提</strong>: 通道中至少 1 个宝箱 <code>obstacleDelay</code> 走完 (=20s 未受任何伤害)。无满足条件的宝箱则完全不刷。</li>
-        <li><strong>计时</strong>: 宝箱落定 (<code>settledAt</code>) 即起, <strong>任意伤害 (含 AOE) 重置</strong> (通过 <code>lastHitAt</code> 判)。</li>
-        <li><strong>roll</strong>: 满足前提时 roll 一次 <code>Math.random() &lt; 0.5</code>:
-          <ul>
-            <li><code>false</code> → R 内所有宝箱重置计时, 不刷障碍</li>
-            <li><code>true</code> → <strong>只刷 1 个障碍</strong> (不是每箱各刷)</li>
-          </ul>
-        </li>
-        <li><strong>障碍位置</strong>: 从该列<strong>未被占用的空槽随机选 1</strong>。该列无空槽 → 不刷, R 统一重置。</li>
-        <li><strong>插入后自动推挤</strong>: reflow 时宝箱按 A→F 重排, 障碍前方的箱被顶到 F 方向。</li>
-      </ul>
-      <strong>③ 障碍血量 (核心 · 削上限机制)</strong>:
-      <ul style="margin-top:6px">
-        <li><strong>起始 HP = 500</strong> (固定, 不看真箱)。</li>
-        <li><strong>上限 <code>maxHp</code></strong> = <code>(repeatHpStart + repeatBuffCount × repeatHpStep) × slotMult × decoyRatio</code>。</li>
-        <li><strong>涨血</strong>: 每秒 <code>maxHp × 0.008</code> (对照 <code>e_root</code> 扎根涨盾节奏), 涨到封顶 <code>maxHp</code> 停。字段 <code>G.treasures[i].baseGrowRate</code> (障碍专用)。</li>
-        <li><strong>被击 10s 暂停涨血</strong> (以 <code>lastHitAt</code> 判)。</li>
-        <li><strong>伤害永久削上限 (关键)</strong>: 每次受 X 伤害, <code>hp</code> 和 <code>maxHp</code> 都 -X, 保证 <code>hp ≤ maxHp</code> 恒成立。
-          <ul>
-            <li>例: max 2000 hp 长到 1000, 打 500 → maxHp 1500 hp 500, 继续涨到 1500 停。血条视觉: 500/1500 → 1500/1500。</li>
-          </ul>
-        </li>
-      </ul>
-      <strong>④ 精确字段清单</strong>:
-      <ul style="margin-top:6px">
-        <li><code>CFG.treasure.h</code> — 槽位间距锚定 (新)</li>
-        <li><code>CFG.treasure.slotHeight</code> — 旧字段仍存, reflow 已切 <code>h</code></li>
-        <li><code>G.treasures[i].slotIdx</code>: 0-5 (A-F)</li>
-        <li><code>G.treasures[i].isObstacle</code>: boolean</li>
-        <li><code>G.treasures[i].lastHitAt</code> / <code>settledAt</code> / <code>obstacleDelay</code> — 计时/重置</li>
-        <li><code>G.treasures[i].baseGrowRate</code> = <code>maxHp × 0.008</code> (障碍专用)</li>
-      </ul>
-      <strong>⑤ 设计意图</strong>:
-      <ul style="margin-top:6px">
-        <li><strong>6 槽位系统</strong>: 从抽象 y 排序改为明确 A-F 定位, 让障碍/宝箱交互有可预测的空间语义。</li>
-        <li><strong>障碍削上限</strong>: "早期削一刀"的价值真正落到玩家手里, 不再吞伤害。</li>
-        <li><strong>500 起始 + 涨血</strong>: 障碍不再瞬间满血, 给玩家"压制窗口"的策略空间。</li>
-      </ul>
-    </div>
-
-    <div class="callout" style="border-color:#c62828">
-      <strong>⑥ 附带 K7-20 削卡/BOBO/经验/视觉批次同步 (随 K21-slot6 一起部署)</strong>
-      <p style="margin-top:6px;color:#8b95a8">昨晚已测但未部署, 今日随 V3.6 一并上线, spec 一并补齐 (V3.5 章节已述细节, 此处摘要):</p>
-      <ul style="margin-top:6px">
-        <li><strong>精通卡削</strong>: <code>a_pierce</code> (去命中分裂+BOBO 分叉联动) · <code>a_bounce</code> (分裂 4→2) · <code>a_burst</code> (弹道 3→2 / 单发 0.55 / 删爆头) · <code>c_meltdown</code> (删满态 20% 暴率 + 50% 暴伤)</li>
-        <li><strong>新精通卡</strong>: <code>a_focusbeam</code> 集束激光 (普攻 +20% + BOBO 折射 +2, A 类)</li>
-        <li><strong>BOBO 强化</strong>: <code>g_focus</code> (弹射 3→5 / 伤害 50%→100%) · <code>g_burn</code> (半径 36→50 / 主伤 12%→25%) · <code>g_guide</code> (攒击 20→12) · <code>BOBO_LASER_CONFIG.attackSpeed</code> 0.7→1.0</li>
-        <li><strong>经验放宽</strong>: <code>chestExpThreshold</code> 80→60, growth 1.7→1.5</li>
-        <li><strong>E 类叹息之壁配色</strong>: 金 → 银灰 (与标签一致)</li>
-        <li><strong>技能视觉投影对齐</strong>: <code>mercyBeam</code> / <code>laserpierceAftermath</code> / <code>laserpierceBeam</code> / <code>ring</code> / <code>mercyCone</code> / <code>togetherPreview</code> / <code>togetherBurnZone</code> / <code>highvoltageZone</code> (梯形化) — 全部走 <code>perspectiveX</code> 与敌人渲染对齐</li>
-      </ul>
-    </div>
-
-    <h3 id="ch-v37" style="color:#c62828">V3.7 · K21-gate+boss+exp · 状态门重构 + boss 击杀奖励 + 经验降档 (2026-07-21)</h3>
-    <p><strong>状态门 5 处参数收紧 + 起步概率新规 (删除防线三维 100% 减益起步, 全 8 维统一斜率公式) + 经验档位降 93% (新手关大 boss 前刚好 10 张卡) + boss 击杀新增三选一/金色状态门双重奖励 (小 boss 全关卡触发, 大 boss 仅无尽模式)。</strong></p>
-
-    <div class="callout" style="border-color:#c62828">
-      <strong>① 状态门参数改 5 处</strong>:
-      <ul style="margin-top:6px">
-        <li><code>atk.vmax</code>: <s>8</s> → <strong>5</strong></li>
-        <li><code>spd.vmin</code>: <s>-0.6</s> → <strong>-1</strong></li>
-        <li><code>critDmg.vmin</code>: <s>-0.05</s> → <strong>-0.10</strong></li>
-        <li><code>defenseArmor.vmin</code>: <s>-0.15</s> → <strong>-0.20</strong>, <code>step</code>: <s>0.005</s> → <strong>0.02</strong></li>
-        <li>其他维度 (<code>crt</code> / <code>silence</code> / <code>defenseMaxHP</code> / <code>defenseHeal</code>) 维持不变</li>
-      </ul>
-
-      <strong>② 起步概率新规 (删除防线三维 100% 减益起步)</strong>:
-      <ul style="margin-top:6px">
-        <li><strong>全 8 维统一公式</strong>: <code>pDebuff = min(0.8, 0.2 + 0.6 × min(t, 90) / 90)</code></li>
-        <li>t=0s: P_debuff = <strong>20%</strong> (早期 80% 刷增益, 玩家开局友好)</li>
-        <li>t=45s: P_debuff = <strong>50%</strong> (中点开始反转)</li>
-        <li>t=90s+: P_debuff = <strong>80%</strong> (后期 80% 刷减益, 推开防线三维的战略需求)</li>
-        <li>保留 K7-2 前 120s 排除防线三维过滤器 (<strong>不变</strong>)</li>
-        <li><strong>设计意图</strong>: 早期以增益为主帮玩家起步, 后期以减益为主创造破门需求, 45s 为均衡时刻</li>
-      </ul>
-
-      <strong>③ 经验降档 (新手关大 boss 前刚好 10 张卡)</strong>:
-      <ul style="margin-top:6px">
-        <li><strong>变更前</strong>: <code>chestExpThreshold</code> 初始 60, 递增 60 × 1.5^tier (前 10 张累计 6798 exp)</li>
-        <li><strong>变更后</strong>: 初始 <strong>15</strong>, 递增 <strong>15 × 1.25^tier</strong> (前 10 张累计 <strong>442 exp</strong>)</li>
-        <li><strong>降幅</strong>: -93% (数量级降低)</li>
-        <li><strong>锚定标准</strong>: 新手关 0-260s 大 boss 前预期累计 exp ≈ 420-500 (基于 PHASES + diffMult=0.5 + enemyMult=0.6 + 实杀率 75% 纯数学估算, 未跑自动化探测), 中庸方案 442 exp 恰好达标</li>
-        <li><code>CHEST_EXP_TABLE</code> (small=2 / elite=4 / miniA=10 / miniB=20 / miniC=40 / boss=100) <strong>不变</strong></li>
-      </ul>
-
-      <strong>④ boss 击杀奖励 (新机制)</strong>:
-      <p style="margin-top:6px"><strong>触发时机</strong>: <code>onEnemyKilled</code> 内钩子</p>
-      <ul style="margin-top:6px">
-        <li><strong>小 boss (miniBoss) — 全关卡触发</strong>:
-          <ul>
-            <li>1 次三选一弹窗 (队列化: <code>G.pendingCardPicks++</code>)</li>
-            <li>1 个金色状态门 (t+2s 刷)</li>
-          </ul>
-        </li>
-        <li><strong>大 boss (finalBoss) — 仅无尽模式触发</strong>:
-          <ul>
-            <li>2 次三选一弹窗</li>
-            <li>3 个金色状态门 (t+2s / t+4s / t+6s 依次刷)</li>
-            <li><strong>关卡限制</strong>: 仅当 <code>G.isEndlessMode === true</code> 触发, <code>undefined</code>/<code>false</code> 均跳过 (正式 3 关大 boss = 本关最后一个怪, 不及时杀完就不给奖励)</li>
-          </ul>
-        </li>
-      </ul>
-
-      <strong>⑤ 三选一队列机制</strong>:
-      <ul style="margin-top:6px">
-        <li><code>G.pendingCardPicks</code> 计数器, 玩家关闭一次弹窗 → 下一帧 <code>tryDrainPendingCardPicks</code> 自动弹下一次</li>
-        <li>大 boss 2 次自然连开</li>
-      </ul>
-
-      <strong>⑥ 金色状态门 (新实体)</strong>:
-      <ul style="margin-top:6px">
-        <li>独立于 <code>G.stateGates</code>, 存于 <code>G.goldenGates</code> 数组, 不占 <code>maxConcurrent=1</code>, 可与普通门共存</li>
-        <li><code>value = dim.vmax</code> (满增益), <code>released=true</code>, <code>isGolden=true</code>, 玩家碰到直接触发满额 buff</li>
-        <li><strong>维度选取</strong>: 8 维全池独立随机 (可撞车, 不去重)</li>
-        <li><strong>横向位置</strong>: 右赛道内随机 (同普通门 <code>xMin</code>/<code>xMax</code>)</li>
-        <li><strong>视觉</strong>: 金色 <code>#ffd700</code> + 脉动光环 + ★ BOSS 角标</li>
-        <li><strong>队列时机</strong>: 固定间隔 2s 依次刷 (基于 <code>G.now</code> game-time, 兑现暂停/三选一 UI 中断)</li>
-      </ul>
-
-      <strong>⑦ 设计意图</strong>:
-      <ul style="margin-top:6px">
-        <li>boss 击杀才是真正高峰时刻, 以前只掉经验不够爽</li>
-        <li>三选一保证向下建设, 金门保证即时面板提升</li>
-        <li>两重奖励叠加塑造 <strong>boss = 仪式感 + 硬收益</strong> 的关卡钩子玩家召唤</li>
-      </ul>
-    </div>
-
-    <h3 id="ch-v38" style="color:#c62828">V3.8 · K21-4pack · AOE 作用宝箱 + g_guide 无视射程 + 障碍 reflow 等同宝箱 + repeatHpStep 降档 (2026-07-21)</h3>
-    <p><strong>四项联动: (1) 精通卡 AOE (爆炸/裂头/穿透/弹射) 全部对宝箱生效 — 打宝箱的爽度对齐打敌人; (2) 制导激光 g_guide 目标选取无视射程 — 攒满 12 击后必打屏内最优仇恨目标; (3) 障碍 reflow 与宝箱同规则统一收拢 — 击破任一即全体顺移; (4) repeatHpStep 768→220 · 后期障碍血量约 -70% 打得动。</strong></p>
-
-    <div class="callout" style="border-color:#c62828">
-      <strong>① 精通卡 AOE 作用于宝箱 (chest-as-enemy)</strong>:
-      <p style="margin-top:6px">以前"宝箱只吃直接命中"的历史规则 (7/16 fix P3) 全部撤回, 宝箱视同敌人单位吃 AOE, 打宝箱触发所有精通效果。</p>
-      <ul style="margin-top:6px">
-        <li><strong>a_explode (爆炸弹)</strong>: 直命宝箱 → 30% 主伤 splash 半径 <code>t.w × 0.5</code>, 同时作用于附近宝箱/障碍 (通过 <code>splashAroundTreasures</code> 新函数); 打敌人爆炸时 splash 也同步作用于宝箱</li>
-        <li><strong>a_bounce (裂头弹)</strong>: 直命宝箱作为主目标也触发 V 字 ±30° 分裂, 子弹伤害 50%, 小弹不再穿透/分裂 (<code>_noSplit</code> / <code>_noPierce</code>)</li>
-        <li><strong>a_pierce (穿透)</strong>: 打宝箱也消耗穿透次数 (2 次), 每穿一次伤害 ×0.8; 命中宝箱不阻断继续飞</li>
-        <li><strong>ricochet (弹射)</strong>: 弹射候选允许宝箱, 若最近候选是宝箱走宝箱扣血 (<code>damageTreasureFromAoe</code>), 伤害 = <code>rawDmg × 0.6</code></li>
-        <li><strong>新函数</strong>: <code>damageTreasureFromAoe(t, dmg)</code> — 障碍削上限 (hp/maxHp 各扣 dmg) + 飘字 + 击破触发 <code>applyTreasure</code>+<code>reflowTreasures</code>; <code>splashAroundTreasures(cx, cy, r, dmg)</code> — 反向遍历 <code>G.treasures</code> 走投影 x 距离判定</li>
-        <li><strong>splashAround 兼容</strong>: 撤回排除 treasure-kind 的过滤, 改为仅排除 <code>hp<=0</code>, 末尾追加 <code>splashAroundTreasures</code> 调用</li>
-        <li><strong>findNextRicochetTarget 兼容</strong>: 撤回 treasure-kind 排除, 宝箱同池竞争最近候选 (200px 上限内)</li>
-      </ul>
-
-      <strong>② g_guide 制导激光目标选取无视射程</strong>:
-      <ul style="margin-top:6px">
-        <li><strong>问题</strong>: 之前攒满 12 击后, 若屏内所有敌人都超过 <code>boboLaserRange()</code>, 制导激光沉默不发, 玩家攒击白攒</li>
-        <li><strong>方案</strong>: <code>selectBoboTarget(bobo, enemies, opts)</code> 新增 <code>opts.ignoreRange</code>; 走 <code>rankedBoboTargets</code> 时若 <code>ignoreRange=true</code>, 跳过 <code>distanceToBobo &lt;= range</code> 过滤, 全屏内敌人都参与仇恨排序</li>
-        <li><strong>调用点 2 处</strong>: (a) 制导触发瞬间 (<code>tickBoboGuide</code> 首次选取), (b) 制导期跳目标 (<code>tickBoboGuideLasers</code> 目标丢失后重选) — 均传 <code>{ ignoreRange: true }</code></li>
-        <li><strong>不变项</strong>: 每 200ms tick 50 伤害 · 走 hatredPriority 排序 (与 mercyBeam 一致) · 排除宝箱/诱饵/道具</li>
-      </ul>
-
-      <strong>③ 障碍 reflow 与宝箱同规则</strong>:
-      <ul style="margin-top:6px">
-        <li><strong>V3.6 (K21-slot6) 旧规则</strong>: 障碍固定占其原始 slotIdx, 宝箱只收拢到未被占用的槽 → 击破前排宝箱时, 后排宝箱不会跨障碍前移, 视觉不整齐</li>
-        <li><strong>V3.8 新规则</strong>: 障碍与宝箱统一按 <code>targetY</code> 降序收拢, 依次填槽 0/1/2/... — 击破任一实体 (宝箱或障碍) → 全体自动往 A 顺移, 无跳槽</li>
-        <li><strong>代码</strong>: <code>reflowTreasures</code> 去掉 <code>usedSlots</code> 分离, 单个 <code>colItems.sort</code> 后线性填槽 (cursor 0→5)</li>
-      </ul>
-
-      <strong>④ repeatHpStep 768→220 · 后期障碍血量降档</strong>:
-      <ul style="margin-top:6px">
-        <li><code>CFG.treasure.repeatHpStep</code>: <s>768</s> → <strong>220</strong> (<s>K7-3 血量再降20%</s> 覆盖)</li>
-        <li><code>repeatHpStart</code> 保持 <strong>4480</strong> 不变 (前期基础血量不动)</li>
-        <li><strong>后期约 -70%</strong>: repeat 阶段每 slot 递增血量从 768 骤降至 220, 高层 repeat slot HP 曲线从陡增变缓增</li>
-        <li><strong>动机</strong>: 玩家反馈 K7-3 后期障碍血墙太厚, 精通 AOE 作用宝箱新规下, 障碍打得动+爽感对齐</li>
-      </ul>
-
-      <strong>⑤ 设计意图 (联动)</strong>:
-      <ul style="margin-top:6px">
-        <li>精通 AOE 作用宝箱 → <strong>宝箱与敌人在战术上同池</strong>, 爆炸/穿透/弹射不再"漏箱"</li>
-        <li>g_guide 无视射程 → <strong>制导必打</strong>, 不再有攒满白攒的黑盒时刻</li>
-        <li>reflow 统一 → <strong>击破节奏顺滑</strong>, 视觉无跳槽</li>
-        <li>血量降档 → <strong>后期打得动</strong>, AOE 作用宝箱的爽度真正落地</li>
-        <li>四项联动 = <strong>宝箱通道的爽感闭环</strong></li>
-      </ul>
-    </div>
-
-    <h3 id="ch-v39" style="color:#c62828">V3.9 · K21-4pack-fix · 穿透 reflow 瞬移 + 分裂 45° + AOE 统一伤宝箱 + 障碍挤入宝箱前 (2026-07-21 下午)</h3>
-    <p><strong>V3.8 上线后 K 实机反馈 5 项修复: (F1) 穿透弹在宝箱 reflow 顺移填坑时能立即命中下移到位的上方箱 — 通过 y 瞬移补偿; (F2) 分裂弹保持标准物理飞, 打不到就打不到, 不再作弊寻箱; (F3) 三个 AOE 大招 (站一起 / 飞轮海 / 激光贯穿) 全部对宝箱造成伤害, 判定几何与该技能敌人伤害一致; (F4) 障碍生成改为\"挤入宝箱前\" — 从 20s 未受击的宝箱池随机挑 1 targetBox, 障碍刷在 targetBox.slotIdx, 该 col 所有 slotIdx≥insertSlot 的 treasures 全部 slotIdx+=1 顺移; (F5) 分裂弹角度 30° → 45°。</strong></p>
-
-    <div class="callout" style="border-color:#c62828">
-      <strong>F1 · 穿透弹 reflow 顺移瞬移补偿 (方向: slotIdx 减小 = 填坑上移)</strong>:
-      <p style="margin-top:6px">V3.8 reflow 引入后, 击破前排宝箱 → 后排宝箱 slotIdx 减小 (往 A 方向填坑) → 但视觉 y 是渐变过渡的; 穿透弹此刻已飞过后排的旧 y 位, 会\"擦过\"下移到位的上方箱 (肉眼看似穿透没命中新位置的箱)。</p>
-      <ul style="margin-top:6px">
-        <li><strong>方案</strong>: reflow 时若某 treasure 的 slotIdx <em>减小</em> (顺移填坑方向), 立即把 <code>t.y</code> 瞬移到新 slotIdx 对应的 targetY (跳过渐变), 让飞行中穿透弹能立刻命中</li>
-        <li><strong>不影响</strong>: slotIdx 增大 (障碍挤入导致的下移) 仍走原渐变, 避免视觉突兀</li>
-        <li><strong>代码</strong>: <code>reflowTreasures</code> 内 slot 计算后 <code>if (newSlot &lt; t.slotIdx) t.y = computeTargetY(newSlot)</code></li>
-      </ul>
-
-      <strong>F2 · 分裂弹保持标准 ±45° 物理飞 (不寻箱)</strong>:
-      <ul style="margin-top:6px">
-        <li><strong>V3.8 遗留</strong>: 裂头弹 V 字分裂子弹曾一度按\"作弊寻最近箱\"处理, 观感诡异</li>
-        <li><strong>V3.9 拨正</strong>: 分裂子弹按 <strong>标准 ±45°</strong> (V3.8 是 ±30°) 物理飞, 打到宝箱算伤害, 打不到拉倒 — 与打敌人的分裂逻辑对齐</li>
-        <li><strong>动机</strong>: 简单 + 一致, 玩家心智模型统一 (\"分裂弹就是分裂弹, 不认宝箱\")</li>
-      </ul>
-
-      <strong>F3 · 三个 AOE 技能全部对宝箱造成伤害 (走统一函数)</strong>:
-      <ul style="margin-top:6px">
-        <li><strong>覆盖 3 个技能</strong>: (a) 站一起 (聚合 AOE), (b) 飞轮海 (飞轮群), (c) 激光贯穿 (穿透激光)</li>
-        <li><strong>判定几何</strong>: 每个技能对宝箱的命中判定与对敌人的判定 <strong>完全一致</strong> (半径 / 矩形 / 射线, 不做另一套)</li>
-        <li><strong>统一函数</strong>: 均走 <code>damageTreasureFromAoe(treasure, dmg)</code> — V3.8 引入的宝箱削血 + 飘字 + reflow 通道, 保证击破后自动顺移</li>
-        <li><strong>与 V3.8 关系</strong>: V3.8 只覆盖了精通卡 AOE (爆炸/裂头/穿透/弹射), 大招 AOE 是漏网 — V3.9 补齐</li>
-      </ul>
-
-      <strong>F4 · 障碍生成改为\"挤入宝箱前\"</strong>:
-      <p style="margin-top:6px">V3.8 障碍走 reflow 同规则收拢, 但 <em>生成位置</em> 仍是找空槽; V3.9 改为强插式: 挑一个\"20s 未受击\"的宝箱 targetBox, 直接挤到它前面, 后排全部往 B 顺移。</p>
-      <ul style="margin-top:6px">
-        <li><strong>候选池</strong>: 从当前 <code>G.treasures</code> 筛出 <code>kind === 'chest'</code> 且 <code>now - t.lastHitTime &gt;= 20000</code> 的宝箱 list</li>
-        <li><strong>选中</strong>: 从 list 随机挑 1 个 <code>targetBox</code> (无候选 → 本次 spawn 放弃)</li>
-        <li><strong>刷在哪</strong>: 障碍 slotIdx = <code>targetBox.slotIdx</code> (即 insertSlot); 同 col 内所有 <code>t.slotIdx &gt;= insertSlot</code> 的 treasures 全部 <code>slotIdx += 1</code> 顺移</li>
-        <li><strong>溢出保护</strong>: 若顺移后 slot5 已被占 (会造成 slotIdx=6 溢出), 触发 <code>resetAll</code> 放弃本次 spawn, 保证 6 槽位不破</li>
-        <li><strong>动机</strong>: 障碍成为\"打脸\"事件 — 玩家攒了 20s 没打的宝箱前突然被塞障碍, 制造紧张感与优先级决策</li>
-      </ul>
-
-      <strong>F5 · 分裂弹角度 30° → 45°</strong>:
-      <ul style="margin-top:6px">
-        <li><code>a_bounce</code> V 字分裂角度: <s>±30°</s> → <strong>±45°</strong></li>
-        <li>覆盖范围更广, 分裂弹更有存在感; 与 F2 的\"标准物理飞\"合起来 = 更宽扇形 + 不作弊 = 依赖玩家瞄准的箱位</li>
-      </ul>
-
-      <strong>⑥ 设计意图 (V3.9 五项联动)</strong>:
-      <ul style="margin-top:6px">
-        <li>F1 让穿透弹在 reflow 中 <strong>不再擦位</strong>, 打起来对得上眼</li>
-        <li>F2+F5 让分裂弹 <strong>诚实但更宽</strong>, 玩家心智不再\"寻箱魔法\"</li>
-        <li>F3 让 3 个大招 <strong>AOE 通杀宝箱</strong>, 补齐 V3.8 只覆盖精通卡的漏</li>
-        <li>F4 让障碍成为 <strong>宝箱通道的插队事件</strong>, 20s 冷板凳宝箱前挤障碍 = 玩家必须换焦点</li>
-        <li>五项联动 = <strong>V3.8 爽感闭环之上再补精度与节奏</strong></li>
-      </ul>
-
-      <strong>⑦ 部署记录</strong>:
-      <ul style="margin-top:6px">
-        <li>commits: <code>c8ff3f3</code> + <code>3cce1c8</code></li>
-        <li>demo 直链: <a href="https://a285c400.nova-nimbus.pages.dev/private/alienfizzle/demo" style="color:#c62828">a285c400.nova-nimbus.pages.dev</a></li>
-        <li>测试: playwright 4/4 pass (F1-F5 全部活体断言通过)</li>
-      </ul>
-    </div>
-  </section>
-
-  <section class="chapter">
-    <h3 id="ch-v40" style="color:#c62828">V4.0 · K21-bosshp · 大 BOSS 血量 50000 → 30000 (2026-07-21 傍晚)</h3>
-    <div class="doc-body">
-      <p class="lead">K21-4pack-fix 之后, 精通卡 AOE 全打宝箱 + 三大招 AOE 全打宝箱, 玩家的实际输出 pipeline 拉起来了。原 boss 50000 血在这个新输出面前太肉, 拖尾时间过长, 玩家心智从"打 boss"变成"耗 boss"。</p>
-
-      <p><strong>① 调整</strong>:</p>
-      <ul>
-        <li><code>CFG.enemyTypes.boss.hp</code>: <strong>50000 → 30000</strong> (-40%)</li>
-        <li>其它字段全部不动: speed 24 / dps 60 / w×h 110 / armor 0.78 / score 2000 / isFinalBoss:true</li>
-      </ul>
-
-      <p><strong>② 联动检查</strong>:</p>
-      <ul>
-        <li>小 boss 血量 (miniA 6000 / miniB 11000 / miniC 20000) 不动, 大小 boss 差距从 2.5-8.3× 收窄到 1.5-5×, 更合理的爬坡</li>
-        <li>K21-boss 段"大 boss 奖励仅无尽模式" (2×三选一 + 3 金门) 逻辑不受影响, 只是死得更快</li>
-        <li>score 2000 不改, 保持大 boss 击杀分权重</li>
-      </ul>
-
-      <p><strong>③ 数值定位</strong>: <code>demo.html</code> L1122 · tag <code>[K21-bosshp]</code></p>
-
-      <p><strong>④ 设计意图</strong>: 让玩家在中后期"感受到 boss 会死"而不是"感受到自己在耗"。真实数据待亲测反馈。</p>
-    </div>
-  </section>
-
   <section class="chapter" id="ch-08">
     <span class="chapter-num">§ 08 · 边缘情况清单</span>
     <h2>16 条规则边界<br>+ 处理预案</h2>
@@ -2327,45 +1562,213 @@ if (targetLv &gt; skillLevels[id]) {
     </table>
   </section>
 
-  <section class="chapter" id="ch-09">
-    <span class="chapter-num">§ 09 · 待定项 (需 Kaysen 后续拍板)</span>
-    <h2>10 个未定数值 / 规则</h2>
-    <p class="lead">这些项目本规格暂留 placeholder, 不阻塞美术与基础玩法验证, 在白模 demo 调试或数值策划阶段补齐。</p>
-
-    <table>
-      <tr><th>#</th><th>待定项</th><th>说明</th><th>建议时机</th></tr>
-      <tr><td>T01</td><td>数值表全量</td><td>所有武器属性 / 敌人血量 dps / 状态门步进值 / 防线 HP / BOBO 基础属性</td><td>白模 demo 跑通后, 数值策划阶段</td></tr>
-      <tr><td>T02</td><td>武器库内容</td><td>基础 / 精良 / 稀有 各档具体有哪些武器, 各自的视觉与机制</td><td>美术 brief 阶段</td></tr>
-      <tr><td>T03</td><td>外星生物形态库</td><td>小兵 / 精英 / Boss 三档具体长什么样</td><td>美术 brief 阶段</td></tr>
-      <tr><td>T04</td><td>状态门维度库</td><td>当前 8 维 (攻击力 / 攻速 / 暴击率 / 暴击伤害 / 火力静默 / 防线护甲 / 防线上限 / 防线回血, 弹道两维已删) 外, 是否扩展(范围 / 穿透 / 反弹...)</td><td>后续玩法扩展时</td></tr>
-      <tr><td>T05</td><td>多镜像 BOBO 上限</td><td>初版限 2 个, 后续是否开放 3-4 个(数值与画面挤占问题)</td><td>白模 demo 平衡性验证后</td></tr>
-      <tr><td>T06</td><td><span style="color:#e0a93a">v3.1</span> 预体验关卡宝箱掉落表</td><td>关卡 0 左通道预排列宝箱的具体掉落内容 (削弱版真实宝箱), 依赖 T02 正式宝箱库先定</td><td>T02 完成后</td></tr>
-      <tr><td>T07</td><td><span style="color:#e0a93a">v3.1</span> 无尽模式 wave 数值表</td><td>每 wave 敌人 HP / 出怪率 / 特殊组合的具体值 (spec 已定曲线形状, 未定数值)</td><td>模拟器 v2 阶段</td></tr>
-      <tr><td>T08</td><td><span style="color:#c96666">v3.1</span> 7 号恩赐解脱 n 倍值</td><td>真实伤害倍率 n · 目标 = 中期 (elite HP 560, 玩家攻击 ~40-60) 一发秒杀精英怪; 前期打小怪爽; 后期打 miniA 打约 20% HP</td><td>数值配平阶段, 需模拟器跑</td></tr>
-      <tr><td>T09</td><td><span style="color:#c96666">v3.1</span> 大 BOSS spawn 曲线</td><td>无尽模式每 wave 大 BOSS 出几只 / 同屏上限 / 阵型组合. 需满足: 通关率 ≤ 1% + 存活时间中位数 ≈ wave 长度</td><td>模拟器 v2 阶段, 无尽难度曲线单独议题</td></tr>
-      <tr><td>T10</td><td><span style="color:#c96666">v3.1</span> 局时长 60s → 180s 拍板</td><td>Kaysen 反馈 60s 不够爽, 暂调 3 分钟试玩. 需白模 demo 验证 3 分钟节奏是否成立 (会不会前期尿点 / 后期堆叠爽感够不够)</td><td>白模 demo v3.2 阶段</td></tr>
-    </table>
-  </section>
-
-  <section class="chapter" id="ch-10">
-    <span class="chapter-num">§ 10 · 实施路径</span>
-    <h2>从规格到可玩 demo<br>下一步 4 个动作</h2>
-
-    <ol>
-      <li><strong>规格评审 (本文档)</strong>: Kaysen 过目本规格, 确认无误或标出修订项</li>
-      <li><strong>白模 demo (~3-4 小时)</strong>: 基于本规格出双版本 HTML demo(桌面窗口 414×736 + 手机全屏), 用白盒子代替所有美术, 跑通核心循环 — 横移 + 双弹道 + 击破宝箱 + 状态门修正 + 防线判定</li>
-      <li><strong>玩法验证</strong>: K 试玩 demo, 验证 6 大核心机制是否成立 — 视角 / 守线节奏 / 双通道决策 / 镜像 BOBO / 状态门修正 / 防线压迫感</li>
-      <li><strong>数值与美术 brief</strong>: 验证通过后启动 T01 数值表 + T02/T03 美术外包规格, 进入 MVP 制作</li>
-    </ol>
-
-    <div class="callout success">
-      <strong>规格闭环原则</strong>: 本规格是 Nova 与 Kaysen 多轮对齐后的 v1 定稿。如白模 demo 阶段发现规则有漏洞或体验不对, 优先修订本规格再改 demo, 不在 demo 里 hack 绕过规格。规格是 single source of truth。
-    </div>
-  </section>
-
 </main>
 </div>
 
+<!-- Spec 编辑功能 v1 START -->
+<div id="spec-editor-toolbar" role="toolbar" aria-label="Spec 编辑工具条">
+  <button type="button" id="btn-toggle-edit" class="spec-ed-btn">✏️ 编辑</button>
+  <button type="button" id="btn-save-edit" class="spec-ed-btn" disabled>💾 保存</button>
+  <button type="button" id="btn-export-edit" class="spec-ed-btn">⬇ 导出</button>
+  <button type="button" id="btn-clear-edit" class="spec-ed-btn" title="丢弃本地存档(不再弹出加载提示)">🗑️</button>
+</div>
+<style>
+  #spec-editor-toolbar {
+    position: fixed; top: 12px; right: 12px; z-index: 99999;
+    display: flex; gap: 8px;
+    background: #ffffff;
+    border: 1px solid #e5e0d3;
+    padding: 8px; border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(15, 118, 110, 0.12);
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  }
+  .spec-ed-btn {
+    min-width: 44px; min-height: 44px;
+    padding: 0 12px;
+    background: #ffffff; color: #0f766e;
+    border: 1px solid #0f766e; border-radius: 6px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .spec-ed-btn:hover:not(:disabled) { background: #ecfdf5; }
+  .spec-ed-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+  .spec-ed-btn.active { background: #0f766e; border-color: #0f766e; color: #ffffff; }
+  body.spec-editing main, body.spec-editing main * {
+    background-color: rgba(15, 118, 110, 0.03);
+  }
+  body.spec-editing [contenteditable="true"]:focus {
+    outline: 2px dashed #14b8a6; outline-offset: 2px;
+  }
+  #spec-export-modal {
+    position: fixed; inset: 0; z-index: 100000;
+    background: rgba(45, 55, 72, 0.55);
+    display: none; align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  #spec-export-modal.show { display: flex; }
+  #spec-export-modal .modal-box {
+    background: #fefdfb; color: #2d3748;
+    border: 1px solid #d4cdb8;
+    max-width: 720px; width: 100%; max-height: 80vh;
+    display: flex; flex-direction: column;
+    border-radius: 8px; padding: 16px;
+  }
+  #spec-export-modal textarea {
+    flex: 1; width: 100%; min-height: 300px;
+    background: #ffffff; color: #2d3748;
+    border: 1px solid #d4cdb8; border-radius: 4px;
+    padding: 8px; font-family: monospace; font-size: 12px;
+    resize: vertical;
+  }
+  #spec-export-modal .modal-actions {
+    display: flex; gap: 8px; margin-top: 12px; justify-content: flex-end;
+  }
+  @media print { #spec-editor-toolbar { display: none !important; } }
+</style>
+<div id="spec-export-modal" role="dialog" aria-modal="true">
+  <div class="modal-box">
+    <h3 style="margin:0 0 8px 0;">导出编辑后的 Spec</h3>
+    <p style="margin:0 0 8px 0; font-size:13px; color:#94a3b8;">
+      已触发下载完整 HTML 文件。也可从下方复制 body innerHTML 粘贴回传:
+    </p>
+    <textarea id="spec-export-textarea" readonly></textarea>
+    <div class="modal-actions">
+      <button type="button" class="spec-ed-btn" id="btn-copy-export">复制</button>
+      <button type="button" class="spec-ed-btn" id="btn-close-export">关闭</button>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  const LS_KEY = 'nova_alienfizzle_spec_edit';
+  const btnEdit = document.getElementById('btn-toggle-edit');
+  const btnSave = document.getElementById('btn-save-edit');
+  const btnExport = document.getElementById('btn-export-edit');
+  const btnClear = document.getElementById('btn-clear-edit');
+  const modal = document.getElementById('spec-export-modal');
+  const modalTA = document.getElementById('spec-export-textarea');
+  const btnCopy = document.getElementById('btn-copy-export');
+  const btnCloseExport = document.getElementById('btn-close-export');
+  let editing = false;
+  let dirty = false;
+
+  // 加载时检查本地存档
+  //   [2026-07-17 fix] 修弹窗死循环 (按固定日期砍, 治标)
+  //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
+  //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
+  //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
+  const SPEC_PUBLISHED = '2026-07-22 12:00';  // ← 每次重新部署 spec 时更新此值
+  try {
+    const saved = localStorage.getItem(LS_KEY);
+    const meta = localStorage.getItem(LS_KEY + '_meta') || '';
+    // 本地存档旧于线上发布时间 → 过时, 静默丢弃 (不弹窗)
+    if (saved && (!meta || meta < SPEC_PUBLISHED)) {
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem(LS_KEY + '_meta');
+      console.log('[spec-edit] 已静默丢弃过时存档:', meta || '(无时间戳)', '< 发布时间', SPEC_PUBLISHED);
+    } else if (saved) {
+      // 存档比线上发布还新 = 用户发布后又本地编辑过, 才提示是否加载
+      const shouldLoad = confirm('检测到本地保存的编辑版本' + (meta ? ' (' + meta + ')' : '') + '\n\n[确定] = 加载存档覆盖当前页面\n[取消] = 保留存档但不加载 (下次仍会询问)\n\n如需彻底丢弃存档, 请点确定后, 页面加载完毕点右上角 🗑️ 按钮');
+      if (shouldLoad) {
+        // 只替换 main 内容, 保留工具条
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(saved, 'text/html');
+        const savedMain = doc.querySelector('main') || doc.body.querySelector('main');
+        const currentMain = document.querySelector('main');
+        if (savedMain && currentMain) {
+          currentMain.innerHTML = savedMain.innerHTML;
+        } else {
+          // 回退: 整个 body 替换 (会丢工具条, 但用户接受了)
+          document.body.innerHTML = saved;
+        }
+      }
+    }
+  } catch(e) { console.warn('load saved edit failed', e); }
+
+  function setEditing(on) {
+    editing = on;
+    document.body.classList.toggle('spec-editing', on);
+    const main = document.querySelector('main');
+    if (main) {
+      if (on) main.setAttribute('contenteditable', 'true');
+      else main.removeAttribute('contenteditable');
+    }
+    btnEdit.textContent = on ? '🚪 退出编辑' : '✏️ 编辑';
+    btnEdit.classList.toggle('active', on);
+    btnSave.disabled = !on;
+  }
+
+  btnEdit.addEventListener('click', function(){
+    setEditing(!editing);
+  });
+
+  btnClear.addEventListener('click', function(){
+    if (confirm('确定丢弃本地存档? 之后打开 spec 不再弹加载提示。\n(此操作只删本地存档, 不影响线上 spec 正文)')) {
+      localStorage.removeItem(LS_KEY);
+      localStorage.removeItem(LS_KEY + '_meta');
+      btnClear.textContent = '✅';
+      setTimeout(function(){ btnClear.textContent = '🗑️'; }, 1500);
+    }
+  });
+
+  document.addEventListener('input', function(e){
+    if (editing) { dirty = true; btnSave.disabled = false; }
+  }, true);
+
+  btnSave.addEventListener('click', function(){
+    try {
+      const main = document.querySelector('main');
+      const html = main ? main.outerHTML : document.body.innerHTML;
+      localStorage.setItem(LS_KEY, html);
+      localStorage.setItem(LS_KEY + '_meta', new Date().toISOString().slice(0,16).replace('T',' '));
+      dirty = false;
+      btnSave.textContent = '✅ 已保存';
+      setTimeout(function(){ btnSave.textContent = '💾 保存'; }, 1500);
+    } catch(e) {
+      alert('保存失败: ' + e.message);
+    }
+  });
+
+  function exportEditedSpec() {
+    const html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+    try {
+      const blob = new Blob([html], { type: 'text/html;charset=utf-8' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      const ts = new Date().toISOString().slice(0,10);
+      a.download = 'spec-edited-' + ts + '.html';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
+    } catch(e) { console.warn('download failed', e); }
+    // 同时打开 modal 显示 body innerHTML, 便于复制
+    const main = document.querySelector('main');
+    modalTA.value = main ? main.innerHTML : document.body.innerHTML;
+    modal.classList.add('show');
+  }
+
+  btnExport.addEventListener('click', exportEditedSpec);
+  btnCloseExport.addEventListener('click', function(){ modal.classList.remove('show'); });
+  modal.addEventListener('click', function(e){ if (e.target === modal) modal.classList.remove('show'); });
+  btnCopy.addEventListener('click', function(){
+    modalTA.select();
+    try {
+      navigator.clipboard.writeText(modalTA.value).then(function(){
+        btnCopy.textContent = '✅ 已复制';
+        setTimeout(function(){ btnCopy.textContent = '复制'; }, 1500);
+      }).catch(function(){ document.execCommand('copy'); });
+    } catch(e) { document.execCommand('copy'); }
+  });
+
+  // 离开前提示未保存
+  window.addEventListener('beforeunload', function(e){
+    if (editing && dirty) { e.preventDefault(); e.returnValue = ''; return ''; }
+  });
+})();
+</script>
+<!-- Spec 编辑功能 v1 END -->
 
 </body>
 </html>
