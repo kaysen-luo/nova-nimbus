@@ -440,7 +440,7 @@ Alien Fizzle · 玩法规格<br>
 
   <section class="chapter" id="ch-01">
     <span class="chapter-num">§ 01 · 视角与世界观</span>
-    <h2>从俯视到一点透视<br>从飞机到守线人</h2>
+    <h2>一点透视 · 守线人视角</h2>
 
     <h3>1.1 视角</h3>
     <ul>
@@ -450,18 +450,18 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-may">可选</span>背景层可加视差滚动(parallax) 增强纵深, 不强制</li>
     </ul>
 
-    <h3>1.2 题材与节奏转换</h3>
+    <h3>1.2 题材与节奏</h3>
     <table>
-      <tr><th>维度</th><th>v2 飞机大战</th><th>v3 人物守线</th></tr>
-      <tr><td>玩家角色</td><td>飞机, 屏幕底部向上推进</td><td>主角 + BOBO, 站定底部防线</td></tr>
-      <tr><td>敌人动线</td><td>从顶部冲下</td><td>从顶部推进, 直到防线前停下攻击</td></tr>
-      <tr><td>节奏类型</td><td>推进式 shooter (前进 = 主旋律)</td><td>endless wave 塔防 (守 = 主旋律)</td></tr>
-      <tr><td>失败条件</td><td>飞机被击落</td><td>防线持久度归零</td></tr>
-      <tr><td>核心张力</td><td>"打得快 vs 躲得过"</td><td>"贪宝箱 vs 守防线"双轨决策</td></tr>
+      <tr><th>维度</th><th>当前口径</th></tr>
+      <tr><td>玩家角色</td><td>主角 + BOBO, 站定底部防线</td></tr>
+      <tr><td>敌人动线</td><td>从顶部推进, 直到防线前停下攻击</td></tr>
+      <tr><td>节奏类型</td><td>endless wave 塔防 (守 = 主旋律)</td></tr>
+      <tr><td>失败条件</td><td>防线持久度归零</td></tr>
+      <tr><td>核心张力</td><td>"贪宝箱 vs 守防线" 双轨决策</td></tr>
     </table>
 
     <div class="callout">
-      <strong>设计意图</strong>: 题材从"主动进攻"换成"被动守线", 让 endless 节奏自然成立 — 玩家不再有"打到尽头"的预期, 而是"撑多久"的存活叙事, 更契合 A 路单机休闲爆款的 30-60s 单局节奏。
+      <strong>设计意图</strong>: 被动守线 + endless 节奏, 玩家不追求"打到尽头", 而是"撑多久"的存活叙事, 契合 A 路单机休闲爆款 30-60s 单局节奏。
     </div>
   </section>
 
@@ -600,7 +600,7 @@ Alien Fizzle · 玩法规格<br>
   <section class="chapter" id="ch-03">
     <span class="chapter-num">§ 03 · 战场布局</span>
     <h2>双通道 2 : 3 空间几何</h2>
-    <p class="lead">这是 v3 改造的物理基础。所有后续机制(状态门躲避 / 主角横移 / 子弹方向)都建立在这套空间几何上。</p>
+    <p class="lead">这是所有后续机制(状态门躲避 / 主角横移 / 子弹方向)的物理基础。</p>
 
     <h3>3.1 通道比例与单位换算</h3>
     <p>设屏幕宽度 = <strong>5 个单位</strong>(后简称 U), 则:</p>
@@ -705,7 +705,7 @@ Alien Fizzle · 玩法规格<br>
   </section>
 
   <section class="chapter" id="ch-04">
-    <span class="chapter-num">§ 04 · 宝箱通道(左) · v3.2 重写 · 三选一抽卡</span>
+    <span class="chapter-num">§ 04 · 宝箱通道(左) · 三选一抽卡</span>
     <h2>技能升级卡 + 精通卡<br>Roguelike 混池抽卡</h2>
     <p class="lead">宝箱通道采用 <strong>三选一 roguelike 抽卡</strong>。卡池由 <strong>5 张技能升级卡 × 3 级 (串行解锁)</strong> + <strong>22 张枪械精通卡 (§4.6 附录)</strong> 混合而成; 状态门只管平铺属性 (攻击力 / 攻速 / 暴击率 / 暴击伤害 / 火力静默 / 防线三维), 与宝箱的 "质变技能" 架构分离。</p>
 
@@ -917,7 +917,7 @@ Alien Fizzle · 玩法规格<br>
   <section class="chapter" id="ch-05">
     <span class="chapter-num">§ 05 · 接敌通道(右) · 状态门核心机制</span>
     <h2>修正即翻转<br>状态门的状态机</h2>
-    <p class="lead">这是 v3 改造的灵魂机制 — 所有减益最终能通过射击修正到 0 并翻转为增益, 上限永远是 buff。把"被动遭遇 debuff"变成"主动消减 + 充能 buff"的双向操作。</p>
+    <p class="lead">灵魂机制 — 所有减益最终能通过射击修正到 0 并翻转为增益, 上限永远是 buff。把"被动遭遇 debuff"变成"主动消减 + 充能 buff"的双向操作。</p>
 
     <h3>5.1 状态门基础规格</h3>
     <table>
