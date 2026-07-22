@@ -481,8 +481,8 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>初始武器</td><td>基础单发直射(数值待定)</td></tr>
     </table>
 
-    <h3>2.2 BOBO (悬浮球辅助机器人 · v3.2 升级为独立第二输出源)</h3>
-    <p class="lead">v3.2 起 BOBO 从 "技能挂件" 升级为 <strong>独立第二输出源</strong>, 允许玩家通过精通卡 G 类 (§4.6) 把它强化为主输出。武器形态从 "子弹" 换成 <strong>激光</strong>, 独立仇恨判定, 全吃状态门增益。</p>
+    <h3>2.2 BOBO (悬浮球辅助机器人 · 独立第二输出源)</h3>
+    <p class="lead">BOBO 作为 <strong>独立第二输出源</strong>, 允许玩家通过精通卡 G 类 (§4.6) 把它强化为主输出。武器形态为 <strong>激光</strong>, 独立仇恨判定, 全吃状态门增益。</p>
     <table>
       <tr><th>属性</th><th>规格</th></tr>
       <tr><td>形象</td><td>小型悬浮球体, 科技感, 顶部激光发射口</td></tr>
@@ -514,16 +514,13 @@ Alien Fizzle · 玩法规格<br>
     <h4>2.2.2 状态门对 BOBO 的作用方式 (与 §5 呼应)</h4>
     <ul>
       <li><span class="tag tag-must">必须</span><strong>攻击力 / 攻速 / 暴击率 / 暴击伤害</strong> 4 项 → BOBO 直接全吃, 乘算到激光单次伤害 / 发射间隔上</li>
-      <li style="color:#c62828"><span class="tag tag-must">必须</span><strong>⚠️ 7/16 已移除弹道 / 弹道速度两维</strong>: 状态门不再有弹道维度, 下面两行为历史描述。BOBO 激光分叉现由精通卡 (集束枪管 A1 / 激光聚焦 G20) 提供, 见 §5.9 权威。</li>
-      <li style="color:#999"><s><strong>弹道 +N</strong> → 转化为 <strong>激光分叉 N 次</strong>: 打完主目标后按仇恨顺序自动跳打次优先级目标, 每次分叉不衰减 (与穿透卡不同)</s></li>
-      <li><span class="tag tag-must">必须</span><strong>双倍火力</strong> (来自火力静默翻转) → BOBO <strong>同时发射 2 束激光锁 2 个目标</strong>, 分别按仇恨 P1 / P2 位取次优先级 (仇恨天然支持锁次优先级)</li>
-      <li style="color:#c62828"><strong>⚠️ V3.3.6 修订</strong>: 双倍火力实际实现为 <code>G.nuoStats.spd *= 2</code> (BOBO 激光<strong>发射攻速×2, 单目标</strong>), 非"2 束激光". <strong>见 §V3.3.6 权威</strong> — 本行历史描述保留供对比。</li>
-      <li><span class="tag tag-must">必须</span><strong>火力静默 (未翻转的 debuff)</strong> → BOBO 静默 N 秒不发射激光 (原规则保留)</li>
+      <li><span class="tag tag-must">必须</span><strong>双倍火力</strong> (来自火力静默翻转) → BOBO <code>G.nuoStats.spd *= 2</code>, 激光<strong>发射攻速×2, 单目标</strong></li>
+      <li><span class="tag tag-must">必须</span><strong>火力静默 (未翻转的 debuff)</strong> → BOBO 静默 N 秒不发射激光</li>
     </ul>
 
-    <h3>2.3 镜像 BOBO (v3.2 · 从宝箱池挪至无尽合成)</h3>
+    <h3>2.3 镜像 BOBO</h3>
     <div class="callout warn">
-      <strong>v3.2 定位变更</strong>: 镜像 BOBO <strong>不再是宝箱产出</strong>, 从原宝箱库 6 号移除, 挪到 <strong>无尽模式合成宝箱</strong> 产出 (合成条件与获取方式待 §7.6 补细则)。同时把 "永久继承" 改为 <strong>持续 10s 临时召唤</strong> 型技能, 定位是短爆发而非全程双输出。
+      镜像 BOBO 从 <strong>无尽模式合成宝箱</strong> 产出 (合成条件与获取方式待 §7.6 补细则), 为 <strong>持续 10s 临时召唤</strong> 型技能, 定位是短爆发而非全程双输出。
     </div>
     <ul>
       <li><span class="tag tag-must">必须</span>获取渠道: <strong>无尽合成宝箱</strong> 产出 (线性关卡 1-3 内不出)</li>
@@ -710,7 +707,7 @@ Alien Fizzle · 玩法规格<br>
   <section class="chapter" id="ch-04">
     <span class="chapter-num">§ 04 · 宝箱通道(左) · v3.2 重写 · 三选一抽卡</span>
     <h2>技能升级卡 + 精通卡<br>Roguelike 混池抽卡</h2>
-    <p class="lead">v3.2 起宝箱通道完全重构: 从 "8 件固定配件序列" 改为 <strong>三选一 roguelike 抽卡</strong>。卡池由 <strong>5 张技能升级卡 × 3 级 (串行解锁)</strong> + <strong>22 张枪械精通卡 (§4.6 附录)</strong> 混合而成; 状态门只管平铺属性 (攻击力 / 攻速 / 暴击率 / 暴击伤害 / 火力静默 / 防线三维), 与宝箱的 "质变技能" 架构分离。</p>
+    <p class="lead">宝箱通道采用 <strong>三选一 roguelike 抽卡</strong>。卡池由 <strong>5 张技能升级卡 × 3 级 (串行解锁)</strong> + <strong>22 张枪械精通卡 (§4.6 附录)</strong> 混合而成; 状态门只管平铺属性 (攻击力 / 攻速 / 暴击率 / 暴击伤害 / 火力静默 / 防线三维), 与宝箱的 "质变技能" 架构分离。</p>
 
     <div class="callout warn">
       <strong>架构分离 (v3.2 顶层规则)</strong>:
@@ -726,7 +723,7 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-must">必须</span>宝箱在通道内 <strong>冻结不动</strong>, 不自动下滑</li>
       <li><span class="tag tag-must">必须</span>宝箱有血量, 被子弹击中累计伤害, 击破后 <strong>弹出三选一卡片界面</strong> (期间敌人暂停 0.5s 缓冲, 与关卡节奏无缝衔接)</li>
       <li><span class="tag tag-must">必须</span>玩家从三张卡中选一张, 立即结算 (若已 Lv3 满级则该技能卡不再进池; 精通卡若已持有, 权重 ×0.5, 见 §4.3 抽卡权重)</li>
-      <li><span class="tag tag-must">必须</span>宝箱通道内同时混入 <strong>障碍</strong>, 障碍击破不掉落任何东西 — 是纯粹的 "挡子弹" 消耗。<span style="color:#c62828"><strong>V3.3 障碍机制</strong>: 真宝箱落定后 20s 未击破 → 前方 (靠防线侧) 随机刷 <strong>0-2 个障碍</strong> (HP = 最近真宝箱 × 0.5), 同列正下方。</span></li>
+      <li><span class="tag tag-must">必须</span>宝箱通道内同时混入 <strong>障碍</strong>, 障碍击破不掉落任何东西 — 是纯粹的 "挡子弹" 消耗。真宝箱落定后 20s 未击破 → 前方 (靠防线侧) 随机刷 <strong>0-2 个障碍</strong> (HP = 最近真宝箱 × 0.5), 同列正下方。</li>
       <li><span class="tag tag-should">建议</span>宝箱与障碍的视觉差异要明显, 颜色 / 形状 / 边框三层区分</li>
     </ul>
 
@@ -784,8 +781,8 @@ Alien Fizzle · 玩法规格<br>
     <h4>4.3.1 混池权重</h4>
     <table>
       <tr><th>卡类</th><th>基础权重</th><th>重复权重</th><th>特殊修正</th></tr>
-      <tr><td>技能升级卡 (5 张 × 3 级)</td><td>1.0</td><td>—</td><td>未解锁的下一级卡 <strong>不在池</strong> (对玩家隐藏); 已 Lv3 满级技能 <strong>不再出</strong>; <strong>已持有的下一级卡权重 ×2</strong> (加速成长) <span style="color:#c62828"><strong>⚠️ V3.3.9 改为 ×1.3</strong> (原 ×2 三级技能太易速满, 降加权逼横向铺技能)</span></td></tr>
-      <tr><td>精通卡 (22 张, §4.6)</td><td>1.5</td><td><strong>0 (拿过即剔除)</strong></td><td>每张真正一次性, 抽到即消耗且从池里移除, 无法再次刷出; <strong>恶魔赌局 (f_gamble) 唯一例外</strong>, 可重复出 (设计即为反复摇色子)<br><span style="color:#c62828"><strong>⚠️ K8-2 修订 (2026-07-20)</strong>: 之前"×0.5 权重递减但仍可重复"的规则删除, 改为拿过即剔除。所有精通卡均无叠层机制 (b_slow/d_hunter/d_weak/e_desperate/f_greed 单张效果 = desc 数值, 不叠加)。</span></td></tr>
+      <tr><td>技能升级卡 (5 张 × 3 级)</td><td>1.0</td><td>—</td><td>未解锁的下一级卡 <strong>不在池</strong> (对玩家隐藏); 已 Lv3 满级技能 <strong>不再出</strong>; <strong>已持有的下一级卡权重 ×1.3</strong> (加速成长, 但不至于速满)</td></tr>
+      <tr><td>精通卡 (22 张, §4.6)</td><td>1.5</td><td><strong>0 (拿过即剔除)</strong></td><td>每张真正一次性, 抽到即消耗且从池里移除, 无法再次刷出; <strong>恶魔赌局 (f_gamble) 唯一例外</strong>, 可重复出 (设计即为反复摇色子)。所有精通卡均无叠层机制 (b_slow/d_hunter/d_weak/e_desperate/f_greed 单张效果 = desc 数值, 不叠加)。</td></tr>
     </table>
 
     <h4>4.3.2 单局刷新规则</h4>
@@ -823,15 +820,15 @@ Alien Fizzle · 玩法规格<br>
     </div>
 
     <h3>4.6 附录 · 枪械精通卡池 · 22 张</h3>
-    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 22 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F19) 为特例, <strong>单张可重复抽</strong> (见 §V3.3.8)。<span style="color:#c62828"><strong>⚠️ 本表为最新权威, 已按 demo 实现对齐 (A 4 张 / B 3 张 / C 2 张 / D 2 张 / E 5 张 / F 3 张 / G 3 张 = 22)</strong>。</span></p>
+    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 22 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F19) 为特例, <strong>单张可重复抽</strong>。分布: A 4 / B 3 / C 2 / D 2 / E 5 / F 3 / G 3 = 22 张。</p>
 
     <h4>4.6.A 子弹形态 · 4 张</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
       <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>普攻 <strong>+20%</strong>, <strong>穿透 2</strong> (每穿一次伤害递减 20%), 命中主目标 <strong>分裂 4 弹</strong></td><td>BOBO 主目标激光 <strong>分叉 2</strong> (A 类里唯一对 BOBO 生效)</td></tr>
-      <tr><td><strong>2</strong></td><td><strong>裂头弹</strong> <span class="tag tag-may">a_bounce</span></td><td>击中主目标瞬间 <strong>四散分裂 4 颗小子弹</strong>, <strong>50% 伤害</strong>, 不再穿透/分裂, 继承攻击特效</td><td>V3.4: 分裂改 <strong>绝对角度 [-30°,50°,130°,210°]</strong> (见 §V3.4)</td></tr>
+      <tr><td><strong>2</strong></td><td><strong>裂头弹</strong> <span class="tag tag-may">a_bounce</span></td><td>击中主目标瞬间 <strong>四散分裂 4 颗小子弹</strong>, <strong>50% 伤害</strong>, 不再穿透/分裂, 继承攻击特效</td><td>分裂绝对角度 [-30°,50°,130°,210°]</td></tr>
       <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong> <span class="tag tag-may">a_explode</span></td><td>子弹命中产生 <strong>小范围爆炸</strong>, 爆炸伤害 = <strong>30% 主伤害</strong></td><td>弹射/分裂后的子弹也能触发</td></tr>
-      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>攻速 <strong>+30%</strong>, 弹道 <strong>+3</strong>, 单发伤害降为 <strong>50%</strong> (总输出略升, 覆盖变宽), <strong>5% 爆头</strong>额外 50% 伤害</td><td>V3.4: 单发降伤只作用主角平 A, 不影响 BOBO (见 §V3.4); 联动 BOBO 弹射 +3</td></tr>
+      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>攻速 <strong>+30%</strong>, 弹道 <strong>+3</strong>, 单发伤害降为 <strong>50%</strong> (总输出略升, 覆盖变宽), <strong>5% 爆头</strong>额外 50% 伤害</td><td>单发降伤只作用主角平 A, 不影响 BOBO; 联动 BOBO 弹射 +3</td></tr>
     </table>
 
     <h4>4.6.B 状态施加 · 3 张 · 全必触发无概率</h4>
@@ -871,7 +868,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
       <tr><td><strong>17</strong></td><td><strong>贪婪</strong> <span class="tag tag-may">f_greed</span></td><td>击杀敌人 <strong>2% 概率</strong> 立即召唤一道状态门 (与 10s 定时刷新独立)</td><td>额外门也遵循 §5 规则</td></tr>
       <tr><td><strong>18</strong></td><td><strong>共鸣</strong> <span class="tag tag-may">f_resonance</span></td><td>每持有 1 张精通卡, 攻击力 <strong>+2%</strong> (基础值算 1 张自身, 即抽到即刻 +2%)</td><td>对 BOBO 生效</td></tr>
-      <tr><td><strong>19</strong></td><td><strong>恶魔赌局</strong> <span class="tag tag-may">f_gamble · 单张可重复抽</span></td><td>抽到即摇一个系数 σ, 一次性重构 <strong>主角 + BOBO 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。<strong>EV ≈ 1.14</strong>, 见 §4.6.F19 概率分布表</td><td>V3.3.8: 已从 3 张合并为 <strong>单张可重复卡</strong>, 权重固定 1.5 不腰斩, 同一次三选一可出现多张 (见 §V3.3.8)</td></tr>
+      <tr><td><strong>19</strong></td><td><strong>恶魔赌局</strong> <span class="tag tag-may">f_gamble · 单张可重复抽</span></td><td>抽到即摇一个系数 σ, 一次性重构 <strong>主角 + BOBO 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。<strong>EV ≈ 1.14</strong>, 见 §4.6.F19 概率分布表</td><td>单张可重复抽, 权重固定 1.5 不腰斩, 同一次三选一可出现多张</td></tr>
     </table>
 
     <div class="callout warn">
@@ -891,7 +888,7 @@ Alien Fizzle · 玩法规格<br>
       <div style="margin-top:8px">
       验算 EV = 0.5×0.05 + 0.7×0.12 + 0.85×0.13 + 1.0×0.10 + 1.15×0.20 + 1.3×0.20 + 1.5×0.12 + 1.8×0.05 + 2.0×0.03
       = 0.025 + 0.084 + 0.1105 + 0.1 + 0.23 + 0.26 + 0.18 + 0.09 + 0.06 = <strong>1.1395 ≈ 1.14</strong>。<br>
-      亏损率 (σ&lt;1.0) = 5+12+13 = <strong>30%</strong>, 保本率 10%, 增益率 60%。<strong>V3.3.8 改单张可重复后, 不再是"3 张累乘 1.58"口径, 每次抽到独立结算一次。</strong>
+      亏损率 (σ&lt;1.0) = 5+12+13 = <strong>30%</strong>, 保本率 10%, 增益率 60%。<strong>单张可重复抽, 每次抽到独立结算一次 (EV ≈ 1.14)。</strong>
       </div>
     </div>
 
@@ -902,7 +899,6 @@ Alien Fizzle · 玩法规格<br>
       <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong> <span class="tag tag-may">g_burn · 不可重复</span></td><td>BOBO 激光命中产生 <strong>小爆炸</strong> (半径 36px, 主伤 <strong>12%</strong>) + <strong>点燃</strong></td><td>与主角燃烧弹独立</td></tr>
       <tr><td><strong>22</strong></td><td><strong>激光制导</strong> <span class="tag tag-may">g_guide · 不可重复</span></td><td>BOBO 攒 <strong>20 次攻击</strong>后发射一道持续 <strong>5s</strong> 的制导激光, 锁定单个目标持续灼烧, 击杀目标后自动跳转附近敌人。联动 <strong>g_focus</strong> (伤害 ×1.5 + 弹射 +3, 递减 20%) 和 <strong>g_burn</strong> (爆炸 + 点燃)</td><td>能量条 UI 挂在 BOBO 侧, 满 20 次自动触发</td></tr>
     </table>
-    <p style="color:#6b7494;font-size:13px;margin-top:6px">注: 原 <code>g_overload</code> 激光过载 (BOBO 攻速 +30%) 已从 demo 移除, 不再入池。</p>
 
     <div class="callout">
       <strong>精通卡对 BOBO 生效对照表</strong> (与 §2.2 呼应):
@@ -929,15 +925,15 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>出现位置</td><td>接敌通道顶部, X 坐标 <strong>随机</strong>(0 到接敌通道宽减去 1.5U 之间)</td></tr>
       <tr><td>固定宽度</td><td><code>1.5U</code> (接敌通道一半), <strong>始终不变</strong>, 不随数值缩放</td></tr>
       <tr><td>移动方向</td><td>从顶部向下匀速移动</td></tr>
-      <tr><td>移动速度</td><td><strong>gate.speed = 260 px/s</strong> (V3.4 K5×2, 原 130), 显著快于小兵推进速度, 保证门会穿过敌人到达主角 (见 §V3.4)</td></tr>
+      <tr><td>移动速度</td><td><strong>gate.speed = 260 px/s</strong>, 显著快于小兵推进速度, 保证门会穿过敌人到达主角</td></tr>
       <tr><td>同时存在数</td><td><strong>始终只 1 个</strong>, 上一个消失才生成下一个 (maxConcurrent=1)</td></tr>
       <tr><td>初始数值</td><td>随机 buff 或 debuff, 数值范围见下方 8 维表</td></tr>
-      <tr><td>属性维度</td><td><strong>8 维</strong> (7/16 重构): 攻击力 / 攻速 / 暴击率 / 暴击伤害 / 火力静默 / <strong>防线护甲 / 防线上限 / 防线回血</strong> (新增三防线维度)。<span style="color:#c62828"><strong>⚠️ 弹道数量 / 弹道速度两维已于 7/16 移除</strong>, 不再作为门维度。</span></td></tr>
+      <tr><td>属性维度</td><td><strong>8 维</strong>: 攻击力 / 攻速 / 暴击率 / 暴击伤害 / 火力静默 / <strong>防线护甲 / 防线上限 / 防线回血</strong></td></tr>
       <tr><td>出现频率</td><td><strong>固定 10s 出一次</strong>, 到时间必生成 (v3.1 定稿)</td></tr>
     </table>
 
     <div class="callout warn">
-      <strong>⚠️ 7/16 门维度重构 (最新权威)</strong>: 门维度从原 "弹道/弹道速度" 改为 <strong>三个防线维度</strong>。完整 8 维单门数值范围 (CFG.gate.dimensions):
+      完整 8 维单门数值范围 (CFG.gate.dimensions):
       <table style="margin-top:8px">
         <tr><th>维度</th><th>单门范围 (vmin ~ vmax)</th><th>步进</th></tr>
         <tr><td>攻击力 (atk)</td><td>-10 ~ +8</td><td>0.4</td></tr>
@@ -952,9 +948,9 @@ Alien Fizzle · 玩法规格<br>
       出现频率 (10s / 次)、宽度 (1.5U)、消失条件 (撞主角) 全部保留。§5.9 补 BOBO 生效方式。
     </div>
 
-    <h4>5.1.1 属性刷新规则 (原有保留 + 7/16 更新)</h4>
+    <h4>5.1.1 属性刷新规则</h4>
     <ul>
-      <li><span class="tag tag-must">必须</span><strong>防线三维 (护甲/上限/回血) 强制以减益起步</strong> (V3.3.2), 逼玩家射击充能翻正</li>
+      <li><span class="tag tag-must">必须</span><strong>防线三维 (护甲/上限/回血) 强制以减益起步</strong>, 逼玩家射击充能翻正</li>
       <li><span class="tag tag-must">必须</span>双倍火力 (火力静默翻转) 前中后期 <strong>概率平均</strong></li>
       <li><span class="tag tag-must">必须</span>固定攻击力 <strong>前期概率高</strong>, 百分比攻击力 <strong>后期概率高</strong> (线性交叉)</li>
       <li><span class="tag tag-must">必须</span>无尽模式 <strong>第 3 次攻击潮开始停刷</strong> (给玩家一个成长上限), 前 2 潮不封顶</li>
@@ -1080,14 +1076,13 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>射击中</td><td>4</td><td>+150 防线上限 (到顶)</td><td>S4 上限释放</td><td>亮绿虚边, 子弹穿透</td></tr>
       <tr><td>撞主角</td><td>-</td><td>+150 防线上限</td><td>S5 消失</td><td>防线满血上限 +150</td></tr>
     </table>
-    <p style="color:#6b7494;font-size:13px">注: 原"弹道+1 门"示例已随 7/16 弹道维度移除而更新为防线维度示例。</p>
 
     <div class="callout">
       <strong>玩家决策点</strong>: 看到状态门生成时, 玩家在 1-3 秒内要算 4 个变量 — (1) 当前 buff 累积进度, (2) 还需多少子弹打满, (3) 距离防线还有多远, (4) 现在该躲到哪。这是核心爽感来源。
     </div>
 
     <h3>5.9 状态门对 BOBO 的作用方式 (v3.2 新增)</h3>
-    <p class="lead">v3.2 起 BOBO 升级为独立第二输出源 (§2.2), 状态门对 BOBO 的作用要 <strong>逐维度显式定义</strong>, 避免出现 "弹道 +N 对激光是什么意思" 之类的语义盲区。</p>
+    <p class="lead">BOBO 作为独立第二输出源 (§2.2), 状态门对 BOBO 的作用要 <strong>逐维度显式定义</strong>, 避免语义盲区。</p>
 
     <table>
       <tr><th style="width:130px">状态门维度</th><th style="width:130px">对主角</th><th>对 BOBO (激光)</th></tr>
@@ -1095,14 +1090,10 @@ Alien Fizzle · 玩法规格<br>
       <tr><td><strong>攻速</strong></td><td>射击间隔 / 系数</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光发射间隔 / 系数 (基础 0.7s)</td></tr>
       <tr><td><strong>暴击率</strong></td><td>+N% 概率暴击</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光暴击独立结算</td></tr>
       <tr><td><strong>暴击伤害</strong></td><td>暴击倍率 +N%</td><td><span style="color:#2e6b3a">✓ 全吃</span></td></tr>
-      <tr><td><strong>火力静默</strong> / 双倍火力翻转</td><td>debuff: N 秒内不发射子弹; 翻转 buff: 射速翻倍</td><td>debuff: <span style="color:#b8451e">✗ 同步静默不发激光</span>; 翻转: <span style="color:#2e6b3a">✓ 射速翻倍</span> (见 V3.3.6)</td></tr>
-      <tr><td><strong>防线护甲 / 防线上限 / 防线回血</strong> <span class="tag tag-may">7/16 新增</span></td><td>作用于防线 (护甲减伤 / HP 上限 / 瞬时回血)</td><td><span style="color:#888">— 防线全局维度, 与 BOBO 输出无关</span></td></tr>
-      <tr style="background:#fff3f0"><td colspan="3" style="color:#c62828;padding:8px 12px"><strong>⚠️ V3.3.6 权威</strong>: 双倍火力实际实现 = <strong>主角 <code>playerSpdMult *= 2</code>, BOBO <code>nuoStats.spd *= 2</code></strong> (双方射速翻倍, 均单目标, 非 2 束激光), 持续 v ms 后精准 restore. <strong>见 §V3.3.6 权威</strong>。</td></tr>
+      <tr><td><strong>火力静默</strong> / 双倍火力翻转</td><td>debuff: N 秒内不发射子弹; 翻转 buff: 射速翻倍</td><td>debuff: <span style="color:#b8451e">✗ 同步静默不发激光</span>; 翻转: <span style="color:#2e6b3a">✓ 射速翻倍</span></td></tr>
+      <tr><td><strong>防线护甲 / 防线上限 / 防线回血</strong></td><td>作用于防线 (护甲减伤 / HP 上限 / 瞬时回血)</td><td><span style="color:#888">— 防线全局维度, 与 BOBO 输出无关</span></td></tr>
+      <tr><td colspan="3" style="padding:8px 12px">双倍火力实际实现 = <strong>主角 <code>playerSpdMult *= 2</code>, BOBO <code>nuoStats.spd *= 2</code></strong> (双方射速翻倍, 均单目标, 非 2 束激光), 持续 v ms 后精准 restore。</td></tr>
     </table>
-
-    <div class="callout warn">
-      <strong>⚠️ 弹道 / 弹道速度两维已于 7/16 移除</strong>: 原表里的"弹道 +N → 激光分叉""弹道速度 → 无意义"两行已删除, 门不再有弹道维度。BOBO 激光分叉现由精通卡 (集束枪管 A1 / 激光聚焦 G20) 提供, 不再走状态门。
-    </div>
   </section>
 
   <section class="chapter" id="ch-06">
