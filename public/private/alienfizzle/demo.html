@@ -718,11 +718,13 @@ const MASTERY_CARDS = [
   // [7/16 fix gamble-merge] 恶魔赌局合并为单张可重复卡 (原 3 张独立 id 造成串行观感)
   //   drawThree 里对 f_gamble 特判权重不腰斩, 每次抽三选一都可能出现
   { id:'f_gamble', category:'F', name:'恶魔赌局', desc:'摇一个系数重构主角+Bobo 面板 (0.5x~2.0x, EV=1.14, 可重复获取)' },
-  // G Bobo 强化 (3, K10-6 全部一次性化)
-  { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 弹射+5, 激光伤害+100% [不可重复]' }, // [K7-20 bobo强化] 弹射 3→5, 伤害 50%→100%
+  // G Bobo 强化 (5, K25-B 从 3 张扩到 5 张 + 数值重平衡)
+  { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 弹射 +3 [不可重复]' }, // [K25-B 拆分] 弹射 5→3, 伤害 +100% 拆去 g_dmg
   // [7/16 fix remove-overload] g_overload 已移除
-  { id:'g_burn', category:'G', name:'激光爆燃', desc:'Bobo 激光命中产生爆炸 (半径 50px, 主伤 25%) + 点燃 [不可重复]' }, // [K7-20 bobo强化] 半径 36→50, 主伤 12%→25%
-  { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 攒 12 次攻击发一道 5s 制导激光, 击杀跳目标. 联动 g_focus (伤害×1.5 + 弹射×3, 递减20%) 和 g_burn (爆炸+点燃) [不可重复]' } // [K7-20 bobo强化] 攒击数 20→12
+  { id:'g_burn', category:'G', name:'激光爆燃', desc:'Bobo 激光命中产生爆炸 (半径 50px, 主伤 15%) + 点燃 [不可重复]' }, // [K25-B 削卡] splash 主伤 25%→15%
+  { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 攒 20 次攻击发一道 5s 制导激光, 击杀跳目标 [不可重复]' }, // [K25-B 削卡] 攒击 12→20, 删 g_focus/g_burn 联动
+  { id:'g_dmg', category:'G', name:'激光强化', desc:'Bobo 激光伤害 +50% [不可重复]' }, // [K25-B 新增] 从 g_focus 拆分
+  { id:'g_speed', category:'G', name:'激光攻速', desc:'Bobo 激光间隔 -30% [不可重复]' } // [K25-B 新增]
 ];
 
 // [K5-卡片标签] 卡面功能标签映射 (id -> 标签数组, 每卡≤3). 独立常量, 不侵入卡数据结构
@@ -737,7 +739,7 @@ const CARD_TAG_MAP = {
   d_hunter:'增伤', d_weak:'增伤',
   e_reinforce:'防御', e_echo:'回血', e_desperate:'防御·增伤', e_root:'防御·护盾', e_plasma:'防御·护盾·AOE',
   f_greed:'Meta·召唤', f_resonance:'Meta·增伤', f_gamble:'Meta',
-  g_focus:'BOBO', g_burn:'BOBO·燃烧·AOE', g_guide:'BOBO·AOE',
+  g_focus:'BOBO', g_burn:'BOBO·燃烧·AOE', g_guide:'BOBO·AOE', g_dmg:'BOBO·增伤', g_speed:'BOBO·攻速', // [K25-B 新卡]
 };
 
 // --- 3. DEMON_GAMBLE_DISTRIBUTION (恶魔赌局系数概率分布, EV≈1.14) ---
@@ -801,8 +803,8 @@ class CardPool {
       const count = this.masteryCounts[m.id];
       // [7/16 fix burst-no-repeat] a_burst 连发快射不可重复获取, 拿过就从池里剔除
       if (m.id === 'a_burst' && count > 0) continue;
-      // [K10-6] 一次性卡: 扎根 + 等离子防线/屑刃 + G 类三张
-      if ((m.id === 'e_root' || m.id === 'e_plasma' || m.id === 'g_focus' || m.id === 'g_burn' || m.id === 'g_guide') && count > 0) continue;
+      // [K10-6 + K25-B] 一次性卡: 扎根 + 等离子防线/屑刃 + G 类五张 (g_focus/g_burn/g_guide/g_dmg/g_speed)
+      if ((m.id === 'e_root' || m.id === 'e_plasma' || m.id === 'g_focus' || m.id === 'g_burn' || m.id === 'g_guide' || m.id === 'g_dmg' || m.id === 'g_speed') && count > 0) continue;
       // [K8-2 精通卡拿过即剔除] 精通卡设计上每张一次性 (拿过就从池里出), 恶魔赌局例外 (设计即为可重复摇色子)
       if (m.id !== 'f_gamble' && count > 0) continue;
       const weight = 1.5;
@@ -1677,6 +1679,8 @@ function updateBullets(dt) {
       const bBoxL = { x: b.x - b.w/2, y: b.y - b.h/2, w: b.w, h: b.h };
       for (let j = G.treasures.length - 1; j >= 0; j--) {
         const t = G.treasures[j];
+        // [K25-A pierce-fix] 同一子弹不重复命中同一箱子 (含 reflow 后位置漂移)
+        if (b._hitChests && b._hitChests.has(t)) continue;
         const tBox = { x: t.x - t.w/2, y: t.y - t.h/2, w: t.w, h: t.h };
         if (rectOverlap(bBoxL, tBox)) {
           const dmg = Math.round(b.atk);
@@ -1686,6 +1690,26 @@ function updateBullets(dt) {
             t.maxHp = Math.max(t.hp - dmg, t.maxHp - dmg);
           }
           t.hp -= dmg;
+          // [K25-A · B 类精通卡对宝箱等效增伤] burn 0.5x / poison 0.9x / slow 0.2x, 可叠加
+          if (b.owner === 'player' && G.cardPool) {
+            const bMasteries = [
+              { key: 'b_burn',   ratio: 0.5 },
+              { key: 'b_poison', ratio: 0.9 },
+              { key: 'b_slow',   ratio: 0.2 },
+            ];
+            let extraOffsetY = 0;
+            bMasteries.forEach(m => {
+              if (G.cardPool.hasMastery(m.key)) {
+                const extraDmg = Math.round(b.atk * m.ratio);
+                if (extraDmg > 0) {
+                  if (t.isObstacle) t.maxHp -= extraDmg;
+                  t.hp -= extraDmg;
+                  extraOffsetY += 12;
+                  floatText(t.x + (Math.random()-0.5)*24, t.y - 10 - extraOffsetY, '-' + extraDmg, '#bbbbbb', false);
+                }
+              }
+            });
+          }
           t.flashUntil = G.now + 80;     // 闪白 80ms
           t.lastHitAt = G.now; // [K7-20 障碍规则] 被击中时间戳, 用于障碍触发条件重置
           // [K21-slot6 · AOE重置] 宝箱被击中 → 重置 obstacleDelay 计时器
@@ -1726,12 +1750,14 @@ function updateBullets(dt) {
             b._noSplit = true;
           }
           // [K21-4pack chest-as-enemy] 穿透 a_pierce: 打宝箱也消耗穿透次数
+          let _pierceContinue = false; // [K25-A pierce-fix]
           if (b.owner === 'player' && G.cardPool && G.cardPool.hasMastery('a_pierce') && !b._noPierce) {
             if (b._pierceLeft === undefined) b._pierceLeft = 2;
             if (b._pierceLeft > 0) {
               b._pierceLeft--;
               b.atk *= 0.8;
               hit = false; // 继续飞
+              _pierceContinue = true;
             }
           }
           if (t.hp <= 0) {
@@ -1745,6 +1771,14 @@ function updateBullets(dt) {
             applyTreasure(t);
             G.treasures.splice(j, 1);
             reflowTreasures();   // 击破后上方的宝箱掉下来补位
+          } else if (_pierceContinue) {
+            // [K25-A pierce-fix] 未击破但穿透生效: 记录已命中, 避免同一子弹反复扣同一箱
+            if (!b._hitChests) b._hitChests = new Set();
+            b._hitChests.add(t);
+          }
+          if (_pierceContinue) {
+            // [K25-A pierce-fix] 穿透生效: 不 break, 让子弹这一帧继续检查后面的箱子
+            continue;
           }
           break;
         }
@@ -2318,10 +2352,10 @@ function selectBoboTarget(bobo, enemies, opts) {
   return list.length ? list[0] : null;
 }
 
-// [K10-6 g_burn 爆燃] 小爆炸: 半径 50px, 主伤 25%, 只对紧贴主目标的邻居生效 [K7-20 强化: 36/12% → 50/25%]
+// [K10-6 g_burn 爆燃] 小爆炸: 半径 50px, 主伤 15% (K25-B 削 25%→15%), 只对紧贴主目标的邻居生效
 function applyBoboLaserBurnExplosion(center, mainDmg) {
   const splashR = 50; // [K7-20 bobo强化] 36→50
-  const splashDmg = Math.max(1, Math.round(mainDmg * 0.25)); // [K7-20 bobo强化] 12%→25%
+  const splashDmg = Math.max(1, Math.round(mainDmg * 0.15)); // [K25-B 削卡] 25%→15%
   const _now = G.now || performance.now();
   const cx = center.x, cy = center.y;
   G.enemies.forEach(en => {
@@ -2350,9 +2384,9 @@ function boboLaserDamage() {
   // 状态门增益全吃: G.nuoStats.atk 作为加成系数 (相对基础 CFG.nuo.base.atk 的比例)
   const nuoAtkMult = Math.max(0.1, (G.nuoStats.atk || CFG.nuo.base.atk) / CFG.nuo.base.atk);
   let dmg = base * nuoAtkMult;
-  // ===== 议题 10 · 切片 4: g_focus (Bobo 激光伤害 +50%) [K10-6 一次性化] =====
-  if (G.cardPool && G.cardPool.hasMastery('g_focus')) {
-    dmg *= 2.0; // [K7-20 bobo强化] 1.5→2.0 (伤害 50%→100%)
+  // ===== [K25-B] g_focus 只管弹射; 伤害拆到新卡 g_dmg (+50%) =====
+  if (G.cardPool && G.cardPool.hasMastery('g_dmg')) {
+    dmg *= 1.5; // [K25-B 新卡 g_dmg] BOBO 激光伤害 +50%
   }
   // ===== END =====
   // 暴击 (吃 BOBO 暴击 + 主角额外暴击加成)
@@ -2406,10 +2440,10 @@ function fireBoboLaserChain(bobo, primaryTarget, rankedList, forkCount, beamColo
     G.boboLaserBeams.push(new BoboLaserBeam({ x: lastNode.x, y: lastNode.y }, { x: next.x, y: next.y }, beamColor));
     lastNode = next;
   }
-  // ===== 议题 10 · 切片 4: g_guide (每次攻击攒能量, 12 次触发制导激光) [K7-20 强化: 20→12] =====
+  // ===== 议题 10 · 切片 4: g_guide (每次攻击攒能量, 20 次触发制导激光) [K25-B 削卡: 12→20] =====
   if (G.cardPool && G.cardPool.hasMastery('g_guide')) {
     G.perks.boboAttackCount = (G.perks.boboAttackCount || 0) + 1;
-    if (G.perks.boboAttackCount >= 12) { // [K7-20 bobo强化] 攒击数 20→12, 制导激光更频繁
+    if (G.perks.boboAttackCount >= 20) { // [K25-B 削卡] 攒击 12→20
       G.perks.boboAttackCount = 0;
       triggerBoboGuideLaser(bobo);
     }
@@ -2436,17 +2470,19 @@ function updateBoboLasers(dt) {
   // 攻速: 基础 attackSpeed (秒) / spd 倍率
   const baseCd = BOBO_LASER_CONFIG.attackSpeed;
   const spdMul = Math.max(0.2, G.nuoStats.spd || 1);
+  // [K25-B 新卡 g_speed] Bobo 激光间隔 -30% (等价 cd × 0.7)
+  const speedMul = (G.cardPool && G.cardPool.hasMastery('g_speed')) ? 0.7 : 1;
   // ===== 议题 10 · 切片 4: g_overload [7/16 fix remove-overload] deprecated =====
   const overloadMul = 1;
-  const cooldown = baseCd / spdMul / overloadMul;
+  const cooldown = baseCd * speedMul / spdMul / overloadMul;
   // ===== END =====
 
   // [7/16 C1-1] BOBO 激光分叉恢复: 弹道 N → 分叉 N-1 次 (spec §5.9 / §2.2.2)
   let forkCount = Math.max(0, Math.round((G.nuoStats.blt || 1) - 1));
   // [K7-20 削卡] a_pierce 不再影响 BOBO 分叉 (原 forkCount=max(forkCount,2) 删除)
-  // [K10-6] g_focus 一次性化: 额外弹射 +3
+  // [K10-6 + K25-B] g_focus 一次性化: 额外弹射 +3 (原 +5, 拆分伤害到 g_dmg)
   if (G.cardPool && G.cardPool.hasMastery('g_focus')) {
-    forkCount += 5; // [K7-20 bobo强化] 3→5
+    forkCount += 3; // [K25-B 削卡] 5→3
   }
   // [K7-20 新卡] 集束激光: BOBO 折射 +2
   if (G.cardPool && G.cardPool.hasMastery('a_focusbeam')) {
@@ -5335,6 +5371,8 @@ function applyMasteryEffect(id) {
     // G Bobo - 挂钩
     case 'g_focus':
     case 'g_burn':
+    case 'g_dmg':   // [K25-B] BOBO 激光伤害 +50%, 在 boboLaserDamage() 读 hasMastery
+    case 'g_speed': // [K25-B] BOBO 激光间隔 -30%, 在 updateBoboLasers() 读 hasMastery
       break;
     // [K7-20 新卡] 集束激光: 普攻+20% (一次性)
     case 'a_focusbeam':
@@ -5653,43 +5691,14 @@ function tickBoboGuideLasers(dt) {
       gl.target = selectBoboTarget(gl.from, G.enemies, { ignoreRange: true }); // [K21-4pack guide-no-range] 制导期跳目标全程无视射程
       if (!gl.target) continue;
     }
-    // 每 200ms tick 50 伤害
+    // 每 200ms tick 40 伤害 [K25-B] 制导激光走标准 BOBO 伤害, 不吃 g_focus/g_burn 联动
     if (now - gl.lastTickAt >= 200) {
       gl.lastTickAt = now;
-      let dmg = 40; // [K正式关卡调优] 50→40 (×0.8) K反馈"bobo单激光就能守线太强"故削基础段伤
-      // [K10-6] 联动 g_focus: 伤害×1.5
-      const hasFocus = G.cardPool && G.cardPool.hasMastery('g_focus');
-      const hasBurn = G.cardPool && G.cardPool.hasMastery('g_burn');
-      if (hasFocus) dmg *= 1.5;
+      const dmg = 40; // [K正式关卡调优] 50→40 (×0.8)
+      // [K25-B 删联动] 原 g_focus 伤害×1.5 / 弹射×3 + g_burn 爆炸点燃 全部删除
       const eff = Math.max(1, Math.round(dmg * (1 - (gl.target.armor || 0))));
       const killedPos = { x: gl.target.x, y: gl.target.y };
       damageEnemy(gl.target, eff, false, false);
-      // [K10-6] 联动 g_burn: 主目标点燃 + 小爆炸
-      if (hasBurn && gl.target && gl.target.hp > 0) {
-        gl.target.burnUntil = now + 2000;
-        gl.target.burnDmg = dmg * 0.125;
-        gl.target.lastBurnTick = now;
-        applyBoboLaserBurnExplosion(gl.target, dmg);
-      }
-      // [K10-6] 联动 g_focus: 弹射 3 邻居, 20% 递减
-      if (hasFocus && gl.target) {
-        const others = G.enemies.filter(e => e !== gl.target && e.kind !== 'decoy' && e.kind !== 'perk' && e.kind !== 'buff').slice().sort((a,b) => {
-          const da = (a.x-gl.target.x)**2 + (a.y-gl.target.y)**2;
-          const db = (b.x-gl.target.x)**2 + (b.y-gl.target.y)**2;
-          return da - db;
-        }).slice(0, 3);
-        let mult = 0.8;
-        others.forEach(o => {
-          const d2 = Math.max(1, Math.round(dmg * mult * (1 - (o.armor||0))));
-          damageEnemy(o, d2, false, false);
-          if (hasBurn && o.hp > 0) {
-            o.burnUntil = now + 2000;
-            o.burnDmg = dmg * mult * 0.125;
-            o.lastBurnTick = now;
-          }
-          mult *= 0.8;
-        });
-      }
       if (!gl.target || gl.target.hp <= 0) gl.lastKilledPos = killedPos;
     }
   }
@@ -6121,9 +6130,9 @@ function castSkill(id, level, chainDepth) {
       if (st) st.lastCast = now - st.cooldown + 500;
       return;
     }
-    // [K10-17] BOBO 释放的技能, g_focus/g_burn 也作用于激光贯穿
-    const hasFocus = G.cardPool && G.cardPool.hasMastery('g_focus');
-    const mainDmg = Math.round(getPlayerAtk() * 32 * (hasFocus ? 1.5 : 1));
+    // [K10-17 + K25-B] BOBO 释放的技能, 激光伤害走 g_dmg (原 g_focus 已只管弹射), g_burn 仍生效
+    const hasDmg = G.cardPool && G.cardPool.hasMastery('g_dmg');
+    const mainDmg = Math.round(getPlayerAtk() * 32 * (hasDmg ? 1.5 : 1));
     _laserpiercePierce(player, mainTarget, 60, mainDmg);
     // [K10-19] g_focus 弹射+3 仅作用于 Bobo 平A, 不作用于激光贯穿 (K 口径: 否则 OP)
     // Lv2: 3s 余波区 (400/s DoT 沿线)

@@ -30,7 +30,7 @@ const T = {
     nameEN:    'Alien Fizzle',       // 合规锁定名, 不可动
     codename:  'alien-fizzle',       // slug, 目录/URL/AppID 内部锚点
     appId:     'wx52bccee83c7ef0de', // 微信小游戏 AppID (Kaysen 主体)
-    version:   'v3.9',               // 当前 spec 权威版本 (随 spec 权威块递进)
+    version:   'v4.1',               // 当前 spec 权威版本 (随 spec 权威块递进)
     domain:    'alienfizzle.com',    // 未注册, K 说以后再说
     publishUrl:'https://nova-nimbus.pages.dev/private/alienfizzle/',
   },
@@ -96,7 +96,7 @@ const T = {
     laserpierce: '激光贯穿',         // 穿透直线
   },
 
-  // ─── 7. 枪械精通卡 · 22 张 (spec §4.6, A/B/C/D/E/F/G 七类) ──────
+  // ─── 7. 枪械精通卡 · 25 张 (spec §4.6, A/B/C/D/E/F/G 七类) ──────
   masteries: {
     // A · 子弹形态 · 4 张
     a_pierce:     '集束枪管',        // 普攻+20%, 穿透2 (递减20%)
@@ -123,10 +123,12 @@ const T = {
     f_greed:      '贪婪',            // 击杀 2% 概率召唤状态门
     f_resonance:  '共鸣',            // 每持有 1 张精通 攻+2%
     f_gamble:     '恶魔赌局',        // 单张可重复 · σ 系数 · EV≈1.14
-    // G · BOBO 强化 · 3 张 (全不可重复)
-    g_focus:      '激光聚焦',        // 弹射+5, 激光+100% (V3.5)
-    g_burn:       '激光爆燃',        // 半径50, 主伤25% (V3.5)
-    g_guide:      '激光制导',        // 攒 12 击, 5s 制导 (V3.5)
+    // G · BOBO 强化 · 5 张 (全不可重复) · K25 重组
+    g_focus:      '激光聚焦',        // 弹射+3 (K25 从 +5+100% 拆弱)
+    g_burn:       '激光爆燃',        // 半径50, 主伤15% (K25 从 25% 降档)
+    g_guide:      '激光制导',        // 攒20击, 5s 独立主伤 40 (K25 删联动)
+    g_dmg:        '激光强化',        // K25 新增: BOBO 激光伤害 +50%
+    g_speed:      '激光攻速',        // K25 新增: BOBO 激光间隔 -30%
   },
 
   // ─── 8. 系统机制 ────────────────────────────────────────────────

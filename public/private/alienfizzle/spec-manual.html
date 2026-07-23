@@ -413,11 +413,11 @@ Alien Fizzle · 玩法规格<br>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">spec-manual · 2026-07-22 · 手动维护</div>
+<div class="value">spec-manual · 2026-07-23 · 手动维护 · v4.1 同步</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-22</div>
+<div class="value">2026-07-23</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -819,8 +819,8 @@ Alien Fizzle · 玩法规格<br>
       </ul>
     </div>
 
-    <h3>4.6 附录 · 枪械精通卡池 · 22 张</h3>
-    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 22 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F19) 为特例, <strong>单张可重复抽</strong>。分布: A 4 / B 3 / C 2 / D 2 / E 5 / F 3 / G 3 = 22 张。</p>
+    <h3>4.6 附录 · 枪械精通卡池 · 25 张</h3>
+    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 25 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F19) 为特例, <strong>单张可重复抽</strong>。分布: A 4 / B 3 / C 2 / D 2 / E 5 / F 3 / G 5 = 25 张 (K25: G 类从 3 → 5)。</p>
 
     <h4>4.6.A 子弹形态 · 4 张</h4>
     <table>
@@ -892,12 +892,14 @@ Alien Fizzle · 玩法规格<br>
       </div>
     </div>
 
-    <h4>4.6.G BOBO 强化 · 3 张 · 专属</h4>
+    <h4>4.6.G BOBO 强化 · 5 张 · 专属 (K25: 3 → 5)</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>20</strong></td><td><strong>激光聚焦</strong> <span class="tag tag-may">g_focus · 不可重复</span></td><td>BOBO <strong>弹射 +3</strong>, 激光伤害 <strong>+50%</strong></td><td>—</td></tr>
-      <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong> <span class="tag tag-may">g_burn · 不可重复</span></td><td>BOBO 激光命中产生 <strong>小爆炸</strong> (半径 36px, 主伤 <strong>12%</strong>) + <strong>点燃</strong></td><td>与主角燃烧弹独立</td></tr>
-      <tr><td><strong>22</strong></td><td><strong>激光制导</strong> <span class="tag tag-may">g_guide · 不可重复</span></td><td>BOBO 攒 <strong>20 次攻击</strong>后发射一道持续 <strong>5s</strong> 的制导激光, 锁定单个目标持续灼烧, 击杀目标后自动跳转附近敌人。联动 <strong>g_focus</strong> (伤害 ×1.5 + 弹射 +3, 递减 20%) 和 <strong>g_burn</strong> (爆炸 + 点燃)</td><td>能量条 UI 挂在 BOBO 侧, 满 20 次自动触发</td></tr>
+      <tr><td><strong>20</strong></td><td><strong>激光聚焦</strong> <span class="tag tag-may">g_focus · 不可重复</span></td><td>BOBO <strong>弹射 +3</strong></td><td>K25: 删除 "激光伤害 +100%"</td></tr>
+      <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong> <span class="tag tag-may">g_burn · 不可重复</span></td><td>BOBO 激光命中产生 <strong>小爆炸</strong> (半径 50px, 主伤 <strong>15%</strong>) + <strong>点燃</strong></td><td>K25: splash 25%→15%</td></tr>
+      <tr><td><strong>22</strong></td><td><strong>激光制导</strong> <span class="tag tag-may">g_guide · 不可重复</span></td><td>BOBO 攒 <strong>20 次攻击</strong>后发射持续 <strong>5s</strong> 的制导激光, 独立走固定 <strong>40 主伤</strong>, 不吃 g_focus / g_burn 联动</td><td>K25: 攒击 12→20; 删除联动</td></tr>
+      <tr><td><strong>23</strong></td><td><strong>激光强化</strong> <span class="tag tag-may">g_dmg · 不可重复</span></td><td>BOBO 激光伤害 <strong>+50%</strong></td><td>K25 新增</td></tr>
+      <tr><td><strong>24</strong></td><td><strong>激光攻速</strong> <span class="tag tag-may">g_speed · 不可重复</span></td><td>BOBO 激光间隔 <strong>-30%</strong></td><td>K25 新增</td></tr>
     </table>
 
     <div class="callout">
@@ -1648,7 +1650,7 @@ Alien Fizzle · 玩法规格<br>
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-22 12:00';  // ← 每次重新部署 spec 时更新此值
+  const SPEC_PUBLISHED = '2026-07-23 23:50';  // ← 每次重新部署 spec 时更新此值 (K25 收工 · v4.1)
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
