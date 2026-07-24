@@ -30,7 +30,7 @@ const T = {
     nameEN:    'Alien Fizzle',       // 合规锁定名, 不可动
     codename:  'alien-fizzle',       // slug, 目录/URL/AppID 内部锚点
     appId:     'wx52bccee83c7ef0de', // 微信小游戏 AppID (Kaysen 主体)
-    version:   'v4.1',               // 当前 spec 权威版本 (随 spec 权威块递进)
+    version:   'v4.2',               // 当前 spec 权威版本 (随 spec 权威块递进)
     domain:    'alienfizzle.com',    // 未注册, K 说以后再说
     publishUrl:'https://nova-nimbus.pages.dev/private/alienfizzle/',
   },
@@ -96,13 +96,14 @@ const T = {
     laserpierce: '激光贯穿',         // 穿透直线
   },
 
-  // ─── 7. 枪械精通卡 · 25 张 (spec §4.6, A/B/C/D/E/F/G 七类) ──────
+  // ─── 7. 枪械精通卡 · 26 张 (spec §4.6, A/B/C/D/E/F/G 七类) ──────
   masteries: {
-    // A · 子弹形态 · 4 张
+    // A · 子弹形态 · 6 张 (K26 新增快枪手 a_rapid)
     a_pierce:     '集束枪管',        // 普攻+20%, 穿透2 (递减20%)
     a_bounce:     '裂头弹',          // TODO 定名确认 (spec V3.4 提到"裂头弹 a_bounce")
     a_burst:      '连发快射',        // 弹道 +N (V3.3.7 起 +2, 单发×0.55)
     a_focusbeam:  '集束激光',        // V3.9 新增 (普攻+20% + BOBO 折射+2)
+    a_rapid:      '快枪手',          // [K26-5] 主角射速×2 + 5% 爆头 (+50%伤 + 目标 50% 减速 0.5s)
     // B · 状态施加 · 3 张 (全必触发无概率)
     b_burn:       '燃烧弹',          // 2 秒 50% DoT
     b_slow:       '减速弹',          // 减速 30% / 2s

@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.1</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.2</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -388,10 +388,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v38">V3.8 · K21-4pack AOE作用宝箱+g_guide无视射程+障碍reflow等同宝箱+repeatHpStep降档</a></li>
   <li><a href="#ch-v39">V3.9 · K21-4pack-fix 穿透reflow瞬移+分裂45°+AOE统一伤宝箱+障碍挤入宝箱前</a></li>
   <li><a href="#ch-v40">V4.0 · K21-bosshp 大 BOSS 血量 50000→30000</a></li>
-  <li><a href="#ch-v41">V4.1 · K25 宝箱增伤生效+BOBO 卡组 3→5 张重组 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v41">V4.1 · K25 宝箱增伤生效+BOBO 卡组 3→5 张重组</a></li>
+  <li><a href="#ch-v42">V4.2 · K26 BOBO 制导互斥/暴击步进减半/爆炸半径缩/飘字收敛+快枪手 a_rapid <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v4.1 · 2026-07-23<br>
+v4.2 · 2026-07-24<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -400,17 +401,17 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v4.1</span>
+<span class="badge">GAME SPEC · v4.2</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v4.1 (K25 · 宝箱增伤生效 + BOBO 卡组 3→5 张重组)</div>
+<div class="value">v4.2 (K26 · BOBO 制导互斥 + 暴击步进减半 + 爆炸半径缩 + 飘字收敛 + 快枪手 a_rapid)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-23</div>
+<div class="value">2026-07-24</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -1014,16 +1015,17 @@ Alien Fizzle · 玩法规格<br>
       </ul>
     </div>
 
-    <h3>4.6 附录 · 枪械精通卡池 · 25 张</h3>
-    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 25 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F19) 为特例, <strong>单张可重复抽</strong> (见 §V3.3.8)。<span style="color:#c62828"><strong>⚠️ 本表为最新权威 (K25), 已按 demo 实现对齐 (A 4 张 / B 3 张 / C 2 张 / D 2 张 / E 5 张 / F 3 张 / G 5 张 = 25)</strong>。G 类从 3 张扩到 5 张见 §V4.1。</span></p>
+    <h3>4.6 附录 · 枪械精通卡池 · 26 张</h3>
+    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 26 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F19) 为特例, <strong>单张可重复抽</strong> (见 §V3.3.8)。<span style="color:#c62828"><strong>⚠️ 本表为最新权威 (K26), 已按 demo 实现对齐 (A 5 张 / B 3 张 / C 2 张 / D 2 张 / E 5 张 / F 3 张 / G 5 张 = 25; demo 另含爆炸弹 a_explode 共 26)</strong>。A 类 K26 新增快枪手 a_rapid, 见 §V4.2。</span></p>
 
-    <h4>4.6.A 子弹形态 · 4 张</h4>
+    <h4>4.6.A 子弹形态 · 5 张 (K26 新增快枪手 a_rapid)</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
       <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>普攻 <strong>+20%</strong>, <strong>穿透 2</strong> (每穿一次伤害递减 20%), 命中主目标 <strong>分裂 4 弹</strong></td><td>BOBO 主目标激光 <strong>分叉 2</strong> (A 类里唯一对 BOBO 生效)</td></tr>
       <tr><td><strong>2</strong></td><td><strong>裂头弹</strong> <span class="tag tag-may">a_bounce</span></td><td>击中主目标瞬间 <strong>四散分裂 4 颗小子弹</strong>, <strong>50% 伤害</strong>, 不再穿透/分裂, 继承攻击特效</td><td>V3.4: 分裂改 <strong>绝对角度 [-30°,50°,130°,210°]</strong> (见 §V3.4)</td></tr>
       <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong> <span class="tag tag-may">a_explode</span></td><td>子弹命中产生 <strong>小范围爆炸</strong>, 爆炸伤害 = <strong>30% 主伤害</strong></td><td>弹射/分裂后的子弹也能触发</td></tr>
       <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>攻速 <strong>+30%</strong>, 弹道 <strong>+3</strong>, 单发伤害降为 <strong>50%</strong> (总输出略升, 覆盖变宽), <strong>5% 爆头</strong>额外 50% 伤害</td><td>V3.4: 单发降伤只作用主角平 A, 不影响 BOBO (见 §V3.4); 联动 BOBO 弹射 +3</td></tr>
+      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong> <span class="tag tag-may">a_rapid · 不可重复</span></td><td>主角子弹 <strong>射速 ×2</strong>, <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td>K26 新增, 见 §V4.2; 只作用主角平 A, 不影响 BOBO</td></tr>
     </table>
 
     <h4>4.6.B 状态施加 · 3 张 · 全必触发无概率</h4>
@@ -1091,7 +1093,7 @@ Alien Fizzle · 玩法规格<br>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
       <tr><td><strong>20</strong></td><td><strong>激光聚焦</strong> <span class="tag tag-may">g_focus · 不可重复</span></td><td>BOBO <strong>弹射 +3</strong></td><td>K25: 删除 "激光伤害 +100%" (伤害类下沉给 g_dmg)</td></tr>
-      <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong> <span class="tag tag-may">g_burn · 不可重复</span></td><td>BOBO 激光命中产生 <strong>小爆炸</strong> (半径 50px, 主伤 <strong>15%</strong>) + <strong>点燃</strong></td><td>K25: splash 25% → 15%; 与主角燃烧弹独立</td></tr>
+      <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong> <span class="tag tag-may">g_burn · 不可重复</span></td><td>BOBO 激光命中产生 <strong>小爆炸</strong> (半径 25px, 主伤 <strong>15%</strong>) + <strong>点燃</strong></td><td>K25: splash 25% → 15%; K26: 半径 50 → 25 (见 §V4.2)</td></tr>
       <tr><td><strong>22</strong></td><td><strong>激光制导</strong> <span class="tag tag-may">g_guide · 不可重复</span></td><td>BOBO 攒 <strong>20 次攻击</strong>后发射一道持续 <strong>5s</strong> 的制导激光, 锁定单个目标持续灼烧, 击杀目标后自动跳转附近敌人。<strong>独立走固定 40 主伤</strong>, 不吃 g_focus / g_burn 联动</td><td>K25: 攒击 12 → 20; 删除与 g_focus/g_burn 的联动 (制导激光独立)。<strong>目前不吃 g_dmg 加成</strong> (K 待定, 本次按现状同步)</td></tr>
       <tr><td><strong>23</strong></td><td><strong>激光强化</strong> <span class="tag tag-may">g_dmg · 不可重复</span></td><td>BOBO 激光伤害 <strong>+50%</strong></td><td>K25 新增。伤害修饰独立可选, 不与 g_focus 打包</td></tr>
       <tr><td><strong>24</strong></td><td><strong>激光攻速</strong> <span class="tag tag-may">g_speed · 不可重复</span></td><td>BOBO 激光间隔 <strong>-30%</strong> (射击更密)</td><td>K25 新增。攻速档独立可选</td></tr>
@@ -2362,6 +2364,90 @@ if (targetLv &gt; skillLevels[id]) {
         <li>spec.html: 本 V4.1 权威块 + §4.6 主表 + 顶部版本标识刷新 (v4.0 → v4.1, 发布日期 → 2026-07-23)</li>
         <li>spec-manual.html: §4.6 主表同步 (仅表格), 顶部版本标识同步; <strong>不追加增量块</strong> (K 拍板 spec-manual 只保留主表结构)</li>
         <li>terms.js: masteries 组补 <code>g_dmg</code>/<code>g_speed</code>; 顶部注释 22 张 → 25 张; project.version → v4.1</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <h3 id="ch-v42" style="color:#c62828">V4.2 · K26 · BOBO 制导激光互斥普通激光 + 暴击步进减半 + 爆炸半径缩 + 飘字收敛 + 快枪手 a_rapid <span class="new-tag">NEW</span> (2026-07-24)</h3>
+    <div class="doc-body">
+      <p class="lead">K26 五项收敛式调优: (1) BOBO 制导激光触发期间<strong>互斥</strong>普通激光, 避免双通道叠射 double dip; (2) 暴击相关 repeatBuff <strong>步进减半</strong>, 抑制中后期暴击雪崩; (3) A 类爆炸弹 & G 类 g_burn <strong>爆炸半径整体缩</strong>, 收敛画面 & 数值; (4) 命中飘字仅在<strong>暴击 / final boss / miniBoss</strong> 时弹, 收敛视觉噪声 (宝箱灰字口径不变); (5) A 类新增第 5 张 <strong>快枪手 a_rapid</strong> (射速 ×2 + 5% 爆头 + 命中减速)。</p>
+
+      <p><strong>① BOBO 制导激光互斥普通激光</strong></p>
+      <ul>
+        <li>变更前: g_guide 触发期间, 普通 BOBO 激光仍在跑, 两条激光同时对同一目标计伤, 制导独立 40 主伤在原本激光输出之上再叠一层</li>
+        <li>变更后: <code>updateBoboLasers()</code> 开头短路 <code>if (G.perks.boboGuideLasers.length &gt; 0) return;</code>, 制导期间普通激光完全停发</li>
+        <li>设计意图: 让 g_guide 的 "独立 40 主伤" 真正成为期间的<strong>唯一 BOBO 输出</strong>, 不再和普通激光 double dip; 也让制导阶段视觉上有 "特写单条激光" 的辨识度</li>
+        <li>精确字段: <code>demo.html</code> · <code>updateBoboLasers()</code> 函数顶部</li>
+      </ul>
+
+      <p><strong>② 暴击步进减半 (crt / critDmg / crit++ 三处)</strong></p>
+      <ul>
+        <li>变更前: <code>crt.step = 0.015</code> · <code>critDmg.step = 0.01</code> · crit++ repeatBuff desc "3%"</li>
+        <li>变更后: <code>crt.step = 0.0075</code> · <code>critDmg.step = 0.005</code> · crit++ repeatBuff desc "1.5%" (vmin/vmax 保持不变, 只降步进)</li>
+        <li>设计意图: 无尽模式后期暴击率 / 暴伤是最容易失控的两条 axis, 步进减半让 "多刷 20 层" 的实际增益回归可控, 不动上下限, 保留单次触发的心理预期</li>
+        <li>精确字段: <code>demo.html</code> · repeatBuff 数据表内 crt / critDmg 两行 step 字段 + crit++ 描述字符串</li>
+      </ul>
+
+      <p><strong>③ 爆炸半径整体缩 (a_explode ×0.3 · g_burn 50→25)</strong></p>
+      <ul>
+        <li>变更前: a_explode splashR 原值; g_burn 爆炸半径 <strong>50px</strong></li>
+        <li>变更后:
+          <ul>
+            <li>A 类 <code>a_explode</code>: splashR <strong>× 0.3</strong> (两处调用点同步: 打宝箱 L1725 + 打敌人 L1868)</li>
+            <li>G 类 <code>g_burn</code>: 爆炸半径 <strong>50 → 25</strong> (L2357) · 主伤仍 15% (K25 已降档)</li>
+          </ul>
+        </li>
+        <li>设计意图: 视觉上 "爆炸糊满屏幕" 收敛; 数值上 AOE 单卡对多目标的期望值随半径平方缩到 ~9% (a_explode) / 25% (g_burn), 与 §4.6 主表口径同步降档</li>
+        <li>精确字段: <code>demo.html</code> L1725 / L1868 / L2357</li>
+      </ul>
+
+      <p><strong>④ 飘字收敛 (命中飘字仅暴击/final boss/miniBoss 才弹)</strong></p>
+      <ul>
+        <li>变更前: 每次命中都会弹主伤/暴击/毒/燃三条 floatText, 中后期屏幕字数糊满</li>
+        <li>变更后: <code>damageEnemy</code> 内三条 floatText 被 <code>_showFloat = isCrit || e.isFinalBoss || e.isMiniBoss</code> 包裹, 只在这三种场景弹字; <strong>宝箱灰字 (K25 口径) 完全不动</strong></li>
+        <li>设计意图: 让飘字回归 "关键信息" 语义 (暴击 / 打大 boss 的实感), 不再是每颗子弹的噪声</li>
+        <li>精确字段: <code>demo.html</code> · <code>damageEnemy()</code> 三条 floatText 外围条件</li>
+      </ul>
+
+      <p><strong>⑤ A 类新增第 5 张: 快枪手 a_rapid (single-pick, 不可重复)</strong></p>
+      <ul>
+        <li>效果 3 维:
+          <ul>
+            <li>主角子弹射速 <strong>×2</strong> (<code>playerSpdMult *= 2</code>)</li>
+            <li>每颗子弹独立 <strong>5% 爆头</strong> (<code>playerHeadshotChance = 0.05</code>), 命中额外 ×1.5 主伤</li>
+            <li>爆头命中给目标 <strong>0.5s / 移速 ×0.5</strong> 减速 (通过 slowUntil / slowMult 沿用 b_slow 通道)</li>
+          </ul>
+        </li>
+        <li>约束: 只作用主角平 A, <strong>不影响 BOBO 激光</strong>; single-pick 名单成员 (drawThree 抽三时按单选池抽)</li>
+        <li>联动落点:
+          <ul>
+            <li>MASTERY_CARDS 常量: 新增 <code>a_rapid</code> 定义, 总数 25 → <strong>26 张</strong> (§4.6 主表 A 列 4→5)</li>
+            <li>CARD_TAG_MAP: <code>a_rapid</code> tag = <strong>'枪械·射速·爆头'</strong></li>
+            <li>drawThree single-pick 名单纳入 a_rapid</li>
+            <li>acquireMastery <code>case 'a_rapid'</code>: 执行三维 stat 写入</li>
+            <li>shootLoop: 每颗子弹 <code>Math.random() &lt; playerHeadshotChance</code> 掷骰, 命中标记 _headshot, damageEnemy 内 ×1.5 + 挂 slow</li>
+            <li>terms.js: <code>masteries.a_rapid = '快枪手'</code></li>
+          </ul>
+        </li>
+        <li>设计意图: A 类缺一张 "纯枪械射速 + 微控制" 的中间强度选项, a_rapid 补齐; 5% 爆头设计成 "低频高兴奋" 事件, 配合减速给玩家 "打中即赚" 的正反馈, 但期望值 (5% × 1.5 = 7.5% DPS) 不至于失衡</li>
+      </ul>
+
+      <p><strong>⑥ 卡池总数</strong>: MASTERY_CARDS <strong>25 → 26 张</strong>, 分布 A5 / B3 / C2 / D2 / E5 / F3 / G5 + demo 内含 <code>a_explode</code> = 26。§4.6 主表 A 列已同步至 5 张。</p>
+
+      <p><strong>⑦ 数值定位</strong>:</p>
+      <ul>
+        <li><code>demo.html</code>: <code>updateBoboLasers</code> 顶部 (①) · repeatBuff crt/critDmg step + crit++ desc (②) · L1725 / L1868 / L2357 (③) · <code>damageEnemy</code> floatText 三条 (④) · MASTERY_CARDS + CARD_TAG_MAP + drawThree + acquireMastery + shootLoop + damageEnemy slow 支路 (⑤)</li>
+        <li><code>spec.html</code>: 本 V4.2 权威块 + §4.6.A 表加 a_rapid 行 + §4.6.G g_burn 行半径 50→25 + 顶部版本 v4.1 → v4.2 + 发布日期 2026-07-24</li>
+        <li><code>spec-manual.html</code>: §4.6.A 表同步加 a_rapid 行 + §4.6.G g_burn 半径 50→25 + 顶部版本 & 日期同步; <strong>其余 K 私域一字不动</strong></li>
+        <li><code>terms.js</code>: <code>masteries.a_rapid = '快枪手'</code>; 顶部计数 25 → 26; project.version → v4.2</li>
+      </ul>
+
+      <p><strong>⑧ 部署记录</strong> (K26 dev subagent 收工时的状态):</p>
+      <ul>
+        <li>五项主体逻辑改动 demo.html + terms.js 由前一 dev subagent 完成, spec 收尾块 (本节) 由收尾 subagent 追加</li>
+        <li>4 文件精确 commit: demo.html / spec.html / spec-manual.html / terms.js</li>
+        <li>不 push / 不 build / 不 deploy — 由 Nova 主脑 controller 统一收尾</li>
       </ul>
     </div>
   </section>

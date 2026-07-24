@@ -694,6 +694,8 @@ const MASTERY_CARDS = [
   { id:'a_explode', category:'A', name:'爆炸弹', desc:'子弹命中产生小范围爆炸, 30% 主伤害' },
   { id:'a_focusbeam', category:'A', name:'集束激光', desc:'普攻+20%, BOBO 激光折射 +2' }, // [K7-20 新卡] 20%攻+bobo 弹射2
   { id:'a_burst', category:'A', name:'连发快射', desc:'攻速+30%, 弹道+2, 单发伤害降为 55% (不可重复获取)' }, // [K7-20 削卡] 弹道 3→2, 单发 0.5→0.55, 删爆头
+  // [K26-5] 快枪手: A 类第 6 张, 主角子弹射速翻倍 + 5% 爆头 (+50% 主伤 + 目标 50% 减速 0.5s), 不可重复
+  { id:'a_rapid', category:'A', name:'快枪手', desc:'主角子弹射速×2, 5% 概率爆头 (+50% 主伤 + 目标减速 50% 持续 0.5s) [不可重复]' },
   // B 状态施加 (3) 全必触发
   { id:'b_burn', category:'B', name:'燃烧弹', desc:'必触发点燃, 2 秒内 50% 主伤害 DoT' },
   { id:'b_slow', category:'B', name:'减速弹', desc:'必触发减速 30% 持续 2 秒' },
@@ -721,7 +723,7 @@ const MASTERY_CARDS = [
   // G Bobo 强化 (5, K25-B 从 3 张扩到 5 张 + 数值重平衡)
   { id:'g_focus', category:'G', name:'激光聚焦', desc:'Bobo 弹射 +3 [不可重复]' }, // [K25-B 拆分] 弹射 5→3, 伤害 +100% 拆去 g_dmg
   // [7/16 fix remove-overload] g_overload 已移除
-  { id:'g_burn', category:'G', name:'激光爆燃', desc:'Bobo 激光命中产生爆炸 (半径 50px, 主伤 15%) + 点燃 [不可重复]' }, // [K25-B 削卡] splash 主伤 25%→15%
+  { id:'g_burn', category:'G', name:'激光爆燃', desc:'Bobo 激光命中产生爆炸 (半径 25px, 主伤 15%) + 点燃 [不可重复]' }, // [K25-B 削卡] splash 主伤 25%→15%; [K26-3] 半径 50→25
   { id:'g_guide', category:'G', name:'激光制导', desc:'Bobo 攒 20 次攻击发一道 5s 制导激光, 击杀跳目标 [不可重复]' }, // [K25-B 削卡] 攒击 12→20, 删 g_focus/g_burn 联动
   { id:'g_dmg', category:'G', name:'激光强化', desc:'Bobo 激光伤害 +50% [不可重复]' }, // [K25-B 新增] 从 g_focus 拆分
   { id:'g_speed', category:'G', name:'激光攻速', desc:'Bobo 激光间隔 -30% [不可重复]' } // [K25-B 新增]
@@ -733,7 +735,7 @@ const CARD_TAG_MAP = {
   together:'技能·AOE', flywheel:'技能·AOE·持续', mercy:'技能·单体·减速',
   highvoltage:'技能·AOE·麻痹', laserpierce:'技能·AOE·BOBO',
   // 精通卡
-  a_pierce:'普攻·穿透·AOE', a_bounce:'普攻·AOE', a_explode:'普攻·AOE', a_focusbeam:'BOBO·折射', a_burst:'普攻·增伤',
+  a_pierce:'普攻·穿透·AOE', a_bounce:'普攻·AOE', a_explode:'普攻·AOE', a_focusbeam:'BOBO·折射', a_burst:'普攻·增伤', a_rapid:'枪械·射速·爆头', // [K26-5]
   b_burn:'普攻·燃烧', b_slow:'普攻·减速', b_poison:'普攻·中毒',
   c_feast:'增益·攻速', c_meltdown:'增益·暴击',
   d_hunter:'增伤', d_weak:'增伤',
@@ -803,8 +805,8 @@ class CardPool {
       const count = this.masteryCounts[m.id];
       // [7/16 fix burst-no-repeat] a_burst 连发快射不可重复获取, 拿过就从池里剔除
       if (m.id === 'a_burst' && count > 0) continue;
-      // [K10-6 + K25-B] 一次性卡: 扎根 + 等离子防线/屑刃 + G 类五张 (g_focus/g_burn/g_guide/g_dmg/g_speed)
-      if ((m.id === 'e_root' || m.id === 'e_plasma' || m.id === 'g_focus' || m.id === 'g_burn' || m.id === 'g_guide' || m.id === 'g_dmg' || m.id === 'g_speed') && count > 0) continue;
+      // [K10-6 + K25-B + K26-5] 一次性卡: 扎根 + 等离子防线/屑刃 + G 类五张 (g_focus/g_burn/g_guide/g_dmg/g_speed) + 快枪手 a_rapid
+      if ((m.id === 'e_root' || m.id === 'e_plasma' || m.id === 'g_focus' || m.id === 'g_burn' || m.id === 'g_guide' || m.id === 'g_dmg' || m.id === 'g_speed' || m.id === 'a_rapid') && count > 0) continue;
       // [K8-2 精通卡拿过即剔除] 精通卡设计上每张一次性 (拿过就从池里出), 恶魔赌局例外 (设计即为可重复摇色子)
       if (m.id !== 'f_gamble' && count > 0) continue;
       const weight = 1.5;
@@ -1146,7 +1148,7 @@ const CFG = {
     repeatBuffs: [
       { id: 'atk++',  color: '#ff5544', label: '攻击++', desc: '主角伤害 +25%' },
       { id: 'spd++',  color: '#ffaa44', label: '射速++', desc: '射速 +20%' },
-      { id: 'crit++', color: '#ffd441', label: '暴击+',  desc: '暴击率 +3%' },
+      { id: 'crit++', color: '#ffd441', label: '暴击+',  desc: '暴击率 +1.5%' }, // [K26-2] +3%→+1.5% (暴击步进减半口径, desc 数值同步)
     ],
     // repeat 阶段基础 HP
     repeatHpStart: 4480, // [K7-3 血量再降20%] 5600→4480 (×0.8)
@@ -1174,10 +1176,11 @@ const CFG = {
     dimensions: [
       {key: 'atk',          label: '攻击力',     vmin: -10,   vmax: 5,    step: 0.4,  unit: ''}, // [K21-gate params]
       {key: 'spd',          label: '攻速',       vmin: -1,    vmax: 0.5,  step: 0.04, unit: 'x'}, // [K21-gate params]
-      // 暴击率单门上限收窄到 +5% (原 15%)
-      {key: 'crt',          label: '暴击率',     vmin: -0.1,  vmax: 0.05, step: 0.015, unit: '%'},
+      // [K26-2] 暴击率步进减半 0.015→0.0075 (单门上限口径不变, 半档触发更细)
+      {key: 'crt',          label: '暴击率',     vmin: -0.1,  vmax: 0.05, step: 0.0075, unit: '%'},
       // 暴击伤害单门上限收窄到 +8% (原 10%)
-      {key: 'critDmg',      label: '暴击伤害',   vmin: -0.10, vmax: 0.08, step: 0.01, unit: '%'}, // [K21-gate params]
+      // [K26-2] 暴击伤害步进减半 0.01→0.005
+      {key: 'critDmg',      label: '暴击伤害',   vmin: -0.10, vmax: 0.08, step: 0.005, unit: '%'}, // [K21-gate params]
       {key: 'silence',      label: '火力静默',   vmin: -4000, vmax: 2000, step: 200,  unit: 'ms'},
       // 防线护甲 (0-30%, 每门 +5% 上限)
       {key: 'defenseArmor', label: '防线护甲',   vmin: -0.20, vmax: 0.10, step: 0.02, unit: '%'}, // [K21-gate params]
@@ -1626,7 +1629,11 @@ function shootLoop() {
       const crit = Math.random() < critRate;
       let atk = baseAtk;
       if (crit) atk *= critMult;
-      const b = createBullet(G.player.x + offset, G.player.y - G.player.h/2, 'player', atk, 1, crit); // [K7-20 削卡] 删除爆头逻辑
+      // [K26-5] 快枪手爆头: 5% 概率 → 额外 +50% 主伤 (标记 b.headshot, damageEnemy 里加减速)
+      const headshot = (G.playerHeadshotChance && Math.random() < G.playerHeadshotChance);
+      if (headshot) atk *= (G.playerHeadshotDmgMult || 1.5);
+      const b = createBullet(G.player.x + offset, G.player.y - G.player.h/2, 'player', atk, 1, crit);
+      if (headshot) b.headshot = true;
       G.bullets.push(b);
     }
     G.player.lastShot = G.now;
@@ -1722,7 +1729,7 @@ function updateBullets(dt) {
           // [K21-4pack chest-as-enemy] 爆炸弹 a_explode: 30% 主伤 splash (走 splashAround 路径)
           const _explosiveOnT = (G.perks && G.perks.explosive) || (G.cardPool && G.cardPool.hasMastery('a_explode'));
           if (b.owner === 'player' && _explosiveOnT) {
-            const splashR = t.w ? t.w * 0.5 : 20;
+            const splashR = (t.w ? t.w * 0.5 : 20) * 0.3; // [K26-3] 爆炸弹半径缩到 30%
             const isMastery = G.cardPool && G.cardPool.hasMastery('a_explode');
             const splashRatio = isMastery ? 0.3 : 0.4;
             const splashDmg = Math.max(1, Math.round(rawDmg * splashRatio));
@@ -1865,7 +1872,8 @@ function updateBullets(dt) {
             const explosiveOn = (G.perks && G.perks.explosive) || (G.cardPool && G.cardPool.hasMastery('a_explode'));
             if (b.owner === 'player' && explosiveOn) {
               // [7/16 fix explode-radius-v2] 爆炸半径改用敌人自身尺寸
-              const splashR = e.w ? e.w * 0.5 : 20;
+              // [K26-3] 爆炸弹半径缩到 30%
+              const splashR = (e.w ? e.w * 0.5 : 20) * 0.3;
               const isMastery = G.cardPool && G.cardPool.hasMastery('a_explode');
               const splashRatio = isMastery ? 0.3 : 0.4;
               const splashDmg = Math.max(1, Math.round(rawDmg * splashRatio));
@@ -2012,13 +2020,23 @@ function damageEnemy(e, dmg, isCrit, fromPlayer, isHeadshot) {
   e.hp -= dmg;
   e.flashUntil = G.now + 80;
   SFX.play('hit');
+  // [K26-5] 快枪手爆头附带 0.5s 50% 减速 (只对敌人生效)
+  if (isHeadshot && G.playerHeadshotSlowUntilMs) {
+    const _hsNow = G.now || performance.now();
+    e.slowUntil = Math.max(e.slowUntil || 0, _hsNow + (G.playerHeadshotSlowUntilMs || 500));
+    e.slowMult = Math.min(e.slowMult || 1, (G.playerHeadshotSlowMult || 0.5));
+  }
   // 飘字
-  if (isCrit) {
-    floatText(e.x, e.y - 10, '暴击 ' + dmg + '!', '#ffd441', true);
-  } else if (e.armor >= 0.4) {
-    floatText(e.x + (Math.random()-0.5)*20, e.y - 10, '-' + dmg + ' 硬', '#aaccff', false);
-  } else {
-    floatText(e.x + (Math.random()-0.5)*20, e.y - 10, '-' + dmg, '#ffd441', false);
+  // [K26-4] 伤害飘字只对暴击和 boss 级别怪物生效 (miniBoss + finalBoss); 普通/精英不飘
+  const _showFloat = isCrit || e.isFinalBoss || e.isMiniBoss;
+  if (_showFloat) {
+    if (isCrit) {
+      floatText(e.x, e.y - 10, '暴击 ' + dmg + '!', '#ffd441', true);
+    } else if (e.armor >= 0.4) {
+      floatText(e.x + (Math.random()-0.5)*20, e.y - 10, '-' + dmg + ' 硬', '#aaccff', false);
+    } else {
+      floatText(e.x + (Math.random()-0.5)*20, e.y - 10, '-' + dmg, '#ffd441', false);
+    }
   }
   if (e.hp <= 0) {
     SFX.play('explode');
@@ -2352,9 +2370,9 @@ function selectBoboTarget(bobo, enemies, opts) {
   return list.length ? list[0] : null;
 }
 
-// [K10-6 g_burn 爆燃] 小爆炸: 半径 50px, 主伤 15% (K25-B 削 25%→15%), 只对紧贴主目标的邻居生效
+// [K10-6 g_burn 爆燃] 小爆炸: 半径 25px (K26-3 50→25), 主伤 15% (K25-B 削 25%→15%), 只对紧贴主目标的邻居生效
 function applyBoboLaserBurnExplosion(center, mainDmg) {
-  const splashR = 50; // [K7-20 bobo强化] 36→50
+  const splashR = 25; // [K26-3] 半径缩一半 50→25
   const splashDmg = Math.max(1, Math.round(mainDmg * 0.15)); // [K25-B 削卡] 25%→15%
   const _now = G.now || performance.now();
   const cx = center.x, cy = center.y;
@@ -2466,6 +2484,9 @@ function updateBoboLasers(dt) {
   const silenced = G.nuoStats.silenceUntil > G.now;
   if (silenced) return;
   if (!G.nuos || G.nuos.length === 0) return;
+
+  // [K26-1] 制导激光激活期间, BOBO 普通激光短路 (施放制导时不能同时进行普通激光射击)
+  if (G.perks && G.perks.boboGuideLasers && G.perks.boboGuideLasers.length > 0) return;
 
   // 攻速: 基础 attackSpeed (秒) / spd 倍率
   const baseCd = BOBO_LASER_CONFIG.attackSpeed;
@@ -4550,7 +4571,10 @@ function reset() {
   G.chestExpTier = 0;
   G.lastRealChestBreakAt = 0;  // [7/17 P1-1] 上次破真宝箱时间, idle 触发器用
   G.playerSpdMult = 1;
-  G.playerHeadshotChance = 0; // [K7-20 削卡] 保留 0 兜底, a_burst 不再写入
+  G.playerHeadshotChance = 0; // [K7-20 削卡] 保留 0 兜底, a_burst 不再写入; [K26-5] a_rapid 快枪手会设 0.05
+  G.playerHeadshotDmgMult = 1.5; // [K26-5] 爆头伤害倍率兜底 (a_rapid 才会真正触发, chance=0 时不生效)
+  G.playerHeadshotSlowUntilMs = 500;
+  G.playerHeadshotSlowMult = 0.5;
   G.multiShotNextAt = 0;
   G.fireRateTickAt = 0;
   G.fireRateBaseInterval = CFG.player.bulletInterval;
@@ -5388,6 +5412,17 @@ function applyMasteryEffect(id) {
         setMultiShotUncapped((G.multiShot || 1) + 2); // [K7-20 削卡] +3 → +2
         G.playerBurstDmgMult = 0.55; // [K7-20 削卡] 0.5 → 0.55
         G.perks._aBurstApplied = true;
+      }
+      break;
+    // [K26-5] 快枪手 a_rapid: 主角射速×2, 5% 概率爆头 (+50% 主伤 + 减速 50% 0.5s), 不可重复
+    case 'a_rapid':
+      if (!G.perks._aRapidApplied) {
+        G.playerSpdMult = (G.playerSpdMult || 1) * 2;
+        G.playerHeadshotChance = 0.05;         // 5% 触发几率
+        G.playerHeadshotDmgMult = 1.5;         // +50% 主伤
+        G.playerHeadshotSlowUntilMs = 500;     // 0.5s 减速
+        G.playerHeadshotSlowMult = 0.5;        // 减速到 50% 移速
+        G.perks._aRapidApplied = true;
       }
       break;
     // C 食髓 - 挂钩, 但需要初始化 feastUntil (kill 时才 set)
