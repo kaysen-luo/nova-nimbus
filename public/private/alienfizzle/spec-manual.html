@@ -413,11 +413,11 @@ Alien Fizzle · 玩法规格<br>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">spec-manual · 2026-07-24 · 手动维护 · v4.2 同步</div>
+<div class="value">spec-manual · 2026-07-25 · 手动维护 · v4.3 同步</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-23</div>
+<div class="value">2026-07-25</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -820,16 +820,16 @@ Alien Fizzle · 玩法规格<br>
     </div>
 
     <h3>4.6 附录 · 枪械精通卡池 · 26 张</h3>
-    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 26 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F19) 为特例, <strong>单张可重复抽</strong>。分布: A 5 / B 3 / C 2 / D 2 / E 5 / F 3 / G 5 = 25 张 + demo 内含 a_explode = 26 (K26: A 类新增 a_rapid; G 类沿 K25 3→5)。</p>
+    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 26 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F19) 为特例, <strong>单张可重复抽</strong>。分布: A 5 / B 3 / C 2 / D 2 / E 5 / F 3 / G 5 = 25 张 + demo 内含 a_explode = 26 (K26: A 类新增 a_rapid; G 类沿 K25 3→5; <strong>K27 精修 a_pierce / a_burst / a_rapid / a_explode desc, 见 spec.html §V4.3</strong>)。<strong>本表已同步 v4.3</strong>。</p>
 
-    <h4>4.6.A 子弹形态 · 5 张 (K26 新增快枪手 a_rapid)</h4>
+    <h4>4.6.A 子弹形态 · 5 张 (K26 新增 a_rapid · K27 精修 pierce/burst/rapid/explode)</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>普攻 <strong>+20%</strong>, <strong>穿透 2</strong> (每穿一次伤害递减 20%), 命中主目标 <strong>分裂 4 弹</strong></td><td>BOBO 主目标激光 <strong>分叉 2</strong> (A 类里唯一对 BOBO 生效)</td></tr>
+      <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>[K27] 普攻 <strong>+20%</strong>, <strong>穿透 1</strong> (一发共命中 2 目标 = 主 + 1 穿透), 次级伤害衰减 <strong>40%</strong> (次级 = 主伤 × 0.6)</td><td>K27-3: 穿透 2→1 · 衰减 20%→40%; V3.5 已删命中分裂 & BOBO 分叉联动</td></tr>
       <tr><td><strong>2</strong></td><td><strong>裂头弹</strong> <span class="tag tag-may">a_bounce</span></td><td>击中主目标瞬间 <strong>四散分裂 4 颗小子弹</strong>, <strong>50% 伤害</strong>, 不再穿透/分裂, 继承攻击特效</td><td>分裂绝对角度 [-30°,50°,130°,210°]</td></tr>
-      <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong> <span class="tag tag-may">a_explode</span></td><td>子弹命中产生 <strong>小范围爆炸</strong>, 爆炸伤害 = <strong>30% 主伤害</strong></td><td>弹射/分裂后的子弹也能触发</td></tr>
-      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong> <span class="tag tag-may">a_rapid · 不可重复</span></td><td>主角子弹 <strong>射速 ×2</strong>, <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td>K26 新增, 见 §V4.2; 只作用主角平 A, 不影响 BOBO</td></tr>
-      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>攻速 <strong>+30%</strong>, 弹道 <strong>+3</strong>, 单发伤害降为 <strong>50%</strong> (总输出略升, 覆盖变宽), <strong>5% 爆头</strong>额外 50% 伤害</td><td>单发降伤只作用主角平 A, 不影响 BOBO; 联动 BOBO 弹射 +3</td></tr>
+      <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong> <span class="tag tag-may">a_explode</span></td><td>[K27] 子弹命中产生 <strong>小范围爆炸</strong>, 半径 <strong>锁死 20px</strong> (打宝箱/打小怪一致, 不再挂载体尺寸), 爆炸伤害 = <strong>30% 主伤害</strong></td><td>K27-2: splashR 锁 20 (原 t.w×0.5×0.3); 弹射/分裂后的子弹也能触发</td></tr>
+      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong> <span class="tag tag-may">a_rapid · 不可重复</span></td><td>[K27] 主角子弹 <strong>飞行速度 ×1.5</strong> (velMult 独立通道, 不与 a_burst 攻速叠乘), <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td>K27-1: 射速×2 → 弹速×1.5 (velMult 通道); 只作用主角平 A, 不影响 BOBO</td></tr>
+      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>[K27] 攻速 <strong>+30%</strong>, 弹道 <strong>+2</strong>, 单发伤害降为 <strong>35%</strong> (3 弹道 × 0.35 = 1.05× DPS)</td><td>K27-4: 单发 0.55→0.35; V3.5 已删爆头; 只作用主角平 A, 不影响 BOBO</td></tr>
     </table>
 
     <h4>4.6.B 状态施加 · 3 张 · 全必触发无概率</h4>
@@ -1651,7 +1651,7 @@ Alien Fizzle · 玩法规格<br>
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-24 12:00';  // ← 每次重新部署 spec 时更新此值 (K26 收工 · v4.2)
+  const SPEC_PUBLISHED = '2026-07-25 12:00';  // ← 每次重新部署 spec 时更新此值 (K27 收工 · v4.3)
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';

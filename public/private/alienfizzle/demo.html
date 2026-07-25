@@ -689,13 +689,13 @@ const SKILL_CARDS = [
 // --- 2. MASTERY_CARDS (20 张精通卡, 可重复获得) ---
 const MASTERY_CARDS = [
   // A 子弹形态 (3)
-  { id:'a_pierce', category:'A', name:'集束枪管', desc:'普攻+20%, 穿透 2 (伤害递减 20%)' }, // [K7-20 削卡] 去除命中分裂+BOBO 折射联动
+  { id:'a_pierce', category:'A', name:'集束枪管', desc:'普攻+20%, 穿透 1 (次级目标伤害 60%)' }, // [K27-3] 穿透 2→1, 递减 20%→40%
   { id:'a_bounce', category:'A', name:'裂头弹', desc:'击中主目标瞬间分裂 2 颗小子弹, 50% 伤害, 不再穿透/分裂, 继承攻击特效' }, // [K7-20 削卡] desc 同步实际 splitOffsets=2
   { id:'a_explode', category:'A', name:'爆炸弹', desc:'子弹命中产生小范围爆炸, 30% 主伤害' },
   { id:'a_focusbeam', category:'A', name:'集束激光', desc:'普攻+20%, BOBO 激光折射 +2' }, // [K7-20 新卡] 20%攻+bobo 弹射2
-  { id:'a_burst', category:'A', name:'连发快射', desc:'攻速+30%, 弹道+2, 单发伤害降为 55% (不可重复获取)' }, // [K7-20 削卡] 弹道 3→2, 单发 0.5→0.55, 删爆头
+  { id:'a_burst', category:'A', name:'连发快射', desc:'攻速+30%, 弹道+2, 单发伤害降为 35% (不可重复获取)' }, // [K27-4] 单发 0.55→0.35
   // [K26-5] 快枪手: A 类第 6 张, 主角子弹射速翻倍 + 5% 爆头 (+50% 主伤 + 目标 50% 减速 0.5s), 不可重复
-  { id:'a_rapid', category:'A', name:'快枪手', desc:'主角子弹射速×2, 5% 概率爆头 (+50% 主伤 + 目标减速 50% 持续 0.5s) [不可重复]' },
+  { id:'a_rapid', category:'A', name:'快枪手', desc:'主角子弹飞行速度×1.5, 5% 概率爆头 (+50% 主伤 + 目标减速 50% 持续 0.5s) [不可重复]' },
   // B 状态施加 (3) 全必触发
   { id:'b_burn', category:'B', name:'燃烧弹', desc:'必触发点燃, 2 秒内 50% 主伤害 DoT' },
   { id:'b_slow', category:'B', name:'减速弹', desc:'必触发减速 30% 持续 2 秒' },
@@ -1310,9 +1310,11 @@ function createNuoStats() {
 }
 
 function createBullet(x, y, owner, atk, vel, crit) {
+  // [K27-1] 主角子弹应用 playerBulletVelMult (快枪手 a_rapid 设 1.5, 其他为 1)
+  const velMult = (owner === 'player' && G.playerBulletVelMult) ? G.playerBulletVelMult : 1;
   return {
     x, y, w: CFG.bullet.width, h: CFG.bullet.height,
-    vy: -CFG.bullet.speed * vel,
+    vy: -CFG.bullet.speed * vel * velMult,
     atk, owner, crit,
   };
 }
@@ -1729,7 +1731,7 @@ function updateBullets(dt) {
           // [K21-4pack chest-as-enemy] 爆炸弹 a_explode: 30% 主伤 splash (走 splashAround 路径)
           const _explosiveOnT = (G.perks && G.perks.explosive) || (G.cardPool && G.cardPool.hasMastery('a_explode'));
           if (b.owner === 'player' && _explosiveOnT) {
-            const splashR = (t.w ? t.w * 0.5 : 20) * 0.3; // [K26-3] 爆炸弹半径缩到 30%
+            const splashR = 20; // [K27-2] 固定半径 20px (小怪31尺寸x1.3), 不再挂载体尺寸
             const isMastery = G.cardPool && G.cardPool.hasMastery('a_explode');
             const splashRatio = isMastery ? 0.3 : 0.4;
             const splashDmg = Math.max(1, Math.round(rawDmg * splashRatio));
@@ -1759,10 +1761,10 @@ function updateBullets(dt) {
           // [K21-4pack chest-as-enemy] 穿透 a_pierce: 打宝箱也消耗穿透次数
           let _pierceContinue = false; // [K25-A pierce-fix]
           if (b.owner === 'player' && G.cardPool && G.cardPool.hasMastery('a_pierce') && !b._noPierce) {
-            if (b._pierceLeft === undefined) b._pierceLeft = 2;
+            if (b._pierceLeft === undefined) b._pierceLeft = 1; // [K27-3] 2→1
             if (b._pierceLeft > 0) {
               b._pierceLeft--;
-              b.atk *= 0.8;
+              b.atk *= 0.6; // [K27-3] 次级衰减 40% (原 20%)
               hit = false; // 继续飞
               _pierceContinue = true;
             }
@@ -1871,9 +1873,8 @@ function updateBullets(dt) {
             // 兼容 legacy G.perks.explosive 与新卡 a_explode
             const explosiveOn = (G.perks && G.perks.explosive) || (G.cardPool && G.cardPool.hasMastery('a_explode'));
             if (b.owner === 'player' && explosiveOn) {
-              // [7/16 fix explode-radius-v2] 爆炸半径改用敌人自身尺寸
-              // [K26-3] 爆炸弹半径缩到 30%
-              const splashR = (e.w ? e.w * 0.5 : 20) * 0.3;
+              // [K27-2] 爆炸弹半径固定 20px, 与打宝箱一致
+              const splashR = 20;
               const isMastery = G.cardPool && G.cardPool.hasMastery('a_explode');
               const splashRatio = isMastery ? 0.3 : 0.4;
               const splashDmg = Math.max(1, Math.round(rawDmg * splashRatio));
@@ -1951,11 +1952,11 @@ function updateBullets(dt) {
             // 穿透 (a_pierce): [7/16 fix cluster-barrel] 穿透 2 目标, 每穿一次伤害递减 20%
             if (b.owner === 'player' && G.cardPool && G.cardPool.hasMastery('a_pierce') && !b._noPierce) {
               if (b._pierceLeft === undefined) {
-                b._pierceLeft = 2;
+                b._pierceLeft = 1; // [K27-3] 2→1
               }
               if (b._pierceLeft > 0) {
                 b._pierceLeft--;
-                b.atk *= 0.8; // [7/16 fix cluster-barrel] 每穿一次伤害衰减 20%
+                b.atk *= 0.6; // [K27-3] 次级衰减 40% (原 20%)
                 hit = false; // 不消耗子弹, 继续飞
               }
             }
@@ -4571,6 +4572,7 @@ function reset() {
   G.chestExpTier = 0;
   G.lastRealChestBreakAt = 0;  // [7/17 P1-1] 上次破真宝箱时间, idle 触发器用
   G.playerSpdMult = 1;
+  G.playerBulletVelMult = 1; // [K27-1] a_rapid 快枪手会设 1.5
   G.playerHeadshotChance = 0; // [K7-20 削卡] 保留 0 兜底, a_burst 不再写入; [K26-5] a_rapid 快枪手会设 0.05
   G.playerHeadshotDmgMult = 1.5; // [K26-5] 爆头伤害倍率兜底 (a_rapid 才会真正触发, chance=0 时不生效)
   G.playerHeadshotSlowUntilMs = 500;
@@ -5405,19 +5407,20 @@ function applyMasteryEffect(id) {
         G.perks._aFocusbeamApplied = true;
       }
       break;
-    // [K7-20 削卡] 连发快射: 攻速+30%, 弹道+2, 单发 0.55 (删爆头)
+    // [K7-20 削卡 · K27-4 tune] 连发快射: 攻速+30%, 弹道+2, 单发 0.35 (删爆头)
     case 'a_burst':
       if (!G.perks._aBurstApplied) {
         G.playerSpdMult = (G.playerSpdMult || 1) * 1.3;
         setMultiShotUncapped((G.multiShot || 1) + 2); // [K7-20 削卡] +3 → +2
-        G.playerBurstDmgMult = 0.55; // [K7-20 削卡] 0.5 → 0.55
+        G.playerBurstDmgMult = 0.35; // [K27-4] 0.55 → 0.35
         G.perks._aBurstApplied = true;
       }
       break;
     // [K26-5] 快枪手 a_rapid: 主角射速×2, 5% 概率爆头 (+50% 主伤 + 减速 50% 0.5s), 不可重复
     case 'a_rapid':
       if (!G.perks._aRapidApplied) {
-        G.playerSpdMult = (G.playerSpdMult || 1) * 2;
+        // [K27-1] 快枪手不再改射速, 改为子弹飞行速度×1.5 (与 a_burst 攻速通道解耦)
+        G.playerBulletVelMult = 1.5;
         G.playerHeadshotChance = 0.05;         // 5% 触发几率
         G.playerHeadshotDmgMult = 1.5;         // +50% 主伤
         G.playerHeadshotSlowUntilMs = 500;     // 0.5s 减速
@@ -5943,11 +5946,12 @@ function castSkill(id, level, chainDepth) {
         });
         // [K21-4pack-fix F3-together] 站一起主爆同步作用宝箱, 方形判定与敌人一致
         if (G.treasures) {
+          const CHEST_AOE_R = 200; // [K27-6] 跨通道宝箱 AOE 半径, 解耦技能视觉半径 (敌人几何 vs 宝箱扫描 分离)
           for (let ti = G.treasures.length - 1; ti >= 0; ti--) {
             const tt = G.treasures[ti];
             if (!tt || tt.hp <= 0) continue;
-            const txp = perspectiveX(tt.x, tt.y);
-            if (Math.abs(txp - cxp) > r || Math.abs(tt.y - lockY) > r) continue;
+            const dxT = tt.x - lockX, dyT = tt.y - lockY;
+            if (dxT*dxT + dyT*dyT > CHEST_AOE_R * CHEST_AOE_R) continue;
             const { dmg: td } = rollSkillCrit(baseDmg);
             damageTreasureFromAoe(tt, Math.max(1, td));
           }
@@ -6297,16 +6301,14 @@ function _laserpiercePierce(player, target, width, dmg) {
       }
     }
   });
-  // [K21-4pack-fix F3-laserpierce] 激光贯穿沿线同步作用宝箱, 判定与敌人一致 (t∈[0,extLen], perp≤halfW+w/2)
+  // [K21-4pack-fix F3-laserpierce] 激光贯穿宝箱扫描: 以光束终点为圆心, 200px 圆形跨通道
   if (G.treasures) {
+    const CHEST_AOE_R = 200; // [K27-6] 激光贯穿宝箱 AOE 独立半径, 以光束终点为圆心跨通道扫
     for (let ti = G.treasures.length - 1; ti >= 0; ti--) {
       const tt = G.treasures[ti];
       if (!tt || tt.hp <= 0) continue;
-      const rx = tt.x - player.x, ry = tt.y - player.y;
-      const tp = rx * exu + ry * eyu;
-      if (tp < 0 || tp > extLen) continue;
-      const perp = Math.abs(rx * (-eyu) + ry * exu);
-      if (perp > halfW + (tt.w || 20) / 2) continue;
+      const dxT = tt.x - extX, dyT = tt.y - extY;
+      if (dxT*dxT + dyT*dyT > CHEST_AOE_R * CHEST_AOE_R) continue;
       damageTreasureFromAoe(tt, dmg);
     }
   }
@@ -6355,11 +6357,12 @@ function tickSkillVisuals(dt) {
         });
         // [K21-4pack-fix F3-flywheel] 飞轮海每秒 tick 同步作用宝箱, 圆形判定与敌人一致
         if (G.treasures) {
+          const CHEST_AOE_R = 200; // [K27-6] 同 together
           for (let ti = G.treasures.length - 1; ti >= 0; ti--) {
             const tt = G.treasures[ti];
             if (!tt || tt.hp <= 0) continue;
             const dxT = tt.x - v.x, dyT = tt.y - v.y;
-            if (dxT*dxT + dyT*dyT > v.r * v.r) continue;
+            if (dxT*dxT + dyT*dyT > CHEST_AOE_R * CHEST_AOE_R) continue;
             const { dmg: td } = rollSkillCrit(Math.round(getPlayerAtk() * 1.2));
             damageTreasureFromAoe(tt, Math.max(1, td));
           }

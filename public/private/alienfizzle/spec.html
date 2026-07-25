@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.2</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.3</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -389,10 +389,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v39">V3.9 · K21-4pack-fix 穿透reflow瞬移+分裂45°+AOE统一伤宝箱+障碍挤入宝箱前</a></li>
   <li><a href="#ch-v40">V4.0 · K21-bosshp 大 BOSS 血量 50000→30000</a></li>
   <li><a href="#ch-v41">V4.1 · K25 宝箱增伤生效+BOBO 卡组 3→5 张重组</a></li>
-  <li><a href="#ch-v42">V4.2 · K26 BOBO 制导互斥/暴击步进减半/爆炸半径缩/飘字收敛+快枪手 a_rapid <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v42">V4.2 · K26 BOBO 制导互斥/暴击步进减半/爆炸半径缩/飘字收敛+快枪手 a_rapid</a></li>
+  <li><a href="#ch-v43">V4.3 · K27 数值精修 (快枪手弹速/爆炸锁死/穿透削/连发削/AOE 对宝箱现状) <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v4.2 · 2026-07-24<br>
+v4.3 · 2026-07-25<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -401,17 +402,17 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v4.2</span>
+<span class="badge">GAME SPEC · v4.3</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v4.2 (K26 · BOBO 制导互斥 + 暴击步进减半 + 爆炸半径缩 + 飘字收敛 + 快枪手 a_rapid)</div>
+<div class="value">v4.3 (K27 · 快枪手弹速×1.5 + 爆炸半径锁死 20 + 集束穿透 2→1 + 连发单发 0.55→0.35 + 三 AOE 对宝箱 200px 现状)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-24</div>
+<div class="value">2026-07-25</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -1021,11 +1022,11 @@ Alien Fizzle · 玩法规格<br>
     <h4>4.6.A 子弹形态 · 5 张 (K26 新增快枪手 a_rapid)</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>普攻 <strong>+20%</strong>, <strong>穿透 2</strong> (每穿一次伤害递减 20%), 命中主目标 <strong>分裂 4 弹</strong></td><td>BOBO 主目标激光 <strong>分叉 2</strong> (A 类里唯一对 BOBO 生效)</td></tr>
+      <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>[K27] 普攻 <strong>+20%</strong>, <strong>穿透 1</strong> (一发共命中 2 目标 = 主 + 1 穿透), 次级伤害衰减 <strong>40%</strong> (次级 = 主伤 × 0.6)</td><td>K27-3: 穿透 2→1 · 衰减 20%→40%; V3.5 已删命中分裂 & BOBO 分叉联动</td></tr>
       <tr><td><strong>2</strong></td><td><strong>裂头弹</strong> <span class="tag tag-may">a_bounce</span></td><td>击中主目标瞬间 <strong>四散分裂 4 颗小子弹</strong>, <strong>50% 伤害</strong>, 不再穿透/分裂, 继承攻击特效</td><td>V3.4: 分裂改 <strong>绝对角度 [-30°,50°,130°,210°]</strong> (见 §V3.4)</td></tr>
-      <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong> <span class="tag tag-may">a_explode</span></td><td>子弹命中产生 <strong>小范围爆炸</strong>, 爆炸伤害 = <strong>30% 主伤害</strong></td><td>弹射/分裂后的子弹也能触发</td></tr>
-      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>攻速 <strong>+30%</strong>, 弹道 <strong>+3</strong>, 单发伤害降为 <strong>50%</strong> (总输出略升, 覆盖变宽), <strong>5% 爆头</strong>额外 50% 伤害</td><td>V3.4: 单发降伤只作用主角平 A, 不影响 BOBO (见 §V3.4); 联动 BOBO 弹射 +3</td></tr>
-      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong> <span class="tag tag-may">a_rapid · 不可重复</span></td><td>主角子弹 <strong>射速 ×2</strong>, <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td>K26 新增, 见 §V4.2; 只作用主角平 A, 不影响 BOBO</td></tr>
+      <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong> <span class="tag tag-may">a_explode</span></td><td>[K27] 子弹命中产生 <strong>小范围爆炸</strong>, 半径 <strong>锁死 20px</strong> (打宝箱/打小怪一致, 不再挂载体尺寸), 爆炸伤害 = <strong>30% 主伤害</strong></td><td>K27-2: splashR 锁 20 (原 t.w×0.5×0.3); 弹射/分裂后的子弹也能触发</td></tr>
+      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>[K27] 攻速 <strong>+30%</strong>, 弹道 <strong>+2</strong>, 单发伤害降为 <strong>35%</strong> (3 弹道 × 0.35 = 1.05× DPS)</td><td>K27-4: 单发 0.55→0.35; V3.5 已删爆头; 只作用主角平 A, 不影响 BOBO</td></tr>
+      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong> <span class="tag tag-may">a_rapid · 不可重复</span></td><td>[K27] 主角子弹 <strong>飞行速度 ×1.5</strong> (velMult 独立通道, 不与 a_burst 攻速叠乘), <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td>K27-1: 射速×2 → 弹速×1.5 (velMult 通道); 只作用主角平 A, 不影响 BOBO</td></tr>
     </table>
 
     <h4>4.6.B 状态施加 · 3 张 · 全必触发无概率</h4>
@@ -2448,6 +2449,80 @@ if (targetLv &gt; skillLevels[id]) {
         <li>五项主体逻辑改动 demo.html + terms.js 由前一 dev subagent 完成, spec 收尾块 (本节) 由收尾 subagent 追加</li>
         <li>4 文件精确 commit: demo.html / spec.html / spec-manual.html / terms.js</li>
         <li>不 push / 不 build / 不 deploy — 由 Nova 主脑 controller 统一收尾</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <h3 id="ch-v43" style="color:#c62828">V4.3 · K27 · 数值精修 · 快枪手弹速化 + 爆炸半径锁死 + 集束/连发削 + 三 AOE 对宝箱现状 <span class="new-tag">NEW</span> (2026-07-25)</h3>
+    <div class="doc-body">
+      <p class="lead">K27 五项精修 (承接 K26 五项收敛): (1) <strong>a_rapid 快枪手</strong> 效果口径由 "射速×2" 改成 "<strong>子弹飞行速度 ×1.5</strong>" (velMult 通道独立, 与 a_burst 攻速通道解耦); (2) <strong>a_explode 爆炸半径锁死 20px</strong>, 不再挂载体尺寸 (打宝箱/打小怪视觉一致); (3) <strong>a_pierce 集束枪管</strong> 穿透 2→1 · 次级衰减 20%→40%; (4) <strong>a_burst 连发快射</strong> 单发 0.55→0.35 (3 弹道 × 0.35 = 1.05× DPS); (5) <strong>together / flywheel / laserpierce</strong> 三技能对宝箱扫描单独用 <strong>CHEST_AOE_R = 200px</strong> 圆形跨通道 (敌人锁定逻辑不动) — <strong>200px 大部分布局下打不到左通道宝箱, K 拍板维持原状, 三技能对宝箱实际生效性待未来议题定</strong>。</p>
+
+      <p><strong>① 快枪手 a_rapid · 射速×2 → 子弹飞行速度 ×1.5</strong></p>
+      <ul>
+        <li>变更前 (K26-5 引入): 主角 <code>playerSpdMult *= 2</code> (攻速通道) + 5% 爆头 (+50% 主伤 + 目标减速 50% × 0.5s)</li>
+        <li>变更后 (K27-1): 主角 <code>playerBulletVelMult = 1.5</code> (<strong>新增 velMult 通道</strong>, 子弹飞行速度 ×1.5); 攻速通道完全不改; 爆头效果原样保留 (5% · +50% 主伤 · 减速 50% × 0.5s)</li>
+        <li>设计意图: 与 <code>a_burst</code> 的 <code>playerSpdMult</code> (攻速通道) 完全解耦, 双拿不发生乘性叠加 (K26 版本双拿会得到 攻速×2 × 攻速×1.3 = ×2.6 攻速的雪崩); K27 后双拿只叠加 "弹速×1.5 + 攻速×1.3" 两条正交 axis</li>
+        <li>精确字段: <code>demo.html</code> L4575 <code>G.playerBulletVelMult = 1</code> (兜底) · L5420-5422 <code>case 'a_rapid'</code> (写入 1.5) · shootLoop 内子弹初速乘 <code>G.playerBulletVelMult</code></li>
+      </ul>
+
+      <p><strong>② 爆炸弹 a_explode · splashR 锁死 20px (不再挂载体尺寸)</strong></p>
+      <ul>
+        <li>变更前 (K26-3): <code>splashR = (target.w × 0.5) × 0.3</code> — 挂载体尺寸, 打宝箱看着大 (宝箱 w 大), 打小怪看着小</li>
+        <li>变更后 (K27-2): 打宝箱入口 + 打敌人入口两处 splashR 统一 <strong>锁死 20px</strong> (直径 40 ≈ 小怪 31 尺寸 × 1.3, 视觉一致)</li>
+        <li>不动: G 类 <code>g_burn</code> 的 <code>splashR = 25</code> 保持不变 (BOBO 激光爆燃独立通道, K26 已降档)</li>
+        <li>设计意图: 让"爆炸弹"的视觉/数值口径与命中对象解耦, 玩家能形成稳定预期; 20px 也是根据小怪尺寸反推出的"稳打 1-2 个"的期望值</li>
+        <li>精确字段: <code>demo.html</code> L1734 (打宝箱 splashR=20) · L1877 (打敌人 splashR=20)</li>
+      </ul>
+
+      <p><strong>③ 集束枪管 a_pierce · 穿透 2→1 + 次级衰减 20%→40%</strong></p>
+      <ul>
+        <li>变更前 (K7-20): 普攻 +20%, 穿透 <strong>2</strong> (每穿一次伤害递减 20%) — 一发共命中 3 目标 (主 + 2 穿透), 3 段伤害 = 1.2× / 0.96× / 0.768× 主伤</li>
+        <li>变更后 (K27-3): 穿透 <strong>2 → 1</strong> (一发共命中 <strong>2 目标</strong> = 主 + 1 穿透), 次级衰减 <strong>20% → 40%</strong> (即次级 = 主伤 × 0.6) — 2 段伤害 = 1.2× / 0.72× 主伤</li>
+        <li>普攻 +20% <strong>不动</strong>; 打宝箱入口 + 打敌人入口两处 pierceLeft 和 atk 系数同步</li>
+        <li>设计意图: K7-20 后穿透弹在密怪场景 DPS 过高 (3 目标 × 平均 0.98×); 削到 2 目标 + 更陡衰减后, 期望 DPS 从 ~2.9× 单目标降到 ~1.9× 单目标, 回归 "微 AOE" 定位</li>
+        <li>精确字段: <code>demo.html</code> L1764 / L1767 (打宝箱侧 pierceLeft=1, 次级 ×0.6) · L1955 / L1959 (打敌人侧同步)</li>
+      </ul>
+
+      <p><strong>④ 连发快射 a_burst · 单发 0.55 → 0.35</strong></p>
+      <ul>
+        <li>变更前: 攻速 +30%, 弹道 +2, 单发伤害 <strong>55%</strong> (不可重复) — 3 弹道 × 0.55 = 1.65× DPS</li>
+        <li>变更后 (K27-4): 单发伤害 <strong>55% → 35%</strong> — 3 弹道 × 0.35 = <strong>1.05× DPS</strong> (明显下调, 从 "覆盖变宽 + 略升 DPS" 收到 "覆盖变宽 + DPS 基本持平")</li>
+        <li>攻速 +30% / 弹道 +2 <strong>不动</strong></li>
+        <li>设计意图: K26 数据显示 a_burst 三弹道 DPS 溢出, 加上 a_rapid 攻速通道叠加后进一步失衡; 降到 0.35 后 a_burst 从 "永远最优选" 回归 "覆盖导向"</li>
+        <li>精确字段: <code>demo.html</code> L5415 <code>playerBurstDmgMult = 0.35</code></li>
+      </ul>
+
+      <p><strong>⑤ 三 AOE 技能对宝箱扫描 · CHEST_AOE_R = 200px 圆形 (跨 SPLIT_X 通道)</strong></p>
+      <ul>
+        <li>根因: 敌人-宝箱在 demo 里物理分居两通道 (SPLIT_X 分割), 技能视觉半径 (方形 W/6~W/4 / 沿线 halfW=30) 跨不过 SPLIT_X, 因此 <strong>together / flywheel / laserpierce</strong> 三个技能对宝箱扫描不到</li>
+        <li>K27-6: 三技能对宝箱扫描 <strong>单独</strong>用 <strong>CHEST_AOE_R = 200px</strong> 圆形半径 (以主角/技能中心为圆心, 跨通道)</li>
+        <li><strong>敌人锁定 / 敌人 tick 逻辑完全不动</strong>: 敌人仍走各自视觉半径 (together 方形 W/6~W/4 · flywheel 圆形 W/6~W/4 · laserpierce 沿线 halfW=30)</li>
+        <li><strong>已知现状</strong>: 200px 半径实测在大部分布局下 <strong>仍打不到左通道最远宝箱</strong> (K 亲测 test 有 3/4 FAIL); K 拍板 <strong>"维持原状, 不改半径"</strong> — 三技能对宝箱的实际生效性 <strong>待未来议题定</strong> (可能选项: 加大半径至 300+ / 改成 "最近宝箱强锁" / 改成 "sweep 全屏一次" 等, 都需要 gameplay 试玩后拍板)</li>
+        <li>设计意图: 先建立 "AOE 技能对宝箱有独立扫描通道" 这个架构基础 (哪怕当前半径打不到), 后续调优只需要改一个常量或换扫描形状即可, 不用重构入口</li>
+        <li>精确字段: <code>demo.html</code> L5949 (together CHEST_AOE_R=200) · L6306 (laserpierce) · L6360 (flywheel)</li>
+      </ul>
+
+      <p><strong>⑥ §4.6 主表同步</strong>:</p>
+      <ul>
+        <li>§4.6.A 表 <code>a_pierce</code> 行 desc: "普攻 +20%, 穿透 2 (每穿一次伤害递减 20%), 命中主目标分裂 4 弹" → <strong>"普攻 +20%, 穿透 <strong>1</strong> (次级伤害衰减 <strong>40%</strong>, 即 ×0.6 主伤)"</strong> (联动分裂/BOBO 分叉在 V3.5 已删)</li>
+        <li>§4.6.A 表 <code>a_burst</code> 行 desc: "攻速 +30%, 弹道 +3, 单发 50%, 5% 爆头 +50%" → <strong>"攻速 +30%, 弹道 +2, 单发 <strong>35%</strong>"</strong> (爆头在 V3.5 已删)</li>
+        <li>§4.6.A 表 <code>a_rapid</code> 行 desc: "主角子弹 <strong>射速 ×2</strong>" → <strong>"主角子弹 <strong>飞行速度 ×1.5</strong> (velMult 独立通道, 不与 a_burst 攻速叠乘)"</strong>; 爆头效果 (5% · +50% 主伤 · 减速 50% × 0.5s) 不变</li>
+      </ul>
+
+      <p><strong>⑦ 数值/文件定位</strong>:</p>
+      <ul>
+        <li><code>demo.html</code>: L4575 (playerBulletVelMult 兜底) · L5415 (playerBurstDmgMult=0.35) · L5420-5422 (case 'a_rapid' velMult=1.5) · L1734 / L1877 (splashR=20) · L1764 / L1767 (pierce 宝箱侧) · L1955 / L1959 (pierce 敌人侧) · L5949 (together CHEST_AOE_R=200) · L6306 (laserpierce) · L6360 (flywheel)</li>
+        <li><code>spec.html</code>: 本 V4.3 权威块 + §4.6.A 表更新 a_pierce / a_burst / a_rapid 三行 desc + 顶部版本 v4.2 → v4.3 + 发布日期 2026-07-24 → 2026-07-25 + 目录加 ch-v43</li>
+        <li><code>spec-manual.html</code>: §4.6.A 表同步 a_pierce / a_burst / a_rapid 三行 desc + 表头版本 v4.2 → v4.3 + 顶部版本 & 日期同步 + SPEC_PUBLISHED 时间戳 → '2026-07-25'; <strong>其余 K 私域一字不动, 不追加 V4.x 增量块</strong></li>
+        <li><code>terms.js</code>: 由 K27 dev subagent 单独处理, 本文档不涉及</li>
+      </ul>
+
+      <p><strong>⑧ 部署纪律</strong> (K27 spec 收尾 subagent 状态):</p>
+      <ul>
+        <li>五项主体逻辑改动 demo.html 由前置 K27 dev subagents 完成; spec 收尾块 (本节) 由收尾 subagent 追加</li>
+        <li>只改 spec.html + spec-manual.html 两个文件; 不动 demo.html / terms.js / 任何其他文件</li>
+        <li>不 commit / 不 push / 不 build / 不 deploy — 由 Nova 主脑 controller 统一收尾</li>
       </ul>
     </div>
   </section>
