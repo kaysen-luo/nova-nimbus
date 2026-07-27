@@ -396,7 +396,7 @@ tr:hover td { background: #134e4a; }
   <li><a href="#ch-08">边缘情况清单</a></li>
 </ol>
 <div class="sidebar-footer">
-spec-manual · 2026-07-22<br>
+spec-manual · 2026-07-27<br>
 Alien Fizzle · 玩法规格<br>
 <a href="spec.html" style="color:#2dd4bf;">→ 权威 spec (完整版)</a><br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
@@ -463,16 +463,74 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout">
       <strong>设计意图</strong>: 被动守线 + endless 节奏, 玩家不追求"打到尽头", 而是"撑多久"的存活叙事, 契合 A 路单机休闲爆款 30-60s 单局节奏。
     </div>
+
+    <h3>1.3 世界观</h3>
+    <p class="lead">近未来地球 · 外星侵略资源战 · 星际防卫队防线体系。<strong>严肃科幻底 + 缝隙反差萌</strong>为核心调性锚, 后续 UI 文案 / 立绘 / 音效外包统一遵循。</p>
+
+    <h4>1.3.1 世界设定</h4>
+    <table>
+      <tr><th>维度</th><th>设定</th></tr>
+      <tr><td>时代</td><td>近未来地球, 星际航行初步实用化, 但地球本体仍是文明主基地</td></tr>
+      <tr><td>冲突起因</td><td>外星文明入侵, 目的是<strong>掠夺地球资源</strong> (水/矿物/生物质), 非通讯友好接触</td></tr>
+      <tr><td>防御体系</td><td>各大陆边缘部署<strong>星际防卫队防线</strong>, 由两人小队 + 军用 AI 单元组成的机动战斗单元把守</td></tr>
+      <tr><td>玩家所在位</td><td>防线一线 · 两人守线小队 · 负责阻断外星生物突入内陆</td></tr>
+    </table>
+
+    <h4>1.3.2 双主角 · 玩家开局二选一</h4>
+    <p><strong>Marvis</strong> 与 <strong>Nova</strong> 均为星际防卫队正式星际战士, 均<strong>主动响应征召令</strong>入伍 (非强制)。两人性格、前身份、战场语言完全不同, 玩家开局选一位出战, 未上场者作为<strong>无线电画外音</strong>在场景中吐槽/补台。</p>
+
+    <table>
+      <tr><th>维度</th><th>Marvis</th><th>Nova</th></tr>
+      <tr><td>性别</td><td>男</td><td>女</td></tr>
+      <tr><td>性格 tag</td><td><span class="tag tag-may">混不吝</span> <span class="tag tag-may">闲散</span> <span class="tag tag-may">老油条</span></td><td><span class="tag tag-may">飒</span> <span class="tag tag-may">果断</span> <span class="tag tag-may">大女主</span></td></tr>
+      <tr><td>前身份</td><td>街角<strong>小卖部老板</strong> — 关了店响应征召, 心里盘算着战后开个更大的</td><td>顶级<strong>外科医生</strong> — 主动请缨, "手术台救一个, 战场救一片"</td></tr>
+      <tr><td>入伍动机</td><td>主动响应号召 · 顺便闯闯</td><td>主动请缨 · 更大规模救人</td></tr>
+      <tr><td>战场口吻</td><td>懒洋洋 / 摸鱼式吐槽 / 见惯不惊</td><td>精准 / 冷静 / 掌控欲</td></tr>
+      <tr><td>数值/玩法差异</td><td colspan="2" style="text-align:center;"><strong>无</strong> · 二选一只影响立绘 + 台词 + 无线电语音, 不影响面板数值和玩法机制</td></tr>
+    </table>
+
+    <div class="callout">
+      <strong>台词分工</strong>: 玩家上场的角色 = 战场执行方 (第一人称音效/技能语音); 未上场的角色 = <strong>无线电画外音</strong> (关卡切换、状态门刷新、Boss 出现、通关等时机触发短语音/文本弹幕)。<strong>双主角互为对方的画外音</strong>, 是最省成本又能撑起双人叙事的做法。
+    </div>
+
+    <h4>1.3.3 BOBO · 军方档案</h4>
+    <table>
+      <tr><th>维度</th><th>设定</th></tr>
+      <tr><td>正式型号</td><td><strong>BOBO-7 型多功能战术辅助单元</strong> (军方内部代号, 立绘 UI 上正式场合使用)</td></tr>
+      <tr><td>俗称</td><td>Marvis 场上: <strong>"波波"</strong>; Nova 场上: <strong>"BOBO"</strong> (发音习惯差异)</td></tr>
+      <tr><td>本质</td><td>近未来军方配发的 <strong>集大成 AI 单元</strong>, 军民两用技术封顶产物</td></tr>
+      <tr><td>核心能力</td><td>自动索敌 · 激光输出 · 设备修复 · 医疗人类 (四大功能, §2 玩法层对应仇恨判定 + 激光武器 + 后期精通卡 G 类)</td></tr>
+      <tr><td>叙事定位</td><td>Marvis / Nova 的战场搭档 · 每支守线小队标配 1 台</td></tr>
+    </table>
+
+    <h4>1.3.4 外星生物 · Alien Fizzle</h4>
+    <table>
+      <tr><th>维度</th><th>设定</th></tr>
+      <tr><td>命名由来</td><td><strong>Fizzle</strong> = 苏打水气泡的拟声词 · 外形圆滚、行动时带气泡感, 但侵略性凶残</td></tr>
+      <tr><td>形态</td><td>基础形态圆滚泡泡感 (P0 三种小兵), 精英/稀有形态形变升级 (P1 层)</td></tr>
+      <tr><td>死亡表现</td><td><strong>化为一滩汽水泡沫消散</strong> — 严肃战场里最直接的反差萌接缝</td></tr>
+      <tr><td>行为逻辑</td><td>从顶部推进 · 直至防线前停下攻击 · 详见 §3 战场布局</td></tr>
+    </table>
+
+    <div class="callout warn">
+      <strong>调性锚 · 严肃科幻底 + 缝隙反差萌</strong> (给美术/音效/文案外包统一遵循)
+      <ol style="margin-top:8px; padding-left:24px;">
+        <li><strong>硬核设定 + 软名字/软文案</strong>: BOBO-7 型多功能战术辅助单元 (硬) + 场上叫"波波"(软); BOBO 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
+        <li><strong>外星生物的错位可爱</strong>: 叙事上是入侵者 (严肃), 视觉上是圆滚泡泡 + 死亡化泡沫 (萌)。这个错位<strong>贯穿美术、动画、音效三线</strong>。</li>
+        <li><strong>双主角吐槽接缝</strong>: 关卡切换 / Boss 出现 / 通关 等节点插 2-3 秒无线电短对话 (文本弹幕即可, 无需过场动画), 严肃战报 + 战友日常吐槽的化学反应是留存钩子。</li>
+      </ol>
+      <strong>反面示例</strong>: 全程搞怪滑稽 (削弱严肃底, 观感掉档) · 完全严肃无接缝 (与竞品同质化, 传播弱)。反差萌是<strong>缝隙里冒出来的</strong>, 不是主基调。
+    </div>
   </section>
 
   <section class="chapter" id="ch-02">
     <span class="chapter-num">§ 02 · 角色系统</span>
     <h2>主角 + BOBO + 外星生物<br>三方关系定义</h2>
 
-    <h3>2.1 主角</h3>
+    <h3>2.1 主角 (Marvis / Nova · 开局二选一)</h3>
     <table>
       <tr><th>属性</th><th>规格</th></tr>
-      <tr><td>形象</td><td>人物(具体设计待美术 brief), 站姿守线</td></tr>
+      <tr><td>形象</td><td><strong>玩家开局二选一</strong>: Marvis (男 · 小卖部老板出身) 或 Nova (女 · 外科医生出身), 均为星际防卫队星际战士。世界观与人物档案见 <a href="#ch-01">§1.3</a>。<strong>数值和玩法完全一致</strong>, 二选一只影响立绘 / 台词 / 无线电画外音</td></tr>
       <tr><td>站位</td><td>屏幕底部防线上方约 1 个角色身位</td></tr>
       <tr><td>操作</td><td><strong>左右自由滑动</strong>(鼠标拖动 / 触屏滑动), 不离开防线高度</td></tr>
       <tr><td>开火</td><td><strong>自动垂直向上射击</strong>, 不受玩家操作影响</td></tr>
@@ -1651,7 +1709,7 @@ Alien Fizzle · 玩法规格<br>
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-25 12:00';  // ← 每次重新部署 spec 时更新此值 (K27 收工 · v4.3)
+  const SPEC_PUBLISHED = '2026-07-27 12:00';  // ← 每次重新部署 spec 时更新此值 (1.3 世界观上线)
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
