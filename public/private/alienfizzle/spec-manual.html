@@ -534,6 +534,109 @@ Alien Fizzle · 玩法规格<br>
       </ol>
       <strong>反面示例</strong>: 全程搞怪滑稽 (削弱严肃底, 观感掉档) · 完全严肃无接缝 (与竞品同质化, 传播弱)。反差萌是<strong>缝隙里冒出来的</strong>, 不是主基调。
     </div>
+
+    <h3>1.3.5 无线电台词 · 双主角画外音 (WIP)</h3>
+    <p class="lead"><span class="tag tag-may">WIP</span> 本节为<strong>内容层草稿</strong>, 由 Kaysen 反复迭代, 权威 spec 不同步, 仅在 spec-manual 内维护。玩家上场的角色 = 场上执行方, 未上场的角色 = <strong>无线电画外音</strong> (纯文本弹幕形态), 在关卡节点触发短对话, 承担 (a) 告知玩家游戏进度 (b) 调节战场气氛 (c) 双主角叙事延展 三重作用。</p>
+
+    <div class="callout">
+      <strong>调性总则</strong> (Kaysen 2026-07-27 定死, 起草时逐条比对):
+      <ul style="margin-top:6px;">
+        <li><strong>不提 AUX / 型号 / 昵称</strong>: 台词内容层不出现 AUX / AUV-0 / SIV-7 / 小零 / 小七, 保持世界观纯度</li>
+        <li><strong>平视战友, 非粉丝仰视</strong>: Marvis 直呼 "Nova", 不出现 "姐"、"磕一个"、"给你请客" 这类谄媚话术</li>
+        <li><strong>战时严肃感为底</strong>: 一方上场 + 另一方后方联络的定位, 严肃指挥语言优先, 反差萌只从缝隙冒</li>
+        <li><strong>外星生物统一称"目标"</strong>: 派生 "目标群" / "高价值目标" / "锁定目标" 等, 不用"泡泡罐子""汽水"等花名</li>
+        <li><strong>载体 = 纯文本弹幕</strong>: 屏幕角落飘字, 不做头像/对话框/语音</li>
+      </ul>
+    </div>
+
+    <h4>1.3.5.1 触发频率基线</h4>
+    <table>
+      <tr><th>频段</th><th>触发率</th><th>台词池策略</th><th>覆盖节点</th></tr>
+      <tr><td><strong>高频</strong></td><td>20-30%</td><td>池子备 15-20 条随机抽, 防重复</td><td>Wave 间隔 (通用池)</td></tr>
+      <tr><td><strong>中频</strong></td><td>60-80%</td><td>每节点池 5-8 条随机抽</td><td>状态门刷新 · 精通卡三选一 · 恶魔赌局</td></tr>
+      <tr><td><strong>低频关键</strong></td><td>100% (每节点必触发)</td><td>每节点单条固定台词 (可分阶段版本)</td><td>开局登场 · Boss 登场 · 防线告急 · 看广告复活 · M1→M2 / M2→M3 过场 · M3 通关 · 关卡失败 · 无尽分段推进</td></tr>
+    </table>
+
+    <h4>1.3.5.2 弧光 4 阶段</h4>
+    <p>台词内容随游戏进度递进, 两人性格不变, 变的是<strong>表达方式的松动</strong>。同一节点在不同阶段有不同版本。</p>
+    <table>
+      <tr><th>阶段</th><th>玩法进程</th><th>Marvis 表达松动</th><th>Nova 表达松动</th></tr>
+      <tr><td><strong>M1</strong></td><td>边陲防线 · 初次接敌</td><td>话痨老兵油子, 该贫的地方贫, 该严肃的地方严肃</td><td>冷指令口吻, 藏一句战友情接缝 ("别死"这类)</td></tr>
+      <tr><td><strong>M2</strong></td><td>防线纵深 · 敌军升级</td><td>嘴上耍贫但意外享受打这仗</td><td>开始主动给建议, 语气微软</td></tr>
+      <tr><td><strong>M3</strong></td><td>最后防线 · 大 Boss</td><td>用耍贫的方式表达真心托付</td><td>并肩感出现, 出现调侃回怼</td></tr>
+      <tr><td><strong>无尽</strong></td><td>超越剧本</td><td>嘴不承认但把这当自己事业</td><td>飒里带温度, 主动关心 Marvis 状态</td></tr>
+    </table>
+
+    <h4>1.3.5.3 已定稿节点样本 (3 / 13)</h4>
+    <p><span class="tag tag-may">草稿</span> 剩余 10 节点见 §1.3.5.4 TODO 清单。</p>
+
+    <div class="callout">
+      <strong>节点 1 · 开局登场</strong> (M1 · 100% 触发 · 定基调)
+      <p style="margin-top:6px;"><strong>Marvis 上场 → Nova 无线电</strong>:</p>
+      <ul>
+        <li>"Marvis, 到位报个数。右翼归你, 别走神。"</li>
+        <li>"第一波三分钟内接触。... 别死。"</li>
+      </ul>
+      <p><strong>Nova 上场 → Marvis 无线电</strong>:</p>
+      <ul>
+        <li>"Nova, 到位了吧? 老规矩, 你打前, 我后方眼睛帮你盯着。"</li>
+        <li>"开打了啊。别绷太紧, 一波一波来。"</li>
+      </ul>
+    </div>
+
+    <div class="callout">
+      <strong>节点 10 · M2 → M3 过场</strong> (100% 触发 · 弧光转折最关键点)
+      <p style="margin-top:6px;"><strong>Marvis 上场 → Nova 无线电</strong>:</p>
+      <ul>
+        <li>"Marvis, 到 M3 了。前面是最后一道防线, 后面就是内陆。... 你打得可以, 保持。"</li>
+        <li>"目标群在集结, 密度会拉满。别硬扛, 该退半步就退半步。... 我盯着你。"</li>
+      </ul>
+      <p><strong>Nova 上场 → Marvis 无线电</strong>:</p>
+      <ul>
+        <li>"Nova, M3 了。这波守住我们就赢了。... 你别单打独斗, 情况不对喊我。"</li>
+        <li>"前面是硬骨头。你稳一点, 我这边盯着你的血条。守住这条线, 后面的城才有人。"</li>
+      </ul>
+      <p style="margin-top:4px; font-size: 0.9em; color: #94a3b8;"><em>弧光接缝: Marvis 说不出"燃"话, 最深的托付 = "喊我"; Nova 说不出"软"话, 最高评价 = "你打得可以, 保持"</em></p>
+    </div>
+
+    <div class="callout">
+      <strong>节点 6 · 恶魔赌局 (f_gamble) 触发</strong> (中频 60-80% · 最见性格)
+      <p style="margin-top:6px;"><strong>Marvis 上场 → Nova 无线电</strong>:</p>
+      <ul>
+        <li>(摇之前) "又摇? Marvis, 数学上你输面 30%。... 你摇你的, 我不劝。"</li>
+        <li>(1.8x 大赚) "... 这次算你运气。"</li>
+        <li>(0.7x 大亏) "我说过什么? 我没说, 我什么都没说。"</li>
+        <li>(1.0x 保本) "白摇。继续打。"</li>
+      </ul>
+      <p><strong>Nova 上场 → Marvis 无线电</strong>:</p>
+      <ul>
+        <li>(摇之前) "Nova 也开始摇色子了? 稀奇。行, 手感这东西信一次。"</li>
+        <li>(1.8x 大赚) "牛啊 Nova! 这波稳了半个关卡。"</li>
+        <li>(0.7x 大亏) "... 亏了别复盘, 打完再说。"</li>
+        <li>(1.0x 保本) "白摇。下一把。"</li>
+      </ul>
+      <p style="margin-top:4px; font-size: 0.9em; color: #94a3b8;"><em>反差接缝: 同一个"白摇"两种口气 (Nova 冷/Marvis 贫); Nova 的"我说过什么? 我没说" = 冷里藏耍贫</em></p>
+    </div>
+
+    <h4>1.3.5.4 待定稿节点 TODO (10 / 13)</h4>
+    <p><span class="tag tag-may">WIP</span> 以下节点尚未起草, Kaysen 磨完调性后 Nova 铺全量, 每节点按 M1 / M2 / M3 / 无尽四阶段拆版本。</p>
+    <table>
+      <tr><th>节点</th><th>频段</th><th>说明</th></tr>
+      <tr><td>2 · Wave 间隔 (通用池)</td><td>高频 20-30%</td><td>15-20 条随机, 双向各半, 段内小停顿气氛调节</td></tr>
+      <tr><td>3 · 状态门刷新</td><td>中频 60-80%</td><td>10s 定时刷新, 池 5-8 条, 双向</td></tr>
+      <tr><td>4 · Boss 登场 (小/大)</td><td>低频 100%</td><td>小 Boss / 大 Boss 各一版, 单条固定, 严肃报警</td></tr>
+      <tr><td>5 · 精通卡三选一确认</td><td>中频 60-80%</td><td>玩家选定后触发, 池 5-8 条, 对应卡类可差异化</td></tr>
+      <tr><td>7 · 防线 HP &lt; 30% 告急</td><td>低频 100%</td><td>严肃调, 无耍贫, 双向单条固定</td></tr>
+      <tr><td>8 · 看广告复活</td><td>低频 100%</td><td>复活瞬间的战友情接缝, 双向单条固定</td></tr>
+      <tr><td>9 · M1 → M2 过场</td><td>低频 100%</td><td>弧光第一次松动, 阶段过渡</td></tr>
+      <tr><td>11 · M3 通关</td><td>低频 100%</td><td>剧情结局台词, 双向单条固定, 保留人设不飘</td></tr>
+      <tr><td>12 · 关卡失败</td><td>低频 100%</td><td>失败弹幕, 双向单条固定, 不煽情不丧气</td></tr>
+      <tr><td>13 · 无尽分段推进 (段 1-5)</td><td>低频 100% × 5</td><td>每段起始触发, 弧光递进 (超越剧本阶段)</td></tr>
+    </table>
+
+    <div class="callout warn">
+      <strong>迭代节奏</strong>: 本节由 Kaysen 反复磨调性, Nova 起草, K 审通过一节点才算定稿。<strong>权威 spec 不同步</strong> — 台词属内容层, 与玩法/数值/机制解耦, 不占权威 spec 版本号。收工时只更 spec-manual + SESSION-LOG, 不动 spec.html。
+    </div>
   </section>
 
   <section class="chapter" id="ch-02">
@@ -1721,7 +1824,7 @@ Alien Fizzle · 玩法规格<br>
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-27 15:00';  // ← 每次重新部署 spec 时更新此值 (1.3.3 AI 副手双型号档案 · BOBO → AUX 系统层迁移)
+  const SPEC_PUBLISHED = '2026-07-27 17:00';  // ← 每次重新部署 spec 时更新此值 (1.3.5 无线电台词 WIP · 3/13 节点定稿)
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
