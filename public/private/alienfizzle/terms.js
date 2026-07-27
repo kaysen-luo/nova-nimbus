@@ -41,13 +41,29 @@ const T = {
     role:     '守线人',              // spec §1 标题用词
   },
 
-  // ─── 3. AI 伙伴 (BOBO) ─────────────────────────────────────────
-  ai: {
-    name:        'BOBO',             // 正式名 (2026-06 定, 早期代号 NUO 已废)
-    nameCN:      '诺',               // 中文昵称 (spec §2.2 括注)
-    fullName:    '悬浮球辅助机器人', // spec §2.2 标题描述
-    mirrorName:  '镜像 BOBO',        // 无尽合成宝箱产出, 10s 临时召唤
-    formerName:  'NUO',              // 已废弃 (2026-06 改为 BOBO)
+  // ─── 3. AI 副手 (AUX) ──────────────────────────────────────────
+  aux: {
+    codename:      'AUX',                    // 代码/系统规则层通名 (稳定, 未来改名不动这里)
+    fullNameCN:    'AI 副手',                // 玩法文档 / UI 通用中文
+    fullNameEN:    'Auxiliary AI Unit',      // 英文全称
+    mirrorName:    '镜像 AUX',               // TODO K 待拍板是否分双镜像 (镜像 AUV-0 / 镜像 SIV-7)
+    formerNames:   ['NUO', 'BOBO'],          // 已废弃历史名 (2026-06 NUO→BOBO, 2026-07-27 BOBO→AUX)
+  },
+
+  // ─── 3.1 AUX 型号档案 (世界观层, 双主角各配一款) ────────────────
+  auxModels: {
+    marvis: {
+      code:     'AUV-0',
+      fullName: 'Auxiliary Utility Vehicle · 0 号原型机',
+      nick:     '小零',
+      tone:     'lazy',                      // UI 提示口吻: 懒散/跳戏
+    },
+    nova: {
+      code:     'SIV-7',
+      fullName: 'Surgical Intervention Vehicle · 第 7 代量产旗舰',
+      nick:     '小七',
+      tone:     'professional',              // UI 提示口吻: 专业/术语
+    },
   },
 
   // ─── 4. 敌人档位 (spec §2.4) ───────────────────────────────────

@@ -453,7 +453,7 @@ Alien Fizzle · 玩法规格<br>
     <h3>1.2 题材与节奏</h3>
     <table>
       <tr><th>维度</th><th>当前口径</th></tr>
-      <tr><td>玩家角色</td><td>主角 + BOBO, 站定底部防线</td></tr>
+      <tr><td>玩家角色</td><td>主角 + AUX, 站定底部防线</td></tr>
       <tr><td>敌人动线</td><td>从顶部推进, 直到防线前停下攻击</td></tr>
       <tr><td>节奏类型</td><td>endless wave 塔防 (守 = 主旋律)</td></tr>
       <tr><td>失败条件</td><td>防线持久度归零</td></tr>
@@ -493,15 +493,28 @@ Alien Fizzle · 玩法规格<br>
       <strong>台词分工</strong>: 玩家上场的角色 = 战场执行方 (第一人称音效/技能语音); 未上场的角色 = <strong>无线电画外音</strong> (关卡切换、状态门刷新、Boss 出现、通关等时机触发短语音/文本弹幕)。<strong>双主角互为对方的画外音</strong>, 是最省成本又能撑起双人叙事的做法。
     </div>
 
-    <h4>1.3.3 BOBO · 军方档案</h4>
+    <h4>1.3.3 AI 副手 (AUX) · 双型号档案</h4>
+    <p class="lead">星际防卫队为每位星际战士配发一台 <strong>AI 副手</strong> (系统代号 <code>AUX</code>, 玩法系统层通名), 世界观层根据入伍来源与装备批次分两型号: <strong>AUV-0</strong> (Marvis 装备) / <strong>SIV-7</strong> (Nova 装备)。两者共享同一玩法能力基线 (四大功能 · 状态门吃法 · 仇恨判定), 仅在型号叙事和场上语言上有差异。</p>
+
     <table>
-      <tr><th>维度</th><th>设定</th></tr>
-      <tr><td>正式型号</td><td><strong>BOBO-7 型多功能战术辅助单元</strong> (军方内部代号, 立绘 UI 上正式场合使用)</td></tr>
-      <tr><td>俗称</td><td>Marvis 场上: <strong>"波波"</strong>; Nova 场上: <strong>"BOBO"</strong> (发音习惯差异)</td></tr>
-      <tr><td>本质</td><td>近未来军方配发的 <strong>集大成 AI 单元</strong>, 军民两用技术封顶产物</td></tr>
-      <tr><td>核心能力</td><td>自动索敌 · 激光输出 · 设备修复 · 医疗人类 (四大功能, §2 玩法层对应仇恨判定 + 激光武器 + 后期精通卡 G 类)</td></tr>
-      <tr><td>叙事定位</td><td>Marvis / Nova 的战场搭档 · 每支守线小队标配 1 台</td></tr>
+      <tr><th>维度</th><th>AUV-0 (Marvis)</th><th>SIV-7 (Nova)</th></tr>
+      <tr><td>全称</td><td>Auxiliary Utility Vehicle · 0 号原型机</td><td>Surgical Intervention Vehicle · 第 7 代量产旗舰</td></tr>
+      <tr><td>批次定位</td><td>军方早期原型测试品, 老兵油子拿手的老伙计</td><td>近期量产的高精尖旗舰, 精准冷艳的现役标配</td></tr>
+      <tr><td>场上昵称</td><td><strong>小零</strong> (Marvis 老油条口吻)</td><td><strong>小七</strong> (Nova 飒女主口吻)</td></tr>
+      <tr><td>UI 提示口吻</td><td>偏懒散, 偶尔跳戏 (如"这波再来一遍?"、"敷个云朵形创可贴")</td><td>偏专业, 战术术语为主 (如"目标已锁定"、"生命维持稳定")</td></tr>
+      <tr><td>核心能力 (共享基线)</td><td colspan="2" style="text-align:center;"><strong>自动索敌 · 激光输出 · 设备修复 · 医疗人类</strong> — §2 玩法系统层对应仇恨判定 + 激光武器 + 后期精通卡 G 类</td></tr>
+      <tr><td>数值/玩法差异</td><td colspan="2" style="text-align:center;"><strong>无</strong> · 型号只影响立绘 + 昵称 + UI 提示词, 面板数值和玩法机制完全一致</td></tr>
     </table>
+
+    <div class="callout">
+      <strong>命名分层</strong>:
+      <ul style="margin-top:6px;">
+        <li><strong>系统层通名</strong> = <code>AUX</code> (Auxiliary AI Unit) — 玩法规则文档 / 代码变量 / spec 系统条款一律用此</li>
+        <li><strong>世界观档案层</strong> = AUV-0 / SIV-7 — 立绘 UI / 军方档案 / 型号铭牌</li>
+        <li><strong>玩家昵称层</strong> = 小零 / 小七 — 场上口语 / 无线电台词</li>
+      </ul>
+      <strong>设计意图</strong>: 系统层通名保持稳定, 未来即使调整型号命名或增加新型号, 也无需触碰代码和玩法文档。<strong>反差萌接缝</strong>: 0 号原型 vs 第 7 代旗舰的批次落差本身讲两人身份差, 不用台词点破。
+    </div>
 
     <h4>1.3.4 外星生物 · Alien Fizzle</h4>
     <table>
@@ -515,7 +528,7 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout warn">
       <strong>调性锚 · 严肃科幻底 + 缝隙反差萌</strong> (给美术/音效/文案外包统一遵循)
       <ol style="margin-top:8px; padding-left:24px;">
-        <li><strong>硬核设定 + 软名字/软文案</strong>: BOBO-7 型多功能战术辅助单元 (硬) + 场上叫"波波"(软); BOBO 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
+        <li><strong>硬核设定 + 软名字/软文案</strong>: 军方型号 AUV-0 / SIV-7 (硬) + 场上叫"小零"/"小七"(软); AUX 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
         <li><strong>外星生物的错位可爱</strong>: 叙事上是入侵者 (严肃), 视觉上是圆滚泡泡 + 死亡化泡沫 (萌)。这个错位<strong>贯穿美术、动画、音效三线</strong>。</li>
         <li><strong>双主角吐槽接缝</strong>: 关卡切换 / Boss 出现 / 通关 等节点插 2-3 秒无线电短对话 (文本弹幕即可, 无需过场动画), 严肃战报 + 战友日常吐槽的化学反应是留存钩子。</li>
       </ol>
@@ -525,7 +538,7 @@ Alien Fizzle · 玩法规格<br>
 
   <section class="chapter" id="ch-02">
     <span class="chapter-num">§ 02 · 角色系统</span>
-    <h2>主角 + BOBO + 外星生物<br>三方关系定义</h2>
+    <h2>主角 + AUX + 外星生物<br>三方关系定义</h2>
 
     <h3>2.1 主角 (Marvis / Nova · 开局二选一)</h3>
     <table>
@@ -535,12 +548,12 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>操作</td><td><strong>左右自由滑动</strong>(鼠标拖动 / 触屏滑动), 不离开防线高度</td></tr>
       <tr><td>开火</td><td><strong>自动垂直向上射击</strong>, 不受玩家操作影响</td></tr>
       <tr><td>武器</td><td>覆盖式 — 拿到新武器立即替换旧武器, 不叠加</td></tr>
-      <tr><td>武器作用范围</td><td><strong>仅影响主角自身弹道</strong>, 不影响 BOBO</td></tr>
+      <tr><td>武器作用范围</td><td><strong>仅影响主角自身弹道</strong>, 不影响 AUX</td></tr>
       <tr><td>初始武器</td><td>基础单发直射(数值待定)</td></tr>
     </table>
 
-    <h3>2.2 BOBO (悬浮球辅助机器人 · 独立第二输出源)</h3>
-    <p class="lead">BOBO 作为 <strong>独立第二输出源</strong>, 允许玩家通过精通卡 G 类 (§4.6) 把它强化为主输出。武器形态为 <strong>激光</strong>, 独立仇恨判定, 全吃状态门增益。</p>
+    <h3>2.2 AUX (AI 副手 · 独立第二输出源)</h3>
+    <p class="lead">AUX 作为 <strong>独立第二输出源</strong>, 允许玩家通过精通卡 G 类 (§4.6) 把它强化为主输出。武器形态为 <strong>激光</strong>, 独立仇恨判定, 全吃状态门增益。</p>
     <table>
       <tr><th>属性</th><th>规格</th></tr>
       <tr><td>形象</td><td>小型悬浮球体, 科技感, 顶部激光发射口</td></tr>
@@ -550,12 +563,11 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>射程</td><td><strong>2/3 通道</strong> (从主角站位向上, 约 2/3 屏高)</td></tr>
       <tr><td>基础伤害</td><td>建议锚点 = <strong>主角固定攻击力 × 60%</strong> (数值组细调, demo 阶段用 0.6 系数)</td></tr>
       <tr><td>目标锁定</td><td><strong>自动</strong>, 按 4 阶仇恨优先级 (见下)</td></tr>
-      <tr><td>属性来源</td><td>状态门 (5 项吃: 攻击力/攻速/暴击率/暴击伤害/火力静默翻转, 防线三维不作用于 BOBO, 见 §5.9) + 精通卡 G 类专属 + D/F 部分类适用 (见 §4.6)</td></tr>
-      <tr><td>命名来源</td><td><strong>BOBO</strong>(诺) — 单音节, 与 Nova/Nimbus 同字母系, 国际化通用</td></tr>
+      <tr><td>属性来源</td><td>状态门 (5 项吃: 攻击力/攻速/暴击率/暴击伤害/火力静默翻转, 防线三维不作用于 AUX, 见 §5.9) + 精通卡 G 类专属 + D/F 部分类适用 (见 §4.6)</td></tr>
     </table>
 
     <h4>2.2.1 仇恨判定 · 4 阶优先级</h4>
-    <p>BOBO 每次准备开火时按下列优先级选目标, 高阶优先级永远压过低阶; 同阶内 <strong>优先当前血量更少</strong>的敌人 (贯彻 "点残" 逻辑, 与恩赐解脱的 "点满" 互补)。</p>
+    <p>AUX 每次准备开火时按下列优先级选目标, 高阶优先级永远压过低阶; 同阶内 <strong>优先当前血量更少</strong>的敌人 (贯彻 "点残" 逻辑, 与恩赐解脱的 "点满" 互补)。</p>
     <table>
       <tr><th>阶</th><th>目标类型</th><th>设计意图</th></tr>
       <tr><td><strong>P1</strong></td><td>正在攻击防线的敌人</td><td>止血优先, 直接掐防线掉血源</td></tr>
@@ -569,11 +581,11 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-should">建议</span>激光射线的视觉锁定过程 ≤ 0.1s, 避免视觉切换过于生硬</li>
     </ul>
 
-    <h4>2.2.2 状态门对 BOBO 的作用方式 (与 §5 呼应)</h4>
+    <h4>2.2.2 状态门对 AUX 的作用方式 (与 §5 呼应)</h4>
     <ul>
-      <li><span class="tag tag-must">必须</span><strong>攻击力 / 攻速 / 暴击率 / 暴击伤害</strong> 4 项 → BOBO 直接全吃, 乘算到激光单次伤害 / 发射间隔上</li>
-      <li><span class="tag tag-must">必须</span><strong>双倍火力</strong> (来自火力静默翻转) → BOBO <code>G.nuoStats.spd *= 2</code>, 激光<strong>发射攻速×2, 单目标</strong></li>
-      <li><span class="tag tag-must">必须</span><strong>火力静默 (未翻转的 debuff)</strong> → BOBO 静默 N 秒不发射激光</li>
+      <li><span class="tag tag-must">必须</span><strong>攻击力 / 攻速 / 暴击率 / 暴击伤害</strong> 4 项 → AUX 直接全吃, 乘算到激光单次伤害 / 发射间隔上</li>
+      <li><span class="tag tag-must">必须</span><strong>双倍火力</strong> (来自火力静默翻转) → AUX <code>G.nuoStats.spd *= 2</code>, 激光<strong>发射攻速×2, 单目标</strong></li>
+      <li><span class="tag tag-must">必须</span><strong>火力静默 (未翻转的 debuff)</strong> → AUX 静默 N 秒不发射激光</li>
     </ul>
 
     <h3>2.3 镜像 BOBO</h3>
@@ -582,9 +594,9 @@ Alien Fizzle · 玩法规格<br>
     </div>
     <ul>
       <li><span class="tag tag-must">必须</span>获取渠道: <strong>无尽合成宝箱</strong> 产出 (线性关卡 1-3 内不出)</li>
-      <li><span class="tag tag-must">必须</span>触发效果: 立即在主角左侧 0.5U 位置生成一个 <strong>镜像 BOBO</strong>, 继承本体 BOBO 当前 <strong>80%</strong> 属性 (攻击力 / 攻速 / 暴击率 / 暴击伤害 / 弹道分叉 / 双倍火力状态)</li>
+      <li><span class="tag tag-must">必须</span>触发效果: 立即在主角左侧 0.5U 位置生成一个 <strong>镜像 BOBO</strong>, 继承本体 AUX 当前 <strong>80%</strong> 属性 (攻击力 / 攻速 / 暴击率 / 暴击伤害 / 弹道分叉 / 双倍火力状态)</li>
       <li><span class="tag tag-must">必须</span>持续时间: <strong>10s</strong>, 到时自动消失, 不占永久栏位</li>
-      <li><span class="tag tag-must">必须</span>持续期间同吃状态门 (与本体 BOBO 同步刷新增益)</li>
+      <li><span class="tag tag-must">必须</span>持续期间同吃状态门 (与本体 AUX 同步刷新增益)</li>
       <li><span class="tag tag-must">必须</span>持续期间主角横移, 镜像 BOBO 同步横移保持对称</li>
       <li><span class="tag tag-todo">待定</span>叠加规则: 持续期内再次抽到, 候选 A 延长 10s / B 刷新为满 10s / C 生成第 3 个 → <strong>初版选 B 刷新</strong></li>
     </ul>
@@ -665,8 +677,8 @@ Alien Fizzle · 玩法规格<br>
     <ul>
       <li><strong>左通道(宝箱通道)</strong>: 宽 <code>2U</code>, 占屏幕 40%</li>
       <li><strong>右通道(接敌通道)</strong>: 宽 <code>3U</code>, 占屏幕 60%</li>
-      <li><strong>主角 hitbox 宽度</strong>: <code>0.5U</code> (含 BOBO 贴身, 实际有效宽度需考虑 BOBO 边缘)</li>
-      <li><strong>BOBO 单体宽度</strong>: <code>0.3U</code></li>
+      <li><strong>主角 hitbox 宽度</strong>: <code>0.5U</code> (含 AUX 贴身, 实际有效宽度需考虑 AUX 边缘)</li>
+      <li><strong>AUX 单体宽度</strong>: <code>0.3U</code></li>
       <li><strong>状态门固定宽度</strong>: 接敌通道一半 = <code>1.5U</code></li>
       <li><strong>防线高度</strong>: 屏幕底部约 <code>1U</code> 高的横向带</li>
     </ul>
@@ -719,11 +731,11 @@ Alien Fizzle · 玩法规格<br>
         <line x1="80" y1="430" x2="360" y2="430" stroke="#b8451e" stroke-width="3" stroke-dasharray="4,3"/>
         <text x="40" y="435" fill="#b8451e" font-family="ui-monospace" font-size="10">防线</text>
 
-        <!-- 主角 + BOBO -->
+        <!-- 主角 + AUX -->
         <rect x="240" y="395" width="20" height="28" rx="2" fill="#e8e0d4" stroke="#888" stroke-width="1.5"/>
         <text x="250" y="412" fill="#222" font-family="ui-sans-serif" font-size="8" text-anchor="middle">主角</text>
         <circle cx="275" cy="410" r="8" fill="#88c0d4" stroke="#5a8a9c" stroke-width="1.5"/>
-        <text x="275" y="413" fill="#222" font-family="ui-sans-serif" font-size="7" text-anchor="middle">BOBO</text>
+        <text x="275" y="413" fill="#222" font-family="ui-sans-serif" font-size="7" text-anchor="middle">AUX</text>
 
         <!-- 滑动箭头 -->
         <path d="M 100 460 L 360 460" stroke="#666" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
@@ -737,7 +749,7 @@ Alien Fizzle · 玩法规格<br>
         <text x="140" y="14" fill="#666" font-family="ui-monospace" font-size="8" text-anchor="middle">2U</text>
         <text x="260" y="14" fill="#666" font-family="ui-monospace" font-size="8" text-anchor="middle">3U</text>
       </svg>
-      <span class="caption">图 3-1 · 战场布局示意 · 一点透视双通道 2:3 + 主角 BOBO + 状态门居中场景</span>
+      <span class="caption">图 3-1 · 战场布局示意 · 一点透视双通道 2:3 + 主角 AUX + 状态门居中场景</span>
     </div>
 
     <h3>3.2 主角横移规则</h3>
@@ -745,20 +757,20 @@ Alien Fizzle · 玩法规格<br>
       <tr><th>规则</th><th>说明</th></tr>
       <tr><td>横移范围</td><td>整个屏幕宽 <code>5U</code> 自由滑动, 含宝箱通道和接敌通道</td></tr>
       <tr><td>纵向限制</td><td><strong>仅横轴</strong>移动, 不离开防线高度(主角守线职责)</td></tr>
-      <tr><td>BOBO 跟随</td><td>所有 BOBO 与主角 <strong>刚性绑定</strong>同步横移</td></tr>
+      <tr><td>AUX 跟随</td><td>所有 AUX 与主角 <strong>刚性绑定</strong>同步横移</td></tr>
       <tr><td>边界判定</td><td>主角边缘碰到屏幕左右边时停下, 不会出屏</td></tr>
       <tr><td>滑动手感</td><td>1:1 跟手, 无加速度曲线, 无延迟(休闲游戏快反馈优先)</td></tr>
     </table>
 
     <h3>3.3 子弹方向规则</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span>主角和所有 BOBO 的子弹 <strong>始终垂直向上发射</strong>, 无论主角在哪个通道</li>
+      <li><span class="tag tag-must">必须</span>主角和所有 AUX 的子弹 <strong>始终垂直向上发射</strong>, 无论主角在哪个通道</li>
       <li><span class="tag tag-must">必须</span>子弹位置由发射者当前 X 坐标决定 — 主角在宝箱通道 = 子弹打宝箱通道</li>
       <li><span class="tag tag-must">必须</span>子弹不能跨通道(物理一致性)</li>
     </ul>
 
     <div class="callout success">
-      <strong>临界情况 · 不抢行修正</strong>: 主角恰好骑在两通道分界线上时, 会出现 <em>主角弹道在宝箱通道 + BOBO 弹道在接敌通道</em> 的分裂状态。这是 <strong>feature 不是 bug</strong>, 代码不要做任何对齐 / 吸附 / 偏移修正, 让玩家自由利用这个边界位置做"边贪宝箱边守接敌"的精妙操作。
+      <strong>临界情况 · 不抢行修正</strong>: 主角恰好骑在两通道分界线上时, 会出现 <em>主角弹道在宝箱通道 + AUX 弹道在接敌通道</em> 的分裂状态。这是 <strong>feature 不是 bug</strong>, 代码不要做任何对齐 / 吸附 / 偏移修正, 让玩家自由利用这个边界位置做"边贪宝箱边守接敌"的精妙操作。
     </div>
   </section>
 
@@ -770,7 +782,7 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout warn">
       <strong>架构分离 (v3.2 顶层规则)</strong>:
       <ul style="margin:8px 0 0 0">
-        <li><strong>状态门</strong> = 平铺属性增益 (原规则保留, 补 BOBO 生效方式, 见 §5)</li>
+        <li><strong>状态门</strong> = 平铺属性增益 (原规则保留, 补 AUX 生效方式, 见 §5)</li>
         <li><strong>宝箱</strong> = 技能升级卡 + 枪械精通卡 <strong>混池三选一</strong>, 单卡一次性抽到即消耗</li>
         <li>宝箱 <strong>不影响</strong> 状态门的平铺属性维度 (那是状态门的领地), 只提供 <strong>质变 / 特殊触发 / 输出源强化</strong></li>
       </ul>
@@ -824,7 +836,7 @@ Alien Fizzle · 玩法规格<br>
       </tr>
       <tr>
         <td><strong>激光贯穿</strong> <span class="tag tag-may">v3.2 新</span></td>
-        <td>蓄力 <strong>2s</strong> 后由 BOBO 发射一根 <strong>60px 宽</strong>贯穿激光, 对一条直线上所有敌人造成 <strong>800 (playerAtk×32)</strong> 伤害</td>
+        <td>蓄力 <strong>2s</strong> 后由 AUX 发射一根 <strong>60px 宽</strong>贯穿激光, 对一条直线上所有敌人造成 <strong>800 (playerAtk×32)</strong> 伤害</td>
         <td>Lv1 + <strong>2.5s 沿线余波</strong>, 每 0.5s 沿线 <strong>100 (playerAtk×4)</strong> 伤</td>
         <td>Lv2 + <strong>3s 内每 0.5s 从随机目标额外发射一根 5px 小激光</strong>, <strong>200 (playerAtk×8)</strong> 伤</td>
       </tr>
@@ -883,11 +895,11 @@ Alien Fizzle · 玩法规格<br>
     <h4>4.6.A 子弹形态 · 5 张 (K26 新增 a_rapid · K27 精修 pierce/burst/rapid/explode)</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>[K27] 普攻 <strong>+20%</strong>, <strong>穿透 1</strong> (一发共命中 2 目标 = 主 + 1 穿透), 次级伤害衰减 <strong>40%</strong> (次级 = 主伤 × 0.6)</td><td>K27-3: 穿透 2→1 · 衰减 20%→40%; V3.5 已删命中分裂 & BOBO 分叉联动</td></tr>
+      <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>[K27] 普攻 <strong>+20%</strong>, <strong>穿透 1</strong> (一发共命中 2 目标 = 主 + 1 穿透), 次级伤害衰减 <strong>40%</strong> (次级 = 主伤 × 0.6)</td><td>K27-3: 穿透 2→1 · 衰减 20%→40%; V3.5 已删命中分裂 & AUX 分叉联动</td></tr>
       <tr><td><strong>2</strong></td><td><strong>裂头弹</strong> <span class="tag tag-may">a_bounce</span></td><td>击中主目标瞬间 <strong>四散分裂 4 颗小子弹</strong>, <strong>50% 伤害</strong>, 不再穿透/分裂, 继承攻击特效</td><td>分裂绝对角度 [-30°,50°,130°,210°]</td></tr>
       <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong> <span class="tag tag-may">a_explode</span></td><td>[K27] 子弹命中产生 <strong>小范围爆炸</strong>, 半径 <strong>锁死 20px</strong> (打宝箱/打小怪一致, 不再挂载体尺寸), 爆炸伤害 = <strong>30% 主伤害</strong></td><td>K27-2: splashR 锁 20 (原 t.w×0.5×0.3); 弹射/分裂后的子弹也能触发</td></tr>
-      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong> <span class="tag tag-may">a_rapid · 不可重复</span></td><td>[K27] 主角子弹 <strong>飞行速度 ×1.5</strong> (velMult 独立通道, 不与 a_burst 攻速叠乘), <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td>K27-1: 射速×2 → 弹速×1.5 (velMult 通道); 只作用主角平 A, 不影响 BOBO</td></tr>
-      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>[K27] 攻速 <strong>+30%</strong>, 弹道 <strong>+2</strong>, 单发伤害降为 <strong>35%</strong> (3 弹道 × 0.35 = 1.05× DPS)</td><td>K27-4: 单发 0.55→0.35; V3.5 已删爆头; 只作用主角平 A, 不影响 BOBO</td></tr>
+      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong> <span class="tag tag-may">a_rapid · 不可重复</span></td><td>[K27] 主角子弹 <strong>飞行速度 ×1.5</strong> (velMult 独立通道, 不与 a_burst 攻速叠乘), <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td>K27-1: 射速×2 → 弹速×1.5 (velMult 通道); 只作用主角平 A, 不影响 AUX</td></tr>
+      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>[K27] 攻速 <strong>+30%</strong>, 弹道 <strong>+2</strong>, 单发伤害降为 <strong>35%</strong> (3 弹道 × 0.35 = 1.05× DPS)</td><td>K27-4: 单发 0.55→0.35; V3.5 已删爆头; 只作用主角平 A, 不影响 AUX</td></tr>
     </table>
 
     <h4>4.6.B 状态施加 · 3 张 · 全必触发无概率</h4>
@@ -908,8 +920,8 @@ Alien Fizzle · 玩法规格<br>
     <h4>4.6.D 伤害修饰 · 2 张</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>10</strong></td><td><strong>精英以上猎手</strong> <span class="tag tag-may">d_hunter</span></td><td>对 <strong>精英 + boss</strong> 单位伤害 <strong>+30%</strong></td><td>对 BOBO 激光生效</td></tr>
-      <tr><td><strong>11</strong></td><td><strong>弱者克星</strong> <span class="tag tag-may">d_weak</span></td><td>对被施加减益 (减速 / 麻痹 / 燃烧 / 毒等) 的单位伤害 <strong>+40%</strong></td><td>对 BOBO 激光生效</td></tr>
+      <tr><td><strong>10</strong></td><td><strong>精英以上猎手</strong> <span class="tag tag-may">d_hunter</span></td><td>对 <strong>精英 + boss</strong> 单位伤害 <strong>+30%</strong></td><td>对 AUX 激光生效</td></tr>
+      <tr><td><strong>11</strong></td><td><strong>弱者克星</strong> <span class="tag tag-may">d_weak</span></td><td>对被施加减益 (减速 / 麻痹 / 燃烧 / 毒等) 的单位伤害 <strong>+40%</strong></td><td>对 AUX 激光生效</td></tr>
     </table>
 
     <h4>4.6.E 防线相关 · 5 张</h4>
@@ -917,7 +929,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
       <tr><td><strong>12</strong></td><td><strong>防线加固</strong> <span class="tag tag-may">e_reinforce</span></td><td>防线 HP <strong>+30%</strong> (基础值百分比, 抽到时按当前满 HP 结算, 当前 HP 同步补足)</td><td>—</td></tr>
       <tr><td><strong>13</strong></td><td><strong>回响</strong> <span class="tag tag-may">e_echo</span></td><td>每击杀 <strong>20 个敌人</strong>, 防线回 <strong>1% HP</strong></td><td>持续生效, 无上限</td></tr>
-      <tr><td><strong>14</strong></td><td><strong>绝境反击</strong> <span class="tag tag-may">e_desperate</span></td><td>防线 HP 每下降 <strong>2%</strong>, 攻击力 <strong>+1%</strong> (线性, 满血 0 加成, 空血 +50%)</td><td>对 BOBO 全生效 (伤害修饰全局)</td></tr>
+      <tr><td><strong>14</strong></td><td><strong>绝境反击</strong> <span class="tag tag-may">e_desperate</span></td><td>防线 HP 每下降 <strong>2%</strong>, 攻击力 <strong>+1%</strong> (线性, 满血 0 加成, 空血 +50%)</td><td>对 AUX 全生效 (伤害修饰全局)</td></tr>
       <tr><td><strong>15</strong></td><td><strong>扎根</strong> <span class="tag tag-may">e_root · 不可重复</span></td><td>防线生成护盾 (<strong>defenseMax×0.8%/秒</strong> 积累), 护盾期间被攻击 <strong>反弹真伤</strong> (defenseMax×5% + 护盾×20%)。受击后暂停积累 10s</td><td>护盾蓝色可视, 受击暂停后恢复积累</td></tr>
       <tr><td><strong>16</strong></td><td><strong>等离子防线</strong> <span class="tag tag-may">e_plasma · 不可重复</span></td><td>每 <strong>20s</strong> 用满 defenseMax 护盾替换原护盾。护盾被击破瞬间, 对最近 <strong>3 敌方形范围</strong>造成"击破前护盾峰值"等值的真实伤害 (不递减)</td><td>与扎根护盾独立那份, plasma 专属替换</td></tr>
     </table>
@@ -926,8 +938,8 @@ Alien Fizzle · 玩法规格<br>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
       <tr><td><strong>17</strong></td><td><strong>贪婪</strong> <span class="tag tag-may">f_greed</span></td><td>击杀敌人 <strong>2% 概率</strong> 立即召唤一道状态门 (与 10s 定时刷新独立)</td><td>额外门也遵循 §5 规则</td></tr>
-      <tr><td><strong>18</strong></td><td><strong>共鸣</strong> <span class="tag tag-may">f_resonance</span></td><td>每持有 1 张精通卡, 攻击力 <strong>+2%</strong> (基础值算 1 张自身, 即抽到即刻 +2%)</td><td>对 BOBO 生效</td></tr>
-      <tr><td><strong>19</strong></td><td><strong>恶魔赌局</strong> <span class="tag tag-may">f_gamble · 单张可重复抽</span></td><td>抽到即摇一个系数 σ, 一次性重构 <strong>主角 + BOBO 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。<strong>EV ≈ 1.14</strong>, 见 §4.6.F19 概率分布表</td><td>单张可重复抽, 权重固定 1.5 不腰斩, 同一次三选一可出现多张</td></tr>
+      <tr><td><strong>18</strong></td><td><strong>共鸣</strong> <span class="tag tag-may">f_resonance</span></td><td>每持有 1 张精通卡, 攻击力 <strong>+2%</strong> (基础值算 1 张自身, 即抽到即刻 +2%)</td><td>对 AUX 生效</td></tr>
+      <tr><td><strong>19</strong></td><td><strong>恶魔赌局</strong> <span class="tag tag-may">f_gamble · 单张可重复抽</span></td><td>抽到即摇一个系数 σ, 一次性重构 <strong>主角 + AUX 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。<strong>EV ≈ 1.14</strong>, 见 §4.6.F19 概率分布表</td><td>单张可重复抽, 权重固定 1.5 不腰斩, 同一次三选一可出现多张</td></tr>
     </table>
 
     <div class="callout warn">
@@ -951,26 +963,26 @@ Alien Fizzle · 玩法规格<br>
       </div>
     </div>
 
-    <h4>4.6.G BOBO 强化 · 5 张 · 专属 (K25: 3 → 5)</h4>
+    <h4>4.6.G AUX 强化 · 5 张 · 专属 (K25: 3 → 5)</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>20</strong></td><td><strong>激光聚焦</strong> <span class="tag tag-may">g_focus · 不可重复</span></td><td>BOBO <strong>弹射 +3</strong></td><td>K25: 删除 "激光伤害 +100%"</td></tr>
-      <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong> <span class="tag tag-may">g_burn · 不可重复</span></td><td>BOBO 激光命中产生 <strong>小爆炸</strong> (半径 25px, 主伤 <strong>15%</strong>) + <strong>点燃</strong></td><td>K25: splash 25%→15%; K26: 半径 50→25</td></tr>
-      <tr><td><strong>22</strong></td><td><strong>激光制导</strong> <span class="tag tag-may">g_guide · 不可重复</span></td><td>BOBO 攒 <strong>20 次攻击</strong>后发射持续 <strong>5s</strong> 的制导激光, 独立走固定 <strong>40 主伤</strong>, 不吃 g_focus / g_burn 联动</td><td>K25: 攒击 12→20; 删除联动</td></tr>
-      <tr><td><strong>23</strong></td><td><strong>激光强化</strong> <span class="tag tag-may">g_dmg · 不可重复</span></td><td>BOBO 激光伤害 <strong>+50%</strong></td><td>K25 新增</td></tr>
-      <tr><td><strong>24</strong></td><td><strong>激光攻速</strong> <span class="tag tag-may">g_speed · 不可重复</span></td><td>BOBO 激光间隔 <strong>-30%</strong></td><td>K25 新增</td></tr>
+      <tr><td><strong>20</strong></td><td><strong>激光聚焦</strong> <span class="tag tag-may">g_focus · 不可重复</span></td><td>AUX <strong>弹射 +3</strong></td><td>K25: 删除 "激光伤害 +100%"</td></tr>
+      <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong> <span class="tag tag-may">g_burn · 不可重复</span></td><td>AUX 激光命中产生 <strong>小爆炸</strong> (半径 25px, 主伤 <strong>15%</strong>) + <strong>点燃</strong></td><td>K25: splash 25%→15%; K26: 半径 50→25</td></tr>
+      <tr><td><strong>22</strong></td><td><strong>激光制导</strong> <span class="tag tag-may">g_guide · 不可重复</span></td><td>AUX 攒 <strong>20 次攻击</strong>后发射持续 <strong>5s</strong> 的制导激光, 独立走固定 <strong>40 主伤</strong>, 不吃 g_focus / g_burn 联动</td><td>K25: 攒击 12→20; 删除联动</td></tr>
+      <tr><td><strong>23</strong></td><td><strong>激光强化</strong> <span class="tag tag-may">g_dmg · 不可重复</span></td><td>AUX 激光伤害 <strong>+50%</strong></td><td>K25 新增</td></tr>
+      <tr><td><strong>24</strong></td><td><strong>激光攻速</strong> <span class="tag tag-may">g_speed · 不可重复</span></td><td>AUX 激光间隔 <strong>-30%</strong></td><td>K25 新增</td></tr>
     </table>
 
     <div class="callout">
-      <strong>精通卡对 BOBO 生效对照表</strong> (与 §2.2 呼应):
+      <strong>精通卡对 AUX 生效对照表</strong> (与 §2.2 呼应):
       <ul style="margin:8px 0 0 0">
-        <li><strong>A 类 (子弹形态)</strong>: <span style="color:#b8451e">主要作用主角子弹</span>; 例外: 集束枪管 (A1) 使 <span style="color:#2e6b3a">BOBO 主目标激光分叉 2</span>, 连发快射 (A4) 联动 <span style="color:#2e6b3a">BOBO 弹射 +3</span></li>
-        <li><strong>B 类 (状态施加)</strong>: <span style="color:#b8451e">仅主角子弹, 不作用于 BOBO 激光</span> (BOBO 有专属 G21 燃烧)</li>
+        <li><strong>A 类 (子弹形态)</strong>: <span style="color:#b8451e">主要作用主角子弹</span>; 例外: 集束枪管 (A1) 使 <span style="color:#2e6b3a">AUX 主目标激光分叉 2</span>, 连发快射 (A4) 联动 <span style="color:#2e6b3a">AUX 弹射 +3</span></li>
+        <li><strong>B 类 (状态施加)</strong>: <span style="color:#b8451e">仅主角子弹, 不作用于 AUX 激光</span> (AUX 有专属 G21 燃烧)</li>
         <li><strong>C 类 (食髓 / 熔核)</strong>: <span style="color:#b8451e">仅主角</span> (熔核是主角攻速循环)</li>
-        <li><strong>D 类 (精英猎手 / 弱者克星)</strong>: <span style="color:#2e6b3a">全部对 BOBO 生效</span> (伤害修饰跟输出源无关)</li>
-        <li><strong>E 类 (防线相关)</strong>: <span style="color:#2e6b3a">全局效果</span>, 绝境反击的攻击力加成对 BOBO 也生效</li>
-        <li><strong>F 类 (Meta)</strong>: <span style="color:#2e6b3a">共鸣 / 贪婪对 BOBO 生效; 恶魔赌局对 BOBO 一起赌</span></li>
-        <li><strong>G 类 (BOBO 强化)</strong>: <span style="color:#2e6b3a">BOBO 专属</span></li>
+        <li><strong>D 类 (精英猎手 / 弱者克星)</strong>: <span style="color:#2e6b3a">全部对 AUX 生效</span> (伤害修饰跟输出源无关)</li>
+        <li><strong>E 类 (防线相关)</strong>: <span style="color:#2e6b3a">全局效果</span>, 绝境反击的攻击力加成对 AUX 也生效</li>
+        <li><strong>F 类 (Meta)</strong>: <span style="color:#2e6b3a">共鸣 / 贪婪对 AUX 生效; 恶魔赌局对 AUX 一起赌</span></li>
+        <li><strong>G 类 (AUX 强化)</strong>: <span style="color:#2e6b3a">AUX 专属</span></li>
       </ul>
     </div>
   </section>
@@ -1006,7 +1018,7 @@ Alien Fizzle · 玩法规格<br>
         <tr><td>防线上限 (defenseMaxHP)</td><td>-100 ~ +150</td><td>50</td></tr>
         <tr><td>防线回血 (defenseHeal)</td><td>0 ~ +100 (瞬时)</td><td>50</td></tr>
       </table>
-      出现频率 (10s / 次)、宽度 (1.5U)、消失条件 (撞主角) 全部保留。§5.9 补 BOBO 生效方式。
+      出现频率 (10s / 次)、宽度 (1.5U)、消失条件 (撞主角) 全部保留。§5.9 补 AUX 生效方式。
     </div>
 
     <h4>5.1.1 属性刷新规则</h4>
@@ -1036,7 +1048,7 @@ Alien Fizzle · 玩法规格<br>
 
     <h3>5.4 消失唯一条件</h3>
     <div class="callout">
-      <strong>唯一消失条件</strong>: 状态门撞到主角, BOBO 吃到当前数值的 buff/debuff, 门 <strong>立即消失</strong>。
+      <strong>唯一消失条件</strong>: 状态门撞到主角, AUX 吃到当前数值的 buff/debuff, 门 <strong>立即消失</strong>。
     </div>
     <ul>
       <li><span class="tag tag-must">必须</span>"自然流出屏幕底部" <strong>不</strong> 算消失 — 它要么撞主角, 要么被主角避开</li>
@@ -1081,7 +1093,7 @@ Alien Fizzle · 玩法规格<br>
         <!-- 状态: 消失 -->
         <rect x="230" y="300" width="140" height="60" rx="4" fill="#fff" stroke="#444" stroke-width="2" stroke-dasharray="2,2"/>
         <text x="300" y="320" fill="#222" font-family="ui-sans-serif" font-size="12" font-weight="600" text-anchor="middle">S5 · 消失</text>
-        <text x="300" y="338" fill="#666" font-family="ui-monospace" font-size="10" text-anchor="middle">撞主角 · BOBO 吃效果</text>
+        <text x="300" y="338" fill="#666" font-family="ui-monospace" font-size="10" text-anchor="middle">撞主角 · AUX 吃效果</text>
         <text x="300" y="352" fill="#666" font-family="ui-monospace" font-size="9" text-anchor="middle">或流出屏幕底部</text>
 
         <!-- 箭头 S1 → S2 → S3 -->
@@ -1109,10 +1121,10 @@ Alien Fizzle · 玩法规格<br>
       <strong>命名逻辑</strong>: "火力静默" 是 <strong>减益维度描述词</strong> — 名字本身指代 debuff 效果. 通用规则 "减益为正数, 增益为负数" 在此维度成立.
     </div>
     <ul>
-      <li><span class="tag tag-must">必须</span>火力静默门 <strong>初始数值 = +4s</strong> (减益, 状态色 <span style="color:#b8451e;font-weight:600;">红</span>), 表示 BOBO 吃到后会静默 4 秒</li>
+      <li><span class="tag tag-must">必须</span>火力静默门 <strong>初始数值 = +4s</strong> (减益, 状态色 <span style="color:#b8451e;font-weight:600;">红</span>), 表示 AUX 吃到后会静默 4 秒</li>
       <li><span class="tag tag-must">必须</span>玩家射击门, 数值 <strong>递减</strong>: +4s → +3s → +2s → +1s → 0s → <strong>-1s</strong> (增益翻转点)</li>
-      <li><span class="tag tag-must">必须</span>数值到 <strong>-1s</strong> 时门变增益, 状态色 <span style="color:#2e6b3a;font-weight:600;">绿</span>, 效果为 <strong>双倍火力 1s</strong> (含义: BOBO 吃到后火力翻倍, 持续 1 秒)</li>
-      <li><span class="tag tag-must">必须</span>状态色变化 <strong>作用于门体本身</strong>, 不作用于 BOBO / 主角 (BOBO 只在门被吃时才生效果)</li>
+      <li><span class="tag tag-must">必须</span>数值到 <strong>-1s</strong> 时门变增益, 状态色 <span style="color:#2e6b3a;font-weight:600;">绿</span>, 效果为 <strong>双倍火力 1s</strong> (含义: AUX 吃到后火力翻倍, 持续 1 秒)</li>
+      <li><span class="tag tag-must">必须</span>状态色变化 <strong>作用于门体本身</strong>, 不作用于 AUX / 主角 (AUX 只在门被吃时才生效果)</li>
       <li><span class="tag tag-should">建议</span>因为火力静默是 <strong>唯一数值方向与其他维度相反</strong>的门 (其他维度 debuff 是负数, buff 是正数), UI 上可用小图标标注避免玩家混淆</li>
     </ul>
 
@@ -1127,7 +1139,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>过零</td><td>8</td><td>0s</td><td>S2 中性(瞬态)</td><td>灰闪一下</td></tr>
       <tr><td>翻转</td><td>10</td><td>-1s 双倍火力</td><td>S4 上限释放 (增益到顶)</td><td>亮绿虚边, 子弹穿透</td></tr>
       <tr><td>继续射</td><td>16</td><td>-1s (不变)</td><td>S4 上限释放</td><td>子弹穿透打敌人</td></tr>
-      <tr><td>撞主角</td><td>-</td><td>-1s</td><td>S5 消失</td><td>爆开效果, BOBO 吃 <strong>双倍火力 1s</strong></td></tr>
+      <tr><td>撞主角</td><td>-</td><td>-1s</td><td>S5 消失</td><td>爆开效果, AUX 吃 <strong>双倍火力 1s</strong></td></tr>
     </table>
 
     <h3>5.8 示例 · 防线上限门(初始即 buff)</h3>
@@ -1142,18 +1154,18 @@ Alien Fizzle · 玩法规格<br>
       <strong>玩家决策点</strong>: 看到状态门生成时, 玩家在 1-3 秒内要算 4 个变量 — (1) 当前 buff 累积进度, (2) 还需多少子弹打满, (3) 距离防线还有多远, (4) 现在该躲到哪。这是核心爽感来源。
     </div>
 
-    <h3>5.9 状态门对 BOBO 的作用方式 (v3.2 新增)</h3>
-    <p class="lead">BOBO 作为独立第二输出源 (§2.2), 状态门对 BOBO 的作用要 <strong>逐维度显式定义</strong>, 避免语义盲区。</p>
+    <h3>5.9 状态门对 AUX 的作用方式 (v3.2 新增)</h3>
+    <p class="lead">AUX 作为独立第二输出源 (§2.2), 状态门对 AUX 的作用要 <strong>逐维度显式定义</strong>, 避免语义盲区。</p>
 
     <table>
-      <tr><th style="width:130px">状态门维度</th><th style="width:130px">对主角</th><th>对 BOBO (激光)</th></tr>
+      <tr><th style="width:130px">状态门维度</th><th style="width:130px">对主角</th><th>对 AUX (激光)</th></tr>
       <tr><td><strong>攻击力</strong></td><td>子弹伤害 × 系数</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光伤害 × 系数</td></tr>
       <tr><td><strong>攻速</strong></td><td>射击间隔 / 系数</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光发射间隔 / 系数 (基础 0.7s)</td></tr>
       <tr><td><strong>暴击率</strong></td><td>+N% 概率暴击</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光暴击独立结算</td></tr>
       <tr><td><strong>暴击伤害</strong></td><td>暴击倍率 +N%</td><td><span style="color:#2e6b3a">✓ 全吃</span></td></tr>
       <tr><td><strong>火力静默</strong> / 双倍火力翻转</td><td>debuff: N 秒内不发射子弹; 翻转 buff: 射速翻倍</td><td>debuff: <span style="color:#b8451e">✗ 同步静默不发激光</span>; 翻转: <span style="color:#2e6b3a">✓ 射速翻倍</span></td></tr>
-      <tr><td><strong>防线护甲 / 防线上限 / 防线回血</strong></td><td>作用于防线 (护甲减伤 / HP 上限 / 瞬时回血)</td><td><span style="color:#888">— 防线全局维度, 与 BOBO 输出无关</span></td></tr>
-      <tr><td colspan="3" style="padding:8px 12px">双倍火力实际实现 = <strong>主角 <code>playerSpdMult *= 2</code>, BOBO <code>nuoStats.spd *= 2</code></strong> (双方射速翻倍, 均单目标, 非 2 束激光), 持续 v ms 后精准 restore。</td></tr>
+      <tr><td><strong>防线护甲 / 防线上限 / 防线回血</strong></td><td>作用于防线 (护甲减伤 / HP 上限 / 瞬时回血)</td><td><span style="color:#888">— 防线全局维度, 与 AUX 输出无关</span></td></tr>
+      <tr><td colspan="3" style="padding:8px 12px">双倍火力实际实现 = <strong>主角 <code>playerSpdMult *= 2</code>, AUX <code>nuoStats.spd *= 2</code></strong> (双方射速翻倍, 均单目标, 非 2 束激光), 持续 v ms 后精准 restore。</td></tr>
     </table>
   </section>
 
@@ -1168,7 +1180,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>接敌通道宽</td><td>3U</td><td>右通道全宽</td></tr>
       <tr><td>状态门宽</td><td>1.5U</td><td>固定一半</td></tr>
       <tr><td>剩余空间</td><td>1.5U</td><td>接敌通道内可用于躲门的横向余量</td></tr>
-      <tr><td>主角 hitbox 宽</td><td>0.5U</td><td>含 BOBO 贴身边缘</td></tr>
+      <tr><td>主角 hitbox 宽</td><td>0.5U</td><td>含 AUX 贴身边缘</td></tr>
       <tr><td>纯接敌通道躲位</td><td>1.0U</td><td>1.5U − 0.5U, 够主角左右两侧各避一半</td></tr>
     </table>
 
@@ -1191,7 +1203,7 @@ Alien Fizzle · 玩法规格<br>
 
     <h4>关系 C · 故意撞门 (主动吃 buff/debuff)</h4>
     <ul>
-      <li>门已被打到 S4 上限释放 → 主动撞 → BOBO 吃满 buff</li>
+      <li>门已被打到 S4 上限释放 → 主动撞 → AUX 吃满 buff</li>
       <li>或决定吃当前数值(不等满)时主动撞</li>
       <li>或紧急情况下不得不撞(没有更好选择)</li>
     </ul>
@@ -1356,7 +1368,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>暴击伤害</td><td>+0%</td><td><strong>+50%</strong> (1.5× 伤害)</td><td>—</td></tr>
     </table>
     <ul>
-      <li><span class="tag tag-must">必须</span>主角 + BOBO 属性 <strong>完全相同</strong> (上表数值两者共用)</li>
+      <li><span class="tag tag-must">必须</span>主角 + AUX 属性 <strong>完全相同</strong> (上表数值两者共用)</li>
       <li><span class="tag tag-must">必须</span>穿透 / AoE <strong>不加</strong>, 保留 "小兵成群依次爆" 的爽感</li>
     </ul>
 
@@ -1413,7 +1425,7 @@ Alien Fizzle · 玩法规格<br>
     <h3>7.5.9 成本估算</h3>
     <table>
       <tr><th>项</th><th>估算</th><th>说明</th></tr>
-      <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 v3 现有内容 (敌人/防线/主角/BOBO/武器/宝箱)</td></tr>
+      <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 v3 现有内容 (敌人/防线/主角/AUX/武器/宝箱)</td></tr>
       <tr><td>代码成本</td><td><strong>4-6 小时</strong></td><td>方阵系统 + 满配属性覆盖 + 宝箱双倍 + 4 个弹窗 (加载页/警报/总部问话/通讯中断)</td></tr>
       <tr><td>art-spec-v3.html 影响</td><td><strong>无</strong></td><td>反弹护盾特效独立成资产, 不影响荻子已在推进的 P0/P1 交付</td></tr>
     </table>
@@ -1434,7 +1446,7 @@ Alien Fizzle · 玩法规格<br>
 
     <h3>7.6.2 玩法与场景复用</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span>视角 / 双通道 / 主角+BOBO 双弹道 / 状态门 / 宝箱 <strong>与正式关卡完全一致</strong></li>
+      <li><span class="tag tag-must">必须</span>视角 / 双通道 / 主角+AUX 双弹道 / 状态门 / 宝箱 <strong>与正式关卡完全一致</strong></li>
       <li><span class="tag tag-must">必须</span>敌人库复用正式关卡的小兵/精英/Boss, <strong>无新美术资源</strong></li>
       <li><span class="tag tag-must">必须</span>无关卡结束条件, 只有玩家死亡或主动退出结算</li>
     </ul>
@@ -1597,15 +1609,15 @@ Alien Fizzle · 玩法规格<br>
       <tr><th>#</th><th>场景</th><th>处理</th></tr>
       <tr><td>E01</td><td>主角刚拿到新武器瞬间, 旧武器子弹还在飞</td><td>旧子弹继续按旧武器属性飞完, 新子弹从主角位置按新武器发射</td></tr>
       <tr><td>E02</td><td>状态门 S4 上限释放后, 子弹穿透打到后方敌人</td><td>正常造成伤害, 不被门吸收</td></tr>
-      <tr><td>E03</td><td>状态门 S4 上限释放后, 主角立即撞门</td><td>BOBO 仍吃满 buff(数值已锁定在上限)</td></tr>
-      <tr><td>E04</td><td>主角骑两通道分界线</td><td><strong>不抢行修正</strong>, 主角弹道打宝箱通道 + BOBO 弹道打接敌通道分裂是正常 feature</td></tr>
-      <tr><td>E05</td><td>主角横移把 BOBO 推出屏幕边界</td><td>BOBO 不出屏, 改成贴主角另一侧</td></tr>
+      <tr><td>E03</td><td>状态门 S4 上限释放后, 主角立即撞门</td><td>AUX 仍吃满 buff(数值已锁定在上限)</td></tr>
+      <tr><td>E04</td><td>主角骑两通道分界线</td><td><strong>不抢行修正</strong>, 主角弹道打宝箱通道 + AUX 弹道打接敌通道分裂是正常 feature</td></tr>
+      <tr><td>E05</td><td>主角横移把 AUX 推出屏幕边界</td><td>AUX 不出屏, 改成贴主角另一侧</td></tr>
       <tr><td>E06</td><td>主角和镜像 BOBO 都顶到屏幕边界</td><td>整体停下, 不能继续横移, 不出屏</td></tr>
       <tr><td>E07</td><td>宝箱被障碍挡住, 子弹打不到</td><td>正常 — 这是关卡设计点, 玩家要找角度或先击破障碍</td></tr>
       <tr><td>E08</td><td>多个宝箱同时被击破</td><td>武器按击破顺序依次装备, 最后击破的覆盖前面的</td></tr>
       <tr><td>E09</td><td>主角在宝箱通道时撞到状态门(状态门移到分界线附近)</td><td>不可能 — 状态门生成在接敌通道内, 不会跨界。如代码上发生, 视为撞主角触发 S5</td></tr>
-      <tr><td>E10</td><td>状态门已 S4 上限释放, 没人撞它, 流到屏幕底</td><td>自然消失, 不触发 BOBO 吃 buff, 下个门生成</td></tr>
-      <tr><td>E11</td><td>BOBO 火力静默期间撞到状态门</td><td>状态门仍然消失, BOBO 仍吃当前数值效果(静默结束后生效)</td></tr>
+      <tr><td>E10</td><td>状态门已 S4 上限释放, 没人撞它, 流到屏幕底</td><td>自然消失, 不触发 AUX 吃 buff, 下个门生成</td></tr>
+      <tr><td>E11</td><td>AUX 火力静默期间撞到状态门</td><td>状态门仍然消失, AUX 仍吃当前数值效果(静默结束后生效)</td></tr>
       <tr><td>E12</td><td>已有镜像 BOBO, 再拿到镜像武器</td><td>无效化(吞武器, 无效果)</td></tr>
       <tr><td>E13</td><td>主角死亡瞬间敌人继续攻击防线</td><td>Game Over 帧锁定, 不再计算后续伤害</td></tr>
       <tr><td>E14</td><td>暂停 / 后台切换</td><td>整局暂停, 包括子弹 / 敌人 / 状态门 / 防线攻击</td></tr>
@@ -1709,7 +1721,7 @@ Alien Fizzle · 玩法规格<br>
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-27 12:00';  // ← 每次重新部署 spec 时更新此值 (1.3 世界观上线)
+  const SPEC_PUBLISHED = '2026-07-27 15:00';  // ← 每次重新部署 spec 时更新此值 (1.3.3 AI 副手双型号档案 · BOBO → AUX 系统层迁移)
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
