@@ -35,6 +35,15 @@ const T = {
     publishUrl:'https://nova-nimbus.pages.dev/private/alienfizzle/',
   },
 
+  // ─── 1.5 世界观设定 (2026-07-27 K28-D 立) ───────────────────────
+  world: {
+    planet:       'Aurelia',                     // 冲突地点 · 地球殖民星
+    resource:     'Aurelium',                    // 稀缺资源 · 超导/曲率引擎核心材料
+    resourceDesc: '超导/曲率引擎核心材料',        // Aurelium 用途描述
+    era:          '近未来 · 星际殖民时代',
+    conflict:     '外星文明侵入 Aurelia 掠夺 Aurelium 矿脉',
+  },
+
   // ─── 2. 主角 ────────────────────────────────────────────────────
   hero: {
     name:     '主角',                // TODO 定名 (spec §2.1 仅称"主角", 待 K 拍板)
