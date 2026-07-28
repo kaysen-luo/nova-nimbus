@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.3</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.4</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -390,10 +390,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v40">V4.0 · K21-bosshp 大 BOSS 血量 50000→30000</a></li>
   <li><a href="#ch-v41">V4.1 · K25 宝箱增伤生效+BOBO 卡组 3→5 张重组</a></li>
   <li><a href="#ch-v42">V4.2 · K26 BOBO 制导互斥/暴击步进减半/爆炸半径缩/飘字收敛+快枪手 a_rapid</a></li>
-  <li><a href="#ch-v43">V4.3 · K27 数值精修 (快枪手弹速/爆炸锁死/穿透削/连发削/AOE 对宝箱现状) <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v43">V4.3 · K27 数值精修 (快枪手弹速/爆炸锁死/穿透削/连发削/AOE 对宝箱现状)</a></li>
+  <li><a href="#ch-v44">V4.4 · K29 专属卡系统 · 双主角 3 张 + 羁绊 (骨架版) <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v4.3 · 2026-07-25<br>
+v4.4 · 2026-07-28<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -402,17 +403,17 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v4.3</span>
+<span class="badge">GAME SPEC · v4.4</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v4.3 (K27 · 快枪手弹速×1.5 + 爆炸半径锁死 20 + 集束穿透 2→1 + 连发单发 0.55→0.35 + 三 AOE 对宝箱 200px 现状)</div>
+<div class="value">v4.4 (K29 · 专属卡系统骨架 · 双主角各 3 张 + 羁绊 · Marvis A/C/F 赌 · Nova B/D/G 稳)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-25</div>
+<div class="value">2026-07-28</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -1113,6 +1114,53 @@ Alien Fizzle · 玩法规格<br>
         <li><strong>G 类 (BOBO 强化)</strong>: <span style="color:#2e6b3a">BOBO 专属</span></li>
       </ul>
     </div>
+  </section>
+
+  <section class="chapter" id="ch-04-7">
+    <span class="chapter-num">§ 4.7 · 专属卡系统 (K29 · 骨架版)</span>
+    <h2>双主角专属卡<br>3 张 + 羁绊</h2>
+    <p class="lead">专属卡与 §4.6 精通卡混池共存, 走三选一同一入口, 权重/强度与精通卡持平。双主角 (Marvis · Nova) 各持 3 张专属, 对应 3 个类别 (Marvis = A/C/F · Nova = B/D/G), 3 张集齐即触发羁绊。M1 上线时每主角 3 张为固定池 (免费默认); 未来上线"无尽得分系统"后, 通过对局经验解锁更多专属卡 (T2/T3 池, 本期只预留槽位不落内容)。</p>
+
+    <h3>4.7.1 系统机制</h3>
+    <table>
+      <tr><th style="width:160px">维度</th><th>规则</th></tr>
+      <tr><td>混池方式</td><td>塞入现有三选一池, 与精通卡同权重 (§4.1 权重表: 1.5)</td></tr>
+      <tr><td>稀有度</td><td>无稀有加成, 普通强度普通权重</td></tr>
+      <tr><td>每局上限</td><td>无 (最多 3 张同类专属齐)</td></tr>
+      <tr><td>双主角切分</td><td>Marvis 只出 Marvis 3 张, Nova 只出 Nova 3 张 (开局二选一时锁定)</td></tr>
+      <tr><td>拿过即剔除</td><td>与精通卡一致, 一次性 (羁绊触发后不影响剔除)</td></tr>
+      <tr><td>羁绊触发</td><td>3 张同主角专属集齐即触发, 无额外条件</td></tr>
+      <tr><td>解锁池扩展 (未来)</td><td>T1 = M1 默认 3 张 (免费) · T2/T3 = 无尽经验解锁 (本期只预留结构不落内容)</td></tr>
+    </table>
+
+    <h3>4.7.2 Marvis 专属 · 老江湖买卖 · A/C/F 类</h3>
+    <table>
+      <tr><th style="width:110px">id</th><th style="width:80px">名</th><th style="width:50px">类</th><th>效果 (M1 基础版)</th></tr>
+      <tr><td><code>a_marvis</code></td><td><strong>全下</strong></td><td>A</td><td>每次开火 <strong>20% 概率</strong>打出三倍伤子弹 (单发×3), <strong>20% 概率</strong>空枪 (不出弹, 有开火动画和音效)</td></tr>
+      <tr><td><code>c_marvis</code></td><td><strong>梭哈</strong></td><td>C</td><td>击杀 <strong>5 只不吃伤</strong> → 触发"手气正旺" 8s: 攻速+60% / 暴击率+30% / 移速+20%; 期间吃到任何伤害立即中断并进 8s 冷却</td></tr>
+      <tr><td><code>f_marvis</code></td><td><strong>翻牌</strong></td><td>F</td><td>每次三选一时可重摇一次, 但重摇后新三张里 <strong>必然有一张 f_gamble (恶魔赌局) 强制占位</strong></td></tr>
+    </table>
+    <div class="callout">
+      <strong>羁绊 · All In (ACF 齐)</strong>:
+      <p style="margin:6px 0 0 0">每次开火 <strong>10% 概率</strong>触发"梭哈时刻": 当前弹匣所有子弹瞬间一起打出去 (视觉: 一次性发射本回合内积攒的所有开火, 按当前 A/B 类效果叠加)。</p>
+      <p style="margin:6px 0 0 0;color:#6b7494;font-size:13px">设计意图: Marvis 三张 + 羁绊全部围绕"上头/破功/连锁", 契合混不吝赌棍老板调性。上限刺激, 下限平庸。</p>
+    </div>
+
+    <h3>4.7.3 Nova 专属 · 外科手术 · B/D/G 类</h3>
+    <table>
+      <tr><th style="width:110px">id</th><th style="width:80px">名</th><th style="width:50px">类</th><th>效果 (M1 基础版)</th></tr>
+      <tr><td><code>b_nova</code></td><td><strong>术前麻醉</strong></td><td>B</td><td>命中必挂麻醉 3s (<strong>无概率</strong>), 麻醉期敌人移速-40% + 受伤+20%, 麻醉期间不刷新 (避免概率变量)</td></tr>
+      <tr><td><code>d_nova</code></td><td><strong>稳态输出</strong></td><td>D</td><td>主角每 1s 内连续命中同一目标, 第 3/4/5 命中伤害固定 = 主伤 <strong>×1.2 / ×1.4 / ×1.6</strong> (无暴击浮动)</td></tr>
+      <tr><td><code>g_nova</code></td><td><strong>协同标记</strong></td><td>G</td><td>AUX 激光命中的目标留驻"标记" 3s, 主角对标记目标伤害 <strong>+30%</strong> (无概率无消耗)</td></tr>
+    </table>
+    <div class="callout">
+      <strong>羁绊 · 精确制导 (BDG 齐)</strong>:
+      <p style="margin:6px 0 0 0">对带麻醉的敌人, 主角每次命中额外造成"标准伤害": 固定 = 主伤 × 100% (<strong>无暴击浮动, 无衰减, 无随机</strong>)。</p>
+      <p style="margin:6px 0 0 0;color:#6b7494;font-size:13px">设计意图: Nova 三张 + 羁绊全部围绕"必触/可预测/无 RNG", 契合外科医生调性。数值刚性, 玩家能算清。</p>
+    </div>
+
+    <h3>4.7.4 未来解锁池预留</h3>
+    <p>M1 上线仅开放每主角 T1 · 3 张。T2/T3 池等"无尽得分系统"上线后, 通过对局经验解锁 (参考 LOL 海克斯大乱斗活动机制, 玩得越多解锁越多)。T2/T3 内容待独立议题设计, 本期不落。</p>
   </section>
 
   <section class="chapter" id="ch-05">
@@ -2454,7 +2502,7 @@ if (targetLv &gt; skillLevels[id]) {
   </section>
 
   <section class="chapter">
-    <h3 id="ch-v43" style="color:#c62828">V4.3 · K27 · 数值精修 · 快枪手弹速化 + 爆炸半径锁死 + 集束/连发削 + 三 AOE 对宝箱现状 <span class="new-tag">NEW</span> (2026-07-25)</h3>
+    <h3 id="ch-v43" style="color:#c62828">V4.3 · K27 · 数值精修 · 快枪手弹速化 + 爆炸半径锁死 + 集束/连发削 + 三 AOE 对宝箱现状 (2026-07-25)</h3>
     <div class="doc-body">
       <p class="lead">K27 五项精修 (承接 K26 五项收敛): (1) <strong>a_rapid 快枪手</strong> 效果口径由 "射速×2" 改成 "<strong>子弹飞行速度 ×1.5</strong>" (velMult 通道独立, 与 a_burst 攻速通道解耦); (2) <strong>a_explode 爆炸半径锁死 20px</strong>, 不再挂载体尺寸 (打宝箱/打小怪视觉一致); (3) <strong>a_pierce 集束枪管</strong> 穿透 2→1 · 次级衰减 20%→40%; (4) <strong>a_burst 连发快射</strong> 单发 0.55→0.35 (3 弹道 × 0.35 = 1.05× DPS); (5) <strong>together / flywheel / laserpierce</strong> 三技能对宝箱扫描单独用 <strong>CHEST_AOE_R = 200px</strong> 圆形跨通道 (敌人锁定逻辑不动) — <strong>200px 大部分布局下打不到左通道宝箱, K 拍板维持原状, 三技能对宝箱实际生效性待未来议题定</strong>。</p>
 
@@ -2523,6 +2571,59 @@ if (targetLv &gt; skillLevels[id]) {
         <li>五项主体逻辑改动 demo.html 由前置 K27 dev subagents 完成; spec 收尾块 (本节) 由收尾 subagent 追加</li>
         <li>只改 spec.html + spec-manual.html 两个文件; 不动 demo.html / terms.js / 任何其他文件</li>
         <li>不 commit / 不 push / 不 build / 不 deploy — 由 Nova 主脑 controller 统一收尾</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <h3 id="ch-v44" style="color:#c62828">V4.4 · K29 · 专属卡系统 · 双主角 3 张 + 羁绊 (骨架版) <span class="new-tag">NEW</span> (2026-07-28)</h3>
+    <div class="doc-body">
+      <p class="lead">K29 新增 §4.7 专属卡系统骨架: 与 §4.6 精通卡池 (26 张) 并列的双主角专属卡池, Marvis (A/C/F) · Nova (B/D/G) 各 3 张, 集齐即触发羁绊。K 拍板"先落骨架, 后面手动打磨" — 结构清晰即可, 数值/文案本期不深雕。M1 仅开每主角 T1 · 3 张, T2/T3 预留给未来"无尽得分系统"经验解锁 (参考 LOL 海克斯大乱斗)。</p>
+
+      <p><strong>① 变更前</strong>:</p>
+      <ul>
+        <li>无 §4.7 章节, 宝箱三选一卡池仅含 <strong>26 张精通卡</strong> (§4.6: A 5 · B 3 · C 2 · D 2 · E 3 · F 6 · G 5)</li>
+        <li>双主角 Marvis / Nova 在系统层无专属差异化, 只有开局二选一时的调性差 (赌 vs 稳)</li>
+      </ul>
+
+      <p><strong>② 变更后</strong>:</p>
+      <ul>
+        <li>新增 <strong>§4.7 专属卡系统</strong> (骨架版, 4 小节: 系统机制 / Marvis 三张 / Nova 三张 / 未来解锁池预留)</li>
+        <li>新增 <strong>6 张专属卡</strong>: Marvis <code>a_marvis 全下</code> / <code>c_marvis 梭哈</code> / <code>f_marvis 翻牌</code> · Nova <code>b_nova 术前麻醉</code> / <code>d_nova 稳态输出</code> / <code>g_nova 协同标记</code></li>
+        <li>新增 <strong>2 套羁绊</strong>: Marvis All In (ACF 齐, 10% 梭哈时刻) · Nova 精确制导 (BDG 齐, 麻醉敌人 +100% 标准伤)</li>
+        <li>卡池骨架: <strong>26 精通 + 6 专属 = 32 张</strong> (双主角切分后每主角实际池 = 26 + 3 = 29 张)</li>
+        <li>混池规则: 与精通卡同权重 (§4.1 · 1.5), 无稀有加成, 拿过即剔除, 3 张同主角专属集齐触发羁绊无额外条件</li>
+      </ul>
+
+      <p><strong>③ 设计意图</strong>:</p>
+      <ul>
+        <li><strong>双主角调性放大</strong>: Marvis 三张 + 羁绊全部围绕"上头/破功/连锁" (概率/中断/强制赌局), 契合混不吝赌棍老板 — 上限刺激, 下限平庸</li>
+        <li><strong>Nova 走反面</strong>: 三张 + 羁绊全部围绕"必触/可预测/无 RNG" (100% 挂麻醉 / 固定倍率 / 无概率标记), 契合外科医生 — 数值刚性, 玩家能算清</li>
+        <li><strong>骨架先落</strong>: K 明确"不要过度雕琢文案数值, 结构清晰即可", 后续手动打磨 (数值/文案/羁绊触发条件精修)</li>
+        <li><strong>T2/T3 预留</strong>: 无尽得分系统上线后走"玩得越多解锁越多" (LOL 海克斯大乱斗机制), 本期只预留结构不落内容</li>
+      </ul>
+
+      <p><strong>④ 精确落地清单</strong> (本次改动):</p>
+      <ul>
+        <li><code>spec.html</code> §4.7 章节新增 (插入位置: §4.6 精通卡附录之后, §5 状态门之前; 新 section id=<code>ch-04-7</code>, 4 小节 4.7.1 / 4.7.2 / 4.7.3 / 4.7.4)</li>
+        <li><code>spec.html</code> 顶部版本刷新: <code>&lt;title&gt;</code> v4.3 → v4.4 · GAME SPEC badge v4.3 → v4.4 · 项目版本 value 换成 v4.4 K29 摘要 · 发布日期 2026-07-25 → 2026-07-28 · sidebar footer v4.3 → v4.4</li>
+        <li><code>spec.html</code> 目录追加 <code>ch-v44</code> 一行 (V4.4 K29 专属卡系统), V4.3 的 NEW tag 摘除 (只保留最新版有 NEW)</li>
+        <li><code>spec.html</code> 本 V4.4 权威块 (章节末尾追加)</li>
+        <li>SPEC_PUBLISHED 时间戳更新 → '2026-07-28' (spec-manual.html 由后续 subagent 同步, 本文档只改 spec.html)</li>
+      </ul>
+
+      <p><strong>⑤ 未落项</strong> (后续独立议题):</p>
+      <ul>
+        <li><code>demo.html</code> 未接入 (专属卡池未挂载三选一入口, 6 张专属卡效果代码未实现, 羁绊触发逻辑未落)</li>
+        <li><code>terms.js</code> 未加术语中心表 (T.a_marvis / T.c_marvis / ... T.bond_allin / T.bond_precision 等术语键未追加)</li>
+        <li><code>spec-manual.html</code> 未同步 K 私域 (本次只改活文档 spec.html, K 私域视本次是否要落 V4.x 增量块由 K 拍板)</li>
+        <li>数值待 K 手动打磨: a_marvis 20%/20% 概率 · c_marvis 8s 时长 · f_marvis 强制占位机制 · b_nova 3s 麻醉 · d_nova 三段倍率 · g_nova 3s 标记 · 两套羁绊触发概率/倍率</li>
+      </ul>
+
+      <p><strong>⑥ 部署纪律</strong>:</p>
+      <ul>
+        <li>本次纯文档改动, 只动 spec.html 一个文件, 不改任何 <code>&lt;script&gt;</code> 逻辑</li>
+        <li>不 push / 不 build / 不 wrangler deploy — 由 controller 收尾统一做</li>
       </ul>
     </div>
   </section>
