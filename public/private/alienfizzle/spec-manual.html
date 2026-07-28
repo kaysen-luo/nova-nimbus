@@ -2086,10 +2086,11 @@ Alien Fizzle · 玩法规格<br>
       document.body.removeChild(a);
       setTimeout(function(){ URL.revokeObjectURL(url); }, 1000);
     } catch(e) { console.warn('download failed', e); }
-    // 同时打开 modal 显示 body innerHTML, 便于复制
-    const main = document.querySelector('main');
-    modalTA.value = main ? main.innerHTML : document.body.innerHTML;
-    modal.classList.add('show');
+    // 2026-07-28 K 立: 源码弹窗已关闭 (K 表示看不懂源码, 只需文件下载弹窗即可)
+    // 若未来需重开, 恢复以下 3 行:
+    //   const main = document.querySelector('main');
+    //   modalTA.value = main ? main.innerHTML : document.body.innerHTML;
+    //   modal.classList.add('show');
   }
 
   btnExport.addEventListener('click', exportEditedSpec);
