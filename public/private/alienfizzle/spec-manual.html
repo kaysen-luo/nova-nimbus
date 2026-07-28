@@ -495,27 +495,26 @@ Alien Fizzle · 玩法规格<br>
       <strong>台词分工</strong>: 玩家上场的角色 = 战场执行方 (第一人称音效/技能语音); 未上场的角色 = <strong>无线电画外音</strong> (关卡切换、状态门刷新、Boss 出现、通关等时机触发短语音/文本弹幕)。<strong>双主角互为对方的画外音</strong>, 是最省成本又能撑起双人叙事的做法。
     </div>
 
-    <h4>1.3.3 AI 副手 (AUX) · 双型号档案</h4>
-    <p class="lead">星际防卫队为每位星际战士配发一台 <strong>AI 副手</strong> (系统代号 <code>AUX</code>, 玩法系统层通名), 世界观层根据入伍来源与装备批次分两型号: <strong>AUV-0</strong> (Marvis 装备) / <strong>SIV-7</strong> (Nova 装备)。两者共享同一玩法能力基线 (四大功能 · 状态门吃法 · 仇恨判定), 仅在型号叙事和场上语言上有差异。</p>
+    <h4>1.3.3 AI 副手 (AUX) · 军方标配型号 AUV-0</h4>
+    <p class="lead">星际防卫队为每位星际战士配发一台 <strong>AI 副手</strong> (系统代号 <code>AUX</code>, 玩法系统层通名)。型号统一为 <strong>AUV-0</strong> (Auxiliary Utility Vehicle · 0 号原型机), 双主角持有同一军方标配型号, 差异只体现在<strong>各自给自己的 AUX 取的名字与语言习惯</strong>上, 面板数值与玩法机制完全一致。</p>
 
     <table>
-      <tr><th>维度</th><th>AUV-0 (Marvis)</th><th>SIV-7 (Nova)</th></tr>
-      <tr><td>全称</td><td>Auxiliary Utility Vehicle · 0 号原型机</td><td>Surgical Intervention Vehicle · 第 7 代量产旗舰</td></tr>
-      <tr><td>批次定位</td><td>军方早期原型测试品, 老兵油子拿手的老伙计</td><td>近期量产的高精尖旗舰, 精准冷艳的现役标配</td></tr>
-      <tr><td>场上昵称</td><td><strong>零指导</strong> (Marvis 老油条式调侃尊称)</td><td><strong>寸厘</strong> (Nova 视其为自己的手术刀, "分寸毫厘" 意象)</td></tr>
+      <tr><th>维度</th><th>Marvis 侧</th><th>Nova 侧</th></tr>
+      <tr><td>军方型号</td><td colspan="2" style="text-align:center;"><strong>AUV-0</strong> (Auxiliary Utility Vehicle · 0 号原型机) — 星际防卫队统一标配</td></tr>
+      <tr><td>持有者取名</td><td><strong>零指导</strong> (Marvis 老油条式调侃尊称, 直接叫)</td><td><strong>手术刀"寸厘"</strong> (Nova 视其为自己的手术刀, "分寸毫厘"意象) — 首次介绍全称"手术刀寸厘", 后续对话简称<strong>寸厘</strong></td></tr>
       <tr><td>UI 提示口吻</td><td>偏懒散, 偶尔跳戏 (如"这波再来一遍?"、"敷个云朵形创可贴")</td><td>偏专业, 战术术语为主 (如"目标已锁定"、"生命维持稳定")</td></tr>
       <tr><td>核心能力 (共享基线)</td><td colspan="2" style="text-align:center;"><strong>自动索敌 · 激光输出 · 设备修复 · 医疗人类</strong> — §2 玩法系统层对应仇恨判定 + 激光武器 + 后期精通卡 G 类</td></tr>
-      <tr><td>数值/玩法差异</td><td colspan="2" style="text-align:center;"><strong>无</strong> · 型号只影响立绘 + 昵称 + UI 提示词, 面板数值和玩法机制完全一致</td></tr>
+      <tr><td>数值/玩法差异</td><td colspan="2" style="text-align:center;"><strong>无</strong> · 昵称与 UI 提示词只影响立绘与台词, 面板数值和玩法机制完全一致</td></tr>
     </table>
 
     <div class="callout">
       <strong>命名分层</strong>:
       <ul style="margin-top:6px;">
         <li><strong>系统层通名</strong> = <code>AUX</code> (Auxiliary AI Unit) — 玩法规则文档 / 代码变量 / spec 系统条款一律用此</li>
-        <li><strong>世界观档案层</strong> = AUV-0 / SIV-7 — 立绘 UI / 军方档案 / 型号铭牌</li>
-        <li><strong>玩家昵称层</strong> = 零指导 / 寸厘 — 场上口语 / 无线电台词</li>
+        <li><strong>世界观档案层</strong> = AUV-0 (军方标配型号, 双主角共用) — 立绘 UI / 军方档案 / 型号铭牌</li>
+        <li><strong>玩家昵称层</strong> = 零指导 (Marvis) / 手术刀"寸厘" · 简称寸厘 (Nova) — 场上口语 / 无线电台词</li>
       </ul>
-      <strong>设计意图</strong>: 系统层通名保持稳定, 未来即使调整型号命名或增加新型号, 也无需触碰代码和玩法文档。<strong>反差萌接缝</strong>: 0 号原型 vs 第 7 代旗舰的批次落差本身讲两人身份差, 不用台词点破。
+      <strong>设计意图</strong>: 系统层通名保持稳定, 未来即使调整型号命名或增加新型号, 也无需触碰代码和玩法文档。<strong>反差萌接缝</strong>: 同一军方标配 AUV-0, 两个人给它取了完全不同的名字 (调侃式尊称 vs 手术器械代称), 讲的是主角性格差, 不用台词点破。
     </div>
 
     <h4>1.3.4 外星生物 · Ossyr (厄司)</h4>
@@ -531,7 +530,7 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout warn">
       <strong>调性锚 · 严肃科幻底 + 缝隙反差萌</strong> (给美术/音效/文案外包统一遵循)
       <ol style="margin-top:8px; padding-left:24px;">
-        <li><strong>硬核设定 + 软名字/软文案</strong>: 军方型号 AUV-0 / SIV-7 (硬) + 场上叫"零指导"/"寸厘"(软); AUX 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
+        <li><strong>硬核设定 + 软名字/软文案</strong>: 军方型号 <code>AUV-0</code> (硬) + 场上叫"零指导"/"寸厘"(软, 双主角各自取名); AUX 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
         <li><strong>外星生物的硬核压迫感</strong>: 叙事上是入侵者, 视觉上是<strong>生物本体 + 骨甲/结晶义肢改装</strong>的异种战士 (严肃硬核), 死亡从简不做浮夸表现。这条<strong>不再承担反差萌</strong>, 归严肃底; 反差萌接缝改由"AUX 硬名软名"和"双主角吐槽"两条支撑。</li>
         <li><strong>双主角吐槽接缝</strong>: 关卡切换 / Boss 出现 / 通关 等节点插 2-3 秒无线电短对话 (文本弹幕即可, 无需过场动画), 严肃战报 + 战友日常吐槽的化学反应是留存钩子。</li>
       </ol>
@@ -544,7 +543,7 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout">
       <strong>调性总则</strong> (Kaysen 2026-07-27 定死, 起草时逐条比对):
       <ul style="margin-top:6px;">
-        <li><strong>不提 AUX / 型号 / 昵称</strong>: 台词内容层不出现 AUX / AUV-0 / SIV-7 / 零指导 / 寸厘, 保持世界观纯度</li>
+        <li><strong>不提 AUX / 型号 / 昵称</strong>: 台词内容层不出现 AUX / AUV-0 / 零指导 / 寸厘, 保持世界观纯度</li>
         <li><strong>称呼规则</strong> (2026-07-27 K 立死):
           <ul style="margin-top:4px;">
             <li>Nova → 马启航: <strong>严格单一称呼"马启航"</strong> (无变体, 不用"Marvis"/"老马"/"启航"/"马哥"等)</li>

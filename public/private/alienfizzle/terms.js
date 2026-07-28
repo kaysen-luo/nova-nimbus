@@ -55,22 +55,28 @@ const T = {
     codename:      'AUX',                    // 代码/系统规则层通名 (稳定, 未来改名不动这里)
     fullNameCN:    'AI 副手',                // 玩法文档 / UI 通用中文
     fullNameEN:    'Auxiliary AI Unit',      // 英文全称
-    mirrorName:    '镜像 AUX',               // TODO K 待拍板是否分双镜像 (镜像 AUV-0 / 镜像 SIV-7)
-    formerNames:   ['NUO', 'BOBO'],          // 已废弃历史名 (2026-06 NUO→BOBO, 2026-07-27 BOBO→AUX)
+    mirrorName:    '镜像 AUX',               // TODO K 待拍板 (双主角共用 AUV-0, 镜像也是同型号)
+    formerNames:   ['NUO', 'BOBO', 'SIV-7'], // 已废弃历史名 (2026-06 NUO→BOBO, 2026-07-27 BOBO→AUX, 2026-07-28 SIV-7 弃用, 双主角统一 AUV-0)
   },
 
-  // ─── 3.1 AUX 型号档案 (世界观层, 双主角各配一款) ────────────────
+  // ─── 3.1 AUX 型号档案 (世界观层, 双主角共用同一军方标配, 各自取名) ─
   auxModels: {
-    marvis: {
+    // 军方标配型号 (2026-07-28 K 立死, 双主角共用)
+    military: {
       code:     'AUV-0',
       fullName: 'Auxiliary Utility Vehicle · 0 号原型机',
+    },
+    // 双主角对自己 AUX 的取名 (玩家昵称层)
+    marvis: {
+      code:     'AUV-0',                     // 军方型号 (与 Nova 相同)
       nick:     '零指导',                    // Marvis 老油条式调侃尊称 (2026-07-28 K29-follow 换名)
+      nickIntro: '零指导',                    // 首次介绍与后续对话一致, 直接叫
       tone:     'lazy',                      // UI 提示口吻: 懒散/跳戏
     },
     nova: {
-      code:     'SIV-7',
-      fullName: 'Surgical Intervention Vehicle · 第 7 代量产旗舰',
-      nick:     '寸厘',                      // Nova 视其为自己的手术刀, "分寸毫厘" 意象 (2026-07-28 K29-follow 换名)
+      code:     'AUV-0',                     // 军方型号 (与 Marvis 相同)
+      nick:     '寸厘',                      // 后续对话简称 (Nova 视其为手术刀, "分寸毫厘" 意象)
+      nickIntro: '手术刀"寸厘"',              // 首次介绍全称 (2026-07-28 K 立死 · 介绍走全称, 后续走简称)
       tone:     'professional',              // UI 提示口吻: 专业/术语
     },
   },
