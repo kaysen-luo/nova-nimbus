@@ -502,7 +502,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><th>维度</th><th>AUV-0 (Marvis)</th><th>SIV-7 (Nova)</th></tr>
       <tr><td>全称</td><td>Auxiliary Utility Vehicle · 0 号原型机</td><td>Surgical Intervention Vehicle · 第 7 代量产旗舰</td></tr>
       <tr><td>批次定位</td><td>军方早期原型测试品, 老兵油子拿手的老伙计</td><td>近期量产的高精尖旗舰, 精准冷艳的现役标配</td></tr>
-      <tr><td>场上昵称</td><td><strong>小零</strong> (Marvis 老油条口吻)</td><td><strong>小七</strong> (Nova 飒女主口吻)</td></tr>
+      <tr><td>场上昵称</td><td><strong>零指导</strong> (Marvis 老油条式调侃尊称)</td><td><strong>寸厘</strong> (Nova 视其为自己的手术刀, "分寸毫厘" 意象)</td></tr>
       <tr><td>UI 提示口吻</td><td>偏懒散, 偶尔跳戏 (如"这波再来一遍?"、"敷个云朵形创可贴")</td><td>偏专业, 战术术语为主 (如"目标已锁定"、"生命维持稳定")</td></tr>
       <tr><td>核心能力 (共享基线)</td><td colspan="2" style="text-align:center;"><strong>自动索敌 · 激光输出 · 设备修复 · 医疗人类</strong> — §2 玩法系统层对应仇恨判定 + 激光武器 + 后期精通卡 G 类</td></tr>
       <tr><td>数值/玩法差异</td><td colspan="2" style="text-align:center;"><strong>无</strong> · 型号只影响立绘 + 昵称 + UI 提示词, 面板数值和玩法机制完全一致</td></tr>
@@ -513,25 +513,26 @@ Alien Fizzle · 玩法规格<br>
       <ul style="margin-top:6px;">
         <li><strong>系统层通名</strong> = <code>AUX</code> (Auxiliary AI Unit) — 玩法规则文档 / 代码变量 / spec 系统条款一律用此</li>
         <li><strong>世界观档案层</strong> = AUV-0 / SIV-7 — 立绘 UI / 军方档案 / 型号铭牌</li>
-        <li><strong>玩家昵称层</strong> = 小零 / 小七 — 场上口语 / 无线电台词</li>
+        <li><strong>玩家昵称层</strong> = 零指导 / 寸厘 — 场上口语 / 无线电台词</li>
       </ul>
       <strong>设计意图</strong>: 系统层通名保持稳定, 未来即使调整型号命名或增加新型号, 也无需触碰代码和玩法文档。<strong>反差萌接缝</strong>: 0 号原型 vs 第 7 代旗舰的批次落差本身讲两人身份差, 不用台词点破。
     </div>
 
-    <h4>1.3.4 外星生物 · Alien Fizzle</h4>
+    <h4>1.3.4 外星生物 · Ossyr (厄司)</h4>
     <table>
       <tr><th>维度</th><th>设定</th></tr>
-      <tr><td>命名由来</td><td><strong>Fizzle</strong> = 苏打水气泡的拟声词 · 首次目击于 Aurelia 殖民星矿区外围, 因外形圆滚有气泡感得名 <strong>Alien Fizzle</strong>, 侵略性凶残</td></tr>
-      <tr><td>形态</td><td>基础形态圆滚泡泡感 (P0 三种小兵), 精英/稀有形态形变升级 (P1 层)</td></tr>
-      <tr><td>死亡表现</td><td><strong>化为一滩汽水泡沫消散</strong> — 严肃战场里最直接的反差萌接缝</td></tr>
+      <tr><td>命名由来</td><td><strong>Ossyr</strong> = 拉丁词根 <code>os</code> (骨) + <code>-yr</code> 造词后缀 · 中文名 <strong>厄司</strong> · 首次目击于 Aurelia 殖民星矿区外围, 因<strong>骨甲外壳与结晶义肢改装形态</strong>得名 · 侵略性凶残 · 与 Aurelia / Aurelium 共拉丁词根, 三者一致性拉满</td></tr>
+      <tr><td>形态基调</td><td><strong>生物本体 + 外星骨甲/结晶义肢改装</strong> · 严禁机械金属/塑料元素 · 基础/精良/稀有三档以<strong>骨甲覆盖率</strong> 20% / 50% / 80% 分层, 稀有档配<strong>结晶能量核</strong></td></tr>
+      <tr><td>五官</td><td>骨甲盔下<strong>发光单眼隙缝</strong> (紫/绿/蓝三阵营色) · 关节缝隙同色透光, 表现"生物能量透出骨甲"</td></tr>
+      <tr><td>死亡表现</td><td><strong>杂兵/精英直接消失</strong> (从简, 不做爆炸/尸体/掉落特效, 只留短促飘字与音效) · <strong>Boss 以上死亡时冻结定格 + 去色 + 渐隐</strong> (强调击杀分量, 避免与杂兵同表现) </td></tr>
       <tr><td>行为逻辑</td><td>从顶部推进 · 直至防线前停下攻击 · 详见 §3 战场布局</td></tr>
     </table>
 
     <div class="callout warn">
       <strong>调性锚 · 严肃科幻底 + 缝隙反差萌</strong> (给美术/音效/文案外包统一遵循)
       <ol style="margin-top:8px; padding-left:24px;">
-        <li><strong>硬核设定 + 软名字/软文案</strong>: 军方型号 AUV-0 / SIV-7 (硬) + 场上叫"小零"/"小七"(软); AUX 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
-        <li><strong>外星生物的错位可爱</strong>: 叙事上是入侵者 (严肃), 视觉上是圆滚泡泡 + 死亡化泡沫 (萌)。这个错位<strong>贯穿美术、动画、音效三线</strong>。</li>
+        <li><strong>硬核设定 + 软名字/软文案</strong>: 军方型号 AUV-0 / SIV-7 (硬) + 场上叫"零指导"/"寸厘"(软); AUX 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
+        <li><strong>外星生物的硬核压迫感</strong>: 叙事上是入侵者, 视觉上是<strong>生物本体 + 骨甲/结晶义肢改装</strong>的异种战士 (严肃硬核), 死亡从简不做浮夸表现。这条<strong>不再承担反差萌</strong>, 归严肃底; 反差萌接缝改由"AUX 硬名软名"和"双主角吐槽"两条支撑。</li>
         <li><strong>双主角吐槽接缝</strong>: 关卡切换 / Boss 出现 / 通关 等节点插 2-3 秒无线电短对话 (文本弹幕即可, 无需过场动画), 严肃战报 + 战友日常吐槽的化学反应是留存钩子。</li>
       </ol>
       <strong>反面示例</strong>: 全程搞怪滑稽 (削弱严肃底, 观感掉档) · 完全严肃无接缝 (与竞品同质化, 传播弱)。反差萌是<strong>缝隙里冒出来的</strong>, 不是主基调。
@@ -543,7 +544,7 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout">
       <strong>调性总则</strong> (Kaysen 2026-07-27 定死, 起草时逐条比对):
       <ul style="margin-top:6px;">
-        <li><strong>不提 AUX / 型号 / 昵称</strong>: 台词内容层不出现 AUX / AUV-0 / SIV-7 / 小零 / 小七, 保持世界观纯度</li>
+        <li><strong>不提 AUX / 型号 / 昵称</strong>: 台词内容层不出现 AUX / AUV-0 / SIV-7 / 零指导 / 寸厘, 保持世界观纯度</li>
         <li><strong>称呼规则</strong> (2026-07-27 K 立死):
           <ul style="margin-top:4px;">
             <li>Nova → 马启航: <strong>严格单一称呼"马启航"</strong> (无变体, 不用"Marvis"/"老马"/"启航"/"马哥"等)</li>

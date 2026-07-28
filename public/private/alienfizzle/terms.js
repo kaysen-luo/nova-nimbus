@@ -64,19 +64,23 @@ const T = {
     marvis: {
       code:     'AUV-0',
       fullName: 'Auxiliary Utility Vehicle · 0 号原型机',
-      nick:     '小零',
+      nick:     '零指导',                    // Marvis 老油条式调侃尊称 (2026-07-28 K29-follow 换名)
       tone:     'lazy',                      // UI 提示口吻: 懒散/跳戏
     },
     nova: {
       code:     'SIV-7',
       fullName: 'Surgical Intervention Vehicle · 第 7 代量产旗舰',
-      nick:     '小七',
+      nick:     '寸厘',                      // Nova 视其为自己的手术刀, "分寸毫厘" 意象 (2026-07-28 K29-follow 换名)
       tone:     'professional',              // UI 提示口吻: 专业/术语
     },
   },
 
   // ─── 4. 敌人档位 (spec §2.4) ───────────────────────────────────
   enemies: {
+    // 外星异种族名 (2026-07-28 K29-follow 从 Alien Fizzle 换到 Ossyr, 骨甲风格立死)
+    speciesEN:     'Ossyr',           // 拉丁 os (骨) + -yr 造词, 与 Aurelia/Aurelium 同拉丁词根
+    speciesCN:     '厄司',            // 中文名
+    formerSpecies: ['Alien Fizzle'],  // 已废弃 · 圆滚气泡感, v3.2 骨甲风重写后弃
     tierMinion:    '小兵',           // 4 款 · 消耗火力
     tierElite:     '精英怪',         // 7 款 · 引入策略应对
     tierMiniBoss:  '小 BOSS',        // 6 款 · 集火 3-5s 转折点
