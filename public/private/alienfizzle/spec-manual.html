@@ -2000,7 +2000,7 @@ Alien Fizzle · 玩法规格<br>
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-28 14:00';  // ← 每次重新部署 spec 时更新此值 (K29 · 专属卡骨架同步进 spec-manual)
+  const SPEC_PUBLISHED = '2026-07-27 19:00';  // ← 每次重新部署 spec 时更新此值 (K28-E · 台词称呼规则立死 + M1 全 13 节点 66 条落齐 · K29 §4.7 骨架同步不刷此值以保 K 本地存档存活)
   try {
     const saved = localStorage.getItem(LS_KEY);
     const meta = localStorage.getItem(LS_KEY + '_meta') || '';
