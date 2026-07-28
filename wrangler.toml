@@ -1,0 +1,7 @@
+name = "nova-nimbus"
+compatibility_date = "2026-07-28"
+pages_build_output_dir = "dist"
+
+[[kv_namespaces]]
+binding = "SPEC_KV"
+id = "ce2a690cbb864a3a8cf0ba2671cf38ee"
