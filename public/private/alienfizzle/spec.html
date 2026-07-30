@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.4</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.5</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -391,10 +391,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v41">V4.1 · K25 宝箱增伤生效+BOBO 卡组 3→5 张重组</a></li>
   <li><a href="#ch-v42">V4.2 · K26 BOBO 制导互斥/暴击步进减半/爆炸半径缩/飘字收敛+快枪手 a_rapid</a></li>
   <li><a href="#ch-v43">V4.3 · K27 数值精修 (快枪手弹速/爆炸锁死/穿透削/连发削/AOE 对宝箱现状)</a></li>
-  <li><a href="#ch-v44">V4.4 · K29 专属卡系统 · 双主角 3 张 + 羁绊 (骨架版) <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v44">V4.4 · K29 专属卡系统 · 双主角 3 张 + 羁绊 (骨架版)</a></li>
+  <li><a href="#ch-v45">V4.5 · §1.3 世界观整段补齐 · 与 spec-manual 对齐 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v4.4 · 2026-07-28<br>
+v4.5 · 2026-07-30<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -403,17 +404,17 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v4.4</span>
+<span class="badge">GAME SPEC · v4.5</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v4.4 (K29 · 专属卡系统骨架 · 双主角各 3 张 + 羁绊 · Marvis A/C/F 赌 · Nova B/D/G 稳)</div>
+<div class="value">v4.5 (§1.3 世界观整段补齐 · Aurelia / Aurelium / AUV-0 / Ossyr 厄司 · 与 spec-manual 对齐)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-28</div>
+<div class="value">2026-07-30</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -656,6 +657,78 @@ Alien Fizzle · 玩法规格<br>
 
     <div class="callout">
       <strong>设计意图</strong>: 题材从"主动进攻"换成"被动守线", 让 endless 节奏自然成立 — 玩家不再有"打到尽头"的预期, 而是"撑多久"的存活叙事, 更契合 A 路单机休闲爆款的 30-60s 单局节奏。
+    </div>
+
+    <h3>1.3 世界观</h3>
+    <p class="lead">近未来 · 星际殖民时代 · 地球殖民星 <strong>Aurelia</strong> 争夺战。<strong>严肃科幻底 + 缝隙反差萌</strong>为核心调性锚, 后续 UI 文案 / 立绘 / 音效外包统一遵循。</p>
+
+    <h4>1.3.1 世界设定</h4>
+    <table>
+      <tr><th>维度</th><th>设定</th></tr>
+      <tr><td>时代</td><td>近未来 · 星际殖民时代 · 地球主导的殖民网络已延伸至邻近星系, 但殖民星资源开采尚在建设期</td></tr>
+      <tr><td>冲突地点</td><td>地球殖民星 <strong>Aurelia</strong> — 因蕴藏地球独缺的 <strong>Aurelium 金属</strong> (超导/曲率引擎核心材料) 而成为殖民网络重心</td></tr>
+      <tr><td>冲突起因</td><td>外星文明侵入 Aurelia, 目的是<strong>掠夺 Aurelium 矿脉</strong>, 非通讯友好接触</td></tr>
+      <tr><td>防御体系</td><td>Aurelia 殖民星外围部署<strong>星际防卫队防线</strong>, 由两人小队 + AI 辅助作战单元组成的机动战斗单元把守矿区通道</td></tr>
+      <tr><td>玩家所在位</td><td>Aurelia 前线防线 · 两人守线小队 · 负责阻断外星生物突入殖民城与矿区</td></tr>
+    </table>
+
+    <h4>1.3.2 双主角 · 玩家开局二选一</h4>
+    <p><strong>Marvis</strong> 与 <strong>Nova</strong> 均为星际防卫队正式星际战士, <strong>主动响应征召令</strong>入伍。两人性格、前身份、战场语言完全不同, 玩家开局选一位出战, 未上场者作为<strong>无线电画外音</strong>在场景中吐槽/补台。</p>
+
+    <table>
+      <tr><th>维度</th><th>马启航Marvis</th><th>牛知灵Nova</th></tr>
+      <tr><td>性别</td><td>男</td><td>女</td></tr>
+      <tr><td>性格 tag</td><td><span class="tag tag-may">混不吝</span> <span class="tag tag-may">闲散</span> <span class="tag tag-may">老油条</span></td><td><span class="tag tag-may">飒</span> <span class="tag tag-may">果断</span> <span class="tag tag-may">大女主</span></td></tr>
+      <tr><td>前身份</td><td>地球街角<strong>小卖部老板</strong> — 关了店跨星系响应征召, 心里盘算着战后开个更大的</td><td>地球顶级<strong>外科医生</strong> — 主动请缨调往 Aurelia 前线, "手术台救一个, 战场救一片"</td></tr>
+      <tr><td>入伍动机</td><td>主动响应号召 · 顺便闯闯星际</td><td>主动请缨 · 更大规模救人</td></tr>
+      <tr><td>战场口吻</td><td>懒洋洋 / 摸鱼式吐槽 / 见惯不惊</td><td>精准 / 冷静 / 掌控欲</td></tr>
+      <tr><td>数值/玩法差异</td><td colspan="2" style="text-align:center;"><strong>无</strong> · 二选一只影响立绘 + 台词 + 无线电语音, 不影响面板数值和玩法机制</td></tr>
+    </table>
+
+    <div class="callout">
+      <strong>台词分工</strong>: 玩家上场的角色 = 战场执行方 (第一人称音效/技能语音); 未上场的角色 = <strong>无线电画外音</strong> (关卡切换、状态门刷新、Boss 出现、通关等时机触发短语音/文本弹幕)。<strong>双主角互为对方的画外音</strong>, 是最省成本又能撑起双人叙事的做法。
+    </div>
+
+    <h4>1.3.3 AI 辅助作战单元 (AUX) · 军方标配型号 AUV-0</h4>
+    <p class="lead">星际防卫队为每位星际战士配发一台 <strong>AI 辅助作战单元</strong> (系统代号 <code>AUX</code>, 玩法系统层通名)。型号统一为 <strong>AUV-0</strong> (Auxiliary Utility Vehicle · 0 号原型机), 双主角持有同一军方标配型号, 差异只体现在<strong>各自给自己的 AUX 取的名字与语言习惯</strong>上, 面板数值与玩法机制完全一致。</p>
+
+    <table>
+      <tr><th>维度</th><th>Marvis 侧</th><th>Nova 侧</th></tr>
+      <tr><td>军方型号</td><td colspan="2" style="text-align:center;"><strong>AUV-0</strong> (Auxiliary Utility Vehicle · 0 号原型机) — 星际防卫队统一标配</td></tr>
+      <tr><td>持有者取名</td><td><strong>零指导</strong> (Marvis 老油条式调侃尊称, 直接叫)</td><td><strong>手术刀"寸厘"</strong> (Nova 视其为自己的手术刀, "分寸毫厘"意象) — 首次介绍全称"手术刀寸厘", 后续对话简称<strong>寸厘</strong></td></tr>
+      <tr><td>UI 提示口吻</td><td>偏懒散, 偶尔跳戏 (如"这波再来一遍?"、"敷个云朵形创可贴")</td><td>偏专业, 战术术语为主 (如"目标已锁定"、"生命维持稳定")</td></tr>
+      <tr><td>核心能力 (共享基线)</td><td colspan="2" style="text-align:center;"><strong>自动索敌 · 激光输出 · 设备修复 · 医疗人类</strong> — §2 玩法系统层对应仇恨判定 + 激光武器 + 后期精通卡 G 类</td></tr>
+      <tr><td>数值/玩法差异</td><td colspan="2" style="text-align:center;"><strong>无</strong> · 昵称与 UI 提示词只影响立绘与台词, 面板数值和玩法机制完全一致</td></tr>
+    </table>
+
+    <div class="callout">
+      <strong>命名分层</strong>:
+      <ul style="margin-top:6px;">
+        <li><strong>系统层通名</strong> = <code>AUX</code> (Auxiliary AI Unit) — 玩法规则文档 / 代码变量 / spec 系统条款一律用此</li>
+        <li><strong>世界观档案层</strong> = AUV-0 (军方标配型号, 双主角共用) — 立绘 UI / 军方档案 / 型号铭牌</li>
+        <li><strong>玩家昵称层</strong> = 零指导 (Marvis) / 手术刀"寸厘" · 简称寸厘 (Nova) — 场上口语 / 无线电台词</li>
+      </ul>
+      <strong>设计意图</strong>: 系统层通名保持稳定, 未来即使调整型号命名或增加新型号, 也无需触碰代码和玩法文档。<strong>反差萌接缝</strong>: 同一军方标配 AUV-0, 两个人给它取了完全不同的名字 (调侃式尊称 vs 手术器械代称), 讲的是主角性格差, 不用台词点破。
+    </div>
+
+    <h4>1.3.4 外星生物 · Ossyr (厄司)</h4>
+    <table>
+      <tr><th>维度</th><th>设定</th></tr>
+      <tr><td>命名由来</td><td><strong>Ossyr</strong> = 拉丁词根 <code>os</code> (骨) + <code>-yr</code> 造词后缀 · 中文名 <strong>厄司</strong> · 首次目击于 Aurelia 殖民星矿区外围, 因<strong>骨甲外壳与结晶义肢改装形态</strong>得名 · 侵略性凶残 · 与 Aurelia / Aurelium 共拉丁词根, 三者一致性拉满</td></tr>
+      <tr><td>形态基调</td><td><strong>生物本体 + 外星骨甲/结晶义肢改装</strong> · 严禁机械金属/塑料元素 · 基础/精良/稀有三档以<strong>骨甲覆盖率</strong> 20% / 50% / 80% 分层, 稀有档配<strong>结晶能量核</strong></td></tr>
+      <tr><td>五官</td><td>骨甲盔下<strong>发光单眼隙缝</strong> (紫/绿/蓝三阵营色) · 关节缝隙同色透光, 表现"生物能量透出骨甲"</td></tr>
+      <tr><td>死亡表现</td><td><strong>杂兵/精英直接消失</strong> (从简, 不做爆炸/尸体/掉落特效, 只留短促飘字与音效) · <strong>Boss 以上死亡时冻结定格 + 去色 + 渐隐</strong> (强调击杀分量, 避免与杂兵同表现) </td></tr>
+      <tr><td>行为逻辑</td><td>从顶部推进 · 直至防线前停下攻击 · 详见 §3 战场布局</td></tr>
+    </table>
+
+    <div class="callout warn">
+      <strong>调性锚 · 严肃科幻底 + 缝隙反差萌</strong> (给美术/音效/文案外包统一遵循)
+      <ol style="margin-top:8px; padding-left:24px;">
+        <li><strong>硬核设定 + 软名字/软文案</strong>: 军方型号 <code>AUV-0</code> (硬) + 场上叫"零指导"/"寸厘"(软, 双主角各自取名); AUX 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
+        <li><strong>外星生物的硬核压迫感</strong>: 叙事上是入侵者, 视觉上是<strong>生物本体 + 骨甲/结晶义肢改装</strong>的异种战士 (严肃硬核), 死亡从简不做浮夸表现。这条<strong>不再承担反差萌</strong>, 归严肃底; 反差萌接缝改由"AUX 硬名软名"和"双主角吐槽"两条支撑。</li>
+        <li><strong>双主角吐槽接缝</strong>: 关卡切换 / Boss 出现 / 通关 等节点插 2-3 秒无线电短对话 (文本弹幕即可, 无需过场动画), 严肃战报 + 战友日常吐槽的化学反应是留存钩子。</li>
+      </ol>
+      <strong>反面示例</strong>: 全程搞怪滑稽 (削弱严肃底, 观感掉档) · 完全严肃无接缝 (与竞品同质化, 传播弱)。反差萌是<strong>缝隙里冒出来的</strong>, 不是主基调。
     </div>
   </section>
 
@@ -2624,6 +2697,76 @@ if (targetLv &gt; skillLevels[id]) {
       <ul>
         <li>本次纯文档改动, 只动 spec.html 一个文件, 不改任何 <code>&lt;script&gt;</code> 逻辑</li>
         <li>不 push / 不 build / 不 wrangler deploy — 由 controller 收尾统一做</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <h3 id="ch-v45" style="color:#c62828">V4.5 · §1.3 世界观整段补齐 · 与 spec-manual 对齐 <span class="new-tag">NEW</span> (2026-07-30)</h3>
+    <div class="doc-body">
+      <p class="lead">V4.5 把 spec-manual.html §1.3 世界观整段 (§1.3.1 世界设定 / §1.3.2 双主角 / §1.3.3 AUX 军方标配 AUV-0 / §1.3.4 Ossyr 厄司 / 调性锚 callout) 搬入权威 spec.html, 让开发 / 美术 / 音效外包直接看权威版就能拿到完整调性锚, 不必二次翻 K 私域 spec-manual。台词 §1.3.5 属内容层, 本次不搬入权威版。</p>
+
+      <p><strong>① 变更前</strong>:</p>
+      <ul>
+        <li>spec.html §01 只有 <strong>§1.1 视角</strong> + <strong>§1.2 题材与节奏转换</strong> 两小节</li>
+        <li>完全没有 §1.3 世界观整段 — 权威版世界观档案缺口, 开发/美术要看 Aurelia / Aurelium / AUV-0 / Ossyr / 双主角调性只能翻 K 私域 spec-manual.html</li>
+      </ul>
+
+      <p><strong>② 变更后</strong>:</p>
+      <ul>
+        <li>spec.html §01 补齐 <strong>§1.3 世界观整段</strong> (5 个小节 = §1.3.1 世界设定 + §1.3.2 双主角 + §1.3.3 AUX/AUV-0 + §1.3.4 Ossyr 厄司 + 调性锚 callout)</li>
+        <li>内容与 spec-manual.html §1.3.1-§1.3.4 + 调性锚 callout 完全一字对齐 (未增未减)</li>
+        <li><strong>§1.3.5 无线电台词</strong> 不搬入权威版 (台词属内容层, 权威 spec 只固调性锚与命名分层)</li>
+      </ul>
+
+      <p><strong>③ 设计意图</strong>:</p>
+      <ul>
+        <li>补齐权威 spec 世界观档案缺口 — Aurelia / Aurelium / AUV-0 / Ossyr / 厄司 / 骨甲 / 寸厘 / 零指导 等世界观关键词进权威版, 后续对外协作以 spec.html 为准</li>
+        <li>命名分层 (系统层 AUX / 世界观层 AUV-0 / 玩家昵称层 零指导 · 寸厘) 权威固化, 避免开发/文案再各自发明词</li>
+        <li>调性锚 callout (严肃科幻底 + 缝隙反差萌 · 三条接缝 + 反面示例) 权威固化, 后续 UI 文案 / 立绘 / 音效外包统一遵循</li>
+        <li>台词层不进权威版 — 权威 spec 只承担机制 + 调性锚职责, 具体台词随 §1.3.5 迭代由 spec-manual (K 私域) 承载</li>
+      </ul>
+
+      <p><strong>④ 精确落地清单</strong> (本次改动, 只改 spec.html 一个文件):</p>
+      <ul>
+        <li>§01 视觉与调性 章节 (id=<code>ch-01</code>) 内 §1.2 <code>&lt;/section&gt;</code> 前追加 <strong>§1.3 世界观</strong> 整段, 结构 = <code>&lt;h3&gt;1.3 世界观&lt;/h3&gt;</code> + 5 个小节 (h4 × 4 + 调性锚 callout)</li>
+        <li>§1.3.1 世界设定 · 5 行表 (时代 / 冲突地点 / 冲突起因 / 防御体系 / 玩家所在位)</li>
+        <li>§1.3.2 双主角 · Marvis (马启航) vs Nova (牛知灵) 6 行对比表 + 台词分工 callout</li>
+        <li>§1.3.3 AUX · AUV-0 · 5 行对比表 (Marvis 侧零指导 / Nova 侧手术刀寸厘) + 命名分层 callout</li>
+        <li>§1.3.4 Ossyr (厄司) · 5 行表 (命名由来 / 形态基调 / 五官 / 死亡表现 / 行为逻辑)</li>
+        <li>调性锚 · warn callout 3 条接缝 (硬核设定 + 软名字 / 外星生物压迫感 / 双主角吐槽) + 反面示例</li>
+      </ul>
+
+      <p><strong>⑤ 联动改动</strong>:</p>
+      <ul>
+        <li><code>&lt;title&gt;</code> v4.4 → <strong>v4.5</strong> · GAME SPEC badge v4.4 → v4.5</li>
+        <li>项目版本 value 换成 v4.5 §1.3 世界观补齐摘要 · 发布日期 2026-07-28 → <strong>2026-07-30</strong></li>
+        <li>sidebar footer v4.4 · 2026-07-28 → <strong>v4.5 · 2026-07-30</strong></li>
+        <li>sidebar 目录追加 <code>ch-v45</code> 一行 (V4.5 · §1.3 世界观整段补齐 · 与 spec-manual 对齐), V4.4 的 NEW tag 摘除 (只保留最新版有 NEW)</li>
+        <li>本 V4.5 权威块章节末尾追加</li>
+      </ul>
+
+      <p><strong>⑥ 未落项</strong> (后续独立议题):</p>
+      <ul>
+        <li><strong>§2.2 BOBO 段落</strong> 未同步升级为 AUX 命名 (BOBO→AUX 迁移属独立议题, 本次不动, 待专项 K 拍板)</li>
+        <li><strong>§2.4 外星生物 20 只表格</strong> 美术提示词未同步骨甲/结晶义肢风 (art-spec 层职责, 独立议题)</li>
+        <li>中文项目名 <strong>《舰舰别炸》</strong> 是否随族名 Ossyr / Aurelia 改名 — K 拍板 <strong>保留原名不动</strong>, 已固化</li>
+        <li><code>demo.html</code> UI 文案未接入世界观词条 (Aurelia / Ossyr / 零指导 / 寸厘 走 <code>T.xxx</code> 术语中心表, 后续 terms.js 议题落地)</li>
+      </ul>
+
+      <p><strong>⑦ 部署纪律</strong>:</p>
+      <ul>
+        <li>本次纯文档改动, 只动 <code>spec.html</code> 一个文件 (无 JS 逻辑改动, 豁免 test 阶段)</li>
+        <li><code>spec-manual.html</code> 是 K 私域, 本次<strong>一字不动</strong> (§1.3 源在 spec-manual, 权威版反向对齐)</li>
+        <li>不 push / 不 build / 不 wrangler deploy — 由 controller 收尾统一做</li>
+        <li>spec.html 无 <code>SPEC_PUBLISHED</code> 常量 (该常量只存在于 spec-manual.html), 顶部发布日期已刷 2026-07-30</li>
+      </ul>
+
+      <p><strong>⑧ verification</strong> (marker 关键词自查, 权威版应全部命中):</p>
+      <ul>
+        <li><code>Aurelia</code> · <code>Aurelium</code> · <code>AUV-0</code> · <code>Ossyr</code> · <code>厄司</code></li>
+        <li><code>骨甲</code> · <code>寸厘</code> · <code>零指导</code></li>
+        <li>版本标识: <code>v4.5</code> · 章节锚点: <code>ch-v45</code></li>
       </ul>
     </div>
   </section>
