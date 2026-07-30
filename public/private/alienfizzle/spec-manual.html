@@ -1961,6 +1961,19 @@ Alien Fizzle · 玩法规格<br>
 <!-- Spec 编辑功能 v1 START -->
 <div id="spec-editor-toolbar" role="toolbar" aria-label="Spec 编辑工具条">
   <button type="button" id="btn-toggle-edit" class="spec-ed-btn">✏️ 编辑</button>
+  <div id="spec-tpl-wrap" class="spec-tpl-wrap" hidden>
+    <button type="button" id="btn-tpl-menu" class="spec-ed-btn" aria-haspopup="true" aria-expanded="false">📎 插入模板 ▾</button>
+    <div id="spec-tpl-menu" class="spec-tpl-menu" role="menu" hidden>
+      <button type="button" class="spec-tpl-item" role="menuitem" data-tpl="skill" aria-label="新技能卡">🎴 新技能卡 (3 阶)</button>
+      <button type="button" class="spec-tpl-item" role="menuitem" data-tpl="mastery" aria-label="新精通卡">📜 新精通卡 (表格行)</button>
+      <button type="button" class="spec-tpl-item" role="menuitem" data-tpl="gate" aria-label="新状态门维度">🚪 新状态门维度</button>
+      <button type="button" class="spec-tpl-item" role="menuitem" data-tpl="enemy" aria-label="新敌人">👹 新敌人 (骨甲版)</button>
+      <button type="button" class="spec-tpl-item" role="menuitem" data-tpl="line" aria-label="新台词节点">📻 新台词节点</button>
+      <button type="button" class="spec-tpl-item" role="menuitem" data-tpl="chapter" aria-label="新章节">📖 新章节 (h3)</button>
+      <button type="button" class="spec-tpl-item" role="menuitem" data-tpl="subchapter" aria-label="新子章节">📑 新子章节 (h4)</button>
+      <button type="button" class="spec-tpl-item" role="menuitem" data-tpl="callout" aria-label="新callout">💡 新 callout</button>
+    </div>
+  </div>
   <button type="button" id="btn-save-edit" class="spec-ed-btn" disabled>💾 保存</button>
   <button type="button" id="btn-export-edit" class="spec-ed-btn">⬇ 导出</button>
   <button type="button" id="btn-clear-edit" class="spec-ed-btn" title="丢弃本地存档(不再弹出加载提示)">🗑️</button>
@@ -1988,6 +2001,32 @@ Alien Fizzle · 玩法规格<br>
   .spec-ed-btn:disabled { background: #243447; color: #64748b; border-color: #334155; opacity: 0.6; cursor: not-allowed; }
   .spec-ed-btn.active { background: #2dd4bf; border-color: #2dd4bf; color: #0f172a; }
   .spec-ed-status { font-size: 13px; color: #94a3b8; margin-left: 12px; align-self: center; }
+  /* 插入模板下拉 */
+  .spec-tpl-wrap { position: relative; display: inline-block; }
+  .spec-tpl-menu {
+    position: absolute; top: calc(100% + 6px); left: 0;
+    background: #0f172a; border: 1px solid #2dd4bf; border-radius: 8px;
+    padding: 6px; min-width: 220px; z-index: 100000;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .spec-tpl-item {
+    background: #243447; color: #2dd4bf;
+    border: 1px solid #334155; border-radius: 6px;
+    padding: 10px 12px; font-size: 13px; font-weight: 600;
+    text-align: left; cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .spec-tpl-item:hover { background: #134e4a; border-color: #2dd4bf; }
+  #spec-tpl-toast {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%);
+    background: #0f172a; color: #2dd4bf;
+    border: 1px solid #2dd4bf; border-radius: 8px;
+    padding: 10px 16px; font-size: 14px; font-weight: 600;
+    z-index: 100001; box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+    opacity: 0; transition: opacity 0.2s; pointer-events: none;
+  }
+  #spec-tpl-toast.show { opacity: 1; }
   body.spec-editing main, body.spec-editing main * {
     background-color: rgba(45, 212, 191, 0.04);
   }
@@ -2163,11 +2202,102 @@ Alien Fizzle · 玩法规格<br>
     btnEdit.textContent = on ? '🚪 退出编辑' : '✏️ 编辑';
     btnEdit.classList.toggle('active', on);
     btnSave.disabled = !on;
+    var _tplWrap = document.getElementById('spec-tpl-wrap');
+    var _tplMenu = document.getElementById('spec-tpl-menu');
+    var _tplBtn = document.getElementById('btn-tpl-menu');
+    if (_tplWrap) _tplWrap.hidden = !on;
+    if (!on && _tplMenu) { _tplMenu.hidden = true; if (_tplBtn) _tplBtn.setAttribute('aria-expanded','false'); }
   }
 
   btnEdit.addEventListener('click', function(){
     setEditing(!editing);
   });
+
+  // === 插入模板下拉 ===
+  var TEMPLATES = {
+    skill: '<div class="callout">\n  <strong>[卡名]</strong> (Lv1/2/3 · [简介])\n  <ul>\n    <li><strong>Lv1</strong>: [基础效果 · CD / 数值]</li>\n    <li><strong>Lv2</strong>: [质变: 强化点]</li>\n    <li><strong>Lv3</strong>: [完全体: 完全升级形态]</li>\n  </ul>\n</div>',
+    mastery: '<tr><td><strong>[ID]</strong></td><td><strong>[卡名]</strong></td><td>[效果描述]</td><td>[可叠层? 拿过即剔?]</td></tr>',
+    gate: '<tr><td><code>[key]</code></td><td><strong>[中文名]</strong></td><td>[vmin] ~ [vmax]</td><td>[step]</td><td>[unit]</td><td>[设计意图]</td></tr>',
+    enemy: '<tr>\n  <td><strong>[编号]</strong></td>\n  <td><strong>[四字名]</strong></td>\n  <td>[威胁模型: 一句话]</td>\n  <td class="prompt-cell">[生物躯体 + 骨甲覆盖 X% + 单眼裂缝 紫/绿/蓝 + 死亡表现]</td>\n</tr>',
+    line: '<div class="callout">\n  <strong>节点 [编号] · [场景名]</strong> ([频段] · [触发率])\n  <p><strong>马场 · Nova 无线电</strong>:</p>\n  <ul>\n    <li>"[播报台词]"</li>\n  </ul>\n  <p><strong>灵场 · 马启航无线电</strong>:</p>\n  <ul>\n    <li>"[播报台词]"</li>\n  </ul>\n</div>',
+    chapter: '<h3 id="ch-[锚点]">[章节号] [章节名]</h3>\n<p class="lead">[章节导语]</p>',
+    subchapter: '<h4>[子章节号] [子章节名]</h4>\n<p>[段落内容]</p>',
+    callout: '<div class="callout">\n  <strong>[标题]</strong>\n  <p style="margin-top:6px;">[内容]</p>\n</div>'
+  };
+
+  function showTplToast(msg) {
+    var t = document.getElementById('spec-tpl-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'spec-tpl-toast';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.classList.add('show');
+    clearTimeout(t._to);
+    t._to = setTimeout(function(){ t.classList.remove('show'); }, 1800);
+  }
+
+  function insertTemplateHTML(html) {
+    var main = document.querySelector('main');
+    if (!main) return;
+    var sel = window.getSelection();
+    var inMain = false;
+    var range = null;
+    if (sel && sel.rangeCount > 0) {
+      range = sel.getRangeAt(0);
+      var node = range.commonAncestorContainer;
+      if (node && node.nodeType === 3) node = node.parentNode;
+      if (node && main.contains(node)) inMain = true;
+    }
+    if (!inMain) {
+      // 插入到 main 末尾
+      var wrapper = document.createElement('div');
+      wrapper.innerHTML = html;
+      while (wrapper.firstChild) main.appendChild(wrapper.firstChild);
+      showTplToast('已插入到末尾');
+    } else {
+      // 光标处插入
+      range.deleteContents();
+      var frag = range.createContextualFragment(html);
+      range.insertNode(frag);
+      range.collapse(false);
+      sel.removeAllRanges();
+      sel.addRange(range);
+      showTplToast('已在光标处插入');
+    }
+    // 触发 dirty
+    dirty = true;
+    btnSave.disabled = false;
+    if (typeof scheduleCloudSave === 'function') scheduleCloudSave();
+  }
+
+  var _tplBtnEl = document.getElementById('btn-tpl-menu');
+  var _tplMenuEl = document.getElementById('spec-tpl-menu');
+  if (_tplBtnEl && _tplMenuEl) {
+    _tplBtnEl.addEventListener('click', function(e){
+      e.stopPropagation();
+      var hidden = _tplMenuEl.hidden;
+      _tplMenuEl.hidden = !hidden;
+      _tplBtnEl.setAttribute('aria-expanded', hidden ? 'true' : 'false');
+    });
+    _tplMenuEl.addEventListener('click', function(e){
+      var btn = e.target.closest('.spec-tpl-item');
+      if (!btn) return;
+      var key = btn.getAttribute('data-tpl');
+      var tpl = TEMPLATES[key];
+      if (tpl) insertTemplateHTML(tpl);
+      _tplMenuEl.hidden = true;
+      _tplBtnEl.setAttribute('aria-expanded','false');
+    });
+    document.addEventListener('click', function(e){
+      if (_tplMenuEl.hidden) return;
+      if (e.target.closest('#spec-tpl-wrap')) return;
+      _tplMenuEl.hidden = true;
+      _tplBtnEl.setAttribute('aria-expanded','false');
+    });
+  }
+  // === 插入模板下拉 END ===
 
   btnClear.addEventListener('click', function(){
     if (confirm('确定丢弃本地存档? 之后打开 spec 不再弹加载提示。\n(此操作只删本地存档, 不影响线上 spec 正文)')) {
