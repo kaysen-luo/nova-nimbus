@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.5</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.6</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -392,10 +392,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v42">V4.2 · K26 BOBO 制导互斥/暴击步进减半/爆炸半径缩/飘字收敛+快枪手 a_rapid</a></li>
   <li><a href="#ch-v43">V4.3 · K27 数值精修 (快枪手弹速/爆炸锁死/穿透削/连发削/AOE 对宝箱现状)</a></li>
   <li><a href="#ch-v44">V4.4 · K29 专属卡系统 · 双主角 3 张 + 羁绊 (骨架版)</a></li>
-  <li><a href="#ch-v45">V4.5 · §1.3 世界观整段补齐 · 与 spec-manual 对齐 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v45">V4.5 · §1.3 世界观整段补齐 · 与 spec-manual 对齐</a></li>
+  <li><a href="#ch-v46">V4.6 · K32 恩赐解脱 Lv2/Lv3 数值改档 + Lv3 颤栗改恐惧 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v4.5 · 2026-07-30<br>
+v4.6 · 2026-07-30<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -404,13 +405,13 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v4.5</span>
+<span class="badge">GAME SPEC · v4.6</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v4.5 (§1.3 世界观整段补齐 · Aurelia / Aurelium / AUV-0 / Ossyr 厄司 · 与 spec-manual 对齐)</div>
+<div class="value">v4.6 (K32 恩赐解脱 Lv2/Lv3 数值改档 + Lv3 颤栗改恐惧: fearUntil 1500ms 反推 1x speed · EV Lv2=60.64x / Lv3=77.28x)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
@@ -1026,8 +1027,8 @@ Alien Fizzle · 玩法规格<br>
       <tr>
         <td><strong>恩赐解脱</strong></td>
         <td>每 <strong>12s</strong> 自动锁定当前最高优先级 <strong>1 个</strong>敌人发射超级子弹, 基础 <strong>24 × 主角攻击力</strong>真实伤害 (穿透 armor); 每发独立摇 <strong>变异倍率</strong> — 24x(30%)/32x(23%)/48x(17%)/64x(12%)/80x(8%)/96x(6%)/<strong>112x(4%)</strong>, 期望 ≈ 47.04x; 目标身后 <strong>60° 锥形</strong>区域 (锥长 = 2 敌人小兵单位) 内敌人 <strong>原地不动 1s</strong> (硬控 stun); 命中挂 <strong>易损 +20% × 5s</strong>; 击杀目标 <strong>40% 概率</strong>再触发 (无上限, 运气可无限连)</td>
-        <td>质变: 同帧锁定 <strong>2 个</strong>目标, 锥形扩至 <strong>90°</strong>; 击杀 <strong>50% 概率</strong>再触发 (锥形硬控 + 变异倍率同 Lv1)</td>
-        <td>完全体: 同帧锁定 <strong>5 个</strong>目标, 锥形扩至 <strong>120°</strong>; 击杀 <strong>60% 概率</strong>再触发 (锥形硬控 + 变异倍率同 Lv1)</td>
+        <td>质变: 同帧锁定 <strong>2 个</strong>目标, 锥形扩至 <strong>90°</strong>; <strong>变异倍率上滑一档</strong>: 32/48/64/80/96/112/128x, 期望 ≈ <strong>60.64x</strong>; 击杀 <strong>50% 概率</strong>再触发 (锥形硬控保持 Lv1 原地 stun 1s) <span class="tag tag-may">V4.6 覆盖</span></td>
+        <td>完全体: 同帧锁定 <strong>5 个</strong>目标, 锥形扩至 <strong>120°</strong>; <strong>变异倍率再上滑一档</strong>: 48/64/80/96/112/128/160x, 期望 ≈ <strong>77.28x</strong>; 击杀 <strong>60% 概率</strong>再触发; <strong>颤栗改恐惧</strong>: 命中锥形内敌人 <code>fearUntil = now + 1500ms</code>, 期间按敌人基础 speed 反向 1x 位移 (不吃 slow/chill), 强制 <code>atDefense = false</code>, 不 clamp 上边界; 过期后走正常前推逻辑 → 观感 = 反推 1.5s + 归位 1.5s ≈ 回到原位。锥形视觉换紫色 <code>rgba(140,80,255,0.35)</code> 区分手感, 命中敌人身上飘"恐惧!" 紫色小字 <span class="tag tag-may">V4.6 覆盖</span></td>
       </tr>
       <tr>
         <td><strong>高压领域</strong></td>
@@ -2767,6 +2768,100 @@ if (targetLv &gt; skillLevels[id]) {
         <li><code>Aurelia</code> · <code>Aurelium</code> · <code>AUV-0</code> · <code>Ossyr</code> · <code>厄司</code></li>
         <li><code>骨甲</code> · <code>寸厘</code> · <code>零指导</code></li>
         <li>版本标识: <code>v4.5</code> · 章节锚点: <code>ch-v45</code></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <h3 id="ch-v46" style="color:#c62828">V4.6 · K32 · 恩赐解脱 Lv2/Lv3 数值改档 + Lv3 颤栗改恐惧 <span class="new-tag">NEW</span> (2026-07-30)</h3>
+    <div class="doc-body">
+      <p class="lead">V4.6 给 K32 恩赐解脱补上"升级手感"层: Lv2/Lv3 从<strong>只有覆盖广度差异</strong>(锁定数/锥形/击杀链)升到<strong>覆盖广度 + 单发爆点</strong>双差异 — 三级各自独立倍率表, EV 阶梯 47.04 → 60.64 → 77.28 (+28.9% / +27.4%, 累计 +64.3%)。同时把 Lv3 的"颤栗 1s 原地硬控"改成"恐惧 1.5s 反推位移", 让完全体在战术层多一档"敌人被推离防线的窗口期"。Lv1/Lv2 颤栗手感保持不变。</p>
+
+      <p><strong>① 变更前</strong>:</p>
+      <ul>
+        <li>Lv2 desc <code>[质变: 同时锁定 2 目标, 锥形扩至 90°, 击杀 50% 再触发]</code> — 无独立数值段位</li>
+        <li>Lv3 desc <code>[完全体: 同时锁定 5 目标, 锥形扩至 120°, 击杀 60% 再触发]</code> — 无独立数值段位</li>
+        <li>三级共用同一张倍率表 (Lv1 EV = 47.04x), 升级只在"覆盖广度"层有感知, 单发爆点层无差异</li>
+        <li>全等级颤栗统一 <code>stunUntil = now + 1000</code> (原地不动 1s 硬控) · 见 <code>demo.html</code> L6136 (改前)</li>
+      </ul>
+
+      <p><strong>② 变更后</strong>:</p>
+      <ul>
+        <li><strong>Lv2 变异倍率表</strong>: <code>32 / 48 / 64 / 80 / 96 / 112 / 128</code>x · 权重 <code>30 / 23 / 17 / 12 / 8 / 6 / 4</code> · <strong>EV = 60.64x</strong> (Lv1→Lv2 <strong>+28.9%</strong>)</li>
+        <li><strong>Lv3 变异倍率表</strong>: <code>48 / 64 / 80 / 96 / 112 / 128 / 160</code>x · 权重同上 <code>30 / 23 / 17 / 12 / 8 / 6 / 4</code> · <strong>EV = 77.28x</strong> (Lv2→Lv3 <strong>+27.4%</strong>, 累计 Lv1→Lv3 <strong>+64.3%</strong>)</li>
+        <li><strong>Lv3 颤栗改恐惧</strong>: <code>fearUntil = now + 1500</code> · <strong>反推</strong> 1x 敌人 <code>speed</code> (不吃 slow/chill 修正) · 强制 <code>atDefense = false</code> · 不 clamp 上边界 (允许 <code>e.y</code> 冲出 <code>HORIZON_Y</code> 出屏) · 过期后走正常前推 · 总观感 = 反推 1.5s + 归位 1.5s ≈ <strong>3s 回原位</strong></li>
+        <li><strong>Lv1/Lv2 颤栗保持 <code>stunUntil</code> 1s 原地不动</strong> (本次不动)</li>
+        <li>Lv3 视觉锥形改用紫色 <code>rgba(140,80,255,0.35)</code> (Lv1/Lv2 保持粉色), 施法瞬间飘字 <code>恐惧!</code></li>
+      </ul>
+
+      <p><strong>③ 设计意图</strong>:</p>
+      <ul>
+        <li>补齐"升级手感"层 — 原三级只有锁定数/锥形/击杀链差异, 玩家把恩赐练到 Lv3 只感觉"打得更广", 打不出"单发更爆"的爽点; 新数值段位让升级瞬间就有单发数字冲击</li>
+        <li>权重分布保持 <code>30/23/17/12/8/6/4</code> 不动, 只滑窗数值 → 概率曲线不动, 代码只换 7 个字面, 心智负担最小、回滚成本最低</li>
+        <li>Lv3 恐惧是<strong>位移</strong>非<strong>硬控</strong>, 战术层次比 Lv1/Lv2 的原地 stun 更高: 玩家能主动利用"敌人被推离防线"这 1.5s 转火其他 wave / 恢复防线 HP / 重装弹夹</li>
+        <li>反推 1.5s + 归位 1.5s 的自恢复设计, 意味着"恐惧不是永久位移" — 3s 后战场回到"施法前状态 + 敌人已受伤", 让玩家更愿意主动用恩赐当 Boss 打断技</li>
+      </ul>
+
+      <p><strong>④ 精确落地清单</strong>:</p>
+      <ul>
+        <li><code>demo.html</code> L6067 附近 <code>rollMercyMult(level)</code> 三级倍率表 (关键代码片段):
+          <pre><code>function rollMercyMult(level) {
+  const r = Math.random() * 100;
+  let table;
+  if (level &gt;= 3)      table = [48, 64, 80, 96, 112, 128, 160];
+  else if (level &gt;= 2) table = [32, 48, 64, 80,  96, 112, 128];
+  else                  table = [24, 40, 56, 72,  88, 104, 120];
+  // 权重 30 / 23 / 17 / 12 / 8 / 6 / 4 (三级共用)
+  ...
+}</code></pre>
+        </li>
+        <li><code>demo.html</code> L2900 附近 update 循环恐惧位移分支:
+          <pre><code>if (e.fearUntil &amp;&amp; now &lt; e.fearUntil) {
+  e.y -= e.speed * dt;   // 反推, 不吃 slow/chill
+  e.atDefense = false;   // 强制离开防线
+  return;                // 不 clamp 上边界, 允许出屏
+}</code></pre>
+        </li>
+        <li><code>demo.html</code> L6149 附近 mercy 施法段 Lv3 分支: 紫色锥形 <code>rgba(140,80,255,0.35)</code> + <code>fearUntil = now + 1500</code> + 飘字 <code>恐惧!</code>; Lv1/Lv2 走原 <code>stunUntil = now + 1000</code> 分支</li>
+        <li><code>demo.html</code> L664-666 mercy desc 三行同步 (Lv2/Lv3 desc 追加倍率区间与恐惧字样)</li>
+        <li><code>spec.html</code> §4.3 精通卡表 Lv2/Lv3 恩赐 desc 同步 (line 1030-1031)</li>
+      </ul>
+
+      <p><strong>⑤ 联动改动</strong>:</p>
+      <ul>
+        <li>Lv1/Lv2 颤栗手感保持 (<code>stunUntil</code> 1s), 未来若 K 决定 Lv1/Lv2 也换恐惧, 只需扩 <code>fearUntil</code> 分支的等级条件, 位移分支代码无需改</li>
+        <li>Lv3 恐惧期间敌人<strong>允许被打</strong>(不影响命中判定), mercy chain 击杀概率不受恐惧影响 — 只是让"击杀"这件事更难发生 (敌人在移动)</li>
+        <li>Lv3 击杀 60% 再触发的机制与恐惧位移<strong>解耦</strong> — 恐惧不影响命中/伤害/链式判定, 只影响后续帧敌人的 y 位置</li>
+        <li>Lv3 紫色锥形与 Lv1/Lv2 粉色锥形共用 <code>mercyCone</code> 视觉 kind, 只是 <code>color</code> 字段差异, 无新 render 分支</li>
+      </ul>
+
+      <p><strong>⑥ 未落项</strong> (后续独立议题):</p>
+      <ul>
+        <li>Lv2/Lv3 数值表 K 后续可能继续手动打磨 (本 V4.6 权威块作基线, 后续微调由 K 主导, 不再单独立版本)</li>
+        <li>Lv2 是否也换恐惧位移 — K 明确 <strong>Lv1/Lv2 保持 stun 不变</strong>, 未来若手感反馈弱可开新议题</li>
+        <li><code>fearUntil</code> 是否受 shatter / paralyze 等新控制类打断 — 当前 update 循环恐惧优先级最高 (最先 return), 若未来加更强控制需重排优先级</li>
+      </ul>
+
+      <p><strong>⑦ 部署纪律</strong>:</p>
+      <ul>
+        <li>build (<code>npm run build</code>) + <code>wrangler deploy</code> 走 (本次含 JS 逻辑改动, 不豁免)</li>
+        <li>spec.html 无 <code>SPEC_PUBLISHED</code> 常量 (V4.5 权威块已注明), 顶部发布日期同步刷为 <strong>2026-07-30</strong></li>
+        <li><code>spec-manual.html</code> <strong>一字不动</strong> (K 私域)</li>
+        <li><code>terms.js</code> 无 mercy level desc, 不动</li>
+      </ul>
+
+      <p><strong>⑧ verification</strong> (marker 关键词自查):</p>
+      <ul>
+        <li>关键 marker: <code>fearUntil</code> × N · <code>K32-Lv3</code> × N · <code>60.64</code> / <code>77.28</code> · <code>ch-v46</code> · <code>v4.6</code> · <code>恐惧!</code> · 紫色锥形 <code>rgba(140,80,255,0.35)</code></li>
+        <li>test 手法: playwright 强设 <code>skillLevels.mercy = 3</code>, 触发 <code>castSkill('mercy', 3, 0)</code>, 观察:
+          <ul>
+            <li>(a) <code>rollMercyMult(3)</code> 摇出的倍率都 ∈ <code>{48,64,80,96,112,128,160}</code>, 100 次统计权重接近 <code>30/23/17/12/8/6/4</code></li>
+            <li>(b) 命中锥形内敌人 <code>e.fearUntil &gt; now + 1400</code></li>
+            <li>(c) 后续 1.5s 内敌人 <code>y</code> 单调递减</li>
+            <li>(d) 恐惧期间敌人 <code>atDefense === false</code></li>
+            <li>(e) 恐惧期间 <code>e.y</code> 不被 clamp (允许 <code>&lt; HORIZON_Y</code>)</li>
+          </ul>
+        </li>
       </ul>
     </div>
   </section>

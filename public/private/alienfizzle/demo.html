@@ -662,8 +662,8 @@ const SKILL_CARDS = [
     name: '恩赐解脱',
     levels: [
       { lv:1, desc:'每 12s 锁定最高优先级目标发一颗超级子弹, 24x atk 真伤 + 概率变异 (32/48/64/80/96/112x); 锥形硬控 1s; 击杀 40% 再触发无上限' },
-      { lv:2, desc:'[质变: 同时锁定 2 目标, 锥形扩至 90°, 击杀 50% 再触发]' },
-      { lv:3, desc:'[完全体: 同时锁定 5 目标, 锥形扩至 120°, 击杀 60% 再触发]' }
+      { lv:2, desc:'[质变: 同时锁定 2 目标, 锥形扩至 90°; 变异 32-128x 期望 61x; 击杀 50% 再触发]' },
+      { lv:3, desc:'[完全体: 同时锁定 5 目标, 锥形扩至 120°; 变异 48-160x 期望 77x; 击杀 60% 再触发; 颤栗改恐惧: 逆行 1.5s + 归位 1.5s 共 3s]' }
     ]
   },
   {
@@ -2897,6 +2897,14 @@ function updateEnemies(dt) {
     // 绘制时 viewport 裁切会自动处理屏外不画
     if (e.rewindUntil && G.now < e.rewindUntil) {
       e.y -= e.speed * dt;
+      return;
+    }
+    // [K32-Lv3 恩赐恐惧] 优先级次于 rewind: 反推 1x 原速 (不吃 slow/chill), 期间强制离开防线,
+    //   不 clamp 上边界 (允许出屏, 渲染层裁掉即可)。fearUntil 过期后走后续正常前推逻辑,
+    //   总观感 = 反推 1.5s + 正推 1.5s ≈ 回到原位。
+    if (e.fearUntil && now < e.fearUntil) {
+      e.y -= e.speed * dt;
+      e.atDefense = false;
       return;
     }
     // 减速
@@ -6055,12 +6063,32 @@ function castSkill(id, level, chainDepth) {
       return;
     }
     const baseDmg = Math.round(getPlayerAtk() * 48);
-    // [K恩赐-变异伤害] 保留 baseDmg 变量做兜底, 实际每次结算走 rollMercyMult() 返回的倍率
-    // 倍率分布: 24x(30%) · 32x(23%) · 48x(17%) · 64x(12%) · 80x(8%) · 96x(6%) · 112x(4%)
-    //   期望 ≈ 47.04x (对齐老 48x, 单发不削), 削 op 全靠 CD 12s + chain 40/50/60% 无上限
-    //   ≥64x 高光 30% / 112x 极光 4% → boss 战爆点感, 清杂削由 CD+chain 承载
-    function rollMercyMult() {
+    // [K恩赐-变异伤害] 保留 baseDmg 变量做兜底, 实际每次结算走 rollMercyMult(level) 返回的倍率
+    // Lv1 (不动): 24 / 32 / 48 / 64 / 80 / 96 / 112x — 期望 ≈ 47.04x
+    // Lv2 (K32): 32 / 48 / 64 / 80 / 96 / 112 / 128x — 期望 ≈ 60.64x
+    // Lv3 (K32): 48 / 64 / 80 / 96 / 112 / 128 / 160x — 期望 ≈ 77.28x
+    //   分档权重不变 (30/23/17/12/8/6/4), 只滑窗数值, 让 Lv2/Lv3 有独立数值段位
+    //   削 op 全靠 CD 12s + chain 40/50/60% 无上限; ≥高档 30% / 极光 4% → boss 战爆点感
+    function rollMercyMult(level) {
       const r = Math.random();
+      if (level >= 3) {
+        if (r < 0.30) return 48;
+        if (r < 0.53) return 64;
+        if (r < 0.70) return 80;
+        if (r < 0.82) return 96;
+        if (r < 0.90) return 112;
+        if (r < 0.96) return 128;
+        return 160;
+      }
+      if (level >= 2) {
+        if (r < 0.30) return 32;
+        if (r < 0.53) return 48;
+        if (r < 0.70) return 64;
+        if (r < 0.82) return 80;
+        if (r < 0.90) return 96;
+        if (r < 0.96) return 112;
+        return 128;
+      }
       if (r < 0.30) return 24;
       if (r < 0.53) return 32;
       if (r < 0.70) return 48;
@@ -6092,8 +6120,8 @@ function castSkill(id, level, chainDepth) {
         const before = capturedTarget.hp;
         // [K10-4 review-fix mercy-vuln-order] 先打伤害, 再挂易损
         //   K 口径"后续伤害 +20%" = 本发不吃易损, 之后的伤害才吃. 顺序: rollSkillCrit → damageEnemy → 挂 vuln
-        // [K恩赐-变异伤害] 每目标独立摇倍率 (24/32/48/64/80/96/112x), 打出高光爆点
-        const mult = rollMercyMult();
+        // [K恩赐-变异伤害] 每目标独立摇倍率 (Lv1/Lv2/Lv3 各自表, 见 rollMercyMult)
+        const mult = rollMercyMult(level);
         const shotDmg = Math.round(getPlayerAtk() * mult);
         const { dmg, crit } = rollSkillCrit(shotDmg);
         damageEnemy(capturedTarget, dmg, crit, true);
@@ -6118,10 +6146,12 @@ function castSkill(id, level, chainDepth) {
             const dirX = rdx / rlen, dirY = rdy / rlen;
             const cosHalf = Math.cos(coneHalfDeg * Math.PI / 180);
             // [K恩赐-锁头v2] 锥形视觉 (扇形, 与判定形状一致: 顶点=主目标, 沿 dir 半角 coneHalfDeg)
+            // [K32-Lv3] Lv3 换紫色区分"控 → 恐惧"手感; Lv1/Lv2 保留粉色
+            const _coneColor = (level >= 3) ? 'rgba(140, 80, 255, 0.35)' : 'rgba(255, 102, 170, 0.28)';
             G.skillVisuals.push({
               kind: 'mercyCone', x: capturedTarget.x, y: capturedTarget.y,
               dirX, dirY, coneLen, halfRad: coneHalfDeg * Math.PI / 180,
-              color: 'rgba(255, 102, 170, 0.28)', bornAt: G.now, life: 600
+              color: _coneColor, bornAt: G.now, life: 600
             });
             for (const e of G.enemies) {
               if (!e || e.hp <= 0 || e === capturedTarget) continue;
@@ -6133,7 +6163,15 @@ function castSkill(id, level, chainDepth) {
               if (vlen < 0.001) continue;
               const cosAng = proj / vlen; // = dot(v,dir)/|v|
               if (cosAng < cosHalf) continue;
-              e.stunUntil = Math.max(e.stunUntil||0, G.now + 1000);
+              // [K32-Lv3] Lv3 颤栗改恐惧: fearUntil 1500ms 反推 1x 原速, 强制离开防线
+              //   Lv1/Lv2 保持原地 stunUntil 1s 硬控
+              if (level >= 3) {
+                e.fearUntil = Math.max(e.fearUntil||0, G.now + 1500);
+                e.atDefense = false; // 反推期间强制离开防线, 期间不攻击
+                floatText(e.x, e.y - 20, '恐惧!', '#8c50ff', false);
+              } else {
+                e.stunUntil = Math.max(e.stunUntil||0, G.now + 1000);
+              }
               // [K恩赐-颤栗改硬控] 原颤栗减速 (chillMult 0.5) 改为原地不动 1s, 与 mercy 击杀链保持强控体验
             }
           }
