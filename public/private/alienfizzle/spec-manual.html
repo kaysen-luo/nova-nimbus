@@ -20,8 +20,7 @@ a:hover { color: #5eead4; }
 
 /* === LAYOUT === */
 .layout {
-  display: grid;
-  grid-template-columns: 280px 1fr;
+  display: block;   /* sidebar fixed 脱离文档流, 不需要 grid 占列 */
   min-height: 100vh;
   min-width: 0;
 }
@@ -426,7 +425,6 @@ tr:hover td { background: #134e4a; }
 
 /* === MOBILE === */
 @media (max-width: 900px) {
-  .layout { grid-template-columns: 1fr; }
   .sidebar {
     position: static;
     width: 100%;
