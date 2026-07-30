@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.6</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.7</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -393,10 +393,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v43">V4.3 · K27 数值精修 (快枪手弹速/爆炸锁死/穿透削/连发削/AOE 对宝箱现状)</a></li>
   <li><a href="#ch-v44">V4.4 · K29 专属卡系统 · 双主角 3 张 + 羁绊 (骨架版)</a></li>
   <li><a href="#ch-v45">V4.5 · §1.3 世界观整段补齐 · 与 spec-manual 对齐</a></li>
-  <li><a href="#ch-v46">V4.6 · K32 恩赐解脱 Lv2/Lv3 数值改档 + Lv3 颤栗改恐惧 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v46">V4.6 · K32 恩赐解脱 Lv2/Lv3 数值改档 + Lv3 颤栗改恐惧</a></li>
+  <li><a href="#ch-v47">V4.7 · K33 AUX 仇恨顺序简化 · 4 阶 → 2 阶 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v4.6 · 2026-07-30<br>
+v4.7 · 2026-07-30<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -405,13 +406,13 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v4.6</span>
+<span class="badge">GAME SPEC · v4.7</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v4.6 (K32 恩赐解脱 Lv2/Lv3 数值改档 + Lv3 颤栗改恐惧: fearUntil 1500ms 反推 1x speed · EV Lv2=60.64x / Lv3=77.28x)</div>
+<div class="value">v4.7 (K33 AUX 仇恨顺序简化: 4 阶 → 2 阶 · P1 atDefense 血量少优先 · P2 其他 y 降序 · 完全不分 boss/elite/minion)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
@@ -764,17 +765,15 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>命名来源</td><td><strong>BOBO</strong>(诺) — 单音节, 与 Nova/Nimbus 同字母系, 国际化通用</td></tr>
     </table>
 
-    <h4>2.2.1 仇恨判定 · 4 阶优先级</h4>
-    <p>BOBO 每次准备开火时按下列优先级选目标, 高阶优先级永远压过低阶; 同阶内 <strong>优先当前血量更少</strong>的敌人 (贯彻 "点残" 逻辑, 与恩赐解脱的 "点满" 互补)。</p>
+    <h4>2.2.1 仇恨判定 · 2 阶优先级 <span class="tag tag-may">V4.7 覆盖</span></h4>
+    <p>BOBO 每次准备开火时按下列优先级选目标, 高阶优先级永远压过低阶; <strong>完全不分 boss / 精英 / 小兵</strong>, 只看是否正在攻击防线 (K33 · 原口径"始终优先攻击最靠近防线的敌人")。</p>
     <table>
-      <tr><th>阶</th><th>目标类型</th><th>设计意图</th></tr>
-      <tr><td><strong>P1</strong></td><td>正在攻击防线的敌人</td><td>止血优先, 直接掐防线掉血源</td></tr>
-      <tr><td><strong>P2</strong></td><td>Boss (大 BOSS / 小 BOSS)</td><td>集火关键目标</td></tr>
-      <tr><td><strong>P3</strong></td><td>精英怪</td><td>压制策略型威胁</td></tr>
-      <tr><td><strong>P4</strong></td><td>小兵</td><td>兜底清场</td></tr>
+      <tr><th>阶</th><th>目标类型</th><th>档内排序</th><th>设计意图</th></tr>
+      <tr><td><strong>P1</strong></td><td>正在攻击防线的敌人 (<code>atDefense</code>)</td><td>血量少优先 (点残止血); 平局 y 降序兜底</td><td>止血为最高优先级, 不分类型</td></tr>
+      <tr><td><strong>P2</strong></td><td>其他所有敌人 (未 <code>atDefense</code>)</td><td>y 降序 (最靠近防线先); y 相等再血量少</td><td>顺应"守线"核心叙事, 不分类型</td></tr>
     </table>
     <ul>
-      <li><span class="tag tag-must">必须</span>同阶内选血量更少者 (点残逻辑, 保证击杀效率)</li>
+      <li><span class="tag tag-must">必须</span>P1 档内选血量更少者 (点残逻辑, 保证击杀效率); P2 档内 y 降序 (贴防线先打)</li>
       <li><span class="tag tag-must">必须</span>目标切换实时判定 (每帧或每次开火前重算), 允许在锁定后被更高阶目标抢占</li>
       <li><span class="tag tag-should">建议</span>激光射线的视觉锁定过程 ≤ 0.1s, 避免视觉切换过于生硬</li>
     </ul>
@@ -2860,6 +2859,95 @@ if (targetLv &gt; skillLevels[id]) {
             <li>(c) 后续 1.5s 内敌人 <code>y</code> 单调递减</li>
             <li>(d) 恐惧期间敌人 <code>atDefense === false</code></li>
             <li>(e) 恐惧期间 <code>e.y</code> 不被 clamp (允许 <code>&lt; HORIZON_Y</code>)</li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <h3 id="ch-v47" style="color:#c62828">V4.7 · K33 · AUX 仇恨顺序简化 · 4 阶 → 2 阶 · 完全不分 boss/elite/minion <span class="new-tag">NEW</span> (2026-07-30)</h3>
+    <div class="doc-body">
+      <p class="lead">V4.7 落实 K33 原口径 —— "AUX 始终优先攻击最靠近防线的敌人, 如果有很多敌人在同时攻击防线, 不管是 boss 还是精英怪还是小兵, 都优先攻击血量更少的单位"。把原 4 阶仇恨 (atDefense / boss / elite / minion) 砍成 2 阶 (atDefense / other), 完全去掉 boss / elite / minion 类型加权, 让 AUX 的仇恨选择更贴合"守线"核心叙事、更直觉。</p>
+
+      <p><strong>① 变更前</strong>:</p>
+      <ul>
+        <li><code>classifyEnemyTier</code> 返回 4 阶: <code>atDefense=0 &gt; boss(final/miniBoss)=1 &gt; elite=2 &gt; minion=3</code></li>
+        <li>sort comparator: 高阶压低阶, 同阶血量少优先, 血量相等 y 降序兜底 (即"同档点残"逻辑, 不区分档号)</li>
+        <li>结果: boss / elite 只要在射程内, 即便远离防线也会被 AUX 强锁, 与"守线"叙事错位</li>
+      </ul>
+
+      <p><strong>② 变更后</strong>:</p>
+      <ul>
+        <li><code>classifyEnemyTier(e) = e.atDefense ? 0 : 1</code> · 只 2 阶, 不查 <code>isFinalBoss</code> / <code>isMiniBoss</code> / <code>type === 'elite'</code></li>
+        <li><strong>P1 (都 <code>atDefense</code>)</strong>: <code>a.hp - b.hp</code> (血量少优先, 点残止血); 血量相等 <code>b.y - a.y</code> 兜底</li>
+        <li><strong>P2 (都未 <code>atDefense</code>)</strong>: <code>b.y - a.y</code> (y 降序, 最靠近防线先); y 相等 <code>a.hp - b.hp</code> 兜底</li>
+        <li>P1 &gt; P2 硬压 (任何 atDefense 敌人永远压过任何非 atDefense 敌人)</li>
+      </ul>
+
+      <p><strong>③ 设计意图</strong>:</p>
+      <ul>
+        <li>K 原口径"始终优先最靠近防线", 与游戏核心叙事"守线"完全一致 — AUX 的存在意义就是补位防守, 不该被 boss / elite 类型标签牵走</li>
+        <li>Boss 因为大概率靠前 (进游戏晚 + 走得快) 自然会先 <code>atDefense</code>, 进入 P1 后靠"血量少优先"再被点残, 无需 tier 强化</li>
+        <li>削去 tier 让 AUX 更"直觉" — 玩家不需要在心里维护"AUX 现在在打谁, 为什么打这只"的类型推理, 只看"谁离防线最近 / 谁在打防线 / 谁血少"</li>
+        <li>与恩赐解脱的"点满"互补关系保持 — mercy 走 <code>mercyCompare</code> (L6030) 独立 tier, 不受本次改动影响</li>
+      </ul>
+
+      <p><strong>④ 精确落地清单</strong>:</p>
+      <ul>
+        <li><code>demo.html</code> L2340 附近 <code>classifyEnemyTier</code> 缩为 2 阶版:
+          <pre><code>function classifyEnemyTier(e) {
+  return e.atDefense ? 0 : 1;
+}</code></pre>
+        </li>
+        <li><code>demo.html</code> L2359 附近 <code>rankedBoboTargets</code> 的 sort comparator 改为分档规则:
+          <pre><code>inRange.sort((a, b) => {
+  const ta = classifyEnemyTier(a), tb = classifyEnemyTier(b);
+  if (ta !== tb) return ta - tb;
+  if (ta === 0) {
+    if (a.hp !== b.hp) return a.hp - b.hp;
+    return b.y - a.y;
+  }
+  if (a.y !== b.y) return b.y - a.y;
+  return a.hp - b.hp;
+});</code></pre>
+        </li>
+        <li><code>spec.html</code> §2.2.1 表 4 行 → 2 行 (阶/目标类型/档内排序/设计意图), 说明段同步"完全不分 boss/精英/小兵"; 通用规则 3 行同步 (P1 血量少优先, P2 y 降序, 目标切换实时判定, 激光锁定 ≤ 0.1s)</li>
+      </ul>
+
+      <p><strong>⑤ 联动改动</strong>:</p>
+      <ul>
+        <li><code>rankedBoboTargets</code> 被 <code>selectBoboTarget</code> (BOBO 平A, L2369) 和 <code>laserpierce</code> 技能 (L6197) 共用, 影响面: (a) BOBO 平A 目标选择, (b) 激光贯穿技能主目标</li>
+        <li>不再优先 boss / elite 类型 — 但因 boss 大概率先 <code>atDefense</code>, 观感差异小</li>
+        <li><code>selectBoboTarget</code> / <code>distanceToBobo</code> 逻辑本次<strong>不动</strong>, 只改 sort comparator + <code>classifyEnemyTier</code></li>
+        <li>mercy 走独立 <code>mercyCompare</code> (L6030), <strong>不共享</strong> tier, 本次不动</li>
+      </ul>
+
+      <p><strong>⑥ 未落项</strong> (后续独立议题):</p>
+      <ul>
+        <li>仇恨切换视觉过场 (0.1s) 保持不变</li>
+        <li>未来若 boss 战 boss 挤在 y 后方 (tier=1 段) 被小兵抢走 AUX, K 可开新议题加"boss 高优"临时补丁</li>
+        <li>是否给 P2 追加"血量比重 vs y 比重"权重函数 — 当前是硬字典序 (y 降序 &gt; hp 升序), 未来若手感反馈弱可考虑权重合成</li>
+      </ul>
+
+      <p><strong>⑦ 部署纪律</strong>:</p>
+      <ul>
+        <li>build (<code>npm run build</code>) + <code>wrangler deploy</code> 走 (本次含 JS 逻辑改动, 不豁免)</li>
+        <li>spec.html 无 <code>SPEC_PUBLISHED</code> 常量 (V4.5/V4.6 权威块已注明), 顶部发布日期保持 <strong>2026-07-30</strong>, 版本刷 v4.6 → <strong>v4.7</strong></li>
+        <li><code>spec-manual.html</code> <strong>一字不动</strong> (K 私域)</li>
+        <li><code>terms.js</code> 无仇恨相关字面, 不动</li>
+        <li>其他 mercy / together / flywheel / highvoltage 技能逻辑不动</li>
+        <li>V3.x / V4.0-V4.6 历史权威块不动</li>
+      </ul>
+
+      <p><strong>⑧ verification</strong> (marker 关键词自查):</p>
+      <ul>
+        <li>关键 marker: <code>classifyEnemyTier</code> 2 阶 · <code>rankedBoboTargets</code> 分档 · <code>ch-v47</code> · <code>v4.7</code> · P1 血量少 · P2 y 降序</li>
+        <li>test 手法: playwright 构造混合场景 (1 只 boss 在 y=100 但未 atDefense, 1 只 minion 在 y=500 atDefense hp=1, 1 只 elite 在 y=400 未 atDefense hp=10), 观察:
+          <ul>
+            <li>(a) AUX 首个锁定 = minion (P1 唯一)</li>
+            <li>(b) minion 死后 AUX 转 elite (y=400 &gt; boss y=100, P2 内 y 降序)</li>
+            <li>(c) 若 boss 也进入 atDefense, AUX 立即从 elite 切到 boss 或 minion 中血量最少者 (P1 血量少优先)</li>
           </ul>
         </li>
       </ul>

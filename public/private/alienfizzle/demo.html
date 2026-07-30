@@ -2335,13 +2335,9 @@ function distanceToBobo(bobo, e) {
   return Math.sqrt(dx*dx + dy*dy);
 }
 
-// 4 阶仇恨排序 + 血量最少优先
-// tier 分类: attacking(atDefense) > boss(final/miniBoss) > elite > minion
+// [K33 v4.7] 2 阶仇恨: atDefense 一档, 其他一档 (不分 boss/elite/minion)
 function classifyEnemyTier(e) {
-  if (e.atDefense) return 0;
-  if (e.isFinalBoss || e.isMiniBoss) return 1;
-  if (e.type === 'elite') return 2;
-  return 3;
+  return e.atDefense ? 0 : 1;
 }
 
 function rankedBoboTargets(bobo, enemies, opts) {
@@ -2359,9 +2355,14 @@ function rankedBoboTargets(bobo, enemies, opts) {
   inRange.sort((a, b) => {
     const ta = classifyEnemyTier(a), tb = classifyEnemyTier(b);
     if (ta !== tb) return ta - tb;
-    // 同档: 优先血量最少 (点残); 血量相等再按离防线近优先 (y 越大越近)
-    if (a.hp !== b.hp) return a.hp - b.hp;
-    return b.y - a.y;
+    // [K33 v4.7] P1 (都 atDefense): 血量少优先 (点残止血)
+    if (ta === 0) {
+      if (a.hp !== b.hp) return a.hp - b.hp;
+      return b.y - a.y; // 平局兜底: 越靠近防线越先
+    }
+    // [K33 v4.7] P2 (都未 atDefense): 最靠近防线优先 (y 降序), y 相等再血量少
+    if (a.y !== b.y) return b.y - a.y;
+    return a.hp - b.hp;
   });
   return inRange;
 }
