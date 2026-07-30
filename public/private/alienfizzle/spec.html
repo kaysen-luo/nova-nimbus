@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.8</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.9</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -395,10 +395,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v45">V4.5 · §1.3 世界观整段补齐 · 与 spec-manual 对齐</a></li>
   <li><a href="#ch-v46">V4.6 · K32 恩赐解脱 Lv2/Lv3 数值改档 + Lv3 颤栗改恐惧</a></li>
   <li><a href="#ch-v47">V4.7 · K33 AUV 仇恨顺序简化 · 4 阶 → 2 阶</a></li>
-  <li><a href="#ch-v48">V4.8 · K34-B AUX → AUV 全项目命名统一 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v48">V4.8 · K34-B AUX → AUV 全项目命名统一</a></li>
+  <li><a href="#ch-v49">V4.9 · K34-C §2.4 外星生物美术提示词骨甲版同步 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v4.8 · 2026-07-30<br>
+v4.9 · 2026-07-30<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -407,13 +408,13 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v4.8</span>
+<span class="badge">GAME SPEC · v4.9</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v4.8 (K34-B AUX → AUV 全项目命名统一 · 数值/机制/行为无变化)</div>
+<div class="value">v4.9 (K34-C §2.4 外星生物美术提示词骨甲版同步 · 20 只全部按骨甲/晶化义肢/紫绿蓝军配重写)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
@@ -803,7 +804,7 @@ Alien Fizzle · 玩法规格<br>
     </ul>
 
     <h3>2.4 外星生物 (敌人)</h3>
-    <p class="lead">分 <strong>4 档 20 只</strong>, 每档功能位错开 (小兵消耗火力 / 精英引入策略应对 / 小 BOSS 集火转折 / 大 BOSS 关卡终局)。名字四字诀, 附美术提示词供外包 (荻子) 和 AI 生图使用。数值 (HP / 推进速度 / 攻击力 / 出现时机) 待美术定稿后单独填 art-spec-v3.html。</p>
+    <p class="lead">分 <strong>4 档 20 只</strong>, 每档功能位错开 (小兵消耗火力 / 精英引入策略应对 / 小 BOSS 集火转折 / 大 BOSS 关卡终局)。名字四字诀, 附美术提示词供外包 (荻子) 和 AI 生图使用。数值 (HP / 推进速度 / 攻击力 / 出现时机) 待美术定稿后单独填 art-spec-v3.html。<br><strong>美术调性统一遵循 §1.3.4 Ossyr 骨甲版铁律</strong> (生物躯体+骨甲+晶化义肢+单眼裂缝紫/绿/蓝军配+死亡定帧去饱和淡出)。</p>
 
     <h4>2.4.1 通用规则</h4>
     <ul>
@@ -812,7 +813,7 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-must">必须</span>到达防线前 <strong>停下并攻击防线</strong>, 持续消耗防线持久度</li>
       <li><span class="tag tag-must">必须</span>被击杀后立即消失, 不掉落物品</li>
       <li><span class="tag tag-must">必须</span>4 档 20 只全部实装, 不允许砍档 (每档功能不可替代)</li>
-      <li><span class="tag tag-should">建议</span>美术风格: 卡通可识别, 独眼为主视觉锚点, 配色遵循「小兵冷色 → 精英暖色 → BOSS 混色」的渐进层次</li>
+      <li><span class="tag tag-should">建议</span>美术风格: <strong>骨甲版硬派末世感</strong> (对齐 §1.3.4), 骨甲覆盖率随档递增 (小兵 20% / 精英 50% / 小 Boss 80% / 大 Boss 100%), 单眼裂缝紫/绿/蓝三色军配, 关节缝隙同色透光, 严禁机械/金属/塑料/萌系元素</li>
     </ul>
 
     <h4>2.4.2 小兵 · 4 款</h4>
@@ -820,10 +821,10 @@ Alien Fizzle · 玩法规格<br>
     <table class="monster-table">
       <thead><tr><th>编号</th><th>名字</th><th>威胁模型</th><th>美术提示词</th></tr></thead>
       <tbody>
-        <tr><td><strong>01</strong></td><td><strong>跳弹菌</strong></td><td>单只 HP 极低, 死亡时向前弹跳 0.5U 位移</td><td class="prompt-cell">小圆软体怪, 湖水绿半透明胶质外皮, 单只独眼位于身体正中呈亮黄色, 顶部两根短触角像天线, 底部无腿靠身体收缩弹跳前进, 体型极小约主角 1/4, 死亡时化作绿色水花溅开, 卡通可爱不吓人</td></tr>
-        <tr><td><strong>02</strong></td><td><strong>刺蒲团</strong></td><td>身体带 4 根尖刺, 靠近防线时刺爆造成小范围溅射</td><td class="prompt-cell">紫色圆球软体怪, 通体覆盖 4 根粉红尖刺呈放射状, 身体中央独眼血红瞪大, 无手脚靠身体旋转滚动前进, 体型比跳弹菌略大, 死亡爆炸时尖刺四散化紫烟, 卡通像海胆变异版本</td></tr>
-        <tr><td><strong>03</strong></td><td><strong>泡泡兵</strong></td><td>外层泡泡吸收 1 发子弹, 破泡后本体才受伤</td><td class="prompt-cell">透明玻璃泡内包裹一只湖水绿小怪, 独眼在泡内呆萌张望, 泡外壁反射彩虹光晕, 底部机械小脚快速倒腾, 体型中等, 破泡时玻璃碎裂声效, 内部小怪露出后极度惊慌表情, 卡通萌系</td></tr>
-        <tr><td><strong>04</strong></td><td><strong>自爆熊</strong></td><td>推进到防线时自爆, 造成大伤害但被击杀阻止爆炸</td><td class="prompt-cell">橙黄色三眼小胖子, 头顶引信冒火花冒白烟, 双手举高作投降状实际是护住身体, 表情又愤怒又害怕, 短腿快速小跑前进, 体型小胖, 死亡时引信被打断呈失望脸, 卡通像小炸弹拟人</td></tr>
+        <tr><td><strong>01</strong></td><td><strong>跳弹菌</strong></td><td>单只 HP 极低, 死亡时向前弹跳 0.5U 位移</td><td class="prompt-cell">蜷缩生物躯体, 灰紫色肉质外皮上覆 20% 白骨甲板呈鳞片状散布, 骨甲下裸露肌理清晰, 头部一道横向单眼裂缝透出绿色冷光, 骨甲关节缝隙同色透光, 无腿靠肌肉收缩弹跳前进, 体型极小约主角 1/4, 死亡瞬间**直接消失**不留尸体, 硬派末世感</td></tr>
+        <tr><td><strong>02</strong></td><td><strong>刺蒲团</strong></td><td>身体带 4 根尖刺, 靠近防线时刺爆造成小范围溅射</td><td class="prompt-cell">深灰紫肉质球体, 表面 20% 骨甲呈碎片状拼接, 4 根粗大骨刺从骨甲缝隙中生长出来非金属, 骨刺根部与生物肌理相连, 球心一道竖向单眼裂缝透紫色冷光, 关节缝隙同色透光, 无脚靠身体滚动前进, 体型比跳弹菌略大, 死亡瞬间**直接消失**不留尸体, 硬派末世感</td></tr>
+        <tr><td><strong>03</strong></td><td><strong>泡泡兵</strong></td><td>外层泡泡吸收 1 发子弹, 破泡后本体才受伤</td><td class="prompt-cell">椭圆生物躯体, 灰蓝色肉质外皮 20% 骨甲覆盖如龟壳散布状, 骨甲外层裹一层半透明生物膜似胎膜非玻璃, 膜内本体独眼裂缝透蓝色冷光, 骨甲关节缝隙同色透光, 底部无肢靠肌肉蠕动前进, 体型中等, 死亡瞬间**直接消失**不留尸体, 硬派末世感</td></tr>
+        <tr><td><strong>04</strong></td><td><strong>自爆熊</strong></td><td>推进到防线时自爆, 造成大伤害但被击杀阻止爆炸</td><td class="prompt-cell">矮胖生物躯体, 灰紫色肉质外皮上 20% 骨甲呈胸甲状半包覆, 头顶骨甲上有一撮膨胀发亮的生物能量瘤如引信, 瘤体透出绿色不稳定光泽, 头部横向单眼裂缝透绿色冷光, 骨甲关节缝隙同色透光, 短肢肉足小跑前进, 体型小胖, 死亡瞬间**直接消失**不留尸体, 硬派末世感</td></tr>
       </tbody>
     </table>
 
@@ -832,13 +833,13 @@ Alien Fizzle · 玩法规格<br>
     <table class="monster-table">
       <thead><tr><th>编号</th><th>名字</th><th>威胁模型</th><th>美术提示词</th></tr></thead>
       <tbody>
-        <tr><td><strong>05</strong></td><td><strong>盾墙客</strong></td><td>正面举盾抵挡子弹, 需绕射或穿透打</td><td class="prompt-cell">紫色巨胖独眼壮汉, 双手举一面矩形能量盾泛紫光, 独眼在盾后透出凶光, 盾遮挡上半身, 底部粗腿稳步前进, 体型是小兵 2 倍, 盾破裂时紫光爆散露出惊恐表情, 卡通魁梧感</td></tr>
-        <tr><td><strong>06</strong></td><td><strong>喷毒手</strong></td><td>远程发射绿色毒液弹, 命中防线额外持续伤害</td><td class="prompt-cell">深绿色瘦长独眼怪, 手持喇叭状喷毒枪, 独眼眯成缝专注瞄准, 嘴角滴绿毒液笑得阴险, 身体前倾作射击姿态, 体型中等偏瘦, 死亡时毒液罐爆开自爆一小范围, 卡通反派感</td></tr>
-        <tr><td><strong>07</strong></td><td><strong>脑罐博士</strong></td><td>边走边给周围友军回复少量 HP</td><td class="prompt-cell">透明玻璃罐里泡着一颗粉色大脑, 罐底四根机械蜘蛛腿快速爬行, 罐外挂着治疗仪表盘发绿光, 脑组织脉动发出淡光, 无眼但脑纹清晰, 体型中等, 死亡时罐子碎脑落地萎缩, 卡通克苏鲁软萌版</td></tr>
-        <tr><td><strong>08</strong></td><td><strong>重炮蓝</strong></td><td>蓄力 1s 后发射直线大子弹, 前置暴力</td><td class="prompt-cell">蓝色四方独眼怪, 双手扛巨型双管加特林机枪重心不稳, 独眼激动瞪大, 蓄力时枪管发红光, 底部履带装置代替脚, 体型高大结实, 死亡时机枪炸膛倒地, 卡通军事拟人</td></tr>
-        <tr><td><strong>09</strong></td><td><strong>心灵者</strong></td><td>用紫色光球射向主角本体 (非防线), 逼迫玩家横移</td><td class="prompt-cell">深紫色三角独眼法师怪, 双手悬浮一颗紫色能量球泛神秘光, 头顶两根橙红色骨角, 身体缠绕紫色能量丝随风飘动, 无脚靠悬浮前进, 体型细长, 死亡时能量球爆散化紫雾, 卡通神秘系</td></tr>
-        <tr><td><strong>10</strong></td><td><strong>祭司眼镜</strong></td><td>每 3s 给最近一只友军叠一层护盾</td><td class="prompt-cell">翠绿独眼老怪, 戴着圆片金边眼镜显知识分子, 手持发绿光的十字权杖, 嘴角慈祥微笑但眼神狡诈, 身体披绿色斗篷拖地, 缓慢挪步前进, 体型中等, 死亡时权杖坠地绿光渐熄, 卡通老学究感</td></tr>
-        <tr><td><strong>11</strong></td><td><strong>毒爆胖</strong></td><td>死亡时爆炸留下一片持续 3s 毒雾区域</td><td class="prompt-cell">橙黄色球形胖怪, 通体覆盖尖刺状小疙瘩, 单独眼在正中血红瞪大, 张开血盆大口露尖牙, 身体膨胀欲裂状快爆炸, 无手脚靠肚皮滚动前进, 体型大胖, 死亡时轰然炸开留橙黄毒雾, 卡通极度愤怒感</td></tr>
+        <tr><td><strong>05</strong></td><td><strong>盾墙客</strong></td><td>正面举盾抵挡子弹, 需绕射或穿透打</td><td class="prompt-cell">魁梧生物躯体, 灰紫色肉质外皮 50% 骨甲覆盖如板甲拼接, 一只手臂已替换为**晶化义肢**——一整块紫色结晶义肢延展形成盾状体, 盾体内部结晶脉络泛紫光, 头盔状骨甲下横向单眼裂缝透紫色冷光, 关节缝隙同色透光, 骨甲肉腿稳步前进, 体型是小兵 2 倍, 死亡瞬间**直接消失**不留尸体, 硬派末世感</td></tr>
+        <tr><td><strong>06</strong></td><td><strong>喷毒手</strong></td><td>远程发射绿色毒液弹, 命中防线额外持续伤害</td><td class="prompt-cell">瘦长生物躯体, 灰绿肉质外皮 50% 骨甲鳞片状包覆躯干, 一只前臂替换为**晶化义肢**——绿色结晶枪管长在骨甲手臂末端, 结晶内部有毒液流动脉纹, 头部骨盔下横向单眼裂缝透绿色冷光, 关节缝隙同色透光, 身体前倾作射击姿态, 体型中等偏瘦, 死亡瞬间**直接消失**不留尸体, 硬派末世感</td></tr>
+        <tr><td><strong>07</strong></td><td><strong>脑罐博士</strong></td><td>边走边给周围友军回复少量 HP</td><td class="prompt-cell">佝偻生物躯体, 灰紫色肉质皮 50% 骨甲拼接如背甲肋骨状, 头颅骨甲后半部替换为**晶化义肢**——绿色结晶脑壳半罩后脑露出脉动生物脑组织, 结晶脉络散发治疗光辉, 头部骨盔下横向单眼裂缝透绿色冷光, 关节缝隙同色透光, 骨甲肉腿佝偻前进, 体型中等, 死亡瞬间**直接消失**不留尸体, 硬派末世感</td></tr>
+        <tr><td><strong>08</strong></td><td><strong>重炮蓝</strong></td><td>蓄力 1s 后发射直线大子弹, 前置暴力</td><td class="prompt-cell">壮硕生物躯体, 灰蓝肉质外皮 50% 骨甲板重甲状包裹肩胸, 双手臂替换为一对巨大**晶化义肢**——蓝色结晶粗管从骨甲肩窝生长而出, 蓄力时结晶内部脉络亮蓝光, 头部骨盔下横向单眼裂缝透蓝色冷光, 关节缝隙同色透光, 粗壮肉腿骨甲护胫, 体型高大结实, 死亡瞬间**直接消失**不留尸体, 硬派末世感</td></tr>
+        <tr><td><strong>09</strong></td><td><strong>心灵者</strong></td><td>用紫色光球射向主角本体 (非防线), 逼迫玩家横移</td><td class="prompt-cell">细长生物躯体, 灰紫色肉质外皮 50% 骨甲长条状拼接沿脊柱, 双手替换为**晶化义肢**——紫色结晶指爪之间悬浮一颗紫色能量球, 头顶两根骨角向后延伸, 头部骨盔下横向单眼裂缝透紫色冷光, 关节缝隙同色透光, 无脚, 生物躯体下摆呈飘浮态, 体型细长, 死亡瞬间**直接消失**不留尸体, 硬派末世感</td></tr>
+        <tr><td><strong>10</strong></td><td><strong>祭司眼镜</strong></td><td>每 3s 给最近一只友军叠一层护盾</td><td class="prompt-cell">佝偻生物躯体, 灰绿肉质外皮 50% 骨甲长袍状披挂, 一只手替换为**晶化义肢**——绿色结晶权杖直接从骨甲手臂末端生长, 权杖顶端结晶体散发护盾光辉, 头部骨盔向前延伸如眼罩, 骨盔下横向单眼裂缝透绿色冷光, 关节缝隙同色透光, 骨甲肉腿缓慢挪步, 体型中等, 死亡瞬间**直接消失**不留尸体, 硬派末世感</td></tr>
+        <tr><td><strong>11</strong></td><td><strong>毒爆胖</strong></td><td>死亡时爆炸留下一片持续 3s 毒雾区域</td><td class="prompt-cell">球形肥胖生物躯体, 灰绿肉质外皮 50% 骨甲呈碎裂拼接状勉强包裹膨胀身体, 骨甲缝隙中透出绿色毒液脉动, 背部长有一块**晶化义肢**——绿色结晶毒囊嵌在骨甲背上, 结晶内部绿雾翻涌, 头部骨盔下横向单眼裂缝透绿色冷光, 关节缝隙同色透光, 无手脚靠肚皮滚动前进, 体型大胖, 死亡瞬间**直接消失**不留尸体 (毒雾由地面残留特效独立表现), 硬派末世感</td></tr>
       </tbody>
     </table>
 
@@ -847,12 +848,12 @@ Alien Fizzle · 玩法规格<br>
     <table class="monster-table">
       <thead><tr><th>编号</th><th>名字</th><th>威胁模型</th><th>美术提示词</th></tr></thead>
       <tbody>
-        <tr><td><strong>12</strong></td><td><strong>钻地兽</strong></td><td>从地下钻出攻击, 会短暂无敌</td><td class="prompt-cell">紫色机械独眼巨兽, 身体前半部像巨型钻头带螺旋纹, 后半部是机甲身躯露齿轮, 独眼在钻头顶部发红光, 钻地时激起沙尘, 露头时钻头旋转, 体型是精英 1.5 倍, 死亡时钻头卡住机甲冒电火花, 卡通重工感</td></tr>
-        <tr><td><strong>13</strong></td><td><strong>蛛母眼</strong></td><td>生成 2 只跳弹菌小兵在其周围</td><td class="prompt-cell">橙红色蜘蛛型 BOSS, 身体是巨型独眼直径占全身一半, 眼周长 8 只细长节肢腿快速交替, 眼球布满血丝愤怒感, 眼睑周围有小獠牙, 体型宽大, 死亡时眼球爆裂流红汁, 腿部抽搐蜷缩, 卡通蜘蛛女王感</td></tr>
-        <tr><td><strong>14</strong></td><td><strong>腐化嘴</strong></td><td>吞噬前方友军尸体回复自身 HP</td><td class="prompt-cell">翠绿色巨型软体怪, 全身像化脓的胶质团, 身体上开一张巨大血盆大口占身体 1/3 露排排利齿, 嘴上方一只小独眼贪婪转动, 身体粘液滴落, 无脚靠身体蠕动前进, 体型肥大, 死亡时化作绿色黏液瘫地, 卡通僵尸感</td></tr>
-        <tr><td><strong>15</strong></td><td><strong>浮游炮台</strong></td><td>悬浮在空中不停射击, 无法近战</td><td class="prompt-cell">银紫色 UFO 飞碟形状, 底部悬浮发紫色能量束, 顶部圆穹罩内一颗巨型独眼旋转警戒, 侧面若干小炮口不停旋转, 无脚全悬浮飞行, 体型扁圆宽大, 死亡时飞碟旋转坠落爆炸, 卡通科幻感</td></tr>
-        <tr><td><strong>16</strong></td><td><strong>熔岩龙</strong></td><td>冲刺攻击, 命中防线大伤害</td><td class="prompt-cell">深蓝色小型飞龙, 双翼展开有琥珀金脉纹, 身体覆盖蓝色鳞片带火焰纹, 独眼位于额头闪红光, 嘴中吐熔岩橙色火焰, 尾巴带火焰, 短爪, 体型中等偏长, 死亡时鳞片碎裂如玻璃火焰熄灭, 卡通龙族感</td></tr>
-        <tr><td><strong>17</strong></td><td><strong>机甲首</strong></td><td>召唤 2 只自爆熊小兵冲锋</td><td class="prompt-cell">翠绿色巨型机甲, 头部是透明玻璃穹顶内一颗独眼绿色司令, 双肩装小型导弹发射架, 双腿粗壮机械液压杆, 手部是机械爪, 胸甲发绿光, 体型是精英 2 倍, 死亡时穹顶碎裂司令头萎缩, 卡通机甲司令感</td></tr>
+        <tr><td><strong>12</strong></td><td><strong>钻地兽</strong></td><td>从地下钻出攻击, 会短暂无敌</td><td class="prompt-cell">巨型生物躯体, 灰紫肉质外皮 80% 骨甲重甲全包裹, 头部前端由**晶化义肢**替换——巨型紫色结晶钻锥直接从骨甲头颅生长而出呈螺旋纹理, 钻锥内部**晶化能量核心**脉动紫光, 背部骨甲板呈脊椎节状排列, 头部骨盔下横向单眼裂缝透紫色冷光, 关节缝隙同色透光, 骨甲短肢肉爪扒地前进, 体型是精英 1.5 倍, 死亡时**定帧+去饱和+淡出**, 硬派末世感</td></tr>
+        <tr><td><strong>13</strong></td><td><strong>蛛母眼</strong></td><td>生成 2 只跳弹菌小兵在其周围</td><td class="prompt-cell">蛛型生物躯体, 灰紫色肉质外皮 80% 骨甲盘状包裹身体, 身体正中一道巨大横向单眼裂缝占身体半径透紫色冷光, 眼周长 8 只由**晶化义肢**替换的紫色结晶节肢, 结晶节肢内部脉络亮紫光作为**晶化能量核心**, 眼睑周围骨刺尖锐, 关节缝隙同色透光, 结晶节肢交替前进, 体型宽大, 死亡时**定帧+去饱和+淡出**, 硬派末世感</td></tr>
+        <tr><td><strong>14</strong></td><td><strong>腐化嘴</strong></td><td>吞噬前方友军尸体回复自身 HP</td><td class="prompt-cell">巨型软体生物躯体, 灰绿色肉质外皮 80% 骨甲拼接如外骨骼, 身体正面开一张巨大血盆大口占身体 1/3, 口周由**晶化义肢**替换的绿色结晶尖齿一圈, 齿间**晶化能量核心**脉动绿光, 嘴上方骨盔下横向单眼裂缝透绿色冷光, 关节缝隙同色透光, 无脚靠身体蠕动前进, 体型肥大, 死亡时**定帧+去饱和+淡出**, 硬派末世感</td></tr>
+        <tr><td><strong>15</strong></td><td><strong>浮游炮台</strong></td><td>悬浮在空中不停射击, 无法近战</td><td class="prompt-cell">悬浮型生物躯体, 灰蓝肉质核心 80% 骨甲盘状包裹如外骨骼碟状, 底部由**晶化义肢**替换的蓝色结晶脉轮悬浮态生物, 结晶内**晶化能量核心**旋转发蓝光提供浮力, 侧面骨甲上生长 4 个由结晶义肢构成的小型炮口, 头部骨盔下横向单眼裂缝透蓝色冷光, 关节缝隙同色透光, 无脚全悬浮, 体型扁圆宽大, 死亡时**定帧+去饱和+淡出**, 硬派末世感</td></tr>
+        <tr><td><strong>16</strong></td><td><strong>熔岩龙</strong></td><td>冲刺攻击, 命中防线大伤害</td><td class="prompt-cell">龙形生物躯体, 灰紫肉质外皮 80% 骨甲鳞片状包覆全身, 双翼由**晶化义肢**替换——紫色结晶翼骨支撑生物翼膜, 结晶翼骨内部脉络亮**晶化能量核心**紫光, 头部骨盔延伸如龙首, 骨盔下横向单眼裂缝透紫色冷光, 尾部骨甲刺状, 关节缝隙同色透光, 骨甲短爪, 体型中等偏长, 死亡时**定帧+去饱和+淡出**, 硬派末世感</td></tr>
+        <tr><td><strong>17</strong></td><td><strong>机甲首</strong></td><td>召唤 2 只自爆熊小兵冲锋</td><td class="prompt-cell">巨型盔胄形态生物躯体, 灰绿肉质核心 80% 骨甲全身包裹如厚重盔胄, 头部由骨甲盔胄呈司令官冠冕状, 双肩由**晶化义肢**替换——一对绿色结晶肩甲上生长小型结晶义肢发射器, 胸口嵌**晶化能量核心**脉动绿光, 骨盔下横向单眼裂缝透绿色冷光, 关节缝隙同色透光, 骨甲粗腿肉足前进, 体型是精英 2 倍, 死亡时**定帧+去饱和+淡出**, 硬派末世感</td></tr>
       </tbody>
     </table>
 
@@ -861,9 +862,9 @@ Alien Fizzle · 玩法规格<br>
     <table class="monster-table">
       <thead><tr><th>编号</th><th>名字</th><th>威胁模型</th><th>美术提示词</th></tr></thead>
       <tbody>
-        <tr><td><strong>18</strong></td><td><strong>冰白触手王</strong></td><td>多触手轮流攻击, 每失一根触手加速一次</td><td class="prompt-cell">灰白色巨型头足类 BOSS, 中央一只巨型独眼直径占身体大半, 眼周长 8 根粗大触手每根有细节吸盘, 触手末端有小獠牙, 眼睑周围布满尖刺, 身体近乎透明泛冰蓝光, 体型是小 BOSS 2 倍, 死亡时触手一根根断落眼球爆裂, 卡通克苏鲁 BOSS 感</td></tr>
-        <tr><td><strong>19</strong></td><td><strong>翠绿魔王</strong></td><td>召唤精英怪, 手持权杖发射能量波</td><td class="prompt-cell">翠绿色巨型独角魔王, 头顶两根粗大琥珀金螺旋角, 单只巨型独眼血红瞪出獠牙, 双手持琥珀金雕纹权杖顶端悬浮黄色能量球, 身体披紫色魔王披风拖地, 脚边有 2 只小兵护卫, 体型高大威严, 死亡时权杖爆开能量球坠地, 卡通魔王感</td></tr>
-        <tr><td><strong>20</strong></td><td><strong>水晶脑主</strong></td><td>全场释放紫色心灵冲击波, 逼玩家躲避</td><td class="prompt-cell">透明玻璃穹顶罩住一颗巨型粉色大脑, 脑组织脉动发粉红光带琥珀金脉纹, 穹顶下是机械蜘蛛式六足底座, 每足末端带小炮口, 无独立眼但脑体自身即视觉器官, 底座周围环绕能量场, 体型宏大, 死亡时穹顶爆裂脑体焦化, 卡通终极智慧体感</td></tr>
+        <tr><td><strong>18</strong></td><td><strong>冰白触手王</strong></td><td>多触手轮流攻击, 每失一根触手加速一次</td><td class="prompt-cell">头足类巨型生物躯体, 灰白肉质核心 100% 骨甲全包裹如深海外骨骼, **中央一道巨大单眼裂缝**作为主视觉占身体大半透蓝色冷光, 眼周长 8 根由**晶化义肢**替换的蓝色结晶触手, 每根结晶触手内部**晶化能量核心**脉动蓝光如冰晶脉络, 触手末端骨刺尖利, 眼睑周围骨甲刺状, 关节缝隙同色透光, 体型是小 BOSS 2 倍, 死亡时**定帧+去饱和+淡出** (强调击杀分量), 硬派末世感</td></tr>
+        <tr><td><strong>19</strong></td><td><strong>翠绿魔王</strong></td><td>召唤精英怪, 手持权杖发射能量波</td><td class="prompt-cell">王者形态巨型生物躯体, 灰绿肉质核心 100% 骨甲全身重甲, 头顶两根粗大骨甲弯角, **头部一道巨大单眼裂缝**作为主视觉透绿色冷光, 双手已全部替换为**晶化义肢**——一对绿色结晶臂, 一手结晶义肢延伸为权杖顶端悬浮**晶化能量核心**绿光球, 胸口再嵌一颗**晶化能量核心**脉动绿光, 骨甲长袍状拖地, 关节缝隙同色透光, 骨甲肉腿威严前进, 体型高大威严, 死亡时**定帧+去饱和+淡出** (强调击杀分量), 硬派末世感</td></tr>
+        <tr><td><strong>20</strong></td><td><strong>水晶脑主</strong></td><td>全场释放紫色心灵冲击波, 逼玩家躲避</td><td class="prompt-cell">终极形态巨型生物躯体, 灰紫肉质核心 100% 骨甲全包裹, 头颅骨甲顶部**一道巨大纵向单眼裂缝**作为主视觉透紫色冷光露出内部脉动生物脑组织, 脑组织即最大的**晶化能量核心**——由紫色结晶脉络包裹的活体脑, 底座 6 条肢体全部由**晶化义肢**替换——紫色结晶节肢支撑身体, 每节肢末端结晶炮口, 骨甲身体周围结晶义肢构成的能量场, 关节缝隙同色透光, 体型宏大, 死亡时**定帧+去饱和+淡出** (强调击杀分量), 硬派末世感</td></tr>
       </tbody>
     </table>
   </section>
@@ -2956,7 +2957,7 @@ if (targetLv &gt; skillLevels[id]) {
   </section>
 
   <section class="chapter">
-    <h3 id="ch-v48" style="color:#c62828">V4.8 · K34-B · AUX → AUV 全项目命名统一 <span class="new-tag">NEW</span> (2026-07-30)</h3>
+    <h3 id="ch-v48" style="color:#c62828">V4.8 · K34-B · AUX → AUV 全项目命名统一 (2026-07-30)</h3>
     <div class="doc-body">
       <p class="lead">V4.8 覆盖 · AI 辅助作战单元底层命名 <code>AUX</code> → <code>AUV</code> 全项目统一。§1.3.3 / §2.2 / §2.2.1 / V4.7 权威块术语替换。数值/机制/行为无变化, 纯命名对齐。</p>
       <ul>
@@ -2965,6 +2966,24 @@ if (targetLv &gt; skillLevels[id]) {
         <li>demo.html HTML 内文本 <strong>零命中</strong>, JS 常量/变量名未涉及</li>
         <li>历史废弃名: NUO(2026-06 弃) → BOBO(2026-07-27 弃) → AUX(2026-07-30 弃) → <strong>AUV</strong> (当前底层通名)</li>
         <li>版本联动: spec.html title/badge/sidebar/项目版本刷 v4.7 → v4.8, spec-manual.html L472 项目版本刷 v4.7 → v4.8, SPEC_PUBLISHED bump 至 2026-07-30 15:44</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <h3 id="ch-v49" style="color:#c62828">V4.9 · K34-C · §2.4 外星生物美术提示词骨甲版同步 <span class="new-tag">NEW</span> (2026-07-30)</h3>
+    <div class="doc-body">
+      <p class="lead">V4.9 落实 §1.3.4 Ossyr 骨甲版铁律到 §2.4 表格 —— 20 只敌人美术提示词全部重写, 砍老卡通版机械金属/塑料/彩虹光晕/胶质外皮/萌系元素, 统一 <strong>生物躯体 + 骨甲覆盖率梯度 + 晶化义肢 + 单眼裂缝紫/绿/蓝军配 + 关节缝隙同色透光 + 死亡按档处理</strong>。数值/机制/行为无变化, 纯美术调性对齐。</p>
+      <ul>
+        <li><strong>骨甲覆盖率梯度</strong>: 小兵档 20% (跳弹菌/刺蒲团/泡泡兵/自爆熊) · 精英档 50% (盾墙客/喷毒手/脑罐博士/重炮蓝/心灵者/祭司眼镜/毒爆胖) · 小 BOSS 档 80% (钻地兽/蛛母眼/腐化嘴/浮游炮台/熔岩龙/机甲首) · 大 BOSS 档 100% (冰白触手王/翠绿魔王/水晶脑主)</li>
+        <li><strong>晶化义肢 (crystalline prosthesis)</strong>: 精英档起标配 (盾状/枪管/脑壳/毒囊/权杖/钻锥/触手/翼骨/尖齿等), 紫/绿/蓝三色结晶, 与骨甲缝隙同色透光呼应</li>
+        <li><strong>晶化能量核心</strong>: 小 BOSS 起标配, 嵌入结晶义肢或胸腹, 脉动发光, 强调"生物能量透出骨甲"</li>
+        <li><strong>单眼裂缝军配</strong>: 骨甲盔下横向/纵向单眼裂缝, 紫/绿/蓝三阵营色 · 大 BOSS 单眼裂缝占身体主视觉半径 (强化压迫感)</li>
+        <li><strong>死亡表现按档</strong>: 小兵/精英 <strong>直接消失</strong>不留尸体 · 小 BOSS/大 BOSS <strong>定帧 + 去饱和 + 淡出</strong> (不爆炸, 强调击杀分量)</li>
+        <li><strong>严禁词清单</strong>: 机械 / 金属 / 塑料 / UFO / 加特林 / 履带 / 玻璃泡 / 彩虹光晕 / 胶质外皮 / 卡通萌系 / 拟人可爱感 (老卡通版遗留全部清除)</li>
+        <li>命名保留: 20 只中文四字诀名字不动 (01 跳弹菌 → 20 水晶脑主), 仅美术提示词列重写</li>
+        <li>版本联动: spec.html title/badge/sidebar/项目版本刷 v4.8 → v4.9, spec-manual.html 已先落地 §2.4 骨甲版 (v4.9 手动维护版权威源), 数值/机制/行为无变化</li>
+        <li>关键 marker: <code>ch-v49</code> · <code>v4.9</code> · <code>骨甲覆盖率 20/50/80/100</code> · <code>晶化义肢</code> · <code>晶化能量核心</code> · <code>单眼裂缝紫绿蓝</code> · <code>定帧去饱和淡出</code></li>
       </ul>
     </div>
   </section>
