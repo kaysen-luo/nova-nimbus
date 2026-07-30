@@ -50,23 +50,23 @@ const T = {
     role:     '守线人',              // spec §1 标题用词
   },
 
-  // ─── 3. AI 副手 (AUX) ──────────────────────────────────────────
+  // ─── 3. AI 副手 (AUV) ──────────────────────────────────────────
   aux: {
-    codename:      'AUX',                    // 代码/系统规则层通名 (稳定, 未来改名不动这里)
+    codename:      'AUV',                    // 代码/系统规则层通名 (稳定, 未来改名不动这里)
     fullNameCN:    'AI 副手',                // 玩法文档 / UI 通用中文
     fullNameEN:    'Auxiliary AI Unit',      // 英文全称
-    mirrorName:    '镜像 AUX',               // TODO K 待拍板 (双主角共用 AUV-0, 镜像也是同型号)
-    formerNames:   ['NUO', 'BOBO', 'SIV-7'], // 已废弃历史名 (2026-06 NUO→BOBO, 2026-07-27 BOBO→AUX, 2026-07-28 SIV-7 弃用, 双主角统一 AUV-0)
+    mirrorName:    '镜像 AUV',               // TODO K 待拍板 (双主角共用 AUV-0, 镜像也是同型号)
+    formerNames:   ['NUO', 'BOBO', 'SIV-7'], // 已废弃历史名 (2026-06 NUO→BOBO, 2026-07-27 BOBO→AUV, 2026-07-28 SIV-7 弃用, 双主角统一 AUV-0)
   },
 
-  // ─── 3.1 AUX 型号档案 (世界观层, 双主角共用同一军方标配, 各自取名) ─
+  // ─── 3.1 AUV 型号档案 (世界观层, 双主角共用同一军方标配, 各自取名) ─
   auxModels: {
     // 军方标配型号 (2026-07-28 K 立死, 双主角共用)
     military: {
       code:     'AUV-0',
       fullName: 'Auxiliary Utility Vehicle · 0 号原型机',
     },
-    // 双主角对自己 AUX 的取名 (玩家昵称层)
+    // 双主角对自己 AUV 的取名 (玩家昵称层)
     marvis: {
       code:     'AUV-0',                     // 军方型号 (与 Nova 相同)
       nick:     '零指导',                    // Marvis 老油条式调侃尊称 (2026-07-28 K29-follow 换名)

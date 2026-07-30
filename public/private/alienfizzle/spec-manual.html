@@ -31,8 +31,28 @@ a:hover { color: #5eead4; }
   padding: 32px 24px;
   position: sticky;
   top: 0;
+  align-self: start;   /* grid child: 允许 sticky 生效, 不被 stretch 撑高 */
   height: 100vh;
+  max-height: 100vh;
   overflow-y: auto;
+  z-index: 20;
+}
+
+/* === TABLE 列宽收紧 (T2) ===
+   短列 (维度/段/阶/等级/Lv) 固定窄宽, 其他列 auto 自适应 */
+main table { table-layout: auto; }
+main table th:first-child,
+main table td:first-child {
+  width: 120px;
+  max-width: 160px;
+  white-space: nowrap;
+}
+/* 允许极端情况下换行 (例如"档内排序"这种长文本第一列时)  */
+main table th:first-child.wide,
+main table td:first-child.wide {
+  width: auto;
+  max-width: none;
+  white-space: normal;
 }
 .sidebar h2 {
   color: #2dd4bf;
@@ -432,7 +452,7 @@ tr:hover td { background: #134e4a; }
   <li><a href="#ch-08">边缘情况清单</a></li>
 </ol>
 <div class="sidebar-footer">
-spec-manual · 2026-07-28<br>
+spec-manual · 2026-07-30<br>
 Alien Fizzle · 玩法规格<br>
 <a href="spec.html" style="color:#2dd4bf;">→ 权威 spec (完整版)</a><br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
@@ -449,11 +469,11 @@ Alien Fizzle · 玩法规格<br>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">spec-manual · 2026-07-28 · 手动维护 · v4.4 (K29 专属卡骨架同步)</div>
+<div class="value">spec-manual · 2026-07-30 · 手动维护 · v4.8 (AUX → AUV 全项目命名统一)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-28</div>
+<div class="value">2026-07-30</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -488,7 +508,7 @@ Alien Fizzle · 玩法规格<br>
     <h3>1.2 题材与节奏</h3>
     <table>
       <tr><th>维度</th><th>当前口径</th></tr>
-      <tr><td>玩家角色</td><td>主角 + AUX, 站定底部防线</td></tr>
+      <tr><td>玩家角色</td><td>主角 + AUV, 站定底部防线</td></tr>
       <tr><td>敌人动线</td><td>从顶部推进, 直到防线前停下攻击</td></tr>
       <tr><td>节奏类型</td><td>endless wave 塔防 (守 = 主旋律)</td></tr>
       <tr><td>失败条件</td><td>防线持久度归零</td></tr>
@@ -529,8 +549,8 @@ Alien Fizzle · 玩法规格<br>
       <strong>台词分工</strong>: 玩家上场的角色 = 战场执行方 (第一人称音效/技能语音); 未上场的角色 = <strong>无线电画外音</strong> (关卡切换、状态门刷新、Boss 出现、通关等时机触发短语音/文本弹幕)。<strong>双主角互为对方的画外音</strong>, 是最省成本又能撑起双人叙事的做法。
     </div>
 
-    <h4>1.3.3 AI 辅助作战单元 (AUX) · 军方标配型号 AUV-0</h4>
-    <p class="lead">星际防卫队为每位星际战士配发一台 <strong>AI 辅助作战单元</strong> (系统代号 <code>AUX</code>, 玩法系统层通名)。型号统一为 <strong>AUV-0</strong> (Auxiliary Utility Vehicle · 0 号原型机), 双主角持有同一军方标配型号, 差异只体现在<strong>各自给自己的 AUX 取的名字与语言习惯</strong>上, 面板数值与玩法机制完全一致。</p>
+    <h4>1.3.3 AI 辅助作战单元 (AUV) · 军方标配型号 AUV-0</h4>
+    <p class="lead">星际防卫队为每位星际战士配发一台 <strong>AI 辅助作战单元</strong> (系统代号 <code>AUV</code>, 玩法系统层通名)。型号统一为 <strong>AUV-0</strong> (Auxiliary Utility Vehicle · 0 号原型机), 双主角持有同一军方标配型号, 差异只体现在<strong>各自给自己的 AUV 取的名字与语言习惯</strong>上, 面板数值与玩法机制完全一致。</p>
 
     <table>
       <tr><th>维度</th><th>Marvis 侧</th><th>Nova 侧</th></tr>
@@ -544,7 +564,7 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout">
       <strong>命名分层</strong>:
       <ul style="margin-top:6px;">
-        <li><strong>系统层通名</strong> = <code>AUX</code> (Auxiliary AI Unit) — 玩法规则文档 / 代码变量 / spec 系统条款一律用此</li>
+        <li><strong>系统层通名</strong> = <code>AUV</code> (Auxiliary AI Unit) — 玩法规则文档 / 代码变量 / spec 系统条款一律用此</li>
         <li><strong>世界观档案层</strong> = AUV-0 (军方标配型号, 双主角共用) — 立绘 UI / 军方档案 / 型号铭牌</li>
         <li><strong>玩家昵称层</strong> = 零指导 (Marvis) / 手术刀"寸厘" · 简称寸厘 (Nova) — 场上口语 / 无线电台词</li>
       </ul>
@@ -564,8 +584,8 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout warn">
       <strong>调性锚 · 严肃科幻底 + 缝隙反差萌</strong> (给美术/音效/文案外包统一遵循)
       <ol style="margin-top:8px; padding-left:24px;">
-        <li><strong>硬核设定 + 软名字/软文案</strong>: 军方型号 <code>AUV-0</code> (硬) + 场上叫"零指导"/"寸厘"(软, 双主角各自取名); AUX 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
-        <li><strong>外星生物的硬核压迫感</strong>: 叙事上是入侵者, 视觉上是<strong>生物本体 + 骨甲/结晶义肢改装</strong>的异种战士 (严肃硬核), 死亡从简不做浮夸表现。这条<strong>不再承担反差萌</strong>, 归严肃底; 反差萌接缝改由"AUX 硬名软名"和"双主角吐槽"两条支撑。</li>
+        <li><strong>硬核设定 + 软名字/软文案</strong>: 军方型号 <code>AUV-0</code> (硬) + 场上叫"零指导"/"寸厘"(软, 双主角各自取名); AUV 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
+        <li><strong>外星生物的硬核压迫感</strong>: 叙事上是入侵者, 视觉上是<strong>生物本体 + 骨甲/结晶义肢改装</strong>的异种战士 (严肃硬核), 死亡从简不做浮夸表现。这条<strong>不再承担反差萌</strong>, 归严肃底; 反差萌接缝改由"AUV 硬名软名"和"双主角吐槽"两条支撑。</li>
         <li><strong>双主角吐槽接缝</strong>: 关卡切换 / Boss 出现 / 通关 等节点插 2-3 秒无线电短对话 (文本弹幕即可, 无需过场动画), 严肃战报 + 战友日常吐槽的化学反应是留存钩子。</li>
       </ol>
       <strong>反面示例</strong>: 全程搞怪滑稽 (削弱严肃底, 观感掉档) · 完全严肃无接缝 (与竞品同质化, 传播弱)。反差萌是<strong>缝隙里冒出来的</strong>, 不是主基调。
@@ -577,11 +597,11 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout">
       <strong>调性总则</strong> (Kaysen 2026-07-27 定死, 起草时逐条比对):
       <ul style="margin-top:6px;">
-        <li><strong>不提 AUX / 型号 / 昵称</strong>: 台词内容层不出现 AUX / AUV-0 / 零指导 / 寸厘, 保持世界观纯度</li>
+        <li><strong>不提 AUV / 型号 / 昵称</strong>: 台词内容层不出现 AUV / AUV-0 / 零指导 / 寸厘, 保持世界观纯度</li>
         <li><strong>称呼规则</strong> (2026-07-27 K 立死):
           <ul style="margin-top:4px;">
             <li>Nova → 马启航: <strong>严格单一称呼"马启航"</strong> (无变体, 不用"Marvis"/"老马"/"启航"/"马哥"等)</li>
-            <li>马启航 → Nova: 常态叫 <strong>"灵主任"</strong> (医生职业敬称保留, 混不吝里的真尊重); 情绪饱满时切换 <strong>"Nova"</strong> (关键节点/惊呼/通关/复活/情绪高峰)</li>
+            <li>马启航 → Nova: 严格单一称呼 <strong>"灵主任"</strong> (医生职业敬称保留)。K34-A 起, 无线电场景 = 无情播报机, 无情绪切换, 无名字变化</li>
             <li>档案层名字 (§1.3.2) 保持 <strong>马启航 Marvis / 牛知灵 Nova</strong> 双名格式不动 — 世界观档案层与台词层解耦</li>
           </ul>
         </li>
@@ -612,181 +632,175 @@ Alien Fizzle · 玩法规格<br>
 
     <h4>1.3.5.3 已定稿节点样本 (M1 阶段 · 13 / 13 覆盖)</h4>
     <p><span class="tag tag-may">草稿</span> 全 13 节点 M1 基础版一次落齐, 后续 M2/M3/无尽阶段变体在下一轮迭代补。术语约定:<br>
-      <strong>"马场"</strong> = 马启航上场 · Nova 无线电 · Nova 说"马启航"; <strong>"灵场"</strong> = Nova 上场 · 马启航无线电 · 马启航说"灵主任" (常态) / "Nova" (情绪饱满时切换)</p>
+      <strong>"马场"</strong> = 马启航上场 · Nova 无线电 · Nova 说"马启航"; <strong>"灵场"</strong> = Nova 上场 · 马启航无线电 · 马启航说"灵主任"<br>
+      <strong>无线电原则 (K34-A):</strong> 上场角色保留原味台词, <strong>无线电那侧 = 无情资讯播报机</strong>, 只播情报/数值/警告, 不带关心/贫嘴/情绪切换/名字变化。称呼层保留 (灵主任/马启航), 情感层全砍。</p>
 
     <div class="callout">
       <strong>节点 1 · 开局登场</strong> (M1 · 100% · 定基调)
-      <p style="margin-top:6px;"><strong>马场</strong>:</p>
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>:</p>
       <ul>
-        <li>"马启航, 到位报个数。右翼归你, 别走神。"</li>
-        <li>"第一波三分钟内接触。... 别死。"</li>
+        <li>"马启航, 到位报数。右翼归你。"</li>
+        <li>"第一波三分钟内接触。"</li>
       </ul>
-      <p><strong>灵场</strong>:</p>
+      <p><strong>灵场 · 马启航无线电</strong>:</p>
       <ul>
-        <li>"灵主任, 到位。老规矩, 你前我盯后。"</li>
-        <li>"开打。一波一波来, 别绷。"</li>
+        <li>"灵主任, 到位。你打前, 我盯后。"</li>
+        <li>"开打。第一波三分钟。"</li>
       </ul>
     </div>
 
     <div class="callout">
       <strong>节点 2 · Wave 间隔 (通用池)</strong> (M1 · 高频 20-30% · 双向各 9 条随机抽)
-      <p style="margin-top:6px;"><strong>马场</strong>:</p>
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>:</p>
       <ul>
-        <li>"右翼三点钟方向, 清一下。"</li>
-        <li>"马启航, 别只盯左边。"</li>
-        <li>"手别停, 节奏稳住。"</li>
-        <li>"血条我在看, 别装没事。"</li>
-        <li>"下一波密度会大, 别贪清。"</li>
-        <li>"马启航, 还行? ... 行。"</li>
-        <li>"打得不赖。别自满。"</li>
-        <li>"水温差不多了。热身完事。"</li>
-        <li>"位置。别飘。"</li>
+        <li>"右翼三点钟方向, 敌情。"</li>
+        <li>"马启航, 左侧密度上升。"</li>
+        <li>"节奏稳住。"</li>
+        <li>"血条 60%。"</li>
+        <li>"下一波密度会大。"</li>
+        <li>"马启航, 状态?"</li>
+        <li>"命中率 82%。"</li>
+        <li>"水温上升, 密度加档。"</li>
+        <li>"位置校正。"</li>
       </ul>
-      <p><strong>灵场</strong>:</p>
+      <p><strong>灵场 · 马启航无线电</strong>:</p>
       <ul>
-        <li>"灵主任, 别打太快, 薯片还没吃完。"</li>
-        <li>"灵主任, 右边漏了个。"</li>
-        <li>"打得利索。就是不留活口给我评论。"</li>
-        <li>"这拨清完歇口气。"</li>
-        <li>"你连喘气都精准, 行吧。"</li>
-        <li>"别硬打, 血条我瞄着。"</li>
-        <li>"节奏挺好, 别自己给自己上强度。"</li>
-        <li>"灵主任, 你不出声, 我以为通讯断了。"</li>
-        <li>"左路干净, 右路别漏。"</li>
+        <li>"灵主任, 节奏偏快。"</li>
+        <li>"灵主任, 右边漏一。"</li>
+        <li>"清场进度 60%。"</li>
+        <li>"本波结束, 间隔 8 秒。"</li>
+        <li>"命中率 91%。"</li>
+        <li>"血条监控中。"</li>
+        <li>"节奏稳定。"</li>
+        <li>"灵主任, 通讯确认。"</li>
+        <li>"左路清空, 右路残敌 3。"</li>
       </ul>
     </div>
 
     <div class="callout">
       <strong>节点 3 · 状态门刷新</strong> (中频 60-80% · 双向各 6 条)
-      <p style="margin-top:6px;"><strong>马场</strong>:</p>
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>:</p>
       <ul>
-        <li>"新门, 选好。"</li>
-        <li>"别乱穿, 想想收益。"</li>
-        <li>"翻转看清楚。"</li>
-        <li>"这门是好东西。"</li>
-        <li>"别贪, 看清楚吃亏还是赚。"</li>
-        <li>"又刷了。你自己拿主意。"</li>
+        <li>"新门刷新。"</li>
+        <li>"门位就绪, 收益待评估。"</li>
+        <li>"翻转可用。"</li>
+        <li>"门属性: 增益类。"</li>
+        <li>"门属性: 混合类。"</li>
+        <li>"又刷。自选。"</li>
       </ul>
-      <p><strong>灵场</strong>:</p>
+      <p><strong>灵场 · 马启航无线电</strong>:</p>
       <ul>
-        <li>"新门出来了灵主任, 你决定。"</li>
-        <li>"又开门, 怎么选?"</li>
-        <li>"这门你熟, 我不多话。"</li>
-        <li>"灵主任, 门有点花。"</li>
-        <li>"翻不翻, 你说了算。"</li>
-        <li>"又刷, 你选, 我打。"</li>
+        <li>"灵主任, 新门刷新。"</li>
+        <li>"又开门。"</li>
+        <li>"门位就绪。"</li>
+        <li>"灵主任, 混合门。"</li>
+        <li>"翻转可用, 自选。"</li>
+        <li>"又刷, 自选。"</li>
       </ul>
     </div>
 
     <div class="callout">
       <strong>节点 4 · Boss 登场</strong> (低频 100% · 小/大 Boss 各一版)
-      <p style="margin-top:6px;"><strong>小 Boss · 马场</strong>: "警报。中型目标接近。集火中路。"</p>
-      <p><strong>小 Boss · 灵场</strong>: "灵主任, 大家伙。中型, 你顶得住。"</p>
-      <p style="margin-top:8px;"><strong>大 Boss · 马场</strong>: "高价值目标就位。马启航, 不要托大。"</p>
-      <p><strong>大 Boss · 灵场</strong>: "Nova, 主目标出现了。这波... 专心打, 别管我说话。"</p>
-      <p style="margin-top:4px; font-size: 0.9em; color: #94a3b8;"><em>接缝: 大 Boss 场马启航从"灵主任"切"Nova", 情绪饱满信号 (立死规则的第一次触发)</em></p>
+      <p style="margin-top:6px;"><strong>小 Boss · 马场 · Nova 无线电</strong>: "警报。中型目标接近。集火中路。"</p>
+      <p><strong>小 Boss · 灵场 · 马启航无线电</strong>: "灵主任, 中型目标接近。"</p>
+      <p style="margin-top:8px;"><strong>大 Boss · 马场 · Nova 无线电</strong>: "警报。高价值目标就位。"</p>
+      <p><strong>大 Boss · 灵场 · 马启航无线电</strong>: "灵主任, 高价值目标就位。"</p>
     </div>
 
     <div class="callout">
       <strong>节点 5 · 精通卡三选一确认</strong> (中频 60-80% · 双向各 6 条)
-      <p style="margin-top:6px;"><strong>马场</strong>:</p>
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>:</p>
       <ul>
-        <li>"这张不亏。"</li>
-        <li>"选得可以。"</li>
-        <li>"... 你确定?"</li>
-        <li>"有胆识。"</li>
-        <li>"打法要变了。"</li>
-        <li>"行, 这条路我陪你走。"</li>
+        <li>"卡库刷新。"</li>
+        <li>"选项就绪。"</li>
+        <li>"确认?"</li>
+        <li>"路径确认。"</li>
+        <li>"策略切换。"</li>
+        <li>"已录入。"</li>
       </ul>
-      <p><strong>灵场</strong>:</p>
+      <p><strong>灵场 · 马启航无线电</strong>:</p>
       <ul>
-        <li>"牛啊灵主任, 选得利落。"</li>
-        <li>"这张看过, 靠谱。"</li>
-        <li>"灵主任, 你选卡跟做手术一样准。"</li>
-        <li>"行, 跟你打。"</li>
-        <li>"选完就冲, 不给对面反应。"</li>
-        <li>"这波有意思了。"</li>
+        <li>"灵主任, 卡库刷新。"</li>
+        <li>"选项就绪。"</li>
+        <li>"灵主任, 确认?"</li>
+        <li>"路径确认。"</li>
+        <li>"策略切换。"</li>
+        <li>"已录入。"</li>
       </ul>
     </div>
 
     <div class="callout">
-      <strong>节点 6 · 恶魔赌局 (f_gamble) 触发</strong> (中频 60-80% · 最见性格)
-      <p style="margin-top:6px;"><strong>马场</strong>:</p>
+      <strong>节点 6 · 恶魔赌局 (f_gamble) 触发</strong> (中频 60-80% · 数值播报)
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>:</p>
       <ul>
-        <li>(摇之前) "又摇? 马启航, 数学上你输面 30%。... 你摇你的, 我不劝。"</li>
-        <li>(1.8x 大赚) "... 这次算你运气。"</li>
-        <li>(0.7x 大亏) "我说过什么? 我没说, 我什么都没说。"</li>
-        <li>(1.0x 保本) "白摇。继续打。"</li>
+        <li>(摇之前) "赌局启动。输面 30%。"</li>
+        <li>(1.8x 大赚) "结算: 1.8x。"</li>
+        <li>(0.7x 大亏) "结算: 0.7x。"</li>
+        <li>(1.0x 保本) "结算: 1.0x。"</li>
       </ul>
-      <p><strong>灵场</strong>:</p>
+      <p><strong>灵场 · 马启航无线电</strong>:</p>
       <ul>
-        <li>(摇之前) "灵主任也开始摇色子? 稀奇。行, 手感这东西信一次。"</li>
-        <li>(1.8x 大赚) "牛啊 Nova! 这波稳了半个关卡。"</li>
-        <li>(0.7x 大亏) "... 亏了别复盘, 打完再说。"</li>
-        <li>(1.0x 保本) "白摇。下一把。"</li>
+        <li>(摇之前) "灵主任, 赌局启动。输面 30%。"</li>
+        <li>(1.8x 大赚) "结算: 1.8x。"</li>
+        <li>(0.7x 大亏) "结算: 0.7x。"</li>
+        <li>(1.0x 保本) "结算: 1.0x。"</li>
       </ul>
-      <p style="margin-top:4px; font-size: 0.9em; color: #94a3b8;"><em>接缝: 1.8x 大赚灵场从"灵主任"切"Nova"(情绪高峰); 同一"白摇"两种口气 (Nova 冷/马启航贫); Nova 的"我说过什么? 我没说" = 冷里藏耍贫</em></p>
     </div>
 
     <div class="callout">
       <strong>节点 7 · 防线 HP &lt; 30% 告急</strong> (低频 100% · 严肃调无耍贫)
-      <p style="margin-top:6px;"><strong>马场</strong>: "警告 · 防线 30% · 马启航, 收一收。稳住。"</p>
-      <p><strong>灵场</strong>: "Nova, 防线告急。撑住, 我一直在。"</p>
-      <p style="margin-top:4px; font-size: 0.9em; color: #94a3b8;"><em>接缝: 灵场告急时马启航切"Nova"(危机高峰, 情绪饱满切换的第二个触发)</em></p>
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>: "警告 · 防线 30%。"</p>
+      <p><strong>灵场 · 马启航无线电</strong>: "灵主任, 防线 30%。"</p>
     </div>
 
     <div class="callout">
-      <strong>节点 8 · 看广告复活</strong> (低频 100% · 战友情接缝)
-      <p style="margin-top:6px;"><strong>马场</strong>: "又回来了。... 别死第二次。"</p>
-      <p><strong>灵场</strong>: "Nova, 回来了。这一局我看着。"</p>
-      <p style="margin-top:4px; font-size: 0.9em; color: #94a3b8;"><em>接缝: 复活是情绪转折点, 灵场用"Nova"</em></p>
+      <strong>节点 8 · 看广告复活</strong> (低频 100% · 播报机不接情感)
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>: "复活确认。战斗继续。"</p>
+      <p><strong>灵场 · 马启航无线电</strong>: "灵主任, 复活确认。"</p>
     </div>
 
     <div class="callout">
-      <strong>节点 9 · M1 → M2 过场</strong> (低频 100% · 弧光第一次松动)
-      <p style="margin-top:6px;"><strong>马场</strong>: "马启航, M1 过了。... 我没想到你能过。"</p>
-      <p><strong>灵场</strong>: "灵主任, 过了这关有点意思。下一关我陪你到底。"</p>
+      <strong>节点 9 · M1 → M2 过场</strong> (低频 100% · 阶段切换播报)
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>: "M1 通过。切换 M2。"</p>
+      <p><strong>灵场 · 马启航无线电</strong>: "灵主任, M1 通过。切换 M2。"</p>
     </div>
 
     <div class="callout">
-      <strong>节点 10 · M2 → M3 过场</strong> (100% · 弧光转折最关键点)
-      <p style="margin-top:6px;"><strong>马场</strong>:</p>
+      <strong>节点 10 · M2 → M3 过场</strong> (100% · 阶段切换播报)
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>:</p>
       <ul>
-        <li>"马启航, 到 M3 了。前面是最后一道防线, 后面就是殖民城。... 你打得可以, 保持。"</li>
-        <li>"目标群在集结, 密度会拉满。别硬扛, 该退半步就退半步。... 我盯着你。"</li>
+        <li>"M2 通过。切换 M3。最后防线。"</li>
+        <li>"目标群集结。密度将拉满。"</li>
       </ul>
-      <p><strong>灵场</strong>:</p>
+      <p><strong>灵场 · 马启航无线电</strong>:</p>
       <ul>
-        <li>"Nova, M3 了。这波守住我们就赢了。... 别单打独斗, 情况不对喊我。"</li>
-        <li>"前面是硬骨头。你稳一点, 我盯着你血条。守住这条线, 后面的城才有人。"</li>
+        <li>"灵主任, M2 通过。切换 M3。"</li>
+        <li>"目标群集结。密度将拉满。"</li>
       </ul>
-      <p style="margin-top:4px; font-size: 0.9em; color: #94a3b8;"><em>接缝: 灵场 M2→M3 切"Nova"(阶段转折高峰, 情绪饱满); Marvis 说不出"燃"话最深托付 = "喊我"; Nova 说不出"软"话最高评价 = "你打得可以, 保持"</em></p>
     </div>
 
     <div class="callout">
-      <strong>节点 11 · M3 通关</strong> (100% · 结局台词保留人设不飘)
-      <p style="margin-top:6px;"><strong>马场</strong>: "Aurelia 守住了。... 马启航, 回来喝一杯?"</p>
-      <p><strong>灵场</strong>: "Nova, 通了。你打得比我狠。这仗值。"</p>
-      <p style="margin-top:4px; font-size: 0.9em; color: #94a3b8;"><em>接缝: 灵场通关瞬间切"Nova"(情绪最高峰)</em></p>
+      <strong>节点 11 · M3 通关</strong> (100% · 通关播报)
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>: "Aurelia 防线保留。任务完成。"</p>
+      <p><strong>灵场 · 马启航无线电</strong>: "灵主任, 任务完成。"</p>
     </div>
 
     <div class="callout">
-      <strong>节点 12 · 关卡失败</strong> (100% · 不煽情不丧气)
-      <p style="margin-top:6px;"><strong>马场</strong>: "失守了。... 复盘, 下一把。"</p>
-      <p><strong>灵场</strong>: "灵主任, 栽了。... 别气馁。再来。"</p>
+      <strong>节点 12 · 关卡失败</strong> (100% · 结果播报)
+      <p style="margin-top:6px;"><strong>马场 · Nova 无线电</strong>: "防线失守。任务失败。"</p>
+      <p><strong>灵场 · 马启航无线电</strong>: "灵主任, 防线失守。"</p>
     </div>
 
     <div class="callout">
-      <strong>节点 13 · 无尽分段推进</strong> (100% × 5 · 弧光递进 · 超越剧本阶段)
+      <strong>节点 13 · 无尽分段推进</strong> (100% × 5 · 段位播报)
       <table style="margin-top:6px;">
-        <tr><th>段</th><th>马场 (Nova 说)</th><th>灵场 (马启航说)</th></tr>
-        <tr><td><strong>段 1</strong></td><td>"无尽 · 段 1。马启航, 不用赶时间。"</td><td>"无尽了灵主任, 慢慢玩。"</td></tr>
-        <tr><td><strong>段 2</strong></td><td>"段 2 · 密度上来了。马启航, 你还稳?"</td><td>"灵主任, 这波密度可以。挺来劲。"</td></tr>
-        <tr><td><strong>段 3</strong></td><td>"段 3。... 你打得越来越像样了。"</td><td>"灵主任, 这已经在剧本之外了, 你居然还没喊累。"</td></tr>
-        <tr><td><strong>段 4</strong></td><td>"段 4。... 马启航, 累了说话。别硬撑。"</td><td>"灵主任, 你手感是长在骨头上的吧。"</td></tr>
-        <tr><td><strong>段 5</strong></td><td>"段 5。... 我看着你。别急。"</td><td>"Nova, 到段 5 了。要不咱一直打下去?"</td></tr>
+        <tr><th>段</th><th>马场 · Nova 无线电</th><th>灵场 · 马启航无线电</th></tr>
+        <tr><td><strong>段 1</strong></td><td>"无尽 · 段 1 进入。"</td><td>"灵主任, 无尽 · 段 1。"</td></tr>
+        <tr><td><strong>段 2</strong></td><td>"段 2 · 密度上升。"</td><td>"灵主任, 段 2 · 密度上升。"</td></tr>
+        <tr><td><strong>段 3</strong></td><td>"段 3 · 剧本外。"</td><td>"灵主任, 段 3 · 剧本外。"</td></tr>
+        <tr><td><strong>段 4</strong></td><td>"段 4 · 疲劳监控中。"</td><td>"灵主任, 段 4 · 疲劳监控中。"</td></tr>
+        <tr><td><strong>段 5</strong></td><td>"段 5 · 极限区。"</td><td>"灵主任, 段 5 · 极限区。"</td></tr>
       </table>
-      <p style="margin-top:4px; font-size: 0.9em; color: #94a3b8;"><em>接缝: 灵场段 5 切"Nova"(无尽末段情绪高峰 = 想跟战友一起打下去的托付)</em></p>
     </div>
 
     <h4>1.3.5.4 后续迭代 TODO</h4>
@@ -804,7 +818,7 @@ Alien Fizzle · 玩法规格<br>
 
   <section class="chapter" id="ch-02">
     <span class="chapter-num">§ 02 · 角色系统</span>
-    <h2>主角 + AUX + 外星生物<br>三方关系定义</h2>
+    <h2>主角 + AUV + 外星生物<br>三方关系定义</h2>
 
     <h3>2.1 主角 (Marvis / Nova · 开局二选一)</h3>
     <table>
@@ -814,12 +828,12 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>操作</td><td><strong>左右自由滑动</strong>(鼠标拖动 / 触屏滑动), 不离开防线高度</td></tr>
       <tr><td>开火</td><td><strong>自动垂直向上射击</strong>, 不受玩家操作影响</td></tr>
       <tr><td>武器</td><td>覆盖式 — 拿到新武器立即替换旧武器, 不叠加</td></tr>
-      <tr><td>武器作用范围</td><td><strong>仅影响主角自身弹道</strong>, 不影响 AUX</td></tr>
+      <tr><td>武器作用范围</td><td><strong>仅影响主角自身弹道</strong>, 不影响 AUV</td></tr>
       <tr><td>初始武器</td><td>基础单发直射(数值待定)</td></tr>
     </table>
 
-    <h3>2.2 AUX (AI 辅助作战单元 · 独立第二输出源)</h3>
-    <p class="lead">AUX 作为 <strong>独立第二输出源</strong>, 允许玩家通过精通卡 G 类 (§4.6) 把它强化为主输出。武器形态为 <strong>激光</strong>, 独立仇恨判定, 全吃状态门增益。</p>
+    <h3>2.2 AUV (AI 辅助作战单元 · 独立第二输出源)</h3>
+    <p class="lead">AUV 作为 <strong>独立第二输出源</strong>, 允许玩家通过精通卡 G 类 (§4.6) 把它强化为主输出。武器形态为 <strong>激光</strong>, 独立仇恨判定, 全吃状态门增益。</p>
     <table>
       <tr><th>属性</th><th>规格</th></tr>
       <tr><td>形象</td><td>小型悬浮球体, 科技感, 顶部激光发射口</td></tr>
@@ -829,29 +843,27 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>射程</td><td><strong>2/3 通道</strong> (从主角站位向上, 约 2/3 屏高)</td></tr>
       <tr><td>基础伤害</td><td>建议锚点 = <strong>主角固定攻击力 × 60%</strong> (数值组细调, demo 阶段用 0.6 系数)</td></tr>
       <tr><td>目标锁定</td><td><strong>自动</strong>, 按 4 阶仇恨优先级 (见下)</td></tr>
-      <tr><td>属性来源</td><td>状态门 (5 项吃: 攻击力/攻速/暴击率/暴击伤害/火力静默翻转, 防线三维不作用于 AUX, 见 §5.9) + 精通卡 G 类专属 + D/F 部分类适用 (见 §4.6)</td></tr>
+      <tr><td>属性来源</td><td>状态门 (5 项吃: 攻击力/攻速/暴击率/暴击伤害/火力静默翻转, 防线三维不作用于 AUV, 见 §5.9) + 精通卡 G 类专属 + D/F 部分类适用 (见 §4.6)</td></tr>
     </table>
 
-    <h4>2.2.1 仇恨判定 · 4 阶优先级</h4>
-    <p>AUX 每次准备开火时按下列优先级选目标, 高阶优先级永远压过低阶; 同阶内 <strong>优先当前血量更少</strong>的敌人 (贯彻 "点残" 逻辑, 与恩赐解脱的 "点满" 互补)。</p>
+    <h4>2.2.1 仇恨判定 · 2 阶优先级 <span class="tag tag-may">V4.7 覆盖</span></h4>
+    <p>AUV 每次准备开火时按下列优先级选目标, 高阶优先级永远压过低阶; <strong>完全不分 boss / 精英 / 小兵</strong>, 只看是否正在攻击防线 (K33 · 原口径"始终优先攻击最靠近防线的敌人")。</p>
     <table>
-      <tr><th>阶</th><th>目标类型</th><th>设计意图</th></tr>
-      <tr><td><strong>P1</strong></td><td>正在攻击防线的敌人</td><td>止血优先, 直接掐防线掉血源</td></tr>
-      <tr><td><strong>P2</strong></td><td>Boss (大 BOSS / 小 BOSS)</td><td>集火关键目标</td></tr>
-      <tr><td><strong>P3</strong></td><td>精英怪</td><td>压制策略型威胁</td></tr>
-      <tr><td><strong>P4</strong></td><td>小兵</td><td>兜底清场</td></tr>
+      <tr><th>阶</th><th>目标</th><th>档内排序</th><th>意图</th></tr>
+      <tr><td><strong>P1</strong></td><td>正在攻击防线的敌人 (<code>atDefense</code>)</td><td>血量少优先 (点残止血); 平局 y 降序兜底</td><td>抢救即将破防, 不分类型</td></tr>
+      <tr><td><strong>P2</strong></td><td>其他所有敌人 (未 <code>atDefense</code>)</td><td>y 降序 (最靠近防线先); y 相等再血量少</td><td>优先最靠近防线的, 顺应"守线"叙事</td></tr>
     </table>
     <ul>
-      <li><span class="tag tag-must">必须</span>同阶内选血量更少者 (点残逻辑, 保证击杀效率)</li>
+      <li><span class="tag tag-must">必须</span>P1 档内选血量更少者 (点残逻辑, 与恩赐解脱的"点满"互补); P2 档内 y 降序 (贴防线先打)</li>
       <li><span class="tag tag-must">必须</span>目标切换实时判定 (每帧或每次开火前重算), 允许在锁定后被更高阶目标抢占</li>
       <li><span class="tag tag-should">建议</span>激光射线的视觉锁定过程 ≤ 0.1s, 避免视觉切换过于生硬</li>
     </ul>
 
-    <h4>2.2.2 状态门对 AUX 的作用方式 (与 §5 呼应)</h4>
+    <h4>2.2.2 状态门对 AUV 的作用方式 (与 §5 呼应)</h4>
     <ul>
-      <li><span class="tag tag-must">必须</span><strong>攻击力 / 攻速 / 暴击率 / 暴击伤害</strong> 4 项 → AUX 直接全吃, 乘算到激光单次伤害 / 发射间隔上</li>
-      <li><span class="tag tag-must">必须</span><strong>双倍火力</strong> (来自火力静默翻转) → AUX <code>G.nuoStats.spd *= 2</code>, 激光<strong>发射攻速×2, 单目标</strong></li>
-      <li><span class="tag tag-must">必须</span><strong>火力静默 (未翻转的 debuff)</strong> → AUX 静默 N 秒不发射激光</li>
+      <li><span class="tag tag-must">必须</span><strong>攻击力 / 攻速 / 暴击率 / 暴击伤害</strong> 4 项 → AUV 直接全吃, 乘算到激光单次伤害 / 发射间隔上</li>
+      <li><span class="tag tag-must">必须</span><strong>双倍火力</strong> (来自火力静默翻转) → AUV <code>G.nuoStats.spd *= 2</code>, 激光<strong>发射攻速×2, 单目标</strong></li>
+      <li><span class="tag tag-must">必须</span><strong>火力静默 (未翻转的 debuff)</strong> → AUV 静默 N 秒不发射激光</li>
     </ul>
 
     <h3>2.3 镜像 BOBO</h3>
@@ -860,9 +872,9 @@ Alien Fizzle · 玩法规格<br>
     </div>
     <ul>
       <li><span class="tag tag-must">必须</span>获取渠道: <strong>无尽合成宝箱</strong> 产出 (线性关卡 1-3 内不出)</li>
-      <li><span class="tag tag-must">必须</span>触发效果: 立即在主角左侧 0.5U 位置生成一个 <strong>镜像 BOBO</strong>, 继承本体 AUX 当前 <strong>80%</strong> 属性 (攻击力 / 攻速 / 暴击率 / 暴击伤害 / 弹道分叉 / 双倍火力状态)</li>
+      <li><span class="tag tag-must">必须</span>触发效果: 立即在主角左侧 0.5U 位置生成一个 <strong>镜像 BOBO</strong>, 继承本体 AUV 当前 <strong>80%</strong> 属性 (攻击力 / 攻速 / 暴击率 / 暴击伤害 / 弹道分叉 / 双倍火力状态)</li>
       <li><span class="tag tag-must">必须</span>持续时间: <strong>10s</strong>, 到时自动消失, 不占永久栏位</li>
-      <li><span class="tag tag-must">必须</span>持续期间同吃状态门 (与本体 AUX 同步刷新增益)</li>
+      <li><span class="tag tag-must">必须</span>持续期间同吃状态门 (与本体 AUV 同步刷新增益)</li>
       <li><span class="tag tag-must">必须</span>持续期间主角横移, 镜像 BOBO 同步横移保持对称</li>
       <li><span class="tag tag-todo">待定</span>叠加规则: 持续期内再次抽到, 候选 A 延长 10s / B 刷新为满 10s / C 生成第 3 个 → <strong>初版选 B 刷新</strong></li>
     </ul>
@@ -943,8 +955,8 @@ Alien Fizzle · 玩法规格<br>
     <ul>
       <li><strong>左通道(宝箱通道)</strong>: 宽 <code>2U</code>, 占屏幕 40%</li>
       <li><strong>右通道(接敌通道)</strong>: 宽 <code>3U</code>, 占屏幕 60%</li>
-      <li><strong>主角 hitbox 宽度</strong>: <code>0.5U</code> (含 AUX 贴身, 实际有效宽度需考虑 AUX 边缘)</li>
-      <li><strong>AUX 单体宽度</strong>: <code>0.3U</code></li>
+      <li><strong>主角 hitbox 宽度</strong>: <code>0.5U</code> (含 AUV 贴身, 实际有效宽度需考虑 AUV 边缘)</li>
+      <li><strong>AUV 单体宽度</strong>: <code>0.3U</code></li>
       <li><strong>状态门固定宽度</strong>: 接敌通道一半 = <code>1.5U</code></li>
       <li><strong>防线高度</strong>: 屏幕底部约 <code>1U</code> 高的横向带</li>
     </ul>
@@ -997,11 +1009,11 @@ Alien Fizzle · 玩法规格<br>
         <line x1="80" y1="430" x2="360" y2="430" stroke="#b8451e" stroke-width="3" stroke-dasharray="4,3"/>
         <text x="40" y="435" fill="#b8451e" font-family="ui-monospace" font-size="10">防线</text>
 
-        <!-- 主角 + AUX -->
+        <!-- 主角 + AUV -->
         <rect x="240" y="395" width="20" height="28" rx="2" fill="#e8e0d4" stroke="#888" stroke-width="1.5"/>
         <text x="250" y="412" fill="#222" font-family="ui-sans-serif" font-size="8" text-anchor="middle">主角</text>
         <circle cx="275" cy="410" r="8" fill="#88c0d4" stroke="#5a8a9c" stroke-width="1.5"/>
-        <text x="275" y="413" fill="#222" font-family="ui-sans-serif" font-size="7" text-anchor="middle">AUX</text>
+        <text x="275" y="413" fill="#222" font-family="ui-sans-serif" font-size="7" text-anchor="middle">AUV</text>
 
         <!-- 滑动箭头 -->
         <path d="M 100 460 L 360 460" stroke="#666" stroke-width="1" stroke-dasharray="3,2" fill="none"/>
@@ -1015,7 +1027,7 @@ Alien Fizzle · 玩法规格<br>
         <text x="140" y="14" fill="#666" font-family="ui-monospace" font-size="8" text-anchor="middle">2U</text>
         <text x="260" y="14" fill="#666" font-family="ui-monospace" font-size="8" text-anchor="middle">3U</text>
       </svg>
-      <span class="caption">图 3-1 · 战场布局示意 · 一点透视双通道 2:3 + 主角 AUX + 状态门居中场景</span>
+      <span class="caption">图 3-1 · 战场布局示意 · 一点透视双通道 2:3 + 主角 AUV + 状态门居中场景</span>
     </div>
 
     <h3>3.2 主角横移规则</h3>
@@ -1023,20 +1035,20 @@ Alien Fizzle · 玩法规格<br>
       <tr><th>规则</th><th>说明</th></tr>
       <tr><td>横移范围</td><td>整个屏幕宽 <code>5U</code> 自由滑动, 含宝箱通道和接敌通道</td></tr>
       <tr><td>纵向限制</td><td><strong>仅横轴</strong>移动, 不离开防线高度(主角守线职责)</td></tr>
-      <tr><td>AUX 跟随</td><td>所有 AUX 与主角 <strong>刚性绑定</strong>同步横移</td></tr>
+      <tr><td>AUV 跟随</td><td>所有 AUV 与主角 <strong>刚性绑定</strong>同步横移</td></tr>
       <tr><td>边界判定</td><td>主角边缘碰到屏幕左右边时停下, 不会出屏</td></tr>
       <tr><td>滑动手感</td><td>1:1 跟手, 无加速度曲线, 无延迟(休闲游戏快反馈优先)</td></tr>
     </table>
 
     <h3>3.3 子弹方向规则</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span>主角和所有 AUX 的子弹 <strong>始终垂直向上发射</strong>, 无论主角在哪个通道</li>
+      <li><span class="tag tag-must">必须</span>主角和所有 AUV 的子弹 <strong>始终垂直向上发射</strong>, 无论主角在哪个通道</li>
       <li><span class="tag tag-must">必须</span>子弹位置由发射者当前 X 坐标决定 — 主角在宝箱通道 = 子弹打宝箱通道</li>
       <li><span class="tag tag-must">必须</span>子弹不能跨通道(物理一致性)</li>
     </ul>
 
     <div class="callout success">
-      <strong>临界情况 · 不抢行修正</strong>: 主角恰好骑在两通道分界线上时, 会出现 <em>主角弹道在宝箱通道 + AUX 弹道在接敌通道</em> 的分裂状态。这是 <strong>feature 不是 bug</strong>, 代码不要做任何对齐 / 吸附 / 偏移修正, 让玩家自由利用这个边界位置做"边贪宝箱边守接敌"的精妙操作。
+      <strong>临界情况 · 不抢行修正</strong>: 主角恰好骑在两通道分界线上时, 会出现 <em>主角弹道在宝箱通道 + AUV 弹道在接敌通道</em> 的分裂状态。这是 <strong>feature 不是 bug</strong>, 代码不要做任何对齐 / 吸附 / 偏移修正, 让玩家自由利用这个边界位置做"边贪宝箱边守接敌"的精妙操作。
     </div>
   </section>
 
@@ -1048,7 +1060,7 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout warn">
       <strong>架构分离 (v3.2 顶层规则)</strong>:
       <ul style="margin:8px 0 0 0">
-        <li><strong>状态门</strong> = 平铺属性增益 (原规则保留, 补 AUX 生效方式, 见 §5)</li>
+        <li><strong>状态门</strong> = 平铺属性增益 (原规则保留, 补 AUV 生效方式, 见 §5)</li>
         <li><strong>宝箱</strong> = 技能升级卡 + 枪械精通卡 <strong>混池三选一</strong>, 单卡一次性抽到即消耗</li>
         <li>宝箱 <strong>不影响</strong> 状态门的平铺属性维度 (那是状态门的领地), 只提供 <strong>质变 / 特殊触发 / 输出源强化</strong></li>
       </ul>
@@ -1091,8 +1103,8 @@ Alien Fizzle · 玩法规格<br>
       <tr>
         <td><strong>恩赐解脱</strong></td>
         <td>每 <strong>12s</strong> 自动锁定当前最高优先级 <strong>1 个</strong>敌人发射超级子弹, 基础 <strong>24 × 主角攻击力</strong>真实伤害 (穿透 armor); 每发独立摇 <strong>变异倍率</strong> — 24x(30%)/32x(23%)/48x(17%)/64x(12%)/80x(8%)/96x(6%)/<strong>112x(4%)</strong>, 期望 ≈ 47.04x; 目标身后 <strong>60° 锥形</strong>区域 (锥长 = 2 敌人小兵单位) 内敌人 <strong>原地不动 1s</strong> (硬控 stun); 命中挂 <strong>易损 +20% × 5s</strong>; 击杀目标 <strong>40% 概率</strong>再触发 (无上限, 运气可无限连)</td>
-        <td>质变: 同帧锁定 <strong>2 个</strong>目标, 锥形扩至 <strong>90°</strong>; 击杀 <strong>50% 概率</strong>再触发 (锥形硬控 + 变异倍率同 Lv1)</td>
-        <td>完全体: 同帧锁定 <strong>5 个</strong>目标, 锥形扩至 <strong>120°</strong>; 击杀 <strong>60% 概率</strong>再触发 (锥形硬控 + 变异倍率同 Lv1)</td>
+        <td>质变: 同帧锁定 <strong>2 个</strong>目标, 锥形扩至 <strong>90°</strong>; <strong>变异倍率上滑一档</strong>: 32/48/64/80/96/112/128x, 期望 ≈ <strong>60.64x</strong>; 击杀 <strong>50% 概率</strong>再触发 (锥形硬控保持 Lv1 原地 stun 1s) <span class="tag tag-may">V4.6 覆盖</span></td>
+        <td>完全体: 同帧锁定 <strong>5 个</strong>目标, 锥形扩至 <strong>120°</strong>; <strong>变异倍率再上滑一档</strong>: 48/64/80/96/112/128/160x, 期望 ≈ <strong>77.28x</strong>; 击杀 <strong>60% 概率</strong>再触发; <strong>颤栗改恐惧</strong>: 命中锥形内敌人 <code>fearUntil = now + 1500ms</code>, 期间按敌人基础 speed 反向 1x 位移 (不吃 slow/chill), 强制 <code>atDefense = false</code>, 不 clamp 上边界; 过期后走正常前推逻辑 → 观感 = 反推 1.5s + 归位 1.5s ≈ 回到原位。锥形视觉换紫色 <code>rgba(140,80,255,0.35)</code> 区分手感, 命中敌人身上飘"恐惧!" 紫色小字 <span class="tag tag-may">V4.6 覆盖</span></td>
       </tr>
       <tr>
         <td><strong>高压领域</strong></td>
@@ -1102,7 +1114,7 @@ Alien Fizzle · 玩法规格<br>
       </tr>
       <tr>
         <td><strong>激光贯穿</strong> <span class="tag tag-may">v3.2 新</span></td>
-        <td>蓄力 <strong>2s</strong> 后由 AUX 发射一根 <strong>60px 宽</strong>贯穿激光, 对一条直线上所有敌人造成 <strong>800 (playerAtk×32)</strong> 伤害</td>
+        <td>蓄力 <strong>2s</strong> 后由 AUV 发射一根 <strong>60px 宽</strong>贯穿激光, 对一条直线上所有敌人造成 <strong>800 (playerAtk×32)</strong> 伤害</td>
         <td>Lv1 + <strong>2.5s 沿线余波</strong>, 每 0.5s 沿线 <strong>100 (playerAtk×4)</strong> 伤</td>
         <td>Lv2 + <strong>3s 内每 0.5s 从随机目标额外发射一根 5px 小激光</strong>, <strong>200 (playerAtk×8)</strong> 伤</td>
       </tr>
@@ -1161,11 +1173,11 @@ Alien Fizzle · 玩法规格<br>
     <h4>4.6.A 子弹形态 · 5 张 (K26 新增 a_rapid · K27 精修 pierce/burst/rapid/explode)</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>[K27] 普攻 <strong>+20%</strong>, <strong>穿透 1</strong> (一发共命中 2 目标 = 主 + 1 穿透), 次级伤害衰减 <strong>40%</strong> (次级 = 主伤 × 0.6)</td><td>K27-3: 穿透 2→1 · 衰减 20%→40%; V3.5 已删命中分裂 & AUX 分叉联动</td></tr>
+      <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>[K27] 普攻 <strong>+20%</strong>, <strong>穿透 1</strong> (一发共命中 2 目标 = 主 + 1 穿透), 次级伤害衰减 <strong>40%</strong> (次级 = 主伤 × 0.6)</td><td>K27-3: 穿透 2→1 · 衰减 20%→40%; V3.5 已删命中分裂 & AUV 分叉联动</td></tr>
       <tr><td><strong>2</strong></td><td><strong>裂头弹</strong> <span class="tag tag-may">a_bounce</span></td><td>击中主目标瞬间 <strong>四散分裂 4 颗小子弹</strong>, <strong>50% 伤害</strong>, 不再穿透/分裂, 继承攻击特效</td><td>分裂绝对角度 [-30°,50°,130°,210°]</td></tr>
       <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong> <span class="tag tag-may">a_explode</span></td><td>[K27] 子弹命中产生 <strong>小范围爆炸</strong>, 半径 <strong>锁死 20px</strong> (打宝箱/打小怪一致, 不再挂载体尺寸), 爆炸伤害 = <strong>30% 主伤害</strong></td><td>K27-2: splashR 锁 20 (原 t.w×0.5×0.3); 弹射/分裂后的子弹也能触发</td></tr>
-      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong> <span class="tag tag-may">a_rapid · 不可重复</span></td><td>[K27] 主角子弹 <strong>飞行速度 ×1.5</strong> (velMult 独立通道, 不与 a_burst 攻速叠乘), <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td>K27-1: 射速×2 → 弹速×1.5 (velMult 通道); 只作用主角平 A, 不影响 AUX</td></tr>
-      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>[K27] 攻速 <strong>+30%</strong>, 弹道 <strong>+2</strong>, 单发伤害降为 <strong>35%</strong> (3 弹道 × 0.35 = 1.05× DPS)</td><td>K27-4: 单发 0.55→0.35; V3.5 已删爆头; 只作用主角平 A, 不影响 AUX</td></tr>
+      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong> <span class="tag tag-may">a_rapid · 不可重复</span></td><td>[K27] 主角子弹 <strong>飞行速度 ×1.5</strong> (velMult 独立通道, 不与 a_burst 攻速叠乘), <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td>K27-1: 射速×2 → 弹速×1.5 (velMult 通道); 只作用主角平 A, 不影响 AUV</td></tr>
+      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>[K27] 攻速 <strong>+30%</strong>, 弹道 <strong>+2</strong>, 单发伤害降为 <strong>35%</strong> (3 弹道 × 0.35 = 1.05× DPS)</td><td>K27-4: 单发 0.55→0.35; V3.5 已删爆头; 只作用主角平 A, 不影响 AUV</td></tr>
     </table>
 
     <h4>4.6.B 状态施加 · 3 张 · 全必触发无概率</h4>
@@ -1186,8 +1198,8 @@ Alien Fizzle · 玩法规格<br>
     <h4>4.6.D 伤害修饰 · 2 张</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>10</strong></td><td><strong>精英以上猎手</strong> <span class="tag tag-may">d_hunter</span></td><td>对 <strong>精英 + boss</strong> 单位伤害 <strong>+30%</strong></td><td>对 AUX 激光生效</td></tr>
-      <tr><td><strong>11</strong></td><td><strong>弱者克星</strong> <span class="tag tag-may">d_weak</span></td><td>对被施加减益 (减速 / 麻痹 / 燃烧 / 毒等) 的单位伤害 <strong>+40%</strong></td><td>对 AUX 激光生效</td></tr>
+      <tr><td><strong>10</strong></td><td><strong>精英以上猎手</strong> <span class="tag tag-may">d_hunter</span></td><td>对 <strong>精英 + boss</strong> 单位伤害 <strong>+30%</strong></td><td>对 AUV 激光生效</td></tr>
+      <tr><td><strong>11</strong></td><td><strong>弱者克星</strong> <span class="tag tag-may">d_weak</span></td><td>对被施加减益 (减速 / 麻痹 / 燃烧 / 毒等) 的单位伤害 <strong>+40%</strong></td><td>对 AUV 激光生效</td></tr>
     </table>
 
     <h4>4.6.E 防线相关 · 5 张</h4>
@@ -1195,7 +1207,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
       <tr><td><strong>12</strong></td><td><strong>防线加固</strong> <span class="tag tag-may">e_reinforce</span></td><td>防线 HP <strong>+30%</strong> (基础值百分比, 抽到时按当前满 HP 结算, 当前 HP 同步补足)</td><td>—</td></tr>
       <tr><td><strong>13</strong></td><td><strong>回响</strong> <span class="tag tag-may">e_echo</span></td><td>每击杀 <strong>20 个敌人</strong>, 防线回 <strong>1% HP</strong></td><td>持续生效, 无上限</td></tr>
-      <tr><td><strong>14</strong></td><td><strong>绝境反击</strong> <span class="tag tag-may">e_desperate</span></td><td>防线 HP 每下降 <strong>2%</strong>, 攻击力 <strong>+1%</strong> (线性, 满血 0 加成, 空血 +50%)</td><td>对 AUX 全生效 (伤害修饰全局)</td></tr>
+      <tr><td><strong>14</strong></td><td><strong>绝境反击</strong> <span class="tag tag-may">e_desperate</span></td><td>防线 HP 每下降 <strong>2%</strong>, 攻击力 <strong>+1%</strong> (线性, 满血 0 加成, 空血 +50%)</td><td>对 AUV 全生效 (伤害修饰全局)</td></tr>
       <tr><td><strong>15</strong></td><td><strong>扎根</strong> <span class="tag tag-may">e_root · 不可重复</span></td><td>防线生成护盾 (<strong>defenseMax×0.8%/秒</strong> 积累), 护盾期间被攻击 <strong>反弹真伤</strong> (defenseMax×5% + 护盾×20%)。受击后暂停积累 10s</td><td>护盾蓝色可视, 受击暂停后恢复积累</td></tr>
       <tr><td><strong>16</strong></td><td><strong>等离子防线</strong> <span class="tag tag-may">e_plasma · 不可重复</span></td><td>每 <strong>20s</strong> 用满 defenseMax 护盾替换原护盾。护盾被击破瞬间, 对最近 <strong>3 敌方形范围</strong>造成"击破前护盾峰值"等值的真实伤害 (不递减)</td><td>与扎根护盾独立那份, plasma 专属替换</td></tr>
     </table>
@@ -1204,8 +1216,8 @@ Alien Fizzle · 玩法规格<br>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
       <tr><td><strong>17</strong></td><td><strong>贪婪</strong> <span class="tag tag-may">f_greed</span></td><td>击杀敌人 <strong>2% 概率</strong> 立即召唤一道状态门 (与 10s 定时刷新独立)</td><td>额外门也遵循 §5 规则</td></tr>
-      <tr><td><strong>18</strong></td><td><strong>共鸣</strong> <span class="tag tag-may">f_resonance</span></td><td>每持有 1 张精通卡, 攻击力 <strong>+2%</strong> (基础值算 1 张自身, 即抽到即刻 +2%)</td><td>对 AUX 生效</td></tr>
-      <tr><td><strong>19</strong></td><td><strong>恶魔赌局</strong> <span class="tag tag-may">f_gamble · 单张可重复抽</span></td><td>抽到即摇一个系数 σ, 一次性重构 <strong>主角 + AUX 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。<strong>EV ≈ 1.14</strong>, 见 §4.6.F19 概率分布表</td><td>单张可重复抽, 权重固定 1.5 不腰斩, 同一次三选一可出现多张</td></tr>
+      <tr><td><strong>18</strong></td><td><strong>共鸣</strong> <span class="tag tag-may">f_resonance</span></td><td>每持有 1 张精通卡, 攻击力 <strong>+2%</strong> (基础值算 1 张自身, 即抽到即刻 +2%)</td><td>对 AUV 生效</td></tr>
+      <tr><td><strong>19</strong></td><td><strong>恶魔赌局</strong> <span class="tag tag-may">f_gamble · 单张可重复抽</span></td><td>抽到即摇一个系数 σ, 一次性重构 <strong>主角 + AUV 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。<strong>EV ≈ 1.14</strong>, 见 §4.6.F19 概率分布表</td><td>单张可重复抽, 权重固定 1.5 不腰斩, 同一次三选一可出现多张</td></tr>
     </table>
 
     <div class="callout warn">
@@ -1229,26 +1241,26 @@ Alien Fizzle · 玩法规格<br>
       </div>
     </div>
 
-    <h4>4.6.G AUX 强化 · 5 张 · 专属 (K25: 3 → 5)</h4>
+    <h4>4.6.G AUV 强化 · 5 张 · 专属 (K25: 3 → 5)</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>20</strong></td><td><strong>激光聚焦</strong> <span class="tag tag-may">g_focus · 不可重复</span></td><td>AUX <strong>弹射 +3</strong></td><td>K25: 删除 "激光伤害 +100%"</td></tr>
-      <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong> <span class="tag tag-may">g_burn · 不可重复</span></td><td>AUX 激光命中产生 <strong>小爆炸</strong> (半径 25px, 主伤 <strong>15%</strong>) + <strong>点燃</strong></td><td>K25: splash 25%→15%; K26: 半径 50→25</td></tr>
-      <tr><td><strong>22</strong></td><td><strong>激光制导</strong> <span class="tag tag-may">g_guide · 不可重复</span></td><td>AUX 攒 <strong>20 次攻击</strong>后发射持续 <strong>5s</strong> 的制导激光, 独立走固定 <strong>40 主伤</strong>, 不吃 g_focus / g_burn 联动</td><td>K25: 攒击 12→20; 删除联动</td></tr>
-      <tr><td><strong>23</strong></td><td><strong>激光强化</strong> <span class="tag tag-may">g_dmg · 不可重复</span></td><td>AUX 激光伤害 <strong>+50%</strong></td><td>K25 新增</td></tr>
-      <tr><td><strong>24</strong></td><td><strong>激光攻速</strong> <span class="tag tag-may">g_speed · 不可重复</span></td><td>AUX 激光间隔 <strong>-30%</strong></td><td>K25 新增</td></tr>
+      <tr><td><strong>20</strong></td><td><strong>激光聚焦</strong> <span class="tag tag-may">g_focus · 不可重复</span></td><td>AUV <strong>弹射 +3</strong></td><td>K25: 删除 "激光伤害 +100%"</td></tr>
+      <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong> <span class="tag tag-may">g_burn · 不可重复</span></td><td>AUV 激光命中产生 <strong>小爆炸</strong> (半径 25px, 主伤 <strong>15%</strong>) + <strong>点燃</strong></td><td>K25: splash 25%→15%; K26: 半径 50→25</td></tr>
+      <tr><td><strong>22</strong></td><td><strong>激光制导</strong> <span class="tag tag-may">g_guide · 不可重复</span></td><td>AUV 攒 <strong>20 次攻击</strong>后发射持续 <strong>5s</strong> 的制导激光, 独立走固定 <strong>40 主伤</strong>, 不吃 g_focus / g_burn 联动</td><td>K25: 攒击 12→20; 删除联动</td></tr>
+      <tr><td><strong>23</strong></td><td><strong>激光强化</strong> <span class="tag tag-may">g_dmg · 不可重复</span></td><td>AUV 激光伤害 <strong>+50%</strong></td><td>K25 新增</td></tr>
+      <tr><td><strong>24</strong></td><td><strong>激光攻速</strong> <span class="tag tag-may">g_speed · 不可重复</span></td><td>AUV 激光间隔 <strong>-30%</strong></td><td>K25 新增</td></tr>
     </table>
 
     <div class="callout">
-      <strong>精通卡对 AUX 生效对照表</strong> (与 §2.2 呼应):
+      <strong>精通卡对 AUV 生效对照表</strong> (与 §2.2 呼应):
       <ul style="margin:8px 0 0 0">
-        <li><strong>A 类 (子弹形态)</strong>: <span style="color:#b8451e">主要作用主角子弹</span>; 例外: 集束枪管 (A1) 使 <span style="color:#2e6b3a">AUX 主目标激光分叉 2</span>, 连发快射 (A4) 联动 <span style="color:#2e6b3a">AUX 弹射 +3</span></li>
-        <li><strong>B 类 (状态施加)</strong>: <span style="color:#b8451e">仅主角子弹, 不作用于 AUX 激光</span> (AUX 有专属 G21 燃烧)</li>
+        <li><strong>A 类 (子弹形态)</strong>: <span style="color:#b8451e">主要作用主角子弹</span>; 例外: 集束枪管 (A1) 使 <span style="color:#2e6b3a">AUV 主目标激光分叉 2</span>, 连发快射 (A4) 联动 <span style="color:#2e6b3a">AUV 弹射 +3</span></li>
+        <li><strong>B 类 (状态施加)</strong>: <span style="color:#b8451e">仅主角子弹, 不作用于 AUV 激光</span> (AUV 有专属 G21 燃烧)</li>
         <li><strong>C 类 (食髓 / 熔核)</strong>: <span style="color:#b8451e">仅主角</span> (熔核是主角攻速循环)</li>
-        <li><strong>D 类 (精英猎手 / 弱者克星)</strong>: <span style="color:#2e6b3a">全部对 AUX 生效</span> (伤害修饰跟输出源无关)</li>
-        <li><strong>E 类 (防线相关)</strong>: <span style="color:#2e6b3a">全局效果</span>, 绝境反击的攻击力加成对 AUX 也生效</li>
-        <li><strong>F 类 (Meta)</strong>: <span style="color:#2e6b3a">共鸣 / 贪婪对 AUX 生效; 恶魔赌局对 AUX 一起赌</span></li>
-        <li><strong>G 类 (AUX 强化)</strong>: <span style="color:#2e6b3a">AUX 专属</span></li>
+        <li><strong>D 类 (精英猎手 / 弱者克星)</strong>: <span style="color:#2e6b3a">全部对 AUV 生效</span> (伤害修饰跟输出源无关)</li>
+        <li><strong>E 类 (防线相关)</strong>: <span style="color:#2e6b3a">全局效果</span>, 绝境反击的攻击力加成对 AUV 也生效</li>
+        <li><strong>F 类 (Meta)</strong>: <span style="color:#2e6b3a">共鸣 / 贪婪对 AUV 生效; 恶魔赌局对 AUV 一起赌</span></li>
+        <li><strong>G 类 (AUV 强化)</strong>: <span style="color:#2e6b3a">AUV 专属</span></li>
       </ul>
     </div>
   </section>
@@ -1288,7 +1300,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><th style="width:110px">id</th><th style="width:80px">名</th><th style="width:50px">类</th><th>效果 (M1 基础版)</th></tr>
       <tr><td><code>b_nova</code></td><td><strong>术前麻醉</strong></td><td>B</td><td>命中必挂麻醉 3s (<strong>无概率</strong>), 麻醉期敌人移速-40% + 受伤+20%, 麻醉期间不刷新 (避免概率变量)</td></tr>
       <tr><td><code>d_nova</code></td><td><strong>稳态输出</strong></td><td>D</td><td>主角每 1s 内连续命中同一目标, 第 3/4/5 命中伤害固定 = 主伤 <strong>×1.2 / ×1.4 / ×1.6</strong> (无暴击浮动)</td></tr>
-      <tr><td><code>g_nova</code></td><td><strong>协同标记</strong></td><td>G</td><td>AUX 激光命中的目标留驻"标记" 3s, 主角对标记目标伤害 <strong>+30%</strong> (无概率无消耗)</td></tr>
+      <tr><td><code>g_nova</code></td><td><strong>协同标记</strong></td><td>G</td><td>AUV 激光命中的目标留驻"标记" 3s, 主角对标记目标伤害 <strong>+30%</strong> (无概率无消耗)</td></tr>
     </table>
     <div class="callout">
       <strong>羁绊 · 精确制导 (BDG 齐)</strong>:
@@ -1331,7 +1343,7 @@ Alien Fizzle · 玩法规格<br>
         <tr><td>防线上限 (defenseMaxHP)</td><td>-100 ~ +150</td><td>50</td></tr>
         <tr><td>防线回血 (defenseHeal)</td><td>0 ~ +100 (瞬时)</td><td>50</td></tr>
       </table>
-      出现频率 (10s / 次)、宽度 (1.5U)、消失条件 (撞主角) 全部保留。§5.9 补 AUX 生效方式。
+      出现频率 (10s / 次)、宽度 (1.5U)、消失条件 (撞主角) 全部保留。§5.9 补 AUV 生效方式。
     </div>
 
     <h4>5.1.1 属性刷新规则</h4>
@@ -1361,7 +1373,7 @@ Alien Fizzle · 玩法规格<br>
 
     <h3>5.4 消失唯一条件</h3>
     <div class="callout">
-      <strong>唯一消失条件</strong>: 状态门撞到主角, AUX 吃到当前数值的 buff/debuff, 门 <strong>立即消失</strong>。
+      <strong>唯一消失条件</strong>: 状态门撞到主角, AUV 吃到当前数值的 buff/debuff, 门 <strong>立即消失</strong>。
     </div>
     <ul>
       <li><span class="tag tag-must">必须</span>"自然流出屏幕底部" <strong>不</strong> 算消失 — 它要么撞主角, 要么被主角避开</li>
@@ -1406,7 +1418,7 @@ Alien Fizzle · 玩法规格<br>
         <!-- 状态: 消失 -->
         <rect x="230" y="300" width="140" height="60" rx="4" fill="#fff" stroke="#444" stroke-width="2" stroke-dasharray="2,2"/>
         <text x="300" y="320" fill="#222" font-family="ui-sans-serif" font-size="12" font-weight="600" text-anchor="middle">S5 · 消失</text>
-        <text x="300" y="338" fill="#666" font-family="ui-monospace" font-size="10" text-anchor="middle">撞主角 · AUX 吃效果</text>
+        <text x="300" y="338" fill="#666" font-family="ui-monospace" font-size="10" text-anchor="middle">撞主角 · AUV 吃效果</text>
         <text x="300" y="352" fill="#666" font-family="ui-monospace" font-size="9" text-anchor="middle">或流出屏幕底部</text>
 
         <!-- 箭头 S1 → S2 → S3 -->
@@ -1434,10 +1446,10 @@ Alien Fizzle · 玩法规格<br>
       <strong>命名逻辑</strong>: "火力静默" 是 <strong>减益维度描述词</strong> — 名字本身指代 debuff 效果. 通用规则 "减益为正数, 增益为负数" 在此维度成立.
     </div>
     <ul>
-      <li><span class="tag tag-must">必须</span>火力静默门 <strong>初始数值 = +4s</strong> (减益, 状态色 <span style="color:#b8451e;font-weight:600;">红</span>), 表示 AUX 吃到后会静默 4 秒</li>
+      <li><span class="tag tag-must">必须</span>火力静默门 <strong>初始数值 = +4s</strong> (减益, 状态色 <span style="color:#b8451e;font-weight:600;">红</span>), 表示 AUV 吃到后会静默 4 秒</li>
       <li><span class="tag tag-must">必须</span>玩家射击门, 数值 <strong>递减</strong>: +4s → +3s → +2s → +1s → 0s → <strong>-1s</strong> (增益翻转点)</li>
-      <li><span class="tag tag-must">必须</span>数值到 <strong>-1s</strong> 时门变增益, 状态色 <span style="color:#2e6b3a;font-weight:600;">绿</span>, 效果为 <strong>双倍火力 1s</strong> (含义: AUX 吃到后火力翻倍, 持续 1 秒)</li>
-      <li><span class="tag tag-must">必须</span>状态色变化 <strong>作用于门体本身</strong>, 不作用于 AUX / 主角 (AUX 只在门被吃时才生效果)</li>
+      <li><span class="tag tag-must">必须</span>数值到 <strong>-1s</strong> 时门变增益, 状态色 <span style="color:#2e6b3a;font-weight:600;">绿</span>, 效果为 <strong>双倍火力 1s</strong> (含义: AUV 吃到后火力翻倍, 持续 1 秒)</li>
+      <li><span class="tag tag-must">必须</span>状态色变化 <strong>作用于门体本身</strong>, 不作用于 AUV / 主角 (AUV 只在门被吃时才生效果)</li>
       <li><span class="tag tag-should">建议</span>因为火力静默是 <strong>唯一数值方向与其他维度相反</strong>的门 (其他维度 debuff 是负数, buff 是正数), UI 上可用小图标标注避免玩家混淆</li>
     </ul>
 
@@ -1452,7 +1464,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>过零</td><td>8</td><td>0s</td><td>S2 中性(瞬态)</td><td>灰闪一下</td></tr>
       <tr><td>翻转</td><td>10</td><td>-1s 双倍火力</td><td>S4 上限释放 (增益到顶)</td><td>亮绿虚边, 子弹穿透</td></tr>
       <tr><td>继续射</td><td>16</td><td>-1s (不变)</td><td>S4 上限释放</td><td>子弹穿透打敌人</td></tr>
-      <tr><td>撞主角</td><td>-</td><td>-1s</td><td>S5 消失</td><td>爆开效果, AUX 吃 <strong>双倍火力 1s</strong></td></tr>
+      <tr><td>撞主角</td><td>-</td><td>-1s</td><td>S5 消失</td><td>爆开效果, AUV 吃 <strong>双倍火力 1s</strong></td></tr>
     </table>
 
     <h3>5.8 示例 · 防线上限门(初始即 buff)</h3>
@@ -1467,18 +1479,18 @@ Alien Fizzle · 玩法规格<br>
       <strong>玩家决策点</strong>: 看到状态门生成时, 玩家在 1-3 秒内要算 4 个变量 — (1) 当前 buff 累积进度, (2) 还需多少子弹打满, (3) 距离防线还有多远, (4) 现在该躲到哪。这是核心爽感来源。
     </div>
 
-    <h3>5.9 状态门对 AUX 的作用方式 (v3.2 新增)</h3>
-    <p class="lead">AUX 作为独立第二输出源 (§2.2), 状态门对 AUX 的作用要 <strong>逐维度显式定义</strong>, 避免语义盲区。</p>
+    <h3>5.9 状态门对 AUV 的作用方式 (v3.2 新增)</h3>
+    <p class="lead">AUV 作为独立第二输出源 (§2.2), 状态门对 AUV 的作用要 <strong>逐维度显式定义</strong>, 避免语义盲区。</p>
 
     <table>
-      <tr><th style="width:130px">状态门维度</th><th style="width:130px">对主角</th><th>对 AUX (激光)</th></tr>
+      <tr><th style="width:130px">状态门维度</th><th style="width:130px">对主角</th><th>对 AUV (激光)</th></tr>
       <tr><td><strong>攻击力</strong></td><td>子弹伤害 × 系数</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光伤害 × 系数</td></tr>
       <tr><td><strong>攻速</strong></td><td>射击间隔 / 系数</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光发射间隔 / 系数 (基础 0.7s)</td></tr>
       <tr><td><strong>暴击率</strong></td><td>+N% 概率暴击</td><td><span style="color:#2e6b3a">✓ 全吃</span> · 激光暴击独立结算</td></tr>
       <tr><td><strong>暴击伤害</strong></td><td>暴击倍率 +N%</td><td><span style="color:#2e6b3a">✓ 全吃</span></td></tr>
       <tr><td><strong>火力静默</strong> / 双倍火力翻转</td><td>debuff: N 秒内不发射子弹; 翻转 buff: 射速翻倍</td><td>debuff: <span style="color:#b8451e">✗ 同步静默不发激光</span>; 翻转: <span style="color:#2e6b3a">✓ 射速翻倍</span></td></tr>
-      <tr><td><strong>防线护甲 / 防线上限 / 防线回血</strong></td><td>作用于防线 (护甲减伤 / HP 上限 / 瞬时回血)</td><td><span style="color:#888">— 防线全局维度, 与 AUX 输出无关</span></td></tr>
-      <tr><td colspan="3" style="padding:8px 12px">双倍火力实际实现 = <strong>主角 <code>playerSpdMult *= 2</code>, AUX <code>nuoStats.spd *= 2</code></strong> (双方射速翻倍, 均单目标, 非 2 束激光), 持续 v ms 后精准 restore。</td></tr>
+      <tr><td><strong>防线护甲 / 防线上限 / 防线回血</strong></td><td>作用于防线 (护甲减伤 / HP 上限 / 瞬时回血)</td><td><span style="color:#888">— 防线全局维度, 与 AUV 输出无关</span></td></tr>
+      <tr><td colspan="3" style="padding:8px 12px">双倍火力实际实现 = <strong>主角 <code>playerSpdMult *= 2</code>, AUV <code>nuoStats.spd *= 2</code></strong> (双方射速翻倍, 均单目标, 非 2 束激光), 持续 v ms 后精准 restore。</td></tr>
     </table>
   </section>
 
@@ -1493,7 +1505,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>接敌通道宽</td><td>3U</td><td>右通道全宽</td></tr>
       <tr><td>状态门宽</td><td>1.5U</td><td>固定一半</td></tr>
       <tr><td>剩余空间</td><td>1.5U</td><td>接敌通道内可用于躲门的横向余量</td></tr>
-      <tr><td>主角 hitbox 宽</td><td>0.5U</td><td>含 AUX 贴身边缘</td></tr>
+      <tr><td>主角 hitbox 宽</td><td>0.5U</td><td>含 AUV 贴身边缘</td></tr>
       <tr><td>纯接敌通道躲位</td><td>1.0U</td><td>1.5U − 0.5U, 够主角左右两侧各避一半</td></tr>
     </table>
 
@@ -1516,7 +1528,7 @@ Alien Fizzle · 玩法规格<br>
 
     <h4>关系 C · 故意撞门 (主动吃 buff/debuff)</h4>
     <ul>
-      <li>门已被打到 S4 上限释放 → 主动撞 → AUX 吃满 buff</li>
+      <li>门已被打到 S4 上限释放 → 主动撞 → AUV 吃满 buff</li>
       <li>或决定吃当前数值(不等满)时主动撞</li>
       <li>或紧急情况下不得不撞(没有更好选择)</li>
     </ul>
@@ -1681,7 +1693,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>暴击伤害</td><td>+0%</td><td><strong>+50%</strong> (1.5× 伤害)</td><td>—</td></tr>
     </table>
     <ul>
-      <li><span class="tag tag-must">必须</span>主角 + AUX 属性 <strong>完全相同</strong> (上表数值两者共用)</li>
+      <li><span class="tag tag-must">必须</span>主角 + AUV 属性 <strong>完全相同</strong> (上表数值两者共用)</li>
       <li><span class="tag tag-must">必须</span>穿透 / AoE <strong>不加</strong>, 保留 "小兵成群依次爆" 的爽感</li>
     </ul>
 
@@ -1738,7 +1750,7 @@ Alien Fizzle · 玩法规格<br>
     <h3>7.5.9 成本估算</h3>
     <table>
       <tr><th>项</th><th>估算</th><th>说明</th></tr>
-      <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 v3 现有内容 (敌人/防线/主角/AUX/武器/宝箱)</td></tr>
+      <tr><td>美术成本</td><td><strong>0</strong></td><td>全部资源复用 v3 现有内容 (敌人/防线/主角/AUV/武器/宝箱)</td></tr>
       <tr><td>代码成本</td><td><strong>4-6 小时</strong></td><td>方阵系统 + 满配属性覆盖 + 宝箱双倍 + 4 个弹窗 (加载页/警报/总部问话/通讯中断)</td></tr>
       <tr><td>art-spec-v3.html 影响</td><td><strong>无</strong></td><td>反弹护盾特效独立成资产, 不影响荻子已在推进的 P0/P1 交付</td></tr>
     </table>
@@ -1759,7 +1771,7 @@ Alien Fizzle · 玩法规格<br>
 
     <h3>7.6.2 玩法与场景复用</h3>
     <ul>
-      <li><span class="tag tag-must">必须</span>视角 / 双通道 / 主角+AUX 双弹道 / 状态门 / 宝箱 <strong>与正式关卡完全一致</strong></li>
+      <li><span class="tag tag-must">必须</span>视角 / 双通道 / 主角+AUV 双弹道 / 状态门 / 宝箱 <strong>与正式关卡完全一致</strong></li>
       <li><span class="tag tag-must">必须</span>敌人库复用正式关卡的小兵/精英/Boss, <strong>无新美术资源</strong></li>
       <li><span class="tag tag-must">必须</span>无关卡结束条件, 只有玩家死亡或主动退出结算</li>
     </ul>
@@ -1922,15 +1934,15 @@ Alien Fizzle · 玩法规格<br>
       <tr><th>#</th><th>场景</th><th>处理</th></tr>
       <tr><td>E01</td><td>主角刚拿到新武器瞬间, 旧武器子弹还在飞</td><td>旧子弹继续按旧武器属性飞完, 新子弹从主角位置按新武器发射</td></tr>
       <tr><td>E02</td><td>状态门 S4 上限释放后, 子弹穿透打到后方敌人</td><td>正常造成伤害, 不被门吸收</td></tr>
-      <tr><td>E03</td><td>状态门 S4 上限释放后, 主角立即撞门</td><td>AUX 仍吃满 buff(数值已锁定在上限)</td></tr>
-      <tr><td>E04</td><td>主角骑两通道分界线</td><td><strong>不抢行修正</strong>, 主角弹道打宝箱通道 + AUX 弹道打接敌通道分裂是正常 feature</td></tr>
-      <tr><td>E05</td><td>主角横移把 AUX 推出屏幕边界</td><td>AUX 不出屏, 改成贴主角另一侧</td></tr>
+      <tr><td>E03</td><td>状态门 S4 上限释放后, 主角立即撞门</td><td>AUV 仍吃满 buff(数值已锁定在上限)</td></tr>
+      <tr><td>E04</td><td>主角骑两通道分界线</td><td><strong>不抢行修正</strong>, 主角弹道打宝箱通道 + AUV 弹道打接敌通道分裂是正常 feature</td></tr>
+      <tr><td>E05</td><td>主角横移把 AUV 推出屏幕边界</td><td>AUV 不出屏, 改成贴主角另一侧</td></tr>
       <tr><td>E06</td><td>主角和镜像 BOBO 都顶到屏幕边界</td><td>整体停下, 不能继续横移, 不出屏</td></tr>
       <tr><td>E07</td><td>宝箱被障碍挡住, 子弹打不到</td><td>正常 — 这是关卡设计点, 玩家要找角度或先击破障碍</td></tr>
       <tr><td>E08</td><td>多个宝箱同时被击破</td><td>武器按击破顺序依次装备, 最后击破的覆盖前面的</td></tr>
       <tr><td>E09</td><td>主角在宝箱通道时撞到状态门(状态门移到分界线附近)</td><td>不可能 — 状态门生成在接敌通道内, 不会跨界。如代码上发生, 视为撞主角触发 S5</td></tr>
-      <tr><td>E10</td><td>状态门已 S4 上限释放, 没人撞它, 流到屏幕底</td><td>自然消失, 不触发 AUX 吃 buff, 下个门生成</td></tr>
-      <tr><td>E11</td><td>AUX 火力静默期间撞到状态门</td><td>状态门仍然消失, AUX 仍吃当前数值效果(静默结束后生效)</td></tr>
+      <tr><td>E10</td><td>状态门已 S4 上限释放, 没人撞它, 流到屏幕底</td><td>自然消失, 不触发 AUV 吃 buff, 下个门生成</td></tr>
+      <tr><td>E11</td><td>AUV 火力静默期间撞到状态门</td><td>状态门仍然消失, AUV 仍吃当前数值效果(静默结束后生效)</td></tr>
       <tr><td>E12</td><td>已有镜像 BOBO, 再拿到镜像武器</td><td>无效化(吞武器, 无效果)</td></tr>
       <tr><td>E13</td><td>主角死亡瞬间敌人继续攻击防线</td><td>Game Over 帧锁定, 不再计算后续伤害</td></tr>
       <tr><td>E14</td><td>暂停 / 后台切换</td><td>整局暂停, 包括子弹 / 敌人 / 状态门 / 防线攻击</td></tr>
@@ -2036,7 +2048,7 @@ Alien Fizzle · 玩法规格<br>
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-30 15:10';  // ← 每次重新部署 spec 时更新此值 (K34 · 台词硬化: 全文 "您" → "你", 客套腔调砍除 ("灵主任" 保留不动), spec-manual §1.3.5 台词库 21+4 处)
+  const SPEC_PUBLISHED = '2026-07-30 15:44';  // ← 每次重新部署 spec 时更新此值 (K34-B · AUX → AUV 全项目命名统一)
 
   // === 云同步 (dev) ===
   const CLOUD_API = '/api/spec-manual';

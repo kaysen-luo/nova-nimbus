@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.7</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.8</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -394,10 +394,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v44">V4.4 · K29 专属卡系统 · 双主角 3 张 + 羁绊 (骨架版)</a></li>
   <li><a href="#ch-v45">V4.5 · §1.3 世界观整段补齐 · 与 spec-manual 对齐</a></li>
   <li><a href="#ch-v46">V4.6 · K32 恩赐解脱 Lv2/Lv3 数值改档 + Lv3 颤栗改恐惧</a></li>
-  <li><a href="#ch-v47">V4.7 · K33 AUX 仇恨顺序简化 · 4 阶 → 2 阶 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v47">V4.7 · K33 AUV 仇恨顺序简化 · 4 阶 → 2 阶</a></li>
+  <li><a href="#ch-v48">V4.8 · K34-B AUX → AUV 全项目命名统一 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v4.7 · 2026-07-30<br>
+v4.8 · 2026-07-30<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -406,13 +407,13 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v4.7</span>
+<span class="badge">GAME SPEC · v4.8</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v4.7 (K33 AUX 仇恨顺序简化: 4 阶 → 2 阶 · P1 atDefense 血量少优先 · P2 其他 y 降序 · 完全不分 boss/elite/minion)</div>
+<div class="value">v4.8 (K34-B AUX → AUV 全项目命名统一 · 数值/机制/行为无变化)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
@@ -691,8 +692,8 @@ Alien Fizzle · 玩法规格<br>
       <strong>台词分工</strong>: 玩家上场的角色 = 战场执行方 (第一人称音效/技能语音); 未上场的角色 = <strong>无线电画外音</strong> (关卡切换、状态门刷新、Boss 出现、通关等时机触发短语音/文本弹幕)。<strong>双主角互为对方的画外音</strong>, 是最省成本又能撑起双人叙事的做法。
     </div>
 
-    <h4>1.3.3 AI 辅助作战单元 (AUX) · 军方标配型号 AUV-0</h4>
-    <p class="lead">星际防卫队为每位星际战士配发一台 <strong>AI 辅助作战单元</strong> (系统代号 <code>AUX</code>, 玩法系统层通名)。型号统一为 <strong>AUV-0</strong> (Auxiliary Utility Vehicle · 0 号原型机), 双主角持有同一军方标配型号, 差异只体现在<strong>各自给自己的 AUX 取的名字与语言习惯</strong>上, 面板数值与玩法机制完全一致。</p>
+    <h4>1.3.3 AI 辅助作战单元 (AUV) · 军方标配型号 AUV-0</h4>
+    <p class="lead">星际防卫队为每位星际战士配发一台 <strong>AI 辅助作战单元</strong> (系统代号 <code>AUV</code>, 玩法系统层通名)。型号统一为 <strong>AUV-0</strong> (Auxiliary Utility Vehicle · 0 号原型机), 双主角持有同一军方标配型号, 差异只体现在<strong>各自给自己的 AUV 取的名字与语言习惯</strong>上, 面板数值与玩法机制完全一致。</p>
 
     <table>
       <tr><th>维度</th><th>Marvis 侧</th><th>Nova 侧</th></tr>
@@ -706,7 +707,7 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout">
       <strong>命名分层</strong>:
       <ul style="margin-top:6px;">
-        <li><strong>系统层通名</strong> = <code>AUX</code> (Auxiliary AI Unit) — 玩法规则文档 / 代码变量 / spec 系统条款一律用此</li>
+        <li><strong>系统层通名</strong> = <code>AUV</code> (Auxiliary AI Unit) — 玩法规则文档 / 代码变量 / spec 系统条款一律用此</li>
         <li><strong>世界观档案层</strong> = AUV-0 (军方标配型号, 双主角共用) — 立绘 UI / 军方档案 / 型号铭牌</li>
         <li><strong>玩家昵称层</strong> = 零指导 (Marvis) / 手术刀"寸厘" · 简称寸厘 (Nova) — 场上口语 / 无线电台词</li>
       </ul>
@@ -726,8 +727,8 @@ Alien Fizzle · 玩法规格<br>
     <div class="callout warn">
       <strong>调性锚 · 严肃科幻底 + 缝隙反差萌</strong> (给美术/音效/文案外包统一遵循)
       <ol style="margin-top:8px; padding-left:24px;">
-        <li><strong>硬核设定 + 软名字/软文案</strong>: 军方型号 <code>AUV-0</code> (硬) + 场上叫"零指导"/"寸厘"(软, 双主角各自取名); AUX 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
-        <li><strong>外星生物的硬核压迫感</strong>: 叙事上是入侵者, 视觉上是<strong>生物本体 + 骨甲/结晶义肢改装</strong>的异种战士 (严肃硬核), 死亡从简不做浮夸表现。这条<strong>不再承担反差萌</strong>, 归严肃底; 反差萌接缝改由"AUX 硬名软名"和"双主角吐槽"两条支撑。</li>
+        <li><strong>硬核设定 + 软名字/软文案</strong>: 军方型号 <code>AUV-0</code> (硬) + 场上叫"零指导"/"寸厘"(软, 双主角各自取名); AUV 医疗玩家时 UI 提示可以偶尔跳戏 (如"正在敷云朵形创可贴")。</li>
+        <li><strong>外星生物的硬核压迫感</strong>: 叙事上是入侵者, 视觉上是<strong>生物本体 + 骨甲/结晶义肢改装</strong>的异种战士 (严肃硬核), 死亡从简不做浮夸表现。这条<strong>不再承担反差萌</strong>, 归严肃底; 反差萌接缝改由"AUV 硬名软名"和"双主角吐槽"两条支撑。</li>
         <li><strong>双主角吐槽接缝</strong>: 关卡切换 / Boss 出现 / 通关 等节点插 2-3 秒无线电短对话 (文本弹幕即可, 无需过场动画), 严肃战报 + 战友日常吐槽的化学反应是留存钩子。</li>
       </ol>
       <strong>反面示例</strong>: 全程搞怪滑稽 (削弱严肃底, 观感掉档) · 完全严肃无接缝 (与竞品同质化, 传播弱)。反差萌是<strong>缝隙里冒出来的</strong>, 不是主基调。
@@ -1224,7 +1225,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><th style="width:110px">id</th><th style="width:80px">名</th><th style="width:50px">类</th><th>效果 (M1 基础版)</th></tr>
       <tr><td><code>b_nova</code></td><td><strong>术前麻醉</strong></td><td>B</td><td>命中必挂麻醉 3s (<strong>无概率</strong>), 麻醉期敌人移速-40% + 受伤+20%, 麻醉期间不刷新 (避免概率变量)</td></tr>
       <tr><td><code>d_nova</code></td><td><strong>稳态输出</strong></td><td>D</td><td>主角每 1s 内连续命中同一目标, 第 3/4/5 命中伤害固定 = 主伤 <strong>×1.2 / ×1.4 / ×1.6</strong> (无暴击浮动)</td></tr>
-      <tr><td><code>g_nova</code></td><td><strong>协同标记</strong></td><td>G</td><td>AUX 激光命中的目标留驻"标记" 3s, 主角对标记目标伤害 <strong>+30%</strong> (无概率无消耗)</td></tr>
+      <tr><td><code>g_nova</code></td><td><strong>协同标记</strong></td><td>G</td><td>AUV 激光命中的目标留驻"标记" 3s, 主角对标记目标伤害 <strong>+30%</strong> (无概率无消耗)</td></tr>
     </table>
     <div class="callout">
       <strong>羁绊 · 精确制导 (BDG 齐)</strong>:
@@ -2704,7 +2705,7 @@ if (targetLv &gt; skillLevels[id]) {
   <section class="chapter">
     <h3 id="ch-v45" style="color:#c62828">V4.5 · §1.3 世界观整段补齐 · 与 spec-manual 对齐 <span class="new-tag">NEW</span> (2026-07-30)</h3>
     <div class="doc-body">
-      <p class="lead">V4.5 把 spec-manual.html §1.3 世界观整段 (§1.3.1 世界设定 / §1.3.2 双主角 / §1.3.3 AUX 军方标配 AUV-0 / §1.3.4 Ossyr 厄司 / 调性锚 callout) 搬入权威 spec.html, 让开发 / 美术 / 音效外包直接看权威版就能拿到完整调性锚, 不必二次翻 K 私域 spec-manual。台词 §1.3.5 属内容层, 本次不搬入权威版。</p>
+      <p class="lead">V4.5 把 spec-manual.html §1.3 世界观整段 (§1.3.1 世界设定 / §1.3.2 双主角 / §1.3.3 AUV 军方标配 AUV-0 / §1.3.4 Ossyr 厄司 / 调性锚 callout) 搬入权威 spec.html, 让开发 / 美术 / 音效外包直接看权威版就能拿到完整调性锚, 不必二次翻 K 私域 spec-manual。台词 §1.3.5 属内容层, 本次不搬入权威版。</p>
 
       <p><strong>① 变更前</strong>:</p>
       <ul>
@@ -2714,7 +2715,7 @@ if (targetLv &gt; skillLevels[id]) {
 
       <p><strong>② 变更后</strong>:</p>
       <ul>
-        <li>spec.html §01 补齐 <strong>§1.3 世界观整段</strong> (5 个小节 = §1.3.1 世界设定 + §1.3.2 双主角 + §1.3.3 AUX/AUV-0 + §1.3.4 Ossyr 厄司 + 调性锚 callout)</li>
+        <li>spec.html §01 补齐 <strong>§1.3 世界观整段</strong> (5 个小节 = §1.3.1 世界设定 + §1.3.2 双主角 + §1.3.3 AUV/AUV-0 + §1.3.4 Ossyr 厄司 + 调性锚 callout)</li>
         <li>内容与 spec-manual.html §1.3.1-§1.3.4 + 调性锚 callout 完全一字对齐 (未增未减)</li>
         <li><strong>§1.3.5 无线电台词</strong> 不搬入权威版 (台词属内容层, 权威 spec 只固调性锚与命名分层)</li>
       </ul>
@@ -2722,7 +2723,7 @@ if (targetLv &gt; skillLevels[id]) {
       <p><strong>③ 设计意图</strong>:</p>
       <ul>
         <li>补齐权威 spec 世界观档案缺口 — Aurelia / Aurelium / AUV-0 / Ossyr / 厄司 / 骨甲 / 寸厘 / 零指导 等世界观关键词进权威版, 后续对外协作以 spec.html 为准</li>
-        <li>命名分层 (系统层 AUX / 世界观层 AUV-0 / 玩家昵称层 零指导 · 寸厘) 权威固化, 避免开发/文案再各自发明词</li>
+        <li>命名分层 (系统层 AUV / 世界观层 AUV-0 / 玩家昵称层 零指导 · 寸厘) 权威固化, 避免开发/文案再各自发明词</li>
         <li>调性锚 callout (严肃科幻底 + 缝隙反差萌 · 三条接缝 + 反面示例) 权威固化, 后续 UI 文案 / 立绘 / 音效外包统一遵循</li>
         <li>台词层不进权威版 — 权威 spec 只承担机制 + 调性锚职责, 具体台词随 §1.3.5 迭代由 spec-manual (K 私域) 承载</li>
       </ul>
@@ -2732,7 +2733,7 @@ if (targetLv &gt; skillLevels[id]) {
         <li>§01 视觉与调性 章节 (id=<code>ch-01</code>) 内 §1.2 <code>&lt;/section&gt;</code> 前追加 <strong>§1.3 世界观</strong> 整段, 结构 = <code>&lt;h3&gt;1.3 世界观&lt;/h3&gt;</code> + 5 个小节 (h4 × 4 + 调性锚 callout)</li>
         <li>§1.3.1 世界设定 · 5 行表 (时代 / 冲突地点 / 冲突起因 / 防御体系 / 玩家所在位)</li>
         <li>§1.3.2 双主角 · Marvis (马启航) vs Nova (牛知灵) 6 行对比表 + 台词分工 callout</li>
-        <li>§1.3.3 AUX · AUV-0 · 5 行对比表 (Marvis 侧零指导 / Nova 侧手术刀寸厘) + 命名分层 callout</li>
+        <li>§1.3.3 AUV · AUV-0 · 5 行对比表 (Marvis 侧零指导 / Nova 侧手术刀寸厘) + 命名分层 callout</li>
         <li>§1.3.4 Ossyr (厄司) · 5 行表 (命名由来 / 形态基调 / 五官 / 死亡表现 / 行为逻辑)</li>
         <li>调性锚 · warn callout 3 条接缝 (硬核设定 + 软名字 / 外星生物压迫感 / 双主角吐槽) + 反面示例</li>
       </ul>
@@ -2748,7 +2749,7 @@ if (targetLv &gt; skillLevels[id]) {
 
       <p><strong>⑥ 未落项</strong> (后续独立议题):</p>
       <ul>
-        <li><strong>§2.2 BOBO 段落</strong> 未同步升级为 AUX 命名 (BOBO→AUX 迁移属独立议题, 本次不动, 待专项 K 拍板)</li>
+        <li><strong>§2.2 BOBO 段落</strong> 未同步升级为 AUV 命名 (BOBO→AUV 迁移属独立议题, 本次不动, 待专项 K 拍板)</li>
         <li><strong>§2.4 外星生物 20 只表格</strong> 美术提示词未同步骨甲/结晶义肢风 (art-spec 层职责, 独立议题)</li>
         <li>中文项目名 <strong>《舰舰别炸》</strong> 是否随族名 Ossyr / Aurelia 改名 — K 拍板 <strong>保留原名不动</strong>, 已固化</li>
         <li><code>demo.html</code> UI 文案未接入世界观词条 (Aurelia / Ossyr / 零指导 / 寸厘 走 <code>T.xxx</code> 术语中心表, 后续 terms.js 议题落地)</li>
@@ -2866,15 +2867,15 @@ if (targetLv &gt; skillLevels[id]) {
   </section>
 
   <section class="chapter">
-    <h3 id="ch-v47" style="color:#c62828">V4.7 · K33 · AUX 仇恨顺序简化 · 4 阶 → 2 阶 · 完全不分 boss/elite/minion <span class="new-tag">NEW</span> (2026-07-30)</h3>
+    <h3 id="ch-v47" style="color:#c62828">V4.7 · K33 · AUV 仇恨顺序简化 · 4 阶 → 2 阶 · 完全不分 boss/elite/minion <span class="new-tag">NEW</span> (2026-07-30)</h3>
     <div class="doc-body">
-      <p class="lead">V4.7 落实 K33 原口径 —— "AUX 始终优先攻击最靠近防线的敌人, 如果有很多敌人在同时攻击防线, 不管是 boss 还是精英怪还是小兵, 都优先攻击血量更少的单位"。把原 4 阶仇恨 (atDefense / boss / elite / minion) 砍成 2 阶 (atDefense / other), 完全去掉 boss / elite / minion 类型加权, 让 AUX 的仇恨选择更贴合"守线"核心叙事、更直觉。</p>
+      <p class="lead">V4.7 落实 K33 原口径 —— "AUV 始终优先攻击最靠近防线的敌人, 如果有很多敌人在同时攻击防线, 不管是 boss 还是精英怪还是小兵, 都优先攻击血量更少的单位"。把原 4 阶仇恨 (atDefense / boss / elite / minion) 砍成 2 阶 (atDefense / other), 完全去掉 boss / elite / minion 类型加权, 让 AUV 的仇恨选择更贴合"守线"核心叙事、更直觉。</p>
 
       <p><strong>① 变更前</strong>:</p>
       <ul>
         <li><code>classifyEnemyTier</code> 返回 4 阶: <code>atDefense=0 &gt; boss(final/miniBoss)=1 &gt; elite=2 &gt; minion=3</code></li>
         <li>sort comparator: 高阶压低阶, 同阶血量少优先, 血量相等 y 降序兜底 (即"同档点残"逻辑, 不区分档号)</li>
-        <li>结果: boss / elite 只要在射程内, 即便远离防线也会被 AUX 强锁, 与"守线"叙事错位</li>
+        <li>结果: boss / elite 只要在射程内, 即便远离防线也会被 AUV 强锁, 与"守线"叙事错位</li>
       </ul>
 
       <p><strong>② 变更后</strong>:</p>
@@ -2887,9 +2888,9 @@ if (targetLv &gt; skillLevels[id]) {
 
       <p><strong>③ 设计意图</strong>:</p>
       <ul>
-        <li>K 原口径"始终优先最靠近防线", 与游戏核心叙事"守线"完全一致 — AUX 的存在意义就是补位防守, 不该被 boss / elite 类型标签牵走</li>
+        <li>K 原口径"始终优先最靠近防线", 与游戏核心叙事"守线"完全一致 — AUV 的存在意义就是补位防守, 不该被 boss / elite 类型标签牵走</li>
         <li>Boss 因为大概率靠前 (进游戏晚 + 走得快) 自然会先 <code>atDefense</code>, 进入 P1 后靠"血量少优先"再被点残, 无需 tier 强化</li>
-        <li>削去 tier 让 AUX 更"直觉" — 玩家不需要在心里维护"AUX 现在在打谁, 为什么打这只"的类型推理, 只看"谁离防线最近 / 谁在打防线 / 谁血少"</li>
+        <li>削去 tier 让 AUV 更"直觉" — 玩家不需要在心里维护"AUV 现在在打谁, 为什么打这只"的类型推理, 只看"谁离防线最近 / 谁在打防线 / 谁血少"</li>
         <li>与恩赐解脱的"点满"互补关系保持 — mercy 走 <code>mercyCompare</code> (L6030) 独立 tier, 不受本次改动影响</li>
       </ul>
 
@@ -2926,7 +2927,7 @@ if (targetLv &gt; skillLevels[id]) {
       <p><strong>⑥ 未落项</strong> (后续独立议题):</p>
       <ul>
         <li>仇恨切换视觉过场 (0.1s) 保持不变</li>
-        <li>未来若 boss 战 boss 挤在 y 后方 (tier=1 段) 被小兵抢走 AUX, K 可开新议题加"boss 高优"临时补丁</li>
+        <li>未来若 boss 战 boss 挤在 y 后方 (tier=1 段) 被小兵抢走 AUV, K 可开新议题加"boss 高优"临时补丁</li>
         <li>是否给 P2 追加"血量比重 vs y 比重"权重函数 — 当前是硬字典序 (y 降序 &gt; hp 升序), 未来若手感反馈弱可考虑权重合成</li>
       </ul>
 
@@ -2945,11 +2946,25 @@ if (targetLv &gt; skillLevels[id]) {
         <li>关键 marker: <code>classifyEnemyTier</code> 2 阶 · <code>rankedBoboTargets</code> 分档 · <code>ch-v47</code> · <code>v4.7</code> · P1 血量少 · P2 y 降序</li>
         <li>test 手法: playwright 构造混合场景 (1 只 boss 在 y=100 但未 atDefense, 1 只 minion 在 y=500 atDefense hp=1, 1 只 elite 在 y=400 未 atDefense hp=10), 观察:
           <ul>
-            <li>(a) AUX 首个锁定 = minion (P1 唯一)</li>
-            <li>(b) minion 死后 AUX 转 elite (y=400 &gt; boss y=100, P2 内 y 降序)</li>
-            <li>(c) 若 boss 也进入 atDefense, AUX 立即从 elite 切到 boss 或 minion 中血量最少者 (P1 血量少优先)</li>
+            <li>(a) AUV 首个锁定 = minion (P1 唯一)</li>
+            <li>(b) minion 死后 AUV 转 elite (y=400 &gt; boss y=100, P2 内 y 降序)</li>
+            <li>(c) 若 boss 也进入 atDefense, AUV 立即从 elite 切到 boss 或 minion 中血量最少者 (P1 血量少优先)</li>
           </ul>
         </li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="chapter">
+    <h3 id="ch-v48" style="color:#c62828">V4.8 · K34-B · AUX → AUV 全项目命名统一 <span class="new-tag">NEW</span> (2026-07-30)</h3>
+    <div class="doc-body">
+      <p class="lead">V4.8 覆盖 · AI 辅助作战单元底层命名 <code>AUX</code> → <code>AUV</code> 全项目统一。§1.3.3 / §2.2 / §2.2.1 / V4.7 权威块术语替换。数值/机制/行为无变化, 纯命名对齐。</p>
+      <ul>
+        <li>命名统一范围: spec.html · spec-manual.html · terms.js 大写字母序列 <code>AUX</code> 全部替换为 <code>AUV</code> (含派生 <code>AUX-0</code> → <code>AUV-0</code>, 镜像 AUX → 镜像 AUV)</li>
+        <li>小写 <code>aux</code> / 英文单词 <code>auxiliary</code> / CSS class <code>.aux</code> 等语义无关命中 <strong>一律不动</strong></li>
+        <li>demo.html HTML 内文本 <strong>零命中</strong>, JS 常量/变量名未涉及</li>
+        <li>历史废弃名: NUO(2026-06 弃) → BOBO(2026-07-27 弃) → AUX(2026-07-30 弃) → <strong>AUV</strong> (当前底层通名)</li>
+        <li>版本联动: spec.html title/badge/sidebar/项目版本刷 v4.7 → v4.8, spec-manual.html L472 项目版本刷 v4.7 → v4.8, SPEC_PUBLISHED bump 至 2026-07-30 15:44</li>
       </ul>
     </div>
   </section>
