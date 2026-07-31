@@ -350,46 +350,6 @@ tr:hover td { background: #134e4a; }
 .tag-may    { background: #134e4a; color: #5eead4; border: 1px solid #2dd4bf; }
 .tag-todo   { background: #134e4a; color: #5eead4; border: 1px solid #2dd4bf; }
 
-/* === CHANGELOG (§00 diff 表) === */
-.changelog {
-  display: table;
-  width: 100%;
-  border-collapse: collapse;
-  margin: 16px 0 24px;
-  background: #243447;
-  border: 1px solid #334155;
-  border-radius: 8px;
-  overflow: hidden;
-  font-size: 13.5px;
-}
-.changelog .head {
-  display: table-row;
-  background: #134e4a;
-  color: #e2e8f0;
-  font-weight: 600;
-  font-size: 12.5px;
-  letter-spacing: 0.4px;
-}
-.changelog .head > div {
-  display: table-cell;
-  padding: 12px 14px;
-  border-bottom: 1px solid #2dd4bf;
-}
-.cl-row {
-  display: table-row;
-}
-.cl-row > div {
-  display: table-cell;
-  padding: 11px 14px;
-  border-bottom: 1px solid #334155;
-  vertical-align: top;
-}
-.cl-row:last-child > div { border-bottom: none; }
-.cl-row:nth-child(even) > div { background: #1f2c3d; }
-.cl-row:hover > div { background: #134e4a; }
-.cl-mod { color: #2dd4bf; font-weight: 600; width: 15%; }
-.cl-from { color: #94a3b8; width: 40%; }
-.cl-to { color: #e2e8f0; width: 45%; }
 
 /* === SVG WRAP === */
 .svg-wrap {
@@ -447,12 +407,12 @@ tr:hover td { background: #134e4a; }
   <li><a href="#ch-02">角色系统</a></li>
   <li><a href="#ch-03">战场布局</a></li>
   <li><a href="#ch-04">宝箱通道(左)</a></li>
-  <li><a href="#ch-04-7">专属卡系统 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-04-7">专属卡系统</a></li>
   <li><a href="#ch-05">接敌通道(右) · 状态门核心机制</a></li>
   <li><a href="#ch-06">躲门空间几何</a></li>
   <li><a href="#ch-07">防线与失败条件</a></li>
-  <li><a href="#ch-07-5">预体验关卡 <span class="new-tag">NEW</span></a></li>
-  <li><a href="#ch-07-6">无尽模式 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-07-5">预体验关卡</a></li>
+  <li><a href="#ch-07-6">无尽模式</a></li>
   <li><a href="#ch-08">边缘情况清单</a></li>
 </ol>
 <div class="sidebar-footer">
@@ -506,7 +466,7 @@ Alien Fizzle · 玩法规格<br>
     <ul>
       <li><span class="tag tag-must">必须</span><strong>一点透视斜俯视</strong>: 摄像机俯角 30-40°, 远端通道收窄, 形成纵深感</li>
       <li><span class="tag tag-must">必须</span><strong>仍为 2D 渲染</strong>: 不引入 3D 引擎, 用 2D 透视技巧(梯形通道 + 远小近大缩放) 实现伪 3D</li>
-      <li><span class="tag tag-may">可选</span>背景层可加视差滚动(parallax) 增强纵深, 不强制</li>
+      <li>背景层可加视差滚动(parallax) 增强纵深, 不强制</li>
     </ul>
 
     <h3>1.2 题材与节奏</h3>
@@ -542,7 +502,7 @@ Alien Fizzle · 玩法规格<br>
     <table>
       <tr><th>维度</th><th>马启航Marvis</th><th>牛知灵Nova</th></tr>
       <tr><td>性别</td><td>男</td><td>女</td></tr>
-      <tr><td>性格 tag</td><td><span class="tag tag-may">混不吝</span> <span class="tag tag-may">闲散</span> <span class="tag tag-may">老油条</span></td><td><span class="tag tag-may">飒</span> <span class="tag tag-may">果断</span> <span class="tag tag-may">大女主</span></td></tr>
+      <tr><td>性格 tag</td><td></td><td></td></tr>
       <tr><td>前身份</td><td>地球街角<strong>小卖部老板</strong> — 关了店跨星系响应征召, 心里盘算着战后开个更大的</td><td>地球顶级<strong>外科医生</strong> — 主动请缨调往 Aurelia 前线, "手术台救一个, 战场救一片"</td></tr>
       <tr><td>入伍动机</td><td>主动响应号召 · 顺便闯闯星际</td><td>主动请缨 · 更大规模救人</td></tr>
       <tr><td>战场口吻</td><td>懒洋洋 / 摸鱼式吐槽 / 见惯不惊</td><td>精准 / 冷静 / 掌控欲</td></tr>
@@ -596,7 +556,7 @@ Alien Fizzle · 玩法规格<br>
     </div>
 
     <h3>1.3.5 无线电台词 · 双主角画外音 (WIP)</h3>
-    <p class="lead"><span class="tag tag-may">WIP</span> 玩家上场的角色 = 场上执行方, 未上场的角色 = <strong>无线电画外音</strong> (纯文本弹幕形态), 在关卡节点触发短对话, 承担 (a) 告知玩家游戏进度 (b) 调节战场气氛 (c) 双主角叙事延展 三重作用。</p>
+    <p class="lead"> 玩家上场的角色 = 场上执行方, 未上场的角色 = <strong>无线电画外音</strong> (纯文本弹幕形态), 在关卡节点触发短对话, 承担 (a) 告知玩家游戏进度 (b) 调节战场气氛 (c) 双主角叙事延展 三重作用。</p>
 
     <div class="callout">
       <strong>调性总则</strong> (Kaysen 2026-07-27 定死, 起草时逐条比对):
@@ -635,9 +595,9 @@ Alien Fizzle · 玩法规格<br>
     </table>
 
     <h4>1.3.5.3 已定稿节点样本 (M1 阶段 · 13 / 13 覆盖)</h4>
-    <p><span class="tag tag-may">草稿</span> 全 13 节点 M1 基础版一次落齐, 后续 M2/M3/无尽阶段变体在下一轮迭代补。术语约定:<br>
+    <p> 全 13 节点 M1 基础版一次落齐, 后续 M2/M3/无尽阶段变体在下一轮迭代补。术语约定:<br>
       <strong>"马场"</strong> = 马启航上场 · Nova 无线电 · Nova 说"马启航"; <strong>"灵场"</strong> = Nova 上场 · 马启航无线电 · 马启航说"灵主任"<br>
-      <strong>无线电原则 (K34-A):</strong> 上场角色保留原味台词, <strong>无线电那侧 = 无情资讯播报机</strong>, 只播情报/数值/警告, 不带关心/贫嘴/情绪切换/名字变化。称呼层保留 (灵主任/马启航), 情感层全砍。</p>
+      <strong>无线电原则:</strong> 上场角色保留原味台词, <strong>无线电那侧 = 无情资讯播报机</strong>, 只播情报/数值/警告, 不带关心/贫嘴/情绪切换/名字变化。称呼层保留 (灵主任/马启航), 情感层全砍。</p>
 
     <div class="callout">
       <strong>节点 1 · 开局登场</strong> (M1 · 100% · 定基调)
@@ -850,8 +810,8 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>属性来源</td><td>状态门 (5 项吃: 攻击力/攻速/暴击率/暴击伤害/火力静默翻转, 防线三维不作用于 AUV, 见 §5.9) + 精通卡 G 类专属 + D/F 部分类适用 (见 §4.6)</td></tr>
     </table>
 
-    <h4>2.2.1 仇恨判定 · 2 阶优先级 <span class="tag tag-may">V4.7 覆盖</span></h4>
-    <p>AUV 每次准备开火时按下列优先级选目标, 高阶优先级永远压过低阶; <strong>完全不分 boss / 精英 / 小兵</strong>, 只看是否正在攻击防线 (K33 · 原口径"始终优先攻击最靠近防线的敌人")。</p>
+    <h4>2.2.1 仇恨判定 · 2 阶优先级</h4>
+    <p>AUV 每次准备开火时按下列优先级选目标, 高阶优先级永远压过低阶; <strong>完全不分 boss / 精英 / 小兵</strong>, 只看是否正在攻击防线。</p>
     <table>
       <tr><th>阶</th><th>目标</th><th>档内排序</th><th>意图</th></tr>
       <tr><td><strong>P1</strong></td><td>正在攻击防线的敌人 (<code>atDefense</code>)</td><td>血量少优先 (点残止血); 平局 y 降序兜底</td><td>抢救即将破防, 不分类型</td></tr>
@@ -1062,7 +1022,7 @@ Alien Fizzle · 玩法规格<br>
     <p class="lead">宝箱通道采用 <strong>三选一 roguelike 抽卡</strong>。卡池由 <strong>5 张技能升级卡 × 3 级 (串行解锁)</strong> + <strong>22 张枪械精通卡 (§4.6 附录)</strong> 混合而成; 状态门只管平铺属性 (攻击力 / 攻速 / 暴击率 / 暴击伤害 / 火力静默 / 防线三维), 与宝箱的 "质变技能" 架构分离。</p>
 
     <div class="callout warn">
-      <strong>架构分离 (v3.2 顶层规则)</strong>:
+      <strong>架构分离</strong>:
       <ul style="margin:8px 0 0 0">
         <li><strong>状态门</strong> = 平铺属性增益 (原规则保留, 补 AUV 生效方式, 见 §5)</li>
         <li><strong>宝箱</strong> = 技能升级卡 + 枪械精通卡 <strong>混池三选一</strong>, 单卡一次性抽到即消耗</li>
@@ -1087,13 +1047,13 @@ Alien Fizzle · 玩法规格<br>
     </div>
 
     <div class="callout warn">
-      <strong>版本口子 (v3.2 demo 阶段)</strong>: 3 级制先跑 demo 验证节奏 (预期每张卡拿满约需 3 次抽到, 单局节奏够爽)。若实际手感差 (成长曲线太陡 / 太平), 回滚 5 级制 (每级增量减半, 拉长成长曲线)。回滚判据: 玩家单局平均拿满 <strong>&lt; 1</strong> 张技能到 Lv3 → 太慢, <strong>&gt; 3</strong> 张 → 太快。
+      <strong>版本口子</strong>: 3 级制先跑 demo 验证节奏 (预期每张卡拿满约需 3 次抽到, 单局节奏够爽)。若实际手感差 (成长曲线太陡 / 太平), 回滚 5 级制 (每级增量减半, 拉长成长曲线)。回滚判据: 玩家单局平均拿满 <strong>&lt; 1</strong> 张技能到 Lv3 → 太慢, <strong>&gt; 3</strong> 张 → 太快。
     </div>
 
     <table>
       <tr><th style="width:110px">技能</th><th>Lv1 基础释放</th><th>Lv2 质变</th><th>Lv3 完全体</th></tr>
       <tr>
-        <td><strong>站一起</strong> <span class="tag tag-may">原"别站一起"</span></td>
+        <td><strong>站一起</strong></td>
         <td>每 10s 丢出一枚手雷, 以主要目标为圆心, 半径 = 1/3 接敌通道宽 的圆形区域造成 <strong>150 点爆炸伤害</strong>, 命中敌人施加 <strong>灼烧 5s</strong> (每秒 20 伤害, 可叠层)</td>
         <td>质变: 灼烧状态下死亡的敌人 <strong>尸爆</strong>, 对周围造成 <strong>150 爆炸伤害</strong> 并 <strong>刷新灼烧持续时间 + 叠加一层灼烧</strong> (可无限叠加, 连锁尸爆成立)</td>
         <td>完全体: 施放该技能时 <strong>40% 几率再次施放</strong> (可无限触发链); 每一颗手雷都刷新灼烧时间并叠加一层</td>
@@ -1107,8 +1067,8 @@ Alien Fizzle · 玩法规格<br>
       <tr>
         <td><strong>恩赐解脱</strong></td>
         <td>每 <strong>12s</strong> 自动锁定当前最高优先级 <strong>1 个</strong>敌人发射超级子弹, 基础 <strong>24 × 主角攻击力</strong>真实伤害 (穿透 armor); 每发独立摇 <strong>变异倍率</strong> — 24x(30%)/32x(23%)/48x(17%)/64x(12%)/80x(8%)/96x(6%)/<strong>112x(4%)</strong>, 期望 ≈ 47.04x; 目标身后 <strong>60° 锥形</strong>区域 (锥长 = 2 敌人小兵单位) 内敌人 <strong>原地不动 1s</strong> (硬控 stun); 命中挂 <strong>易损 +20% × 5s</strong>; 击杀目标 <strong>40% 概率</strong>再触发 (无上限, 运气可无限连)</td>
-        <td>质变: 同帧锁定 <strong>2 个</strong>目标, 锥形扩至 <strong>90°</strong>; <strong>变异倍率上滑一档</strong>: 32/48/64/80/96/112/128x, 期望 ≈ <strong>60.64x</strong>; 击杀 <strong>50% 概率</strong>再触发 (锥形硬控保持 Lv1 原地 stun 1s) <span class="tag tag-may">V4.6 覆盖</span></td>
-        <td>完全体: 同帧锁定 <strong>5 个</strong>目标, 锥形扩至 <strong>120°</strong>; <strong>变异倍率再上滑一档</strong>: 48/64/80/96/112/128/160x, 期望 ≈ <strong>77.28x</strong>; 击杀 <strong>60% 概率</strong>再触发; <strong>颤栗改恐惧</strong>: 命中锥形内敌人 <code>fearUntil = now + 1500ms</code>, 期间按敌人基础 speed 反向 1x 位移 (不吃 slow/chill), 强制 <code>atDefense = false</code>, 不 clamp 上边界; 过期后走正常前推逻辑 → 观感 = 反推 1.5s + 归位 1.5s ≈ 回到原位。锥形视觉换紫色 <code>rgba(140,80,255,0.35)</code> 区分手感, 命中敌人身上飘"恐惧!" 紫色小字 <span class="tag tag-may">V4.6 覆盖</span></td>
+        <td>质变: 同帧锁定 <strong>2 个</strong>目标, 锥形扩至 <strong>90°</strong>; <strong>变异倍率上滑一档</strong>: 32/48/64/80/96/112/128x, 期望 ≈ <strong>60.64x</strong>; 击杀 <strong>50% 概率</strong>再触发 (锥形硬控保持 Lv1 原地 stun 1s)</td>
+        <td>完全体: 同帧锁定 <strong>5 个</strong>目标, 锥形扩至 <strong>120°</strong>; <strong>变异倍率再上滑一档</strong>: 48/64/80/96/112/128/160x, 期望 ≈ <strong>77.28x</strong>; 击杀 <strong>60% 概率</strong>再触发; <strong>颤栗改恐惧</strong>: 命中锥形内敌人 <code>fearUntil = now + 1500ms</code>, 期间按敌人基础 speed 反向 1x 位移 (不吃 slow/chill), 强制 <code>atDefense = false</code>, 不 clamp 上边界; 过期后走正常前推逻辑 → 观感 = 反推 1.5s + 归位 1.5s ≈ 回到原位。锥形视觉换紫色 <code>rgba(140,80,255,0.35)</code> 区分手感, 命中敌人身上飘"恐惧!" 紫色小字</td>
       </tr>
       <tr>
         <td><strong>高压领域</strong></td>
@@ -1117,7 +1077,7 @@ Alien Fizzle · 玩法规格<br>
         <td>区域范围扩至 <strong>0.6× 通道长</strong>; <strong>越靠底部伤害越高</strong> (曲线, 靠底最高倍率); 在高压领域内首次撞防线 <strong>免伤 + 麻痹 3s</strong></td>
       </tr>
       <tr>
-        <td><strong>激光贯穿</strong> <span class="tag tag-may">v3.2 新</span></td>
+        <td><strong>激光贯穿</strong></td>
         <td>蓄力 <strong>2s</strong> 后由 AUV 发射一根 <strong>60px 宽</strong>贯穿激光, 对一条直线上所有敌人造成 <strong>800 (playerAtk×32)</strong> 伤害</td>
         <td>Lv1 + <strong>2.5s 沿线余波</strong>, 每 0.5s 沿线 <strong>100 (playerAtk×4)</strong> 伤</td>
         <td>Lv2 + <strong>3s 内每 0.5s 从随机目标额外发射一根 5px 小激光</strong>, <strong>200 (playerAtk×8)</strong> 伤</td>
@@ -1125,7 +1085,7 @@ Alien Fizzle · 玩法规格<br>
     </table>
 
     <div class="callout">
-      <strong>说明</strong>: 激光贯穿是 v3.2 新加, 用来补位镜像 BOBO 挪走后留下的宝箱池空缺 (让技能盘保持 5 张)。所有含 CD 的技能, <strong>抽到瞬间直接触发第一次</strong>, CD 从触发时刻起算; 同一 CD 池内不叠加, 每张卡是独立 CD 计时器。
+      <strong>说明</strong>: 激光贯穿用于补位宝箱池空缺, 保持技能盘 5 张满位。所有含 CD 的技能, <strong>抽到瞬间直接触发第一次</strong>, CD 从触发时刻起算; 同一 CD 池内不叠加, 每张卡是独立 CD 计时器。
     </div>
 
     <h3>4.3 抽卡权重与刷新规则</h3>
@@ -1147,81 +1107,70 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-must">必须</span>无尽模式理论可 <strong>全满</strong> (5 张 Lv3 + 22 张精通全出, 拉时间即可)</li>
     </ul>
 
-    <h3>4.4 通道无防御警告 (原 §4.4 保留)</h3>
+    <h3>4.4 通道无防御警告</h3>
     <p>主角离开接敌通道(完全进入宝箱通道)时, 接敌通道的防线段进入 <strong>警告状态</strong>:</p>
     <ul>
       <li><span class="tag tag-must">必须</span>接敌通道下方的防线段 <strong>红色闪烁</strong>(频率约 2Hz)</li>
       <li><span class="tag tag-must">必须</span>闪烁直到主角任何部分回到接敌通道为止</li>
       <li><span class="tag tag-should">建议</span>配合短促警告音效(可选, 关闭也不影响游戏性)</li>
-      <li><span class="tag tag-may">可选</span>主角骑分界线时, 闪烁强度减半(部分覆盖)</li>
+      <li>主角骑分界线时, 闪烁强度减半(部分覆盖)</li>
     </ul>
 
     <div class="callout warn">
       <strong>设计张力</strong>: 主角去左通道贪宝箱时, 右通道弹道空缺, 敌人推进无人拦截。警告反馈 = 心理压迫源, 让 "贪 vs 守" 成为玩家每秒都要重新计算的决策。
     </div>
 
-    <h3>4.5 下架清单 (v3.1 → v3.2)</h3>
-    <div class="callout">
-      <ul style="margin:8px 0 0 0">
-        <li>❌ <strong>宝箱库 8 件固定配件序列</strong> (原 §4.5 表) — 已被三选一抽卡替代</li>
-        <li>❌ <strong>枪械精通</strong> (原 1 号成长属性) — 拆解为状态门的平铺属性 (成长/固定攻击力 · 攻速 · 暴击率 · 暴击伤害 · 火力静默) + 精通卡池</li>
-        <li>❌ <strong>爆炸弹 (原 3 号)</strong> · <strong>弹射弹 (原 4 号)</strong> — 挪到精通卡 A 类 (子弹形态), 见 §4.6</li>
-        <li>❌ <strong>镜像 BOBO (原 6 号)</strong> — 挪到无尽合成宝箱, 见 §2.3</li>
-        <li>❌ <strong>multiShot / fireRate / atkUp / laser / ultimate</strong> — 保持 v3.1 下架不变</li>
-      </ul>
-    </div>
+    <h3>4.5 附录 · 枪械精通卡池 · 26 张</h3>
+    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 26 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F19) 为特例, <strong>单张可重复抽</strong>。分布: A 5 / B 3 / C 2 / D 2 / E 5 / F 3 / G 5 = 25 张 + demo 内含 a_explode = 26。</p>
 
-    <h3>4.6 附录 · 枪械精通卡池 · 26 张</h3>
-    <p class="lead">精通卡是 <strong>一次性消耗</strong>的 roguelike 强化, 26 张覆盖 7 大类。<strong>基础权重 1.5</strong> (高于技能卡 1.0), 已持有再抽到 <strong>权重 ×0.5</strong> (实际 0.75), 允许在无尽模式里刷复本 (但不叠加效果, 视为无效抽)。恶魔赌局 (F19) 为特例, <strong>单张可重复抽</strong>。分布: A 5 / B 3 / C 2 / D 2 / E 5 / F 3 / G 5 = 25 张 + demo 内含 a_explode = 26 (K26: A 类新增 a_rapid; G 类沿 K25 3→5; <strong>K27 精修 a_pierce / a_burst / a_rapid / a_explode desc, 见 spec.html §V4.3</strong>)。<strong>本表已同步 v4.3</strong>。</p>
-
-    <h4>4.6.A 子弹形态 · 5 张 (K26 新增 a_rapid · K27 精修 pierce/burst/rapid/explode)</h4>
+    <h4>4.6.A 子弹形态 · 5 张</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>1</strong></td><td><strong>集束枪管</strong> <span class="tag tag-may">a_pierce</span></td><td>[K27] 普攻 <strong>+20%</strong>, <strong>穿透 1</strong> (一发共命中 2 目标 = 主 + 1 穿透), 次级伤害衰减 <strong>40%</strong> (次级 = 主伤 × 0.6)</td><td>K27-3: 穿透 2→1 · 衰减 20%→40%; V3.5 已删命中分裂 & AUV 分叉联动</td></tr>
-      <tr><td><strong>2</strong></td><td><strong>裂头弹</strong> <span class="tag tag-may">a_bounce</span></td><td>击中主目标瞬间 <strong>四散分裂 4 颗小子弹</strong>, <strong>50% 伤害</strong>, 不再穿透/分裂, 继承攻击特效</td><td>分裂绝对角度 [-30°,50°,130°,210°]</td></tr>
-      <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong> <span class="tag tag-may">a_explode</span></td><td>[K27] 子弹命中产生 <strong>小范围爆炸</strong>, 半径 <strong>锁死 20px</strong> (打宝箱/打小怪一致, 不再挂载体尺寸), 爆炸伤害 = <strong>30% 主伤害</strong></td><td>K27-2: splashR 锁 20 (原 t.w×0.5×0.3); 弹射/分裂后的子弹也能触发</td></tr>
-      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong> <span class="tag tag-may">a_rapid · 不可重复</span></td><td>[K27] 主角子弹 <strong>飞行速度 ×1.5</strong> (velMult 独立通道, 不与 a_burst 攻速叠乘), <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td>K27-1: 射速×2 → 弹速×1.5 (velMult 通道); 只作用主角平 A, 不影响 AUV</td></tr>
-      <tr><td><strong>4</strong></td><td><strong>连发快射</strong> <span class="tag tag-may">a_burst · 不可重复</span></td><td>[K27] 攻速 <strong>+30%</strong>, 弹道 <strong>+2</strong>, 单发伤害降为 <strong>35%</strong> (3 弹道 × 0.35 = 1.05× DPS)</td><td>K27-4: 单发 0.55→0.35; V3.5 已删爆头; 只作用主角平 A, 不影响 AUV</td></tr>
+      <tr><td><strong>1</strong></td><td><strong>集束枪管</strong></td><td>普攻 <strong>+20%</strong>, <strong>穿透 1</strong> (一发共命中 2 目标 = 主 + 1 穿透), 次级伤害衰减 <strong>40%</strong> (次级 = 主伤 × 0.6)</td><td></td></tr>
+      <tr><td><strong>2</strong></td><td><strong>裂头弹</strong></td><td>击中主目标瞬间 <strong>四散分裂 4 颗小子弹</strong>, <strong>50% 伤害</strong>, 不再穿透/分裂, 继承攻击特效</td><td>分裂绝对角度 [-30°,50°,130°,210°]</td></tr>
+      <tr><td><strong>3</strong></td><td><strong>爆炸弹</strong></td><td>子弹命中产生 <strong>小范围爆炸</strong>, 半径 <strong>锁死 20px</strong> (打宝箱/打小怪一致, 不再挂载体尺寸), 爆炸伤害 = <strong>30% 主伤害</strong></td><td></td></tr>
+      <tr><td><strong>4b</strong></td><td><strong>快枪手</strong></td><td>主角子弹 <strong>飞行速度 ×1.5</strong> (velMult 独立通道, 不与 a_burst 攻速叠乘), <strong>5% 概率爆头</strong>: 额外 <strong>+50% 主伤</strong> + 命中目标 <strong>减速至 50% 移速</strong>持续 <strong>0.5s</strong></td><td></td></tr>
+      <tr><td><strong>4</strong></td><td><strong>连发快射</strong></td><td>攻速 <strong>+30%</strong>, 弹道 <strong>+2</strong>, 单发伤害降为 <strong>35%</strong> (3 弹道 × 0.35 = 1.05× DPS)</td><td></td></tr>
     </table>
 
     <h4>4.6.B 状态施加 · 3 张 · 全必触发无概率</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>5</strong></td><td><strong>燃烧弹</strong> <span class="tag tag-may">b_burn</span></td><td>子弹命中 <strong>点燃</strong>: 2 秒内造成 <strong>50% 主伤害 DoT</strong></td><td>必触发, 与激光燃烧独立</td></tr>
-      <tr><td><strong>6</strong></td><td><strong>减速弹</strong> <span class="tag tag-may">b_slow</span></td><td>子弹命中 <strong>减速 30%, 持续 2 秒</strong></td><td>必触发</td></tr>
-      <tr><td><strong>7</strong></td><td><strong>毒液弹</strong> <span class="tag tag-may">b_poison</span></td><td>命中 <strong>挂毒</strong>: 每 0.5s 扣 <strong>20 真伤</strong>, 持续 4s, 可叠 <strong>3 层</strong> (每层 ×1.5)</td><td>必触发, 真伤穿甲</td></tr>
+      <tr><td><strong>5</strong></td><td><strong>燃烧弹</strong></td><td>子弹命中 <strong>点燃</strong>: 2 秒内造成 <strong>50% 主伤害 DoT</strong></td><td>必触发, 与激光燃烧独立</td></tr>
+      <tr><td><strong>6</strong></td><td><strong>减速弹</strong></td><td>子弹命中 <strong>减速 30%, 持续 2 秒</strong></td><td>必触发</td></tr>
+      <tr><td><strong>7</strong></td><td><strong>毒液弹</strong></td><td>命中 <strong>挂毒</strong>: 每 0.5s 扣 <strong>20 真伤</strong>, 持续 4s, 可叠 <strong>3 层</strong> (每层 ×1.5)</td><td>必触发, 真伤穿甲</td></tr>
     </table>
 
     <h4>4.6.C 特殊触发 · 2 张</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>8</strong></td><td><strong>食髓</strong> <span class="tag tag-may">c_feast</span></td><td>击杀 <strong>精英以上</strong> 敌人后, 5s 内 <strong>攻速 +50%</strong></td><td>可刷新覆盖, 不叠加</td></tr>
-      <tr><td><strong>9</strong></td><td><strong>熔核</strong> <span class="tag tag-may">c_meltdown</span></td><td>自动循环 <strong>11 秒</strong>: 爬升期 3s (攻速 1× 线性升至 3×) · 满状态 5s (攻速 3× + 暴击率 +20% + 暴击伤害 +50%) · 静默期 3s (完全无法射击)</td><td>与状态门火力静默独立结算, 静默期 UI 明确标示</td></tr>
+      <tr><td><strong>8</strong></td><td><strong>食髓</strong></td><td>击杀 <strong>精英以上</strong> 敌人后, 5s 内 <strong>攻速 +50%</strong></td><td>可刷新覆盖, 不叠加</td></tr>
+      <tr><td><strong>9</strong></td><td><strong>熔核</strong></td><td>自动循环 <strong>11 秒</strong>: 爬升期 3s (攻速 1× 线性升至 3×) · 满状态 5s (攻速 3× + 暴击率 +20% + 暴击伤害 +50%) · 静默期 3s (完全无法射击)</td><td>与状态门火力静默独立结算, 静默期 UI 明确标示</td></tr>
     </table>
 
     <h4>4.6.D 伤害修饰 · 2 张</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>10</strong></td><td><strong>精英以上猎手</strong> <span class="tag tag-may">d_hunter</span></td><td>对 <strong>精英 + boss</strong> 单位伤害 <strong>+30%</strong></td><td>对 AUV 激光生效</td></tr>
-      <tr><td><strong>11</strong></td><td><strong>弱者克星</strong> <span class="tag tag-may">d_weak</span></td><td>对被施加减益 (减速 / 麻痹 / 燃烧 / 毒等) 的单位伤害 <strong>+40%</strong></td><td>对 AUV 激光生效</td></tr>
+      <tr><td><strong>10</strong></td><td><strong>精英以上猎手</strong></td><td>对 <strong>精英 + boss</strong> 单位伤害 <strong>+30%</strong></td><td>对 AUV 激光生效</td></tr>
+      <tr><td><strong>11</strong></td><td><strong>弱者克星</strong></td><td>对被施加减益 (减速 / 麻痹 / 燃烧 / 毒等) 的单位伤害 <strong>+40%</strong></td><td>对 AUV 激光生效</td></tr>
     </table>
 
     <h4>4.6.E 防线相关 · 5 张</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>12</strong></td><td><strong>防线加固</strong> <span class="tag tag-may">e_reinforce</span></td><td>防线 HP <strong>+30%</strong> (基础值百分比, 抽到时按当前满 HP 结算, 当前 HP 同步补足)</td><td>—</td></tr>
-      <tr><td><strong>13</strong></td><td><strong>回响</strong> <span class="tag tag-may">e_echo</span></td><td>每击杀 <strong>20 个敌人</strong>, 防线回 <strong>1% HP</strong></td><td>持续生效, 无上限</td></tr>
-      <tr><td><strong>14</strong></td><td><strong>绝境反击</strong> <span class="tag tag-may">e_desperate</span></td><td>防线 HP 每下降 <strong>2%</strong>, 攻击力 <strong>+1%</strong> (线性, 满血 0 加成, 空血 +50%)</td><td>对 AUV 全生效 (伤害修饰全局)</td></tr>
-      <tr><td><strong>15</strong></td><td><strong>扎根</strong> <span class="tag tag-may">e_root · 不可重复</span></td><td>防线生成护盾 (<strong>defenseMax×0.8%/秒</strong> 积累), 护盾期间被攻击 <strong>反弹真伤</strong> (defenseMax×5% + 护盾×20%)。受击后暂停积累 10s</td><td>护盾蓝色可视, 受击暂停后恢复积累</td></tr>
-      <tr><td><strong>16</strong></td><td><strong>等离子防线</strong> <span class="tag tag-may">e_plasma · 不可重复</span></td><td>每 <strong>20s</strong> 用满 defenseMax 护盾替换原护盾。护盾被击破瞬间, 对最近 <strong>3 敌方形范围</strong>造成"击破前护盾峰值"等值的真实伤害 (不递减)</td><td>与扎根护盾独立那份, plasma 专属替换</td></tr>
+      <tr><td><strong>12</strong></td><td><strong>防线加固</strong></td><td>防线 HP <strong>+30%</strong> (基础值百分比, 抽到时按当前满 HP 结算, 当前 HP 同步补足)</td><td>—</td></tr>
+      <tr><td><strong>13</strong></td><td><strong>回响</strong></td><td>每击杀 <strong>20 个敌人</strong>, 防线回 <strong>1% HP</strong></td><td>持续生效, 无上限</td></tr>
+      <tr><td><strong>14</strong></td><td><strong>绝境反击</strong></td><td>防线 HP 每下降 <strong>2%</strong>, 攻击力 <strong>+1%</strong> (线性, 满血 0 加成, 空血 +50%)</td><td>对 AUV 全生效 (伤害修饰全局)</td></tr>
+      <tr><td><strong>15</strong></td><td><strong>扎根</strong></td><td>防线生成护盾 (<strong>defenseMax×0.8%/秒</strong> 积累), 护盾期间被攻击 <strong>反弹真伤</strong> (defenseMax×5% + 护盾×20%)。受击后暂停积累 10s</td><td>护盾蓝色可视, 受击暂停后恢复积累</td></tr>
+      <tr><td><strong>16</strong></td><td><strong>等离子防线</strong></td><td>每 <strong>20s</strong> 用满 defenseMax 护盾替换原护盾。护盾被击破瞬间, 对最近 <strong>3 敌方形范围</strong>造成"击破前护盾峰值"等值的真实伤害 (不递减)</td><td>与扎根护盾独立那份, plasma 专属替换</td></tr>
     </table>
 
     <h4>4.6.F Meta · 3 张</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>17</strong></td><td><strong>贪婪</strong> <span class="tag tag-may">f_greed</span></td><td>击杀敌人 <strong>2% 概率</strong> 立即召唤一道状态门 (与 10s 定时刷新独立)</td><td>额外门也遵循 §5 规则</td></tr>
-      <tr><td><strong>18</strong></td><td><strong>共鸣</strong> <span class="tag tag-may">f_resonance</span></td><td>每持有 1 张精通卡, 攻击力 <strong>+2%</strong> (基础值算 1 张自身, 即抽到即刻 +2%)</td><td>对 AUV 生效</td></tr>
-      <tr><td><strong>19</strong></td><td><strong>恶魔赌局</strong> <span class="tag tag-may">f_gamble · 单张可重复抽</span></td><td>抽到即摇一个系数 σ, 一次性重构 <strong>主角 + AUV 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。<strong>EV ≈ 1.14</strong>, 见 §4.6.F19 概率分布表</td><td>单张可重复抽, 权重固定 1.5 不腰斩, 同一次三选一可出现多张</td></tr>
+      <tr><td><strong>17</strong></td><td><strong>贪婪</strong></td><td>击杀敌人 <strong>2% 概率</strong> 立即召唤一道状态门 (与 10s 定时刷新独立)</td><td>额外门也遵循 §5 规则</td></tr>
+      <tr><td><strong>18</strong></td><td><strong>共鸣</strong></td><td>每持有 1 张精通卡, 攻击力 <strong>+2%</strong> (基础值算 1 张自身, 即抽到即刻 +2%)</td><td>对 AUV 生效</td></tr>
+      <tr><td><strong>19</strong></td><td><strong>恶魔赌局</strong></td><td>抽到即摇一个系数 σ, 一次性重构 <strong>主角 + AUV 当前 6 项面板数值</strong> (攻击力/攻速/弹道/暴击率/暴击伤害/双倍火力) 为原值 × σ。<strong>EV ≈ 1.14</strong>, 见 §4.6.F19 概率分布表</td><td>单张可重复抽, 权重固定 1.5 不腰斩, 同一次三选一可出现多张</td></tr>
     </table>
 
     <div class="callout warn">
@@ -1245,14 +1194,14 @@ Alien Fizzle · 玩法规格<br>
       </div>
     </div>
 
-    <h4>4.6.G AUV 强化 · 5 张 · 专属 (K25: 3 → 5)</h4>
+    <h4>4.6.G AUV 强化 · 5 张 · 专属</h4>
     <table>
       <tr><th style="width:38px">#</th><th style="width:110px">名称</th><th>效果</th><th style="width:140px">备注</th></tr>
-      <tr><td><strong>20</strong></td><td><strong>激光聚焦</strong> <span class="tag tag-may">g_focus · 不可重复</span></td><td>AUV <strong>弹射 +3</strong></td><td>K25: 删除 "激光伤害 +100%"</td></tr>
-      <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong> <span class="tag tag-may">g_burn · 不可重复</span></td><td>AUV 激光命中产生 <strong>小爆炸</strong> (半径 25px, 主伤 <strong>15%</strong>) + <strong>点燃</strong></td><td>K25: splash 25%→15%; K26: 半径 50→25</td></tr>
-      <tr><td><strong>22</strong></td><td><strong>激光制导</strong> <span class="tag tag-may">g_guide · 不可重复</span></td><td>AUV 攒 <strong>20 次攻击</strong>后发射持续 <strong>5s</strong> 的制导激光, 独立走固定 <strong>40 主伤</strong>, 不吃 g_focus / g_burn 联动</td><td>K25: 攒击 12→20; 删除联动</td></tr>
-      <tr><td><strong>23</strong></td><td><strong>激光强化</strong> <span class="tag tag-may">g_dmg · 不可重复</span></td><td>AUV 激光伤害 <strong>+50%</strong></td><td>K25 新增</td></tr>
-      <tr><td><strong>24</strong></td><td><strong>激光攻速</strong> <span class="tag tag-may">g_speed · 不可重复</span></td><td>AUV 激光间隔 <strong>-30%</strong></td><td>K25 新增</td></tr>
+      <tr><td><strong>20</strong></td><td><strong>激光聚焦</strong></td><td>AUV <strong>弹射 +3</strong></td><td></td></tr>
+      <tr><td><strong>21</strong></td><td><strong>激光爆燃</strong></td><td>AUV 激光命中产生 <strong>小爆炸</strong> (半径 25px, 主伤 <strong>15%</strong>) + <strong>点燃</strong></td><td></td></tr>
+      <tr><td><strong>22</strong></td><td><strong>激光制导</strong></td><td>AUV 攒 <strong>20 次攻击</strong>后发射持续 <strong>5s</strong> 的制导激光, 独立走固定 <strong>40 主伤</strong>, 不吃 g_focus / g_burn 联动</td><td></td></tr>
+      <tr><td><strong>23</strong></td><td><strong>激光强化</strong></td><td>AUV 激光伤害 <strong>+50%</strong></td><td></td></tr>
+      <tr><td><strong>24</strong></td><td><strong>激光攻速</strong></td><td>AUV 激光间隔 <strong>-30%</strong></td><td></td></tr>
     </table>
 
     <div class="callout">
@@ -1270,7 +1219,7 @@ Alien Fizzle · 玩法规格<br>
   </section>
 
   <section class="chapter" id="ch-04-7">
-    <span class="chapter-num">§ 4.7 · 专属卡系统 (K29 · 骨架版)</span>
+    <span class="chapter-num">§ 4.7 · 专属卡系统</span>
     <h2>双主角专属卡<br>3 张 + 羁绊</h2>
     <p class="lead">专属卡与 §4.6 精通卡混池共存, 走三选一同一入口, 权重/强度与精通卡持平。双主角 (Marvis · Nova) 各持 3 张专属, 对应 3 个类别 (Marvis = A/C/F · Nova = B/D/G), 3 张集齐即触发羁绊。M1 上线时每主角 3 张为固定池 (免费默认); 未来上线"无尽得分系统"后, 通过对局经验解锁更多专属卡 (T2/T3 池, 本期只预留槽位不落内容)。</p>
 
@@ -1331,7 +1280,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>同时存在数</td><td><strong>始终只 1 个</strong>, 上一个消失才生成下一个 (maxConcurrent=1)</td></tr>
       <tr><td>初始数值</td><td>随机 buff 或 debuff, 数值范围见下方 8 维表</td></tr>
       <tr><td>属性维度</td><td><strong>8 维</strong>: 攻击力 / 攻速 / 暴击率 / 暴击伤害 / 火力静默 / <strong>防线护甲 / 防线上限 / 防线回血</strong></td></tr>
-      <tr><td>出现频率</td><td><strong>固定 10s 出一次</strong>, 到时间必生成 (v3.1 定稿)</td></tr>
+      <tr><td>出现频率</td><td><strong>固定 10s 出一次</strong>, 到时间必生成</td></tr>
     </table>
 
     <div class="callout warn">
@@ -1445,7 +1394,7 @@ Alien Fizzle · 玩法规格<br>
       <span class="caption">图 5-1 · 状态门 5 态状态机 · 实线 = 射击触发 · 虚线 = 撞主角触发</span>
     </div>
 
-    <h3>5.6 火力静默特殊维度 · 定义与规则 (v3.1 新增)</h3>
+    <h3>5.6 火力静默特殊维度 · 定义与规则</h3>
     <div class="callout warn">
       <strong>命名逻辑</strong>: "火力静默" 是 <strong>减益维度描述词</strong> — 名字本身指代 debuff 效果. 通用规则 "减益为正数, 增益为负数" 在此维度成立.
     </div>
@@ -1483,7 +1432,7 @@ Alien Fizzle · 玩法规格<br>
       <strong>玩家决策点</strong>: 看到状态门生成时, 玩家在 1-3 秒内要算 4 个变量 — (1) 当前 buff 累积进度, (2) 还需多少子弹打满, (3) 距离防线还有多远, (4) 现在该躲到哪。这是核心爽感来源。
     </div>
 
-    <h3>5.9 状态门对 AUV 的作用方式 (v3.2 新增)</h3>
+    <h3>5.9 状态门对 AUV 的作用方式</h3>
     <p class="lead">AUV 作为独立第二输出源 (§2.2), 状态门对 AUV 的作用要 <strong>逐维度显式定义</strong>, 避免语义盲区。</p>
 
     <table>
@@ -1620,7 +1569,7 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-must">必须</span>敌人开始 <strong>持续攻击</strong>, 每秒消耗一定持久度(不同敌人 dps 不同)</li>
       <li><span class="tag tag-must">必须</span>敌人仍可被子弹击杀, 击杀后立即停止攻击</li>
       <li><span class="tag tag-should">建议</span>多个敌人同时攻击时, 防线消耗 dps 叠加</li>
-      <li><span class="tag tag-may">可选</span>敌人攻击时有特效(冲撞 / 啃咬 / 射击), 美术自由</li>
+      <li>敌人攻击时有特效(冲撞 / 啃咬 / 射击), 美术自由</li>
     </ul>
 
     <h3>7.3 失败后的嘲讽接口</h3>
@@ -1635,7 +1584,7 @@ Alien Fizzle · 玩法规格<br>
   </section>
 
   <section class="chapter" id="ch-07-5">
-    <span class="chapter-num">§ 07.5 · v3.1 新增 · 预体验关卡</span>
+    <span class="chapter-num">§ 07.5 · 预体验关卡</span>
     <h2>预体验关卡<br>满配轰炸 · 让玩家一帧入坑</h2>
     <p class="lead">首次进游戏的第一场仗。满配属性 + 密集方阵 + 宝箱双倍效果。时长不封顶, 方阵一个个夸夸出, 直到强度曲线自然收尾。设计目标 = 让玩家爽到嘴角上扬, 然后虚空屏蔽场一巴掌把他扇清醒。</p>
 
@@ -1654,14 +1603,14 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>战斗期</td><td><strong>不封顶</strong></td><td>全操作</td><td>方阵逐个推进, 按强度曲线出完所有方阵后自然结束 · <strong>不寸止玩家</strong></td></tr>
     </table>
     <div class="callout warn">
-      <strong>时长逻辑 (v3.1 Kaysen 拍板 · v3.2 再次确认)</strong>: 不设固定时限。方阵一个个夸夸出, 按正常节奏推完就是预体验时长。评估 ~240s (4 分钟) 可走完全部 8 个方阵, 但以实际方阵推进速度为准, 不硬卡。<strong>玩家正爽着的时候不许强制弹走</strong>。
+      <strong>时长逻辑</strong>: 不设固定时限。方阵一个个夸夸出, 按正常节奏推完就是预体验时长。评估 ~240s (4 分钟) 可走完全部 8 个方阵, 但以实际方阵推进速度为准, 不硬卡。<strong>玩家正爽着的时候不许强制弹走</strong>。
     </div>
     <div class="callout warn" style="border-left: 4px solid #b85478;">
-      <strong>⚠️ 反寸止守则 (v3.2 Kaysen 立)</strong>: 预体验的核心目标是<strong>让玩家爽</strong>, 时间是配合方阵推进的自然产物, 不是需要压制的约束。任何 "60s 是不是不够 / 180s 会不会太长 / 要不要设个上限" 类的讨论都是<strong>假议题</strong> — 60s 出不完就 120s, 120s 出不完就 240s, 方阵按强度曲线出完, 玩家清完最后一只自然收尾。<br><br>
+      <strong>⚠️ 反寸止守则</strong>: 预体验的核心目标是<strong>让玩家爽</strong>, 时间是配合方阵推进的自然产物, 不是需要压制的约束。任何 "60s 是不是不够 / 180s 会不会太长 / 要不要设个上限" 类的讨论都是<strong>假议题</strong> — 60s 出不完就 120s, 120s 出不完就 240s, 方阵按强度曲线出完, 玩家清完最后一只自然收尾。<br><br>
       <strong>写 spec 的人 / 做 demo 的人</strong>: 若你想在这里加"最大时长上限"或"到点强制结算", 请先重读本段。
     </div>
 
-    <h3>7.5.2.1 死亡处理 · 复活弹窗 (v3.2 新增)</h3>
+    <h3>7.5.2.1 死亡处理 · 复活弹窗</h3>
     <p>预体验关卡<strong>允许死亡</strong>, 但与正式关卡/无尽模式的"死一次即结算"不同, 预体验死亡后<strong>直接弹出复活弹窗</strong>让玩家重开一次。</p>
     <table>
       <tr><th>项</th><th>规格</th></tr>
@@ -1676,7 +1625,7 @@ Alien Fizzle · 玩法规格<br>
       <strong>设计意图</strong>: 预体验是玩家的第一场仗, 若首次死亡就 Game Over 会严重打击信心并劝退。给"再来一次"按钮 = 保持"爽游"心理契约, 让玩家反复尝试直到成功通关, 建立"我打过第一关"的正反馈。<strong>其他所有关卡都不给这个按钮, 这就是预体验的独占爽感之一</strong>。
     </div>
     <div class="callout warn">
-      <strong>无嘲讽接口 (v3.2 立)</strong>: 预体验死亡<strong>不触发 §7.3 嘲讽 Boss 弹窗</strong> (那是 Game Over 的接口, 预体验没有 Game Over). 首次挫败感留给正式关卡, 预体验只有"再来"没有"输了"的叙事。
+      <strong>无嘲讽接口</strong>: 预体验死亡<strong>不触发 §7.3 嘲讽 Boss 弹窗</strong> (那是 Game Over 的接口, 预体验没有 Game Over). 首次挫败感留给正式关卡, 预体验只有"再来"没有"输了"的叙事。
     </div>
 
     <h3>7.5.3 静默期文案</h3>
@@ -1745,7 +1694,7 @@ Alien Fizzle · 玩法规格<br>
     </table>
     <div class="callout warn">
       <strong>反弹护盾 · 跨关卡定位 (D13 拍板, 2026-07-02)</strong>: 反弹护盾<strong>仅在预体验关卡存在</strong>, 正式 1/2/3 关无。剧情逻辑 = 敌人启动"虚空屏蔽场"切断补给, 一并剥夺护盾。<br><br>
-      <strong>未来复活路径</strong>: v4 材料合成系统上线后, 反弹护盾作为一个<strong>合成配方产物</strong>可解锁使用 (不是永久掉落, 是配方组合)。留作 v4 玩法钩子, v3.1 spec 不展开。
+      <strong>未来复活路径</strong>: v4 材料合成系统上线后, 反弹护盾作为一个<strong>合成配方产物</strong>可解锁使用 (不是永久掉落, 是配方组合)。留作后续版本玩法钩子, 本文档不展开。
     </div>
 
     <h3>7.5.8 衔接过场 (已迁移至 §0.5.4)</h3>
@@ -1761,7 +1710,7 @@ Alien Fizzle · 玩法规格<br>
   </section>
 
   <section class="chapter" id="ch-07-6">
-    <span class="chapter-num">§ 07.6 · v3.1 新增 · 无尽模式</span>
+    <span class="chapter-num">§ 07.6 · 无尽模式</span>
     <h2>撑多久 = 分多少<br>通关解锁的长线刷分玩法</h2>
     <p class="lead">最高难度 3 关全部通关后解锁。核心目标 = 解玩家"打通就丢, 没动力再玩"的核心病, 用刷分破纪录 + 好友榜社交贴合建立长线留存钩子。</p>
 
@@ -1780,9 +1729,9 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-must">必须</span>无关卡结束条件, 只有玩家死亡或主动退出结算</li>
     </ul>
 
-    <h3>7.6.3 敌人爬升 · 5 段 6 潮 5 回合 · 硬核马拉松 (v3.2 拍板)</h3>
+    <h3>7.6.3 敌人爬升 · 5 段 6 潮 5 回合 · 硬核马拉松</h3>
     <div class="callout warn">
-      <strong>Kaysen 拍板 (2026-07-08)</strong>: 舍弃 v3.1 的 60s wave 结构, 改用 <strong>5 段 × 6 潮 × 5 回合 = 150 回合</strong>的分段结构。目标 = 硬核马拉松长线单局, 中位数玩家死亡 ≈ 20 分钟, 顶级玩家通关 ≈ 35 分钟, 通关率 ≤ 1%。
+      采用 <strong>5 段 × 6 潮 × 5 回合 = 150 回合</strong>的分段结构。目标 = 硬核马拉松长线单局, 中位数玩家死亡 ≈ 20 分钟, 顶级玩家通关 ≈ 35 分钟, 通关率 ≤ 1%。
     </div>
 
     <h4>7.6.3.1 结构总览</h4>
@@ -1817,7 +1766,7 @@ Alien Fizzle · 玩法规格<br>
       <tr><td>段 5 · 叹息之壁</td><td>系统 15s/回合</td><td>8.0 min (480s)</td><td><strong>35.0 min</strong> ← 顶级通关</td><td>&lt; 1% 天赋型通过</td></tr>
     </table>
     <div class="callout warn">
-      <strong>关键数值 (v3.2 拍板)</strong>:
+      <strong>关键数值</strong>:
       <ul style="margin-top:8px;">
         <li>玩家节奏单回合 = <strong>10s</strong> (段 1/2 · 玩家清完即刻推进, 10s 是防挂机上限, 超时未清完系统强推)</li>
         <li>系统节奏单回合 = <strong>15s</strong> (段 3/4/5 · 到点必推进, 给玩家 3s 调整策略窗口)</li>
@@ -1837,7 +1786,7 @@ Alien Fizzle · 玩法规格<br>
       <strong>数值细化悬案 · T07</strong>: 每回合 +20% 是首版建议值, 实际可能因敌人组合 (小兵/精英/BOSS 混合) 调整为 +15%~+25%, 需 demo 阶段验证。若某一段中位数玩家死亡时间偏离预期 ≥ 2 分钟, 调整该段的爬升幅度而不是回合数 (回合数改动会破坏结构)。
     </div>
 
-    <h3>7.6.3.5 大 BOSS 出现规则 (v3.2 更新)</h3>
+    <h3>7.6.3.5 大 BOSS 出现规则</h3>
     <div class="callout warn">
       <strong>Kaysen 拍板 (2026-07-07 / 2026-07-08 更新)</strong>: 大 BOSS <strong>作为常规 3 关的末终 BOSS</strong> 出场, 玩家在通关主线时至少会遇到 3 次。无尽模式下大 BOSS <strong>按段递增涌入</strong>, 后期可能同屏多只。
     </div>
@@ -1860,7 +1809,7 @@ Alien Fizzle · 玩法规格<br>
       <strong>难度曲线守则</strong>: 无尽模式的失败方式必须是"被时间/数量磨死", 不是"被单只 BOSS 一击秒". 玩家死时应该<strong>觉得自己努力过</strong> (打了很久, 但敌人越来越多, 最终撑不住), 而不是<strong>觉得被作弊</strong> (突然一只怪跳出来一击必杀).
     </div>
 
-    <h3>7.6.3.6 切段横幅文案 (v3.2 新增 · Kaysen 2026-07-08 拍板 1-1-1-3)</h3>
+    <h3>7.6.3.6 切段横幅文案</h3>
     <p>每段结束进入下一段时, 屏幕中央触发<strong>切段横幅</strong>: 副标题 (2-6 字) + 主文案 (10-16 字) 双层结构, 3 秒展示后自然淡出, 期间敌人静止游戏暂停。</p>
     <table>
       <tr><th>切点</th><th>新段</th><th>副标题</th><th>主文案</th><th>触发时机</th></tr>
@@ -1902,13 +1851,13 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-must">必须</span>无尽模式结算面板显示 <strong>好友榜 top 10</strong>, 高亮玩家自己的位置</li>
       <li><span class="tag tag-must">必须</span>破纪录时弹出 <strong>荣誉横幅</strong> (独立设计, 金色 + 缩放呼吸动画 + 大事件音), 参考 skill html5-minigame-polish-pipeline 荣誉成就规范</li>
       <li><span class="tag tag-should">建议</span>结算面板加"分享到微信"按钮 (可选), 用微信原生分享 API, 图片带分数展示</li>
-      <li><span class="tag tag-may">可选</span>陌生人全球榜<strong>不做</strong> — 休闲游戏留存意义不大, 且需要自建服务器</li>
+      <li>陌生人全球榜<strong>不做</strong> — 休闲游戏留存意义不大, 且需要自建服务器</li>
     </ul>
     <div class="callout success">
       <strong>技术选型理由</strong>: 微信开放数据域是白嫖社交的最佳解 — 0 服务器成本, 用微信关系链好友的比较自然产生比拼欲, 参考《向僵尸开炮》同款架构。集成时多加一个开放数据域子包 (微信文档有现成模板)。
     </div>
 
-    <h3>7.6.6 UI 需求 (v3.2 更新)</h3>
+    <h3>7.6.6 UI 需求</h3>
     <ul>
       <li>主菜单入口: "无尽模式" 按钮 (通关前 disabled + 锁图标 + 提示 "通关第三关解锁")</li>
       <li>局内 HUD: <strong>当前段名 (段 3 · 困难 大字体)</strong> + <strong>当前潮 (P4/6)</strong> + <strong>当前回合 (R3/5)</strong> + 存活时间 + 累计击杀 + 实时分数</li>
@@ -1994,6 +1943,18 @@ Alien Fizzle · 玩法规格<br>
   body.spec-editing [contenteditable="true"]:focus {
     outline: 2px dashed #5eead4; outline-offset: 2px;
   }
+  .add-row-btn { display: none; margin: 8px 0 16px; }
+  body.spec-editing .add-row-btn { display: inline-block; }
+  .del-row-btn {
+    display: none;
+    float: right;
+    width: 20px; height: 20px; padding: 0;
+    background: #7f1d1d; color: #fecaca; border: 1px solid #b91c1c;
+    border-radius: 50%; cursor: pointer; font-size: 12px; line-height: 1;
+    transition: background .2s;
+  }
+  .del-row-btn:hover { background: #b91c1c; color: #fff; }
+  body.spec-editing tr:hover .del-row-btn { display: inline-block; }
   #spec-export-modal {
     position: fixed; inset: 0; z-index: 100000;
     background: rgba(15, 23, 42, 0.7);
@@ -2052,7 +2013,7 @@ Alien Fizzle · 玩法规格<br>
   //   [2026-07-20 fix 治本] 改为按"spec 发布时间戳"比对: 本地存档只要旧于线上已发布版本, 一律静默丢弃。
   //     原理: spec 每次重新发布后, 线上正文即最新权威, 早于该时间的本地编辑存档必然过时, 加载只会用旧内容盖掉最新 spec。
   //     维护: 每次 Nova 改 spec 并部署时, 同步把 SPEC_PUBLISHED 更到部署时间即可 (已并入 demo↔spec 同步纪律)。
-  const SPEC_PUBLISHED = '2026-07-30 22:45';  // ← 每次重新部署 spec 时更新此值 (K34-C-fix · spec.html §2.4 骨甲版同步 + V4.9 权威块)
+  const SPEC_PUBLISHED = '2026-07-30 22:45';  // ← 每次重新部署 spec 时更新此值
 
   // === 云同步 (dev) ===
   const CLOUD_API = '/api/spec-manual';
@@ -2087,21 +2048,17 @@ Alien Fizzle · 玩法规格<br>
         localStorage.removeItem(LS_KEY + '_meta');
         console.log('[spec-edit] 已静默丢弃过时存档:', meta || '(无时间戳)', '< 发布时间', SPEC_PUBLISHED);
       } else if (saved) {
-        // 存档比线上发布还新 = 用户发布后又本地编辑过, 才提示是否加载
-        const shouldLoad = confirm('检测到本地保存的编辑版本' + (meta ? ' (' + meta + ')' : '') + '\n\n[确定] = 加载存档覆盖当前页面\n[取消] = 保留存档但不加载 (下次仍会询问)\n\n如需彻底丢弃存档, 请点确定后, 页面加载完毕点右上角 🗑️ 按钮');
-        if (shouldLoad) {
-          // 只替换 main 内容, 保留工具条
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(saved, 'text/html');
-          const savedMain = doc.querySelector('main') || doc.body.querySelector('main');
-          const currentMain = document.querySelector('main');
-          if (savedMain && currentMain) {
-            currentMain.innerHTML = savedMain.innerHTML;
-          } else {
-            // 回退: 整个 body 替换 (会丢工具条, 但用户接受了)
-            document.body.innerHTML = saved;
-          }
+        // 存档比线上发布还新 → 静默加载 (云端不可用时的兜底, 不弹窗)
+        const parser = new DOMParser();
+        const doc = parser.parseFromString(saved, 'text/html');
+        const savedMain = doc.querySelector('main') || doc.body.querySelector('main');
+        const currentMain = document.querySelector('main');
+        if (savedMain && currentMain) {
+          currentMain.innerHTML = savedMain.innerHTML;
+        } else {
+          document.body.innerHTML = saved;
         }
+        console.log('[spec-edit] 已静默加载本地存档:', meta);
       }
     } catch(e) { console.warn('load saved edit failed', e); }
   }
@@ -2137,14 +2094,12 @@ Alien Fizzle · 玩法规格<br>
           setCloudStatus((getToken() ? '' : '只读模式 · 未登录 · ') + '云端最后同步: ' + fmtHM(data.updatedAt));
         }
       } else {
-        // 云端没有 / 云端旧于线上发布 → 走本地兜底
-        if (window.__editing !== true) loadFromLocalStorage();
+        // 云端没有 / 云端旧于线上发布 → 用当前页面, 不加载本地存档
         setCloudStatus(getToken() ? '云端无更新' : '只读模式 · 未登录');
       }
     } catch (e) {
-      console.warn('[spec-edit] 云端拉取失败, fallback localStorage:', e);
-      if (window.__editing !== true) loadFromLocalStorage();
-      setCloudStatus('离线 · 本地缓存');
+      console.warn('[spec-edit] 云端拉取失败:', e);
+      setCloudStatus('离线 · 云端不可达');
     } finally {
       if (typeof btnEdit !== 'undefined' && btnEdit) btnEdit.disabled = false;
     }
@@ -2182,12 +2137,13 @@ Alien Fizzle · 玩法规格<br>
     if (editing) { dirty = true; btnSave.disabled = false; scheduleCloudSave(); }
   }, true);
 
-  // === 云同步: debounce 1.5s 自动保存 ===
+  // === 云同步: debounce 10min 自动保存, 内容无变化不上传 ===
   let cloudSaveTimer = null;
   let cloudSaveInFlight = false;
+  let lastSavedHtml = null;
   function scheduleCloudSave() {
     if (cloudSaveTimer) clearTimeout(cloudSaveTimer);
-    cloudSaveTimer = setTimeout(() => { cloudSaveTimer = null; doCloudSave(false); }, 1500);
+    cloudSaveTimer = setTimeout(() => { cloudSaveTimer = null; doCloudSave(false); }, 600000);
   }
   async function doCloudSave(immediate) {
     // 先写本地兜底 (无论是否上云)
@@ -2198,6 +2154,12 @@ Alien Fizzle · 玩法规格<br>
       localStorage.setItem(LS_KEY, html);
       localStorage.setItem(LS_KEY + '_meta', new Date().toISOString().slice(0,16).replace('T',' '));
     } catch(e) { console.warn('local save failed', e); }
+
+    // 内容无变化不上云 (immediate=手动点击保存例外)
+    if (!immediate && html === lastSavedHtml) {
+      dirty = false;
+      return;
+    }
 
     const token = getToken();
     if (!token) {
@@ -2227,6 +2189,7 @@ Alien Fizzle · 玩法规格<br>
       });
       if (!resp.ok) throw new Error('http ' + resp.status);
       const data = await resp.json();
+      lastSavedHtml = html;
       const hm = fmtHM(data.updatedAt || new Date().toISOString());
       setCloudStatus('云端最后同步: ' + hm);
       if (immediate) {
@@ -2301,6 +2264,68 @@ Alien Fizzle · 玩法规格<br>
       e.preventDefault(); e.returnValue = ''; return '';
     }
   });
+})();
+
+// === 表格新增条目按钮 ===
+(function() {
+  const tables = document.querySelectorAll('main table');
+  tables.forEach(table => {
+    // 跳过纯展示表（行数 ≤ 2 且无 th/td 超过 3 列的表视为非数据表）
+    const rows = table.querySelectorAll('tbody tr, tr');
+    const headerCells = table.querySelectorAll('thead th, tr:first-child th');
+    if (headerCells.length < 2 && rows.length <= 2) return;
+
+    const btn = document.createElement('button');
+    btn.className = 'add-row-btn';
+    btn.textContent = '+ 新增条目';
+    btn.style.cssText = 'padding:6px 14px;background:#1e3a5f;color:#93c5fd;border:1px solid #334155;border-radius:6px;cursor:pointer;font-size:13px;transition:background .2s';
+    btn.addEventListener('mouseenter', () => btn.style.background = '#1e4a7f');
+    btn.addEventListener('mouseleave', () => btn.style.background = '#1e3a5f');
+    btn.addEventListener('click', () => {
+      const lastRow = table.querySelector('tbody tr:last-child') || table.querySelector('tr:last-child');
+      if (!lastRow) return;
+      const newRow = lastRow.cloneNode(true);
+      newRow.querySelectorAll('td').forEach(td => {
+        td.textContent = '';
+        td.setAttribute('contenteditable', 'true');
+      });
+      // 移除克隆行里带过来的旧 × 按钮
+      newRow.querySelectorAll('.del-row-btn').forEach(b => b.remove());
+      injectDelBtn(newRow);
+      lastRow.parentNode.appendChild(newRow);
+      // 聚焦第一个 td
+      const firstTd = newRow.querySelector('td');
+      if (firstTd) firstTd.focus();
+      // 触发云同步 (通过 input event 让已有监听器捕获)
+      newRow.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    table.parentNode.insertBefore(btn, table.nextSibling);
+
+    // 给已有的每行也塞一个 × 删除按钮 (只塞数据行, 跳过表头行)
+    const dataRows = table.querySelectorAll('tbody tr');
+    const targetRows = dataRows.length > 0 ? dataRows : Array.from(table.querySelectorAll('tr')).filter(r => !r.querySelector('th'));
+    targetRows.forEach(row => injectDelBtn(row));
+  });
+
+  function injectDelBtn(row) {
+    const lastTd = row.querySelector('td:last-child');
+    if (!lastTd || lastTd.querySelector('.del-row-btn')) return;
+    const del = document.createElement('button');
+    del.className = 'del-row-btn';
+    del.textContent = '×';
+    del.title = '删除此行';
+    del.setAttribute('contenteditable', 'false');
+    del.addEventListener('click', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      if (!confirm('确定删除这一行?')) return;
+      const parent = row.parentNode;
+      row.remove();
+      // 触发云同步
+      if (parent) parent.dispatchEvent(new Event('input', { bubbles: true }));
+    });
+    lastTd.appendChild(del);
+  }
 })();
 </script>
 <!-- Spec 编辑功能 v1 END -->
