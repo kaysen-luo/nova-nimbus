@@ -1,179 +1,49 @@
 ---
-import { Image } from 'astro:assets';
 import type { CollectionEntry } from 'astro:content';
+import { Image } from 'astro:assets';
 import BaseHead from '../components/BaseHead.astro';
+import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
 import FormattedDate from '../components/FormattedDate.astro';
-import Header from '../components/Header.astro';
 
 type Props = CollectionEntry<'blog'>['data'];
 
-const { title, description, pubDate, updatedDate, heroImage, night } = Astro.props;
+const { title, description, pubDate, updatedDate, heroImage, category } = Astro.props;
 ---
 
-<html lang="en" data-night-post={night ? '' : undefined}>
+<html lang="zh-CN">
 	<head>
-		<BaseHead title={title} description={description} />
-		<style>
-			main {
-				width: calc(100% - 2em);
-				max-width: 100%;
-				margin: 0;
-			}
-			.hero-image {
-				width: 100%;
-			}
-			.hero-image img {
-				display: block;
-				margin: 0 auto;
-				border-radius: 12px;
-				box-shadow: var(--shadow-md);
-			}
-			.prose {
-				width: 720px;
-				max-width: calc(100% - 2em);
-				margin: auto;
-				padding: 1em;
-				color: var(--text-primary);
-			}
-			.title {
-				margin-bottom: 1em;
-				padding: 1em 0;
-				text-align: center;
-				line-height: 1;
-			}
-			.title h1 {
-				margin: 0 0 0.5em 0;
-			}
-			.date {
-				margin-bottom: 0.5em;
-				color: var(--text-secondary);
-			}
-			.last-updated-on {
-				font-style: italic;
-			}
-			/* h2 加品牌色竖条 + 紫字 */
-			.prose :global(h2) {
-				color: var(--brand-primary);
-				padding-left: var(--space-3);
-				border-left: 4px solid var(--brand-primary);
-				margin-top: var(--space-7);
-			}
-			/* h3 保持中性深灰, 留紫色给 h2 当独占强调 */
-			.prose :global(h3) {
-				color: var(--text-primary);
-				margin-top: var(--space-5);
-			}
-
-			/* 🌙 夜间随笔专属主题：深紫底 + 粉红高光 */
-			:global(html[data-night-post]),
-			:global(html[data-night-post] body) {
-				background:
-					radial-gradient(ellipse at top, #2a1a3f 0%, #1a1224 50%, #120a1c 100%) !important;
-				color: #d6cbe6 !important;
-				min-height: 100vh;
-			}
-			:global(html[data-night-post] header) {
-				background: rgba(26, 18, 36, 0.85) !important;
-				backdrop-filter: blur(12px);
-				border-bottom: 1px solid rgba(255, 142, 209, 0.12);
-			}
-			:global(html[data-night-post] header h2 a),
-			:global(html[data-night-post] header nav a) {
-				color: #d6cbe6 !important;
-			}
-			:global(html[data-night-post] header nav a.active) {
-				color: #ff8ed1 !important;
-				border-bottom-color: #ff8ed1 !important;
-			}
-			:global(html[data-night-post]) .prose { color: #d6cbe6; }
-			:global(html[data-night-post]) .prose :global(h1),
-			:global(html[data-night-post]) .title h1 {
-				background: linear-gradient(135deg, #ff8ed1 0%, #c794f5 60%, #8b6fe8 100%);
-				-webkit-background-clip: text;
-				background-clip: text;
-				-webkit-text-fill-color: transparent;
-				color: transparent;
-			}
-			:global(html[data-night-post]) .prose :global(h2) {
-				color: #ff8ed1 !important;
-				border-left-color: #ff8ed1 !important;
-			}
-			:global(html[data-night-post]) .prose :global(h3) {
-				color: #d6cbe6 !important;
-			}
-			:global(html[data-night-post]) .prose :global(blockquote) {
-				border-left-color: #ffb47a !important; /* 琥珀: 引用是被点亮的话 */
-				background: rgba(255, 180, 122, 0.06);
-				color: #d6cbe6;
-			}
-			:global(html[data-night-post]) .prose :global(a) {
-				color: #ff8ed1 !important;
-			}
-			:global(html[data-night-post]) .prose :global(code) {
-				background: rgba(199, 148, 245, 0.15) !important;
-				color: #ffb8df !important;
-			}
-			:global(html[data-night-post]) .prose :global(hr) {
-				border-color: rgba(255, 142, 209, 0.2);
-			}
-			:global(html[data-night-post]) .date {
-				color: #c794f5 !important;
-			}
-			.night-badge {
-				display: inline-flex;
-				align-items: center;
-				gap: 0.4em;
-				padding: 0.3em 0.9em;
-				border-radius: var(--radius-pill);
-				/* 琥珀小灯: 暖色徽章替代之前的纯粉 */
-				background: linear-gradient(135deg, rgba(255, 180, 122, 0.15) 0%, rgba(255, 142, 209, 0.12) 100%);
-				border: 1px solid rgba(255, 180, 122, 0.4);
-				color: #ffd89a;
-				font-size: var(--fs-sm);
-				margin-bottom: var(--space-3);
-				box-shadow: 0 0 16px rgba(255, 180, 122, 0.15);
-			}
-			/* 隐藏链接: 视觉上跟周围文字完全一样, 只有指针变化暴露可点 — 用作 about 页夜间随笔暗门 */
-			.prose :global(a.quiet-link),
-			.prose :global(a.quiet-link:hover),
-			.prose :global(a.quiet-link:focus),
-			.prose :global(a.quiet-link:visited) {
-				color: inherit !important;
-				text-decoration: none !important;
-				border-bottom: none !important;
-				background: transparent !important;
-			}
-		</style>
+		<BaseHead title={title} description={description} image={heroImage} />
 	</head>
-
 	<body>
-		<Header night={night} />
-		<main>
-			<article>
-				<div class="hero-image">
-					{heroImage && <Image width={1020} height={510} src={heroImage} alt="" />}
-				</div>
-				<div class="prose">
-					<div class="title">
-						<div class="date">
-							<FormattedDate date={pubDate} />
-							{
-								updatedDate && (
-									<div class="last-updated-on">
-										Last updated on <FormattedDate date={updatedDate} />
-									</div>
-								)
-							}
-						</div>
-						{night && <div class="night-badge">🌙 夜间随笔</div>}
-						<h1>{title}</h1>
-						<hr />
+		<div class="wrap">
+			<Header />
+			<main>
+				<a href="/blog" class="back-link">← 回到所有随笔</a>
+				<article class="single">
+					{
+						heroImage && (
+							<Image class="hero" src={heroImage} width={1020} height={510} alt="" />
+						)
+					}
+					<div class="meta">
+						<span class="tag">{category}</span>
+						<FormattedDate class="date" date={pubDate} />
 					</div>
-					<slot />
-				</div>
-			</article>
-		</main>
+					<h1>{title}</h1>
+					{
+						updatedDate && (
+							<p class="updated">
+								最后更新 <FormattedDate date={updatedDate} />
+							</p>
+						)
+					}
+					<div class="prose">
+						<slot />
+					</div>
+				</article>
+			</main>
+		</div>
 		<Footer />
 	</body>
 </html>

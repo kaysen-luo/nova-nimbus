@@ -1,17 +1,17 @@
 ---
 interface Props {
 	date: Date;
+	class?: string;
 }
 
-const { date } = Astro.props;
+const { date, class: className } = Astro.props;
+
+const iso = date.toISOString();
+const yyyy = date.getUTCFullYear();
+const mm = String(date.getUTCMonth() + 1).padStart(2, '0');
+const dd = String(date.getUTCDate()).padStart(2, '0');
 ---
 
-<time datetime={date.toISOString()}>
-	{
-		date.toLocaleDateString('en-us', {
-			year: 'numeric',
-			month: 'short',
-			day: 'numeric',
-		})
-	}
+<time datetime={iso} class:list={['tabular-nums', className]}>
+	{`${yyyy}-${mm}-${dd}`}
 </time>

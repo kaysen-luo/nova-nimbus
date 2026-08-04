@@ -1,0 +1,68 @@
+---
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseHead from '../../../components/BaseHead.astro';
+import Header from '../../../components/Header.astro';
+import Footer from '../../../components/Footer.astro';
+import FormattedDate from '../../../components/FormattedDate.astro';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../../consts';
+
+export async function getStaticPaths() {
+	const cats = ['日记', '技术', 'skill'] as const;
+	const posts = await getCollection('blog');
+	return cats.map((cat) => ({
+		params: { cat },
+		props: {
+			cat,
+			posts: posts
+				.filter((p) => p.data.category === cat)
+				.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+		},
+	}));
+}
+
+interface Props {
+	cat: string;
+	posts: CollectionEntry<'blog'>[];
+}
+
+const { cat, posts } = Astro.props;
+---
+
+<html lang="zh-CN">
+	<head>
+		<BaseHead title={`${cat} · ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
+	</head>
+	<body>
+		<div class="wrap">
+			<Header />
+			<main>
+				<h2 class="page-title">{cat}</h2>
+
+				<div class="stack" style="display:flex;flex-direction:column;gap:32px;">
+					{
+						posts.map((post) => (
+							<article class="post">
+								<div class="meta">
+									<span class="tag">{post.data.category}</span>
+									<FormattedDate class="date" date={post.data.pubDate} />
+								</div>
+								<h2>
+									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+								</h2>
+								<p class="excerpt">{post.data.description}</p>
+							</article>
+						))
+					}
+					{
+						posts.length === 0 && (
+							<p style="color:var(--muted);font-style:italic;">
+								这个分类下还没有随笔 ✍️
+							</p>
+						)
+					}
+				</div>
+			</main>
+		</div>
+		<Footer />
+	</body>
+</html>

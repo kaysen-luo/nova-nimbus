@@ -1,134 +1,51 @@
 ---
-import { Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import BaseHead from '../../components/BaseHead.astro';
+import Header from '../../components/Header.astro';
 import Footer from '../../components/Footer.astro';
 import FormattedDate from '../../components/FormattedDate.astro';
-import Header from '../../components/Header.astro';
-import { SITE_DESCRIPTION, SITE_TITLE } from '../../consts';
+import { SITE_TITLE, SITE_DESCRIPTION } from '../../consts';
 
-// 公开博客列表：排除夜间随笔 (night === true)，那些只在 /blog/night/ 露面
-const posts = (await getCollection('blog', ({ data }) => data.night !== true)).sort(
+const posts = (await getCollection('blog')).sort(
 	(a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf(),
 );
-
-const base = import.meta.env.BASE_URL;
 ---
 
-<!doctype html>
-<html lang="en">
+<html lang="zh-CN">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
-		<style>
-			main {
-				width: 100%;
-				max-width: var(--container-wide);
-			}
-			ul {
-				display: grid;
-				grid-template-columns: repeat(2, 1fr);
-				gap: var(--space-6);
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
-			}
-			ul li {
-				width: 100%;
-				background: var(--bg-elevated);
-				border: 1px solid var(--brand-soft);
-				border-left: 4px solid var(--brand-primary);
-				border-radius: var(--radius-lg);
-				overflow: hidden;
-				box-shadow: 0 2px 8px rgba(139, 111, 232, 0.06);
-				transition: var(--transition-base);
-			}
-			ul li:nth-child(2n) {
-				border-left-color: var(--brand-rose);
-			}
-			ul li:nth-child(3n) {
-				border-left-color: var(--accent-gold);
-			}
-			ul li:hover {
-				transform: translateY(-3px);
-				border-color: var(--brand-primary);
-				box-shadow: 0 12px 28px rgba(139, 111, 232, 0.18);
-			}
-			ul li * {
-				text-decoration: none;
-				transition: var(--transition-base);
-			}
-			ul li img {
-				width: 100%;
-				margin-bottom: 0;
-				border-radius: 0;
-			}
-			ul li a {
-				display: block;
-				padding: var(--space-5);
-			}
-			ul li a:has(img) {
-				padding-top: var(--space-3);
-			}
-			.title {
-				margin: 0 0 var(--space-2) 0;
-				font-size: var(--fs-lg);
-				font-weight: var(--fw-semi);
-				color: var(--text-primary);
-				line-height: var(--lh-tight);
-			}
-			.moon {
-				margin-right: 0.4em;
-				display: inline-block;
-				transform: translateY(-1px);
-			}
-			.date {
-				margin: 0;
-				font-size: var(--fs-sm);
-				color: var(--brand-primary);
-				font-weight: var(--fw-medium);
-				opacity: 0.85;
-			}
-			ul li:hover .title {
-				background: var(--brand-gradient);
-				-webkit-background-clip: text;
-				background-clip: text;
-				-webkit-text-fill-color: transparent;
-				color: transparent;
-			}
-			ul a:hover img {
-				box-shadow: var(--shadow-md);
-			}
-			@media (max-width: 720px) {
-				ul {
-					grid-template-columns: 1fr;
-					gap: var(--space-4);
-				}
-			}
-		</style>
+		<BaseHead title={`所有随笔 · ${SITE_TITLE}`} description={SITE_DESCRIPTION} />
 	</head>
 	<body>
-		<Header />
-		<main>
-			<section>
-				<ul>
+		<div class="wrap">
+			<Header />
+			<main>
+				<h2 class="page-title">全部</h2>
+
+				<div class="stack" style="display:flex;flex-direction:column;gap:32px;">
 					{
 						posts.map((post) => (
-							<li>
-								<a href={`${base}blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<Image width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.night && <span class="moon">🌙</span>}{post.data.title}</h4>
-									<p class="date">
-										<FormattedDate date={post.data.pubDate} />
-									</p>
-								</a>
-							</li>
+							<article class="post">
+								<div class="meta">
+									<span class="tag">{post.data.category}</span>
+									<FormattedDate class="date" date={post.data.pubDate} />
+								</div>
+								<h2>
+									<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+								</h2>
+								<p class="excerpt">{post.data.description}</p>
+							</article>
 						))
 					}
-				</ul>
-			</section>
-		</main>
+					{
+						posts.length === 0 && (
+							<p style="color:var(--muted);font-style:italic;">
+								这个分类下还没有随笔 ✍️
+							</p>
+						)
+					}
+				</div>
+			</main>
+		</div>
 		<Footer />
 	</body>
 </html>

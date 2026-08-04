@@ -1,33 +1,27 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 
-type Props = HTMLAttributes<'a'> & { forceInactive?: boolean };
+type Props = HTMLAttributes<'a'>;
 
-const { href, class: className, forceInactive, ...props } = Astro.props;
-const pathname = Astro.url.pathname.replace(import.meta.env.BASE_URL, '');
+const { href, class: className, ...props } = Astro.props;
+// 用 decodeURIComponent 规范化, 兼容浏览器可能对中文 URL 的百分号编码
+const decode = (s: string) => {
+	try { return decodeURIComponent(s); } catch { return s; }
+};
+const pathname = decode(Astro.url.pathname).replace(import.meta.env.BASE_URL, '');
 const normalizedPath = '/' + pathname.replace(/^\/+|\/+$/g, '');
-const normalizedHref = '/' + String(href ?? '').replace(/^\/+|\/+$/g, '');
-// 精确匹配: 完全相等 or 当前路径在 href 之下 (e.g. /blog/night active /blog/night)
-// 不再用 subpath[0] 因为那会让 /blog/night 误激活 /blog
-const isActive = normalizedPath === normalizedHref ||
+const normalizedHref = '/' + decode(String(href ?? '')).replace(/^\/+|\/+$/g, '');
+
+const isActive =
+	normalizedPath === normalizedHref ||
 	(normalizedHref !== '/' && normalizedPath.startsWith(normalizedHref + '/'));
-// 特殊: 让 /blog/night/* 只激活"夜间"link, 不激活"博客"link
-const isExactBlogList = normalizedHref === '/blog';
-const isOnNightPath = normalizedPath === '/blog/night' || normalizedPath.startsWith('/blog/night/');
-// forceInactive: 夜间随笔文章详情页强制所有 nav tab 不 active (私密空间不暴露归属)
-const finalActive = !forceInactive && isActive && !(isExactBlogList && isOnNightPath);
 ---
 
-<a href={href} class:list={[className, { active: finalActive }]} {...props}>
+<a
+	href={href}
+	class:list={[className, { active: isActive }]}
+	aria-current={isActive ? 'page' : undefined}
+	{...props}
+>
 	<slot />
 </a>
-<style>
-	a {
-		display: inline-block;
-		text-decoration: none;
-	}
-	a.active {
-		font-weight: bolder;
-		text-decoration: underline;
-	}
-</style>
