@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v4.9</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v5.0</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -396,10 +396,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v46">V4.6 · K32 恩赐解脱 Lv2/Lv3 数值改档 + Lv3 颤栗改恐惧</a></li>
   <li><a href="#ch-v47">V4.7 · K33 AUV 仇恨顺序简化 · 4 阶 → 2 阶</a></li>
   <li><a href="#ch-v48">V4.8 · K34-B AUX → AUV 全项目命名统一</a></li>
-  <li><a href="#ch-v49">V4.9 · K34-C §2.4 外星生物美术提示词骨甲版同步 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v49">V4.9 · K34-C §2.4 外星生物美术提示词骨甲版同步</a></li>
+  <li><a href="#ch-v50">V5.0 · K30 世界坐标与屏幕投影统一 · 状态门/技能视觉-判定同源 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v4.9 · 2026-07-30<br>
+v5.0 · 2026-08-07<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -408,17 +409,17 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v4.9</span>
+<span class="badge">GAME SPEC · v5.0</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v4.9 (K34-C §2.4 外星生物美术提示词骨甲版同步 · 20 只全部按骨甲/晶化义肢/紫绿蓝军配重写)</div>
+<div class="value">v5.0 (K30 世界坐标与屏幕投影统一 · 状态门与技能视觉/判定同源)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-07-30</div>
+<div class="value">2026-08-07</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -2985,6 +2986,64 @@ if (targetLv &gt; skillLevels[id]) {
         <li>版本联动: spec.html title/badge/sidebar/项目版本刷 v4.8 → v4.9, spec-manual.html 已先落地 §2.4 骨甲版 (v4.9 手动维护版权威源), 数值/机制/行为无变化</li>
         <li>关键 marker: <code>ch-v49</code> · <code>v4.9</code> · <code>骨甲覆盖率 20/50/80/100</code> · <code>晶化义肢</code> · <code>晶化能量核心</code> · <code>单眼裂缝紫绿蓝</code> · <code>定帧去饱和淡出</code></li>
       </ul>
+    </div>
+  </section>
+
+  <section class="chapter" id="ch-v50">
+    <span class="chapter-num">V5.0 · K30 · 2026-08-07</span>
+    <h2>世界坐标与屏幕投影统一<br>状态门 / 技能视觉-判定同源</h2>
+    <div class="doc-body">
+      <h3>1. 问题与根因</h3>
+      <p><code>demo.html</code> 是 414×736 单 Canvas 一点透视场景，逻辑世界 x 通过 <code>perspectiveX(x, y)</code> 投影到屏幕。此前技能与状态门存在“中心已投影、尺寸仍使用固定屏幕值”，或视觉与判定混用世界/屏幕坐标的问题，导致远端几何相对通道越界、视觉和命中位置偏移。</p>
+
+      <h3>2. 三层坐标架构</h3>
+      <ul>
+        <li><strong>战场世界层：</strong>实体、状态门、技能几何统一保存世界坐标，由投影 helper 转换后消费。</li>
+        <li><strong>主角近景层：</strong>主角保持固定 <code>PLAYER_Y</code>，但屏幕锚点仍走统一投影 API，不再另建特殊坐标链。</li>
+        <li><strong>UI 层：</strong>HUD、浮字保留屏幕坐标，只负责显示，不参与命中判定。</li>
+      </ul>
+
+      <h3>3. 统一投影 helper</h3>
+      <ul>
+        <li><code>worldToScreenPoint</code>：世界点 → 屏幕点。</li>
+        <li><code>worldCircleToScreenCircle</code>：世界圆 → 屏幕圆。</li>
+        <li><code>worldCenterRectToScreenRect</code>：世界中心矩形 → 屏幕矩形。</li>
+        <li><code>worldRectCornersToScreenPolygon</code>：世界矩形四角 → 屏幕多边形。</li>
+        <li><code>worldConeToScreenPolygon</code>：世界扇形 → 屏幕多边形。</li>
+        <li><code>worldLineToScreenStroke</code>：世界线段与世界宽度 → 屏幕描边。</li>
+      </ul>
+      <p>长度、半径、宽高按 <code>perspectiveScale</code> 缩放；扇形、矩形四角等非线性几何必须先在世界层构造，再逐顶点投影，禁止只投影中心后套固定屏幕尺寸。</p>
+
+      <h3>4. 状态门视觉 / 碰撞同源</h3>
+      <p>状态门继续保存世界 <code>x/y/w/h</code>。<code>drawStateGate</code> 与 gate/player collision 都消费 <code>worldCenterRectToScreenRect</code> 的结果，绘制矩形与碰撞矩形来自同一投影输出，消除双链偏移。</p>
+
+      <h3>5. 五技能及相关视觉迁移口径</h3>
+      <ul>
+        <li><strong>通用 ring：</strong>五技能施放共用的视觉 kind，以世界圆转换为屏幕圆；<strong>flywheel：</strong>自身世界圆转换为屏幕圆。</li>
+        <li><strong>together：</strong>方形预览与伤害命中都以同一份 world <code>{x,y,r}</code> 为源；禁止再对已投影中心二次调用 <code>perspectiveX</code>。</li>
+        <li><strong>mercy：</strong>先在世界坐标离散扇形，再逐点投影。</li>
+        <li><strong>highvoltage：</strong>世界矩形四角逐点投影，并保持 TL/TR/BR/BL 顺序。</li>
+        <li><strong>laserpierce：</strong>世界线段与世界宽度统一投影；Lv2 aftermath 必须先在世界坐标中，从起点沿原方向将线段长度延长至 3 倍，再投影。</li>
+      </ul>
+
+      <h3>6. 不变项 / 冻结范围</h3>
+      <p>本次不改伤害倍率、CD、锁头/仇恨、状态门数值、主角/AUV 已正确的子弹链、UI 坐标层、<code>spec-manual.html</code> 与 <code>terms.js</code>；只重构坐标的表示与消费方式。</p>
+
+      <h3>7. 验收证据</h3>
+      <p>fresh static review：<strong>APPROVED</strong>；fresh Playwright runtime：<strong>T1-T8 ALL PASS</strong>。</p>
+      <ul>
+        <li>circle 透视缩放：far <code>r=12.475591</code> &lt; near <code>r=37.824056</code>。</li>
+        <li>state gate helper rect 与 draw rect 完全一致。</li>
+        <li>together marker 共 3 处，且无 <code>perspectiveX</code> 二次投影。</li>
+        <li>mercy 多边形 18 点。</li>
+        <li>highvoltage 多边形 4 点，且不自交。</li>
+        <li>laser 透视宽度：far <code>width=9.356694</code> &lt; near <code>width=28.368042</code>。</li>
+        <li>runtime <code>errors=[]</code>。</li>
+      </ul>
+      <p><code>file://</code> 环境下 6 条音频 Fetch API 噪声已单列过滤，不计入运行时错误。</p>
+
+      <h3>8. 部署纪律</h3>
+      <p><code>spec-manual.html</code> / <code>terms.js</code> 不动。上线前需执行 build + wrangler 部署；部署后用 <code>verify-deploy.py</code> 验证 demo/spec marker。</p>
     </div>
   </section>
 

@@ -1222,6 +1222,66 @@ function perspectiveScale(y) {
   const curve = Math.pow(t, 0.7);
   return PERSPECTIVE_SCALE_FAR + (1 - PERSPECTIVE_SCALE_FAR) * curve;
 }
+// [K30-coords S1] 统一世界几何投影 API: y 保持世界运动坐标, x/尺寸按同一透视比例映射。
+function worldToScreenPoint(worldX, worldY) {
+  return { x: perspectiveX(worldX, worldY), y: worldY };
+}
+function worldSizeToScreenSize(worldW, worldH, worldY) {
+  const scale = perspectiveScale(worldY);
+  return { w: worldW * scale, h: worldH * scale, scale };
+}
+function worldCenterRectToScreenRect(rect) {
+  const center = worldToScreenPoint(rect.x, rect.y);
+  const size = worldSizeToScreenSize(rect.w, rect.h, rect.y);
+  return {
+    x: center.x - size.w / 2,
+    y: center.y - size.h / 2,
+    w: size.w,
+    h: size.h,
+    cx: center.x,
+    cy: center.y,
+    scale: size.scale,
+  };
+}
+// [K30-coords S2] 世界圆投影: 中心与半径消费同一 y 的透视比例。
+function worldCircleToScreenCircle(worldX, worldY, worldR) {
+  const center = worldToScreenPoint(worldX, worldY);
+  const scale = perspectiveScale(worldY);
+  return { x: center.x, y: center.y, r: worldR * scale, scale };
+}
+// [K30-coords S3] 世界左上矩形/扇形逐点投影，视觉直接消费世界判定几何。
+function worldRectCornersToScreenPolygon({ x, y, w, h }) {
+  return [
+    worldToScreenPoint(x, y),
+    worldToScreenPoint(x + w, y),
+    worldToScreenPoint(x + w, y + h),
+    worldToScreenPoint(x, y + h),
+  ];
+}
+function worldConeToScreenPolygon({ x, y, dirX, dirY, length, halfRad, segments = 16 }) {
+  const points = [worldToScreenPoint(x, y)];
+  const angle = Math.atan2(dirY, dirX);
+  const count = Math.max(1, Math.floor(segments));
+  for (let i = 0; i <= count; i++) {
+    const arcAngle = angle - halfRad + (halfRad * 2 * i) / count;
+    points.push(worldToScreenPoint(
+      x + Math.cos(arcAngle) * length,
+      y + Math.sin(arcAngle) * length
+    ));
+  }
+  return points;
+}
+// [K30-coords S3] 世界线段端点逐点投影，线宽按线段中点的局部深度缩放。
+function worldLineToScreenStroke({ fromX, fromY, toX, toY, width }) {
+  const from = worldToScreenPoint(fromX, fromY);
+  const to = worldToScreenPoint(toX, toY);
+  return {
+    fromX: from.x, fromY: from.y,
+    toX: to.x, toY: to.y,
+    width: width * perspectiveScale((fromY + toY) / 2),
+  };
+}
+
 // 通道判定
 function getTrackAt(x) {
   if (x < SPLIT_X) return 'L';
@@ -1796,14 +1856,13 @@ function updateBullets(dt) {
     } else {
       // 接敌通道: 先看状态门 (array, 可能多个同屏)
       if (G.stateGates && G.stateGates.length > 0) {
-        // 子弹 b.x/y 是中心点 (跟敌人统一约定), 但 rectOverlap 把 .x 当左上角
-        // 状态门已转成左上角 box, 所以子弹也要转成 box: 左上角 = b.x - b.w/2, b.y - b.h/2
-        const bBox = { x: b.x - b.w/2, y: b.y - b.h/2, w: b.w, h: b.h };
+        // [K30-coords S1] 子弹与门都从世界中心矩形投影到屏幕 box, 与视觉几何同源。
+        const bBox = worldCenterRectToScreenRect(b);
         for (const gate of G.stateGates) {
           if (gate.released) continue;
           // [7/16 fix gate-hitbox] 命中判定框左右扩 40% (视觉不变), 修子弹从两侧擦过 bug
           const hitW = gate.w * 1.4;
-          const gateBox = { x: gate.x - hitW/2, y: gate.y - gate.h/2, w: hitW, h: gate.h };
+          const gateBox = worldCenterRectToScreenRect({ x: gate.x, y: gate.y, w: hitW, h: gate.h });
           if (rectOverlap(bBox, gateBox)) {
             gate.value += gate.dim.step;
             gate.value = Math.round(gate.value / gate.dim.step) * gate.dim.step;
@@ -2601,20 +2660,20 @@ function drawLaserVisuals() {
     G.explosions.forEach(ex => {
       const t = (G.now - ex.bornAt) / ex.life;
       const alpha = Math.max(0, 1 - t);
-      const r = ex.r * (0.4 + t * 1.2);   // 圈从 0.4r 扩散到 1.6r
-      // 投影到屏幕坐标 (与敌人渲染一致)
-      const cxp = perspectiveX(ex.x, ex.y);
+      // [K30-coords S2] 爆炸圆心与半径统一世界圆投影。
+      const screenCircle = worldCircleToScreenCircle(ex.x, ex.y, ex.r);
+      const r = screenCircle.r * (0.4 + t * 1.2);   // 圈从 0.4r 扩散到 1.6r
       ctx.globalAlpha = alpha * 0.8;
       ctx.fillStyle = '#ff8c00';
       ctx.beginPath();
-      ctx.arc(cxp, ex.y, r, 0, Math.PI * 2);
+      ctx.arc(screenCircle.x, screenCircle.y, r, 0, Math.PI * 2);
       ctx.fill();
       // 环
       ctx.globalAlpha = alpha;
       ctx.strokeStyle = '#ffdd66';
       ctx.lineWidth = 2;
       ctx.beginPath();
-      ctx.arc(cxp, ex.y, r, 0, Math.PI * 2);
+      ctx.arc(screenCircle.x, screenCircle.y, r, 0, Math.PI * 2);
       ctx.stroke();
     });
     ctx.restore();
@@ -3706,13 +3765,13 @@ function updateStateGate(dt) {
   }
 
   // 移动 / 碰撞 / 流出 — 反向遍历 (会 splice)
-  const playerBox = {x: G.player.x - G.player.w/2, y: G.player.y - G.player.h/2, w: G.player.w, h: G.player.h};
+  // [K30-coords S1] 玩家与普通门统一投影到屏幕层碰撞。
+  const playerBox = worldCenterRectToScreenRect(G.player);
   for (let i = G.stateGates.length - 1; i >= 0; i--) {
     const gate = G.stateGates[i];
     gate.y += gate.speed * dt;
 
-    // 碰撞: rectOverlap 把 g.x 当左上角左侧, gate.x 是中心 → 转盒
-    const gateBox = { x: gate.x - gate.w/2, y: gate.y - gate.h/2, w: gate.w, h: gate.h };
+    const gateBox = worldCenterRectToScreenRect(gate);
     if (rectOverlap(gateBox, playerBox)) {
       applyGateToNuo(gate);
       G.stateGates.splice(i, 1);
@@ -4302,6 +4361,8 @@ function drawObstacle(o) {
 }
 
 function drawStateGate(g) {
+  // [K30-coords S1] 门框、文字与标记共享同一世界 rect 投影结果。
+  const screenRect = worldCenterRectToScreenRect(g);
   // 颜色按 state
   let fillColor, strokeColor;
   if (g.released) {
@@ -4321,8 +4382,8 @@ function drawStateGate(g) {
   ctx.strokeStyle = strokeColor;
   ctx.lineWidth = g.released ? 2 : 2.5;
   ctx.setLineDash(g.released ? [4, 3] : []);
-  ctx.fillRect(g.x - g.w/2, g.y - g.h/2, g.w, g.h);
-  ctx.strokeRect(g.x - g.w/2, g.y - g.h/2, g.w, g.h);
+  ctx.fillRect(screenRect.x, screenRect.y, screenRect.w, screenRect.h);
+  ctx.strokeRect(screenRect.x, screenRect.y, screenRect.w, screenRect.h);
   ctx.setLineDash([]);
 
   // 数值文字
@@ -4338,15 +4399,15 @@ function drawStateGate(g) {
   ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(`${dim.label}`, g.x, g.y - 4);
+  ctx.fillText(`${dim.label}`, screenRect.cx, screenRect.cy - 4);
   ctx.font = 'bold 13px ui-monospace,Menlo,monospace';
-  ctx.fillText(display, g.x, g.y + 9);
+  ctx.fillText(display, screenRect.cx, screenRect.cy + 9);
 
   // 释放标志
   if (g.released) {
     ctx.fillStyle = '#4dff9d';
     ctx.font = 'bold 9px ui-monospace';
-    ctx.fillText('★ MAX', g.x + g.w/2 - 22, g.y - g.h/2 + 8);
+    ctx.fillText('★ MAX', screenRect.x + screenRect.w - 22, screenRect.y + 8);
   }
 }
 
@@ -5661,11 +5722,12 @@ function updateGoldenGates(dt) {
     tryDrainPendingCardPicks();
     return;
   }
-  const playerBox = {x: G.player.x - G.player.w/2, y: G.player.y - G.player.h/2, w: G.player.w, h: G.player.h};
+  // [K30-coords S1] 玩家与金门统一投影到屏幕层碰撞。
+  const playerBox = worldCenterRectToScreenRect(G.player);
   for (let i = G.goldenGates.length - 1; i >= 0; i--) {
     const gate = G.goldenGates[i];
     gate.y += gate.speed * dt;
-    const gateBox = { x: gate.x - gate.w/2, y: gate.y - gate.h/2, w: gate.w, h: gate.h };
+    const gateBox = worldCenterRectToScreenRect(gate);
     if (rectOverlap(gateBox, playerBox)) {
       applyGateToNuo(gate);
       G.goldenGates.splice(i, 1);
@@ -5679,6 +5741,8 @@ function updateGoldenGates(dt) {
 
 // [K21-boss reward] 金门渲染: 金色 + 发光光环
 function drawGoldenGate(g) {
+  // [K30-coords S1] 金门框、文字与 BOSS 标记共享普通门使用的世界 rect 投影 helper。
+  const screenRect = worldCenterRectToScreenRect(g);
   // 光环 (脉动)
   const pulse = 0.5 + 0.5 * Math.sin((G.now || performance.now()) * 0.006);
   const glowAlpha = 0.25 + 0.25 * pulse;
@@ -5688,8 +5752,8 @@ function drawGoldenGate(g) {
   ctx.fillStyle = `rgba(255,215,0,${glowAlpha})`;
   ctx.strokeStyle = '#ffd700';
   ctx.lineWidth = 3;
-  ctx.fillRect(g.x - g.w/2, g.y - g.h/2, g.w, g.h);
-  ctx.strokeRect(g.x - g.w/2, g.y - g.h/2, g.w, g.h);
+  ctx.fillRect(screenRect.x, screenRect.y, screenRect.w, screenRect.h);
+  ctx.strokeRect(screenRect.x, screenRect.y, screenRect.w, screenRect.h);
   ctx.restore();
 
   // 数值
@@ -5704,12 +5768,12 @@ function drawGoldenGate(g) {
   ctx.font = 'bold 11px ui-monospace,Menlo,monospace';
   ctx.textAlign = 'center';
   ctx.textBaseline = 'middle';
-  ctx.fillText(`${dim.label}`, g.x, g.y - 4);
+  ctx.fillText(`${dim.label}`, screenRect.cx, screenRect.cy - 4);
   ctx.font = 'bold 13px ui-monospace,Menlo,monospace';
-  ctx.fillText(display, g.x, g.y + 9);
+  ctx.fillText(display, screenRect.cx, screenRect.cy + 9);
   ctx.fillStyle = '#ffd700';
   ctx.font = 'bold 9px ui-monospace';
-  ctx.fillText('★ BOSS', g.x + g.w/2 - 24, g.y - g.h/2 + 8);
+  ctx.fillText('★ BOSS', screenRect.x + screenRect.w - 24, screenRect.y + 8);
 }
 
 // ----- 制导激光 (g_guide) -----
@@ -5932,15 +5996,13 @@ function castSkill(id, level, chainDepth) {
       });
       setTimeout(() => {
        try {
-        const cxp = perspectiveX(lockX, lockY);
         // [K10-5 fix] 主爆命中瞬间现算 playerAtk (600ms 延迟窗口内玩家攻击力可能被状态门/精通刷新)
         let baseDmg = getPlayerAtk() * 6;
         if (level >= 2) baseDmg = Math.round(baseDmg * 1.3);
         G.enemies.slice().forEach(en => {
           if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
-          const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
-          const dx = exp - cxp, dy = en.y - lockY;
-          // [K10-10 square] 命中判定改方形 (半径 r 视为半边长)
+          const dx = en.x - lockX, dy = en.y - lockY;
+          // [K30-coords S2-fix] 主爆判定与 visual 同源 world 方形 (半径 r 视为半边长)
           if (Math.abs(dx) > r || Math.abs(dy) > r) return;
           const { dmg, crit } = rollSkillCrit(baseDmg);
           const fireDmg = applyFireSynergy(en, dmg);
@@ -5986,9 +6048,8 @@ function castSkill(id, level, chainDepth) {
             const base2 = Math.round(baseDmg2 * 0.6);
             G.enemies.slice().forEach(en => {
               if (en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
-              const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
-              const dx = exp - perspectiveX(lockX, lockY), dy = en.y - lockY;
-              // [K10-10 square] 二段爆炸命中改方形
+              const dx = en.x - lockX, dy = en.y - lockY;
+              // [K30-coords S2-fix] 二段爆炸判定与 visual 同源 world 方形
               if (Math.abs(dx) > r || Math.abs(dy) > r) return;
               const { dmg: d2, crit: c2 } = rollSkillCrit(base2);
               const fireDmg2 = applyFireSynergy(en, d2);
@@ -6105,10 +6166,10 @@ function castSkill(id, level, chainDepth) {
       const lockX = target.x, lockY = target.y;
       G.skillVisuals.push({
         kind: 'mercyBeam',
-        fromX: perspectiveX(player.x, player.y), fromY: player.y,
-        toX: perspectiveX(lockX, lockY), toY: lockY,
-        // [K8-4 mercy红线投影修复] fromX/toX 出生时锁定屏幕投影坐标, 与敌人渲染位置严格对齐;
-        //   原用逻辑坐标 → 越靠右远端偏差越大 (逻辑X离屏幕中心W/2越远, 投影收缩越猛)
+        // [K30-coords S3] 锁定世界端点；绘制时逐点投影。
+        fromX: player.x, fromY: player.y,
+        toX: lockX, toY: lockY,
+        space: 'world',
         bornAt: G.now, life: lifeMs,
         lockMs,
         color: 'rgba(255, 50, 50, 0.95)',
@@ -6217,10 +6278,11 @@ function castSkill(id, level, chainDepth) {
     if (level >= 2) {
       G.skillVisuals.push({
         kind: 'laserpierceAftermath',
-        // [K7-20 激光贯穿投影对齐] fromX/toX 出生锁定 perspectiveX, 与敌人渲染位置对齐 (同 mercyBeam 修法)
-        fromX: perspectiveX(player.x, player.y), fromY: player.y,
-        toX: perspectiveX(mainTarget.x, mainTarget.y), toY: mainTarget.y,
+        // [K30-coords S3] 余波保存世界线段；tick 判定与绘制共同消费。
+        fromX: player.x, fromY: player.y,
+        toX: mainTarget.x, toY: mainTarget.y,
         width: 60,
+        space: 'world',
         bornAt: G.now, life: 2500,
         lastTickAt: G.now,
         color: 'rgba(170, 220, 255, 0.35)'
@@ -6315,10 +6377,10 @@ function _laserpiercePierce(player, target, width, dmg) {
   G.skillVisuals = G.skillVisuals || [];
   G.skillVisuals.push({
     kind: 'laserpierceBeam',
-    // [K7-20 激光贯穿投影对齐] fromX/toX 出生锁定 perspectiveX, 与敌人渲染位置对齐 (同 mercyBeam 修法)
-    fromX: perspectiveX(player.x, player.y), fromY: player.y,
-    toX: perspectiveX(extX, extY), toY: extY,
-    width, bornAt: G.now, life: 300, color: '#aaddff'
+    // [K30-coords S3] 主光束保存世界判定线段，绘制时逐点投影。
+    fromX: player.x, fromY: player.y,
+    toX: extX, toY: extY,
+    width, space: 'world', bornAt: G.now, life: 300, color: '#aaddff'
   });
   // 命中沿线 (垂直距离 < width/2 且 t in [0, extLen]) 的所有非道具敌人
   const halfW = width / 2;
@@ -6467,6 +6529,7 @@ function tickSkillVisuals(dt) {
       // ===== 激光贯穿 Lv2 余波: 每 0.5s 沿线 100 伤 (K10-17) =====
       if (now - (v.lastTickAt || v.bornAt) >= 500) {
         v.lastTickAt = now;
+        // [K30-coords S3] from/to/width 均为世界量；沿世界向量延伸 3 倍做判定。
         const ex = v.toX - v.fromX, ey = v.toY - v.fromY;
         const extLen = Math.sqrt(ex*ex + ey*ey) || 1;
         const exu = ex / extLen, eyu = ey / extLen;
@@ -6494,13 +6557,11 @@ function tickSkillVisuals(dt) {
       if (now - (v.lastTickAt || v.bornAt) >= 1000) {
         v.lastTickAt = now;
         const _pAtk = getPlayerAtk();
-        const cxp = perspectiveX(v.x, v.y);
         G.enemies.slice().forEach(en => {
           if (!en || en.hp <= 0) return;
           if (en.kind === 'chest' || en.kind === 'decoy' || en.kind === 'perk' || en.kind === 'buff') return;
-          const exp = en._cachedPX !== undefined ? en._cachedPX : perspectiveX(en.x, en.y);
-          const dx = exp - cxp, dy = en.y - v.y;
-          // [K10-10 square] 燃烧地带 tick 判定改方形
+          const dx = en.x - v.x, dy = en.y - v.y;
+          // [K30-coords S2-fix] 燃烧地带 tick 判定与 visual 同源 world 方形
           if (Math.abs(dx) > v.r || Math.abs(dy) > v.r) return;
           en.burnStackUntil = Math.max(en.burnStackUntil || 0, now + 5000);
           en.burnStackLayers = Math.min(10, (en.burnStackLayers || 0) + 1);
@@ -6524,22 +6585,25 @@ function drawSkillVisuals() {
       ctx.lineWidth = 3;
       ctx.shadowColor = v.color;
       ctx.shadowBlur = 12;
+      // [K30-coords S2] 技能环圆心与半径统一世界圆投影，保留动画倍率。
+      const screenCircle = worldCircleToScreenCircle(v.x, v.y, v.r);
       ctx.beginPath();
-      // [K7-20 技能视觉投影对齐] 圆心/方心走 perspectiveX 与敌人渲染对齐; 半径/宽高按 K 决策暂不缩放 (远端可能偏大, 后续如需再改)
-      ctx.arc(perspectiveX(v.x, v.y), v.y, v.r * (0.4 + t * 0.9), 0, Math.PI * 2);
+      ctx.arc(screenCircle.x, screenCircle.y, screenCircle.r * (0.4 + t * 0.9), 0, Math.PI * 2);
       ctx.stroke();
     } else if (v.kind === 'mercyCone') {
       // [K恩赐-锁头v2] 身后颤栗锥形可视化 (顶点=主目标, 沿 dir 展开 halfRad 半角, 长 coneLen)
-      const ang = Math.atan2(v.dirY, v.dirX);
       ctx.globalAlpha = alpha * 0.85;
       ctx.fillStyle = v.color;
       ctx.shadowColor = v.color;
       ctx.shadowBlur = 10;
+      // [K30-coords S3] 在世界坐标采样判定同源扇形，再逐点投影。
+      const conePoints = worldConeToScreenPolygon({
+        x: v.x, y: v.y, dirX: v.dirX, dirY: v.dirY,
+        length: v.coneLen, halfRad: v.halfRad
+      });
       ctx.beginPath();
-      // [K7-20 技能视觉投影对齐] 圆心/方心走 perspectiveX 与敌人渲染对齐; 半径/宽高按 K 决策暂不缩放
-      const vpx_mc = perspectiveX(v.x, v.y);
-      ctx.moveTo(vpx_mc, v.y);
-      ctx.arc(vpx_mc, v.y, v.coneLen, ang - v.halfRad, ang + v.halfRad);
+      ctx.moveTo(conePoints[0].x, conePoints[0].y);
+      for (let i = 1; i < conePoints.length; i++) ctx.lineTo(conePoints[i].x, conePoints[i].y);
       ctx.closePath();
       ctx.fill();
       ctx.globalAlpha = alpha;
@@ -6555,26 +6619,23 @@ function drawSkillVisuals() {
       // 议题 12 · 二版调整: 飞轮海 6s 红色圆形色块
       ctx.globalAlpha = alpha * 0.9;
       ctx.fillStyle = v.color;
+      // [K30-coords S2] 飞轮海圆心与半径统一世界圆投影。
+      const screenCircle = worldCircleToScreenCircle(v.x, v.y, v.r);
       ctx.beginPath();
-      // [K7-20 技能视觉投影对齐] 圆心/方心走 perspectiveX 与敌人渲染对齐; 半径/宽高按 K 决策暂不缩放
-      ctx.arc(perspectiveX(v.x, v.y), v.y, v.r, 0, Math.PI * 2);
+      ctx.arc(screenCircle.x, screenCircle.y, screenCircle.r, 0, Math.PI * 2);
       ctx.fill();
       ctx.strokeStyle = 'rgba(255, 120, 120, 0.6)';
       ctx.lineWidth = 2;
       ctx.stroke();
     } else if (v.kind === 'highvoltageZone') {
       // 议题 12 · 二版调整: 高压领域 10s 蓝色矩形色块
-      // [K7-20 高压领域梯形化] 沿右赛道透视绘制梯形, 逻辑坐标经 perspectiveX 投影 4 顶点
+      // [K30-coords S3] 世界左上矩形四角逐点投影，与 tick 的 {x,y,w,h} 判定同源。
       ctx.globalAlpha = alpha * 0.9;
       ctx.fillStyle = v.color;
-      const _yBot = v.y + v.h, _yTop = v.y;
-      const _xBL = perspectiveX(v.x, _yBot), _xBR = perspectiveX(v.x + v.w, _yBot);
-      const _xTL = perspectiveX(v.x, _yTop), _xTR = perspectiveX(v.x + v.w, _yTop);
+      const zonePoints = worldRectCornersToScreenPolygon(v);
       ctx.beginPath();
-      ctx.moveTo(_xBL, _yBot);
-      ctx.lineTo(_xBR, _yBot);
-      ctx.lineTo(_xTR, _yTop);
-      ctx.lineTo(_xTL, _yTop);
+      ctx.moveTo(zonePoints[0].x, zonePoints[0].y);
+      for (let i = 1; i < zonePoints.length; i++) ctx.lineTo(zonePoints[i].x, zonePoints[i].y);
       ctx.closePath();
       ctx.fill();
       ctx.strokeStyle = 'rgba(160, 210, 255, 0.7)';
@@ -6593,13 +6654,13 @@ function drawSkillVisuals() {
       }
       ctx.globalAlpha = base;
       ctx.fillStyle = 'rgba(255, 140, 40, 1)';
-      // [K7-20 技能视觉投影对齐] 圆心/方心走 perspectiveX 与敌人渲染对齐; 半径/宽高按 K 决策暂不缩放
-      const vpx_tp = perspectiveX(v.x, v.y);
-      ctx.fillRect(vpx_tp - v.r, v.y - v.r, v.r * 2, v.r * 2);
+      // [K30-coords S2] 站一起预览方形使用世界中心矩形投影。
+      const box = worldCenterRectToScreenRect({ x: v.x, y: v.y, w: v.r * 2, h: v.r * 2 });
+      ctx.fillRect(box.x, box.y, box.w, box.h);
       ctx.globalAlpha = Math.min(1, base * 2.4);
       ctx.strokeStyle = 'rgba(255, 165, 60, 1)';
       ctx.lineWidth = 2;
-      ctx.strokeRect(vpx_tp - v.r, v.y - v.r, v.r * 2, v.r * 2);
+      ctx.strokeRect(box.x, box.y, box.w, box.h);
     } else if (v.kind === 'mercyBeam') {
       // [7/16 fix absolution] 红线: 前 lockMs 内保持满 alpha (锁定演示), 之后 (life - lockMs) 时间内线性淡出
       const elapsed = G.now - v.bornAt;
@@ -6612,44 +6673,54 @@ function drawSkillVisuals() {
       ctx.lineWidth = v.lineWidth || 3;
       ctx.shadowColor = v.color;
       ctx.shadowBlur = 10;
+      // [K30-coords S3] Mercy beam 保存世界端点，每帧逐点投影。
+      const beamFrom = worldToScreenPoint(v.fromX, v.fromY);
+      const beamTo = worldToScreenPoint(v.toX, v.toY);
       ctx.beginPath();
-      ctx.moveTo(v.fromX, v.fromY);
-      ctx.lineTo(v.toX, v.toY);
+      ctx.moveTo(beamFrom.x, beamFrom.y);
+      ctx.lineTo(beamTo.x, beamTo.y);
       ctx.stroke();
     } else if (v.kind === 'laserpierceBeam') {
       // ===== 议题 10-4 激光贯穿主光柱: 沿 player→ext 一条粗线 =====
       ctx.globalAlpha = alpha;
       ctx.strokeStyle = v.color;
-      ctx.lineWidth = v.width || 90;
+      // [K30-coords S3] 世界端点逐点投影，世界线宽按线段局部深度缩放。
+      const beamStroke = worldLineToScreenStroke(v);
+      ctx.lineWidth = beamStroke.width;
       ctx.shadowColor = v.color;
       ctx.shadowBlur = 20;
       ctx.beginPath();
-      ctx.moveTo(v.fromX, v.fromY);
-      ctx.lineTo(v.toX, v.toY);
+      ctx.moveTo(beamStroke.fromX, beamStroke.fromY);
+      ctx.lineTo(beamStroke.toX, beamStroke.toY);
       ctx.stroke();
     } else if (v.kind === 'laserpierceAftermath') {
       // ===== 议题 10-4 激光余波: 半透明沿线色块 =====
       ctx.globalAlpha = alpha * 0.5;
       ctx.strokeStyle = v.color;
-      ctx.lineWidth = v.width || 90;
-      ctx.beginPath();
-      ctx.moveTo(v.fromX, v.fromY);
-      // 向前延伸 3 倍长度
+      // [K30-coords S3] 先在世界中延伸 3 倍，再逐点投影并缩放世界线宽。
       const dx = v.toX - v.fromX, dy = v.toY - v.fromY;
-      ctx.lineTo(v.fromX + dx * 3, v.fromY + dy * 3);
+      const aftermathStroke = worldLineToScreenStroke({
+        fromX: v.fromX, fromY: v.fromY,
+        toX: v.fromX + dx * 3, toY: v.fromY + dy * 3,
+        width: v.width || 90
+      });
+      ctx.lineWidth = aftermathStroke.width;
+      ctx.beginPath();
+      ctx.moveTo(aftermathStroke.fromX, aftermathStroke.fromY);
+      ctx.lineTo(aftermathStroke.toX, aftermathStroke.toY);
       ctx.stroke();
     } else if (v.kind === 'togetherBurnZone') {
       // [K10-10 square] 燃烧地带改方形 (半径 v.r = 半边长)
       const flicker = 0.6 + 0.2 * Math.sin(G.now / 120);
       ctx.globalAlpha = alpha * 0.5 * flicker;
       ctx.fillStyle = 'rgba(255, 100, 40, 1)';
-      // [K7-20 技能视觉投影对齐] 圆心/方心走 perspectiveX 与敌人渲染对齐; 半径/宽高按 K 决策暂不缩放
-      const vpx_tb = perspectiveX(v.x, v.y);
-      ctx.fillRect(vpx_tb - v.r, v.y - v.r, v.r * 2, v.r * 2);
+      // [K30-coords S2] 站一起燃烧区方形使用世界中心矩形投影。
+      const box = worldCenterRectToScreenRect({ x: v.x, y: v.y, w: v.r * 2, h: v.r * 2 });
+      ctx.fillRect(box.x, box.y, box.w, box.h);
       ctx.globalAlpha = alpha * 0.9;
       ctx.strokeStyle = 'rgba(255, 160, 60, 1)';
       ctx.lineWidth = 2;
-      ctx.strokeRect(vpx_tb - v.r, v.y - v.r, v.r * 2, v.r * 2);
+      ctx.strokeRect(box.x, box.y, box.w, box.h);
     }
   });
   ctx.restore();
