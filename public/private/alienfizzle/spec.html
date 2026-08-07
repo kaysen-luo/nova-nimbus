@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>《舰舰别炸》Alien Fizzle · 玩法规格 v5.0</title>
+<title>《舰舰别炸》Alien Fizzle · 玩法规格 v5.1</title>
 <style>
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html, body {
@@ -397,10 +397,11 @@ tr:hover td { background: #161d33; }
   <li><a href="#ch-v47">V4.7 · K33 AUV 仇恨顺序简化 · 4 阶 → 2 阶</a></li>
   <li><a href="#ch-v48">V4.8 · K34-B AUX → AUV 全项目命名统一</a></li>
   <li><a href="#ch-v49">V4.9 · K34-C §2.4 外星生物美术提示词骨甲版同步</a></li>
-  <li><a href="#ch-v50">V5.0 · K30 世界坐标与屏幕投影统一 · 状态门/技能视觉-判定同源 <span class="new-tag">NEW</span></a></li>
+  <li><a href="#ch-v50">V5.0 · K30 世界坐标与屏幕投影统一 · 状态门/技能视觉-判定同源</a></li>
+  <li><a href="#ch-v51">V5.1 · Easy 障碍关闭 · 敌人护甲权威值同步 <span class="new-tag">NEW</span></a></li>
 </ol>
 <div class="sidebar-footer">
-v5.0 · 2026-08-07<br>
+v5.1 · 2026-08-08<br>
 Alien Fizzle · 玩法规格<br>
 <a href="art-spec-v3.html" style="color:#6b7494;">→ 美术规格 v3</a><br>
 <a href="demo.html" style="color:#6b7494;">→ 白模 demo</a>
@@ -409,17 +410,17 @@ Alien Fizzle · 玩法规格<br>
 
 <main>
 <div class="doc-header">
-<span class="badge">GAME SPEC · v5.0</span>
+<span class="badge">GAME SPEC · v5.1</span>
 <h1>《舰舰别炸》Alien Fizzle<br>玩法规格文档</h1>
 <div class="subtitle">一点透视 · 双通道守线 · 状态门 5 态机制 · 30-60s 单局 · 微信小游戏</div>
 <div class="meta-grid">
 <div class="meta-card">
 <div class="label">项目版本</div>
-<div class="value">v5.0 (K30 世界坐标与屏幕投影统一 · 状态门与技能视觉/判定同源)</div>
+<div class="value">v5.1 (Easy 障碍关闭 · 敌人护甲权威值同步)</div>
 </div>
 <div class="meta-card">
 <div class="label">发布日期</div>
-<div class="value">2026-08-07</div>
+<div class="value">2026-08-08</div>
 </div>
 <div class="meta-card">
 <div class="label">游戏类型</div>
@@ -817,6 +818,17 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-should">建议</span>美术风格: <strong>骨甲版硬派末世感</strong> (对齐 §1.3.4), 骨甲覆盖率随档递增 (小兵 20% / 精英 50% / 小 Boss 80% / 大 Boss 100%), 单眼裂缝紫/绿/蓝三色军配, 关节缝隙同色透光, 严禁机械/金属/塑料/萌系元素</li>
     </ul>
 
+    <h4>2.4.1.1 敌人护甲 · 当前权威值</h4>
+    <table>
+      <tr><th>敌人类型</th><th>护甲</th></tr>
+      <tr><td>小兵 (small)</td><td><strong>0.10</strong></td></tr>
+      <tr><td>精英 (elite)</td><td><strong>0.45</strong></td></tr>
+      <tr><td>小 BOSS A (miniA)</td><td><strong>0.29</strong></td></tr>
+      <tr><td>小 BOSS B (miniB)</td><td><strong>0.325</strong></td></tr>
+      <tr><td>小 BOSS C (miniC)</td><td><strong>0.35</strong></td></tr>
+      <tr><td>最终 BOSS (boss)</td><td><strong>0.39</strong></td></tr>
+    </table>
+
     <h4>2.4.2 小兵 · 4 款</h4>
     <p><em>消耗火力, 制造压迫, 单只弱, 群体强</em></p>
     <table class="monster-table">
@@ -998,7 +1010,7 @@ Alien Fizzle · 玩法规格<br>
       <li><span class="tag tag-must">必须</span>宝箱在通道内 <strong>冻结不动</strong>, 不自动下滑</li>
       <li><span class="tag tag-must">必须</span>宝箱有血量, 被子弹击中累计伤害, 击破后 <strong>弹出三选一卡片界面</strong> (期间敌人暂停 0.5s 缓冲, 与关卡节奏无缝衔接)</li>
       <li><span class="tag tag-must">必须</span>玩家从三张卡中选一张, 立即结算 (若已 Lv3 满级则该技能卡不再进池; 精通卡若已持有, 权重 ×0.5, 见 §4.3 抽卡权重)</li>
-      <li><span class="tag tag-must">必须</span>宝箱通道内同时混入 <strong>障碍</strong>, 障碍击破不掉落任何东西 — 是纯粹的 "挡子弹" 消耗。<span style="color:#c62828"><strong>V3.3 障碍机制</strong>: 真宝箱落定后 20s 未击破 → 前方 (靠防线侧) 随机刷 <strong>0-2 个障碍</strong> (HP = 最近真宝箱 × 0.5), 同列正下方。</span></li>
+      <li><span class="tag tag-must">必须</span>宝箱通道内同时混入 <strong>障碍</strong>, 障碍击破不掉落任何东西 — 是纯粹的 "挡子弹" 消耗。<strong>当前状态:</strong> <code>currentLevel = 1</code> (Easy) 禁用宝箱的障碍 / decoy 转换; <code>currentLevel = 0</code> 与其他所有关卡保留该转换。<span style="color:#c62828"><strong>V3.3 障碍机制</strong>: 真宝箱落定后 20s 未击破 → 前方 (靠防线侧) 随机刷 <strong>0-2 个障碍</strong> (HP = 最近真宝箱 × 0.5), 同列正下方。</span></li>
       <li><span class="tag tag-should">建议</span>宝箱与障碍的视觉差异要明显, 颜色 / 形状 / 边框三层区分</li>
     </ul>
 
@@ -3048,6 +3060,21 @@ if (targetLv &gt; skillLevels[id]) {
     </div>
   </section>
 
+  <section class="chapter" id="ch-v51">
+    <span class="chapter-num">V5.1 · 2026-08-08</span>
+    <h2>Easy 障碍关闭<br>敌人护甲权威值同步</h2>
+    <div class="doc-body">
+      <ul>
+        <li><strong>Easy / <code>currentLevel = 1</code>:</strong> 禁用宝箱的障碍 / decoy 转换；<code>currentLevel = 0</code> 与其他所有关卡保持原规则。</li>
+        <li><strong>小 BOSS A:</strong> 护甲 <code>0.58 → 0.29</code>。</li>
+        <li><strong>小 BOSS B:</strong> 护甲 <code>0.65 → 0.325</code>。</li>
+        <li><strong>小 BOSS C:</strong> 护甲 <code>0.70 → 0.35</code>。</li>
+        <li><strong>最终 BOSS:</strong> 护甲 <code>0.78 → 0.39</code>。</li>
+        <li><strong>不变项:</strong> 小兵护甲 <code>0.10</code>，精英护甲 <code>0.45</code>。</li>
+      </ul>
+    </div>
+  </section>
+
   <section class="chapter" id="ch-08">
     <span class="chapter-num">§ 08 · 边缘情况清单</span>
     <h2>16 条规则边界<br>+ 处理预案</h2>
@@ -3061,7 +3088,7 @@ if (targetLv &gt; skillLevels[id]) {
       <tr><td>E04</td><td>主角骑两通道分界线</td><td><strong>不抢行修正</strong>, 主角弹道打宝箱通道 + BOBO 弹道打接敌通道分裂是正常 feature</td></tr>
       <tr><td>E05</td><td>主角横移把 BOBO 推出屏幕边界</td><td>BOBO 不出屏, 改成贴主角另一侧</td></tr>
       <tr><td>E06</td><td>主角和镜像 BOBO 都顶到屏幕边界</td><td>整体停下, 不能继续横移, 不出屏</td></tr>
-      <tr><td>E07</td><td>宝箱被障碍挡住, 子弹打不到</td><td>正常 — 这是关卡设计点, 玩家要找角度或先击破障碍</td></tr>
+      <tr><td>E07</td><td>宝箱被障碍挡住, 子弹打不到</td><td>有障碍的关卡中正常 — 这是关卡设计点, 玩家要找角度或先击破障碍; <code>currentLevel = 1</code> 不会发生</td></tr>
       <tr><td>E08</td><td>多个宝箱同时被击破</td><td>武器按击破顺序依次装备, 最后击破的覆盖前面的</td></tr>
       <tr><td>E09</td><td>主角在宝箱通道时撞到状态门(状态门移到分界线附近)</td><td>不可能 — 状态门生成在接敌通道内, 不会跨界。如代码上发生, 视为撞主角触发 S5</td></tr>
       <tr><td>E10</td><td>状态门已 S4 上限释放, 没人撞它, 流到屏幕底</td><td>自然消失, 不触发 BOBO 吃 buff, 下个门生成</td></tr>
